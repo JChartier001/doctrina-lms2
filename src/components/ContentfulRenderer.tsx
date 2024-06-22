@@ -1,12 +1,25 @@
-import { BLOCKS, Document, Node } from '@contentful/rich-text-types';
-import { documentToReactComponents, Options } from '@contentful/rich-text-react-renderer';
-import { Typography, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { BLOCKS, Document, Node } from "@contentful/rich-text-types";
+import {
+  documentToReactComponents,
+  Options,
+} from "@contentful/rich-text-react-renderer";
+import {
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+} from "@mui/material";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 
-const ContentfulRenderer: React.FC<{ richTextDocument: Document }> = ({ richTextDocument }) => {
+const ContentfulRenderer: React.FC<{ richTextDocument: Document }> = ({
+  richTextDocument,
+}) => {
   const options: Options = {
     renderNode: {
-      [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => <Typography paragraph>{children}</Typography>,
+      [BLOCKS.PARAGRAPH]: (node: Node, children: React.ReactNode) => (
+        <Typography paragraph>{children}</Typography>
+      ),
       [BLOCKS.HEADING_1]: (node: Node, children: React.ReactNode) => (
         <Typography variant="h1" textAlign="center" my={3}>
           {children}
@@ -37,7 +50,9 @@ const ContentfulRenderer: React.FC<{ richTextDocument: Document }> = ({ richText
           {children}
         </Typography>
       ),
-      [BLOCKS.UL_LIST]: (node: Node, children: React.ReactNode) => <List>{children}</List>,
+      [BLOCKS.UL_LIST]: (node: Node, children: React.ReactNode) => (
+        <List>{children}</List>
+      ),
 
       [BLOCKS.LIST_ITEM]: (node: Node, children: React.ReactNode) => (
         <ListItem alignItems="flex-start">
@@ -48,7 +63,7 @@ const ContentfulRenderer: React.FC<{ richTextDocument: Document }> = ({ richText
         </ListItem>
       ),
     },
-    renderText: (text: string) => text.replace('!', '?'),
+    renderText: (text: string) => text.replace("!", "?"),
   };
   return documentToReactComponents(richTextDocument, options);
 };
