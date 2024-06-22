@@ -6,14 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "formatting": "prettier --check .",
+    "formatting:fix": "prettier --write .",
+    "typescript": "tsc --noEmit",
+    "verify": "yarn formatting:fix && yarn lint && yarn typescript"
   },
   "volta": {
     "node": "20.11.1",
     "yarn": "1.22.21"
   },
   "dependencies": {
-    "@devshop24/component-library": "^1.0.0",
+    "@devshop24/component-library": "^1.0.1",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.20",

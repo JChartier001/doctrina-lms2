@@ -136,10 +136,10 @@
   resolved "https://registry.yarnpkg.com/@contentful/rich-text-types/-/rich-text-types-16.5.2.tgz#924641091d5ae83b9fb34908745a62d652b44d68"
   integrity sha512-qD98Amp/vWxCYMtv7yprh4Ry3QHFX50sf+i3E6e/WRquz+aUW2ilqmQqW6ucb4F2dlatUxMbOOhZOFazv2XLjg==
 
-"@devshop24/component-library@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@devshop24/component-library/-/component-library-1.0.0.tgz#42d1075795d2b6396540b2604368516bf90ce0bf"
-  integrity sha512-7TurDCfMz4y1e7BV8uwR0HAnLUPnGWpbHmfuLeKdnRqPJjOeVjWKBPrA3MtsBBCkk192W7zBBK0jw3tWjo7qRQ==
+"@devshop24/component-library@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@devshop24/component-library/-/component-library-1.0.1.tgz#28d049bb0292cbcefdaf2f02be2ce809c1a347fb"
+  integrity sha512-o1xt4FjGLNLles1uR/wvrKYTpvYipoXFk7Mj/MdriE8oLbNaU8lKVGHXkuK38ZZXAbaVQUaX9F/iArALdcrMvg==
   dependencies:
     "@emotion/react" "^11.11.4"
     "@emotion/styled" "^11.11.5"
@@ -2885,6 +2885,7 @@ streamsearch@^1.1.0:
   integrity sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
