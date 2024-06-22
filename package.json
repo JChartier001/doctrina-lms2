@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "formatting": "prettier --check .",
+    "formatting:fix": "prettier --write .",
+    "typescript": "tsc --noEmit",
+    "verify": "yarn formatting:fix && yarn lint && yarn typescript"
   },
   "volta": {
     "node": "20.11.1",
