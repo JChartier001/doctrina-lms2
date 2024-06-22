@@ -17,6 +17,7 @@
     "yarn": "1.22.21"
   },
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^15.21.2",
     "@devshop24/component-library": "^1.0.1",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
