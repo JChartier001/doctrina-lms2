@@ -1,13 +1,21 @@
-import ContactUs from "@/components/LandingPages/ContactUs";
-import FAQs from "@/components/LandingPages/FAQs";
-import CTASection from "@/components/LandingPages/CTASection";
-import Stack from "@mui/material/Stack";
-import Features from "@/components/LandingPages/Features";
-import Header from "@/components/LandingPages/Header";
-import { Button } from "@devshop24/component-library";
-import Typography from "@mui/material/Typography";
 
-export default function Home() {
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import { ContactUs, FAQs, CTASection, Features, MainHeader, Button, Footer } from "@devshop24/component-library";
+
+
+
+
+const Home = () => {
+  const user = {
+    name: "John Doe",
+    image: "https://randomuser.me/api/portraits",
+    items: [{ label: "Profile",href:'/profile' }, { label: "Logout", href: '/logout' }],
+    username: "johndoe",
+  }
+
+  const email = "customerservice@doctrinalms.com"
+
   return (
     <Stack>
       <Stack
@@ -17,66 +25,79 @@ export default function Home() {
           background: "linear-gradient(to top left, #104a60, #0b1a3b, #41193b)",
         }}
       >
-        <Header
+        <MainHeader
+          navigation={[
+            { name: 'Home', href: '/' },
+            { name: 'Instructors', href: '/membership' },
+            { name: 'Students', href: '#students' },
+            { name: 'Browse', href: '/browse' },
+            { name: 'ContactUs', href: '#contact-us' },
+          ]}
+          user={user}
+          navigationSx={{ color: 'primary.contrastText', fontSize: '1rem' }}
+          logoImage="./logo1.png"
+          logoTitle="Doctrina"
+          logoSubtitle="All-in-one Education Platform"
+          logoTitleSx={{ color: 'primary.contrastText' }}
+          logoSubtitleSx={{ color: 'primary.contrastText', opacity: 0.5 }}
           title={
-            <Stack
-              key={0}
-              sx={{
-                justifyContent: "center",
-                alignItems: "center",
-                textAlign: "center",
-                gap: 2,
-              }}
-            >
-              <Typography
-                variant="h1"
-                sx={{ color: "white", fontSize: { xs: "2rem", md: "3rem" } }}
-              >
-                Doctrina
-              </Typography>
-              <Typography
-                variant="h3"
-                sx={{
-                  color: "white",
-                  fontSize: { xs: "1rem", md: "2rem" },
-                  fontWeight: "normal",
-                }}
-              >
-                A New Era For Medical Aesthetics Education
-              </Typography>
-            </Stack>
-          }
-          subtitle={
-            <Typography
-              paragraph
-              sx={{
-                textAlign: "center",
-                width: "80%",
-                color: "text.muted",
-                m: "auto",
-                mt: 2,
-              }}
-            >
-              {" "}
-              Doctrina LMS is a next-generation education platform and
-              management system for medical aesthetic professionals. Designed
-              from the ground up to connect educators and students with all the
-              tools needed to make the learning experience more efficient and
-              effective.
-            </Typography>
-          }
-          action={
-            <Stack sx={{ width: "50%", flexDirection: "row", gap: 2 }}>
-              {" "}
-              <Button href="/register" variant="outlined" sx={{ width: "50%" }}>
-                Try Now
-              </Button>
-              <Button href="/browse" variant="contained" sx={{ width: "50%" }}>
-                Explore
-              </Button>
-            </Stack>
-          }
-        />
+    <Stack
+      key={0}
+      sx={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        gap: 2,
+      }}
+    >
+      <Typography
+        variant="h1"
+                sx={{ color: 'primary.contrastText', fontSize: { xs: '2rem', md: '3rem' } }}
+      >
+        Doctrina
+      </Typography>
+      <Typography
+        variant="h3"
+        sx={{
+          color:'primary.contrastText',
+       
+          fontSize: { xs: '1rem', md: '2rem' },
+          fontWeight: 'normal',
+        }}
+      >
+        A New Era For Medical Aesthetics Education
+      </Typography>
+    </Stack>
+  }
+  subtitle={
+    <Typography
+      paragraph
+      sx={{
+        textAlign: 'center',
+        width: '80%',
+        color: 'primary.contrastText',
+        opacity: 0.5,
+        m: 'auto',
+        mt: 2,
+      }}
+    >
+      {' '}
+      Doctrina LMS is a next-generation education platform and management system for medical aesthetic professionals. Designed from the ground up to connect educators and students with all the tools needed to make the learning experience more efficient and effective.
+    </Typography>
+  }
+  action={
+    <Stack sx={{ width: '50%', flexDirection: 'row', gap: 2 }}>
+      {' '}
+      <Button href='/register' variant='outlined' sx={{ width: '50%' }}>
+        Try Now
+      </Button>
+      <Button href='/browse' variant='contained' sx={{ width: '50%' }}>
+        Explore
+      </Button>
+    </Stack>
+  }
+/>
+
         <Features
           title={"Learn. Teach. Grow"}
           subtitle={
@@ -116,6 +137,7 @@ export default function Home() {
           ]}
         />
         <CTASection
+          color="primary.contrastText"
           title={"Lead the Next Generation in Medical Aesthetics"}
           href="/membership"
           description={
@@ -123,6 +145,8 @@ export default function Home() {
           }
         />
         <FAQs
+          bgcolor='background.default'
+          email={email}
           faqs={[
             {
               question: "Why you should use Doctrina",
@@ -168,6 +192,7 @@ export default function Home() {
       >
         {" "}
         <CTASection
+          color='primary.contrastText'
           title={"Learn From the Best, Shape Your Future"}
           href="/browse"
           id="students"
@@ -175,8 +200,53 @@ export default function Home() {
             "Elevate your skills in the medical aesthetics field with Doctrina's curated selection of courses. Learn from industry leaders, access cutting-edge techniques, and tailor your education to fit your schedule. Whether you're just starting or looking to advance, our platform provides the resources needed to succeed. Embark on your journey to excellence with us today."
           }
         />
-        <ContactUs />
+        <ContactUs location="Kissimmee, FL 34746" email={email} iconSx={{ color: 'white' }} titleSx={{}} />
+        <Footer navigation={{
+          support: [{ name: "Pricing", href: "/membership" }],
+          company: [
+            { name: "Farmers", href: "/farmer" },
+            { name: "Customers", href: "#" },
+            { name: "Shop", href: "/store" },
+            { name: "About", href: "#" },
+            { name: "How it Works", href: "/#how-it-works" },
+          ],
+          legal: [
+            { name: "Privacy Policy", href: "/privacy" },
+            { name: "Terms & Conditions", href: "/terms" },
+            { name: "Farmer Terms & Conditions", href: "/farmer/terms" },
+          ],
+          social: [
+            {
+              name: "Facebook",
+              href: "#",
+            
+            },
+            {
+              name: "Instagram",
+              href: "#",
+
+            },
+            {
+              name: "Twitter",
+              href: "#",
+            },
+            {
+              name: "YouTube",
+              href: "#",
+            },
+          ],
+        }}
+          logoSrc="./logo1.png"
+          iconColor='white'
+          title="Doctrina"
+          subtitle="All-in-one Education Platform"
+          logoTitleSx={{ color: 'primary.contrastText' }}
+          copyright=" &copy; 2024 Doctrina LMS, All rights reserved."
+          description="Doctrina is a next-generation education platform and management system for medical aesthetic professionals. Designed from the ground up to connect educators and students with all the tools needed to make the learning experience more efficient and effective."
+          logoSubtitleSx={{ color: 'primary.contrastText', opacity: 0.5 }}/>
       </Stack>
     </Stack>
   );
 }
+
+export default Home;

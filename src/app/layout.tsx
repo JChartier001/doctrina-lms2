@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import ContextProviders from "@/providers";
 import "./globals.css";
+import { Container } from "@mui/material";
 
 const poppins = Poppins({
   weight: ["400", "500", "700"],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ContextProviders>
-        <body className={poppins.className}>{children}</body>
+        <body className={poppins.className}>
+          
+            {children}</body>
       </ContextProviders>
     </html>
   );

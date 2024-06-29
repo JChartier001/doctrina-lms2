@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { getPrivacyPolicy } from "@/lib/connectors/contentful";
-import ContentfulRenderer from "@/components/ContentfulRenderer";
+import {ContentfulRenderer} from "@devshop24/component-library";
 import { Document } from "@contentful/rich-text-types";
 import Loading from "@/components/modals/LoadingModal";
 export const dynamic = "force-dynamic";

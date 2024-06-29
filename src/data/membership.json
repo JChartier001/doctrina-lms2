@@ -1,0 +1,71 @@
+[
+	{
+		"id": "65d7e8cfb41e0830b7985dfc",
+		"name": "Basic",
+		"slug": "basic",
+		"price": { "monthly": 49.99, "annually": 499.99 },
+		"stripePriceId": {
+			"monthly": "price_1PEK11H11k5AirphQ9f2Sewa",
+			"annually": "price_1PEK11H11k5Airph8xucTV48"
+		},
+		"description": " Ideal for new instructors dipping their toes into online teaching. The Basic Tier provides the essential tools you need to start sharing your knowledge and growing your audience at no initial cost.",
+		"features": [
+			"Create up to 3 courses",
+			"Access to email support",
+			"Basic marketing tools",
+			"Built-in SEO capabilities"
+		],
+		"title": "Begin Your Journey",
+		"mostPopular": false,
+		"order":  1
+	},
+	{
+		"id": "65d558bf38437c5d5c95498a",
+		"name": "Professional",
+		"slug": "professional",
+		"stripePriceId": {
+			"monthly": "price_1PEKAFH11k5Airph0VwGz2hu",
+			"annually": "price_1PEK8rH11k5AirphtBGg9Cf7"
+		},
+		"price": {
+			"monthly": 99.99,
+			"annually": 999.99
+		},
+		"description": "Designed for experienced educators looking to scale their impact. The Professional Tier offers advanced features to enhance student engagement, streamline course management, and maximize your earning potential.",
+		"features": [
+			"Unlimited course creation",
+			"Manage grades",
+			"Create quizzes and tests",
+			"Live stream lectures",
+			"Enhanced email and phone support"
+		],
+		"title": "Expand Your Reach",
+		"mostPopular": true,
+		"order":  2
+	},
+	{
+		"id": "65d558c038437c5d5c95498b" ,
+		"name": "Enterprise",
+		"price": {
+			"monthly":399.99,
+			"annually":3999.99 
+		},
+		"slug": "enterprise",
+		"stripePriceId": {
+			"monthly": "price_1PEKREH11k5AirphOVH1eWI4",
+			"annually": "price_1PEK4XH11k5AirphopXU5yyK"
+		},
+		"description": "The ultimate package for institutions and high-volume educators. The Enterprise Tier provides comprehensive tools for course creation, student management, and engagement, alongside personalized support to meet your educational objectives.",
+		"features": [
+			"Offer payment plans",
+			"Advanced program creation",
+			"Co-instructor management",
+			"Schedule in-person events",
+			"Integrated email marketing",
+			"Dedicated support team"
+		],
+		"title": "Transform Education",
+		"mostPopular": false,
+		"order":  3
+	}
+]
