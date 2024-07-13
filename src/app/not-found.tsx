@@ -1,7 +1,6 @@
-"use client";
-import { NotFound } from "@devshop24/component-library";
+import React from 'react';
+import { NotFound } from '@devshop24/component-library';
 
-const NotFoundPage = () => {
-  return <NotFound />;
-};
-export default NotFoundPage;
+const Custom404 = () => <NotFound />;
+
+export default Custom404;

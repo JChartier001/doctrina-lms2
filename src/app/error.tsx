@@ -1,9 +1,7 @@
-"use client";
+'use client';
+import { ErrorPage } from '@devshop24/component-library';
+import React from 'react';
 
-import { ErrorPage } from "@devshop24/component-library";
-
-const Error = () => {
-  return <ErrorPage href="/dashboard" />;
-};
+const Error = () => <ErrorPage href='/u' />;
 
 export default Error;

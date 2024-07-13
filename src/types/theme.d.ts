@@ -29,12 +29,13 @@ declare module "@mui/material/styles" {
   }
 
   interface BreakpointOverrides {
-    xs: true; // enables the usage of the default breakpoint
-    sm: true;
-    md: true;
-    lg: true;
-    xl: true;
-    xxl: true; // adds a new breakpoint 'xxl'
-    xxxl: true; // adds another new breakpoint 'xxxl'
-  }
+		xs: true; // enables the usage of the default breakpoint
+		sm: true;
+		md: true;
+		lg: true;
+		xl: true;
+		xxl: true; // adds a new breakpoint 'xxl'
+		xxxl: true; // adds another new breakpoint 'xxxl'
+		xxxxl: true; // adds another new breakpoint 'xxxxl'
+	}
 }
