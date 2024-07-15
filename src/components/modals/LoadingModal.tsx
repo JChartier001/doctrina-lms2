@@ -1,5 +1,5 @@
-import React from "react";
-import { LoadingModal } from "@devshop24/component-library";
+import React from 'react';
+import { LoadingModal } from '@devshop24/component-library';
 
 const Loading = ({ loading }: { loading: boolean }) => {
   return (

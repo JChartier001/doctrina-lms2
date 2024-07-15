@@ -6,32 +6,32 @@ import { Toaster } from 'sonner';
 import './globals.css';
 
 const poppins = Poppins({
-	weight: ['400', '500', '700'],
-	style: ['normal', 'italic'],
-	subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-	title: 'Doctrina LMS',
-	description: ' A New Era For Medical Aesthetics Education',
+  title: 'Doctrina LMS',
+  description: ' A New Era For Medical Aesthetics Education',
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<ContextProviders>
-			<html lang='en'>
-				<Toaster
-					theme='light'
-					position='bottom-center'
-					richColors
-					visibleToasts={1}
-				/>
-				<body className={poppins.className}>{children}</body>
-			</html>
-		</ContextProviders>
-	);
+  return (
+    <ContextProviders>
+      <html lang="en">
+        <Toaster
+          theme="light"
+          position="bottom-center"
+          richColors
+          visibleToasts={1}
+        />
+        <body className={poppins.className}>{children}</body>
+      </html>
+    </ContextProviders>
+  );
 }
