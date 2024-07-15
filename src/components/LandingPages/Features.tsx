@@ -100,11 +100,12 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
                       fontWeight: "bold",
                       color: "neutral.900",
                       position: "relative",
+                      height: { xs: 'fit-content', lg:100, xl: 70, xxl: 60 },
                     }}
                   >
                     {feature.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 2 }}>
+                  <Typography variant="body2" >
                     {feature.description}
                   </Typography>
                 </Stack>
