@@ -106,52 +106,53 @@ const ContactUs = () => {
                 )}
               />
               <Controller
-              control={form.control}
-              name="email"
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  label="Email"
-                  fullWidth
-                  size="small"
-                  error={!!fieldState.error}
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="phoneNumber"
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  label="Phone Number"
-                  fullWidth
-                  size="small"
-                  error={!!fieldState.error}
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="message"
-              render={({ field, fieldState }) => (
-                <Input
-                  {...field}
-                  label="Message"
-                  multiline
-                  fullWidth
-                  size="medium"
-                  error={!!fieldState.error}
-                  rows={3}
-                />
-              )}
-            />
-            <Button
-              onClick={form.handleSubmit(onSubmit)}
-              sx={{ width: 200, zIndex: 3, color: 'text.onDark' }}
-            >
-              Send Message
-            </Button>
+                control={form.control}
+                name="email"
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    label="Email"
+                    fullWidth
+                    size="small"
+                    error={!!fieldState.error}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="phoneNumber"
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    label="Phone Number"
+                    fullWidth
+                    size="small"
+                    error={!!fieldState.error}
+                  />
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="message"
+                render={({ field, fieldState }) => (
+                  <Input
+                    {...field}
+                    label="Message"
+                    multiline
+                    fullWidth
+                    size="medium"
+                    error={!!fieldState.error}
+                    rows={3}
+                  />
+                )}
+              />
+              <Button
+                onClick={form.handleSubmit(onSubmit)}
+                sx={{ width: 200, zIndex: 3, color: 'text.onDark' }}
+              >
+                Send Message
+              </Button>
+            </Stack>
           </form>
         </FormProvider>
       </Stack>
