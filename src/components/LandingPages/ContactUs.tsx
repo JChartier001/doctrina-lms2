@@ -105,8 +105,7 @@ const ContactUs = () => {
                   />
                 )}
               />
-            </Stack>
-            <Controller
+              <Controller
               control={form.control}
               name="email"
               render={({ field, fieldState }) => (
