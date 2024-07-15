@@ -1,4 +1,4 @@
-import { Logo as LogoComponent } from "@devshop24/component-library";
+import { Logo as LogoComponent } from '@devshop24/component-library';
 
 const Logo = ({ color }: { color: string }) => {
   return (

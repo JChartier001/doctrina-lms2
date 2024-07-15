@@ -1,5 +1,5 @@
-"use client";
-import { NotFound } from "@devshop24/component-library";
+'use client';
+import { NotFound } from '@devshop24/component-library';
 
 const NotFoundPage = () => {
   return <NotFound />;

@@ -15,10 +15,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "20.11.1"
-          registry-url: "https://registry.npmjs.org"
-          scope: "@devshop24"
-          cache: "yarn"
+          node-version: '20.11.1'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@devshop24'
+          cache: 'yarn'
 
       - name: Install Node Modules
         run: yarn install --frozen-lockfile

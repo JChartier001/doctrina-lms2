@@ -1,9 +1,9 @@
-import Box from "@mui/material/Box";
-import Check from "@mui/icons-material/Check";
-import Grid from "@mui/material/Grid";
-import React from "react";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import Box from '@mui/material/Box';
+import Check from '@mui/icons-material/Check';
+import Grid from '@mui/material/Grid';
+import React from 'react';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 interface FeatureProps {
   features: Feature[];
@@ -20,30 +20,30 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
   return (
     <Box
       sx={{
-        bgcolor: "white",
-        py: { xs: "6rem", sm: "8rem" },
+        bgcolor: 'white',
+        py: { xs: '6rem', sm: '8rem' },
         px: { xs: 8, sm: 20 },
       }}
     >
       <Box
         sx={{
-          display: { xs: "column", lg: "flex" },
-          flexDirection: "row",
-          mx: "auto",
+          display: { xs: 'column', lg: 'flex' },
+          flexDirection: 'row',
+          mx: 'auto',
           gap: 5,
         }}
       >
         <Stack
-          sx={{ width: { xs: "100%", lg: "70%" }, justifyContent: "center" }}
+          sx={{ width: { xs: '100%', lg: '70%' }, justifyContent: 'center' }}
         >
           <Typography
             variant="subtitle1"
             component="h2"
             sx={{
-              fontSize: "base",
-              fontWeight: "bold",
-              lineHeight: "snug",
-              color: "primary.main",
+              fontSize: 'base',
+              fontWeight: 'bold',
+              lineHeight: 'snug',
+              color: 'primary.main',
             }}
           >
             Everything you need
@@ -53,11 +53,11 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
             component="p"
             sx={{
               mt: 2,
-              fontSize: "3xl",
-              fontWeight: "bold",
-              tracking: "tight",
-              color: "neutral.900",
-              sm: { fontSize: "4xl" },
+              fontSize: '3xl',
+              fontWeight: 'bold',
+              tracking: 'tight',
+              color: 'neutral.900',
+              sm: { fontSize: '4xl' },
             }}
           >
             {title}
@@ -65,9 +65,9 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
           <Typography
             sx={{
               mt: 6,
-              fontSize: "base",
-              lineHeight: "snug",
-              color: "neutral.600",
+              fontSize: 'base',
+              lineHeight: 'snug',
+              color: 'neutral.600',
             }}
           >
             {subtitle}
@@ -81,15 +81,15 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
                 lg={6}
                 key={feature.name}
                 sx={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "row",
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'row',
                 }}
               >
                 <Check
                   sx={{
                     mr: 1,
-                    color: "primary.main",
+                    color: 'primary.main',
                   }}
                   aria-hidden="true"
                 />
@@ -97,16 +97,15 @@ const Features = ({ features, title, subtitle }: FeatureProps) => {
                   <Typography
                     variant="h5"
                     sx={{
-                      fontWeight: "bold",
-                      color: "neutral.900",
-                      position: "relative",
+                      fontWeight: 'bold',
+                      color: 'neutral.900',
+                      position: 'relative',
+                      height: { xs: 'fit-content', lg: 100, xl: 70, xxl: 60 },
                     }}
                   >
                     {feature.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 2 }}>
-                    {feature.description}
-                  </Typography>
+                  <Typography variant="body2">{feature.description}</Typography>
                 </Stack>
               </Grid>
             ))}

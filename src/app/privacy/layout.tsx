@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container } from '@mui/material';
 
 const PrivacyLayout = async ({ children }: { children: React.ReactNode }) => {
   return <Container>{children}</Container>;

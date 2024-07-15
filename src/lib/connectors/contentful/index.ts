@@ -1,6 +1,6 @@
-"use server";
+'use server';
 
-import * as contentful from "contentful";
+import * as contentful from 'contentful';
 
 const client = contentful.createClient({
   space: `${process.env.CONTENTFUL_SPACE_ID}`,
@@ -8,6 +8,6 @@ const client = contentful.createClient({
 });
 
 export const getPrivacyPolicy = async () => {
-  const entry = await client.getEntry("3Whkq5vIj7GjpUoSu6mMBg");
+  const entry = await client.getEntry('3Whkq5vIj7GjpUoSu6mMBg');
   return entry.fields;
 };

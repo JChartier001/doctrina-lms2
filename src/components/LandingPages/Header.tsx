@@ -1,18 +1,18 @@
-import Logo from "@/components/Logo";
-import Stack from "@mui/material/Stack";
+import Logo from '@/components/Logo';
+import Stack from '@mui/material/Stack';
 
 // import { getCurrentUser } from '@/actions/user';
 
-import { Avatar } from "@devshop24/component-library";
-import { LoginButtons } from "@devshop24/component-library";
-import { Box, Link } from "@mui/material";
+import { Avatar } from '@devshop24/component-library';
+import { LoginButtons } from '@devshop24/component-library';
+import { Box, Link } from '@mui/material';
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Instructors", href: "/membership" },
-  { name: "Students", href: "#students" },
-  { name: "Browse", href: "/browse" },
-  { name: "ContactUs", href: "#contact-us" },
+  { name: 'Home', href: '/' },
+  { name: 'Instructors', href: '/membership' },
+  { name: 'Students', href: '#students' },
+  { name: 'Browse', href: '/browse' },
+  { name: 'ContactUs', href: '#contact-us' },
 ];
 
 interface HeaderProps {
@@ -24,14 +24,14 @@ interface HeaderProps {
 
 const Header = async ({ title, subtitle, action }: HeaderProps) => {
   // const user = await getCurrentUser();
-  const user = { name: "John Doe", image: "https://randomuser.me/api/portait" };
+  const user = { name: 'John Doe', image: 'https://randomuser.me/api/portait' };
   return (
     <Stack sx={{ height: 600, px: 1 }}>
       <Stack
         sx={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           p: 2,
           zIndex: 10,
         }}
@@ -39,13 +39,13 @@ const Header = async ({ title, subtitle, action }: HeaderProps) => {
         <Logo color="white" />
 
         <Stack
-          sx={{ flexDirection: "row", gap: { xs: 3, lg: 10 }, zIndex: 10 }}
+          sx={{ flexDirection: 'row', gap: { xs: 3, lg: 10 }, zIndex: 10 }}
         >
           {navigation.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              sx={{ color: "white", fontSize: "1rem", textDecoration: "none" }}
+              sx={{ color: 'white', fontSize: '1rem', textDecoration: 'none' }}
             >
               {item.name}
             </Link>
@@ -54,28 +54,28 @@ const Header = async ({ title, subtitle, action }: HeaderProps) => {
         <Stack>
           {!user ? (
             <>
-              <LoginButtons textColor="white" />
+              <LoginButtons />
             </>
           ) : (
             <Avatar name={user.name as string} image={user.image as string} />
           )}
         </Stack>
       </Stack>
-      <Stack sx={{ margin: "auto" }}>
+      <Stack sx={{ margin: 'auto' }}>
         {title}
         {subtitle}
         <Box
           sx={{
-            mt: "2.5rem",
-            display: "flex",
+            mt: '2.5rem',
+            display: 'flex',
             flexDirection: {
-              xs: "column",
-              sm: "row",
+              xs: 'column',
+              sm: 'row',
             },
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: 'center',
+            justifyContent: 'center',
             gap: 3,
-            mx: "1.25rem",
+            mx: '1.25rem',
           }}
         >
           {action}
@@ -84,13 +84,13 @@ const Header = async ({ title, subtitle, action }: HeaderProps) => {
 
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           insetX: 0,
-          top: { xs: "[calc(100%-13rem)]", sm: "[calc(100%-30rem)]" },
+          top: { xs: '[calc(100%-13rem)]', sm: '[calc(100%-30rem)]' },
           zIndex: -10,
-          overflow: "hidden",
-          transform: "translateZ(0)",
-          filter: "blur(48px)",
+          overflow: 'hidden',
+          transform: 'translateZ(0)',
+          filter: 'blur(48px)',
         }}
       ></Box>
     </Stack>

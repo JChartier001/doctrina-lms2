@@ -1,8 +1,8 @@
 // theme.d.ts
-import "@mui/material/styles";
-import { PaletteColorOptions } from "@mui/material/styles";
+import '@mui/material/styles';
+import { PaletteColorOptions } from '@mui/material/styles';
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface TypeBackground {
     primary: string;
     muted: string;
