@@ -24,8 +24,8 @@ const ContactUs = () => {
 				isolation: 'isolate',
 				overflow: 'hidden',
 				bgcolor: '#262626',
-				py: { xs: '6rem', sm: '8rem' },
-				px: { xs: 8, sm: 20 },
+				py: { xs: 5, sm: 10, md: 15, lg:20 },
+				px: { xs: 2, sm: 20 },
 				flexDirection: { xs: 'column', lg: 'row' },
 
 				gap: 5,
@@ -73,9 +73,9 @@ const ContactUs = () => {
 						<Controller
 							control={form.control}
 							name='firstName'
-							render={({ field, fieldState }) => (
+							render={({ field: { ref, ...rest }, fieldState }) => (
 								<Input
-									{...field}
+									{...rest}
 									label='First Name'
 									fullWidth
 									error={!!fieldState.error}
@@ -86,9 +86,9 @@ const ContactUs = () => {
 						<Controller
 							control={form.control}
 							name='lastName'
-							render={({ field, fieldState }) => (
+							render={({ field: { ref, ...rest }, fieldState }) => (
 								<Input
-									{...field}
+									{...rest}
 									label='Last Name'
 									fullWidth
 									error={!!fieldState.error}
@@ -100,9 +100,9 @@ const ContactUs = () => {
 					<Controller
 						control={form.control}
 						name='email'
-						render={({ field, fieldState }) => (
+						render={({ field: { ref, ...rest }, fieldState }) => (
 							<Input
-								{...field}
+								{...rest}
 								label='Email'
 								fullWidth
 								size='small'
@@ -113,22 +113,23 @@ const ContactUs = () => {
 					<Controller
 						control={form.control}
 						name='phone'
-						render={({ field, fieldState }) => (
+						render={({ field: { ref, ...rest }, fieldState }) => (
 							<Input
-								{...field}
+								{...rest}
 								label='Phone Number'
 								fullWidth
 								size='small'
 								error={!!fieldState.error}
+								
 							/>
 						)}
 					/>
 					<Controller
 						control={form.control}
 						name='message'
-						render={({ field, fieldState }) => (
+						render={({ field: { ref, ...rest }, fieldState }) => (
 							<Input
-								{...field}
+								{...rest}
 								label='Message'
 								multiline
 								fullWidth

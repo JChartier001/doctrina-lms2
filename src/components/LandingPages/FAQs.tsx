@@ -12,7 +12,13 @@ interface FAQProps {
 
 const FAQs = ({ faqs }: FAQProps) => {
 	return (
-		<Stack sx={{ px: { xs: 8, sm: 20 }, py: 8 }}>
+		<Stack
+			sx={{
+				py: { xs: 5, sm: 10, md: 15, lg: 20 },
+				px: { xs: 2, sm: 20 },
+				bgcolor: 'text.onDark',
+			}}
+		>
 			<Stack m='auto' textAlign={'center'} gap={3} mb={5}>
 				<Typography variant='h3'>Frequently asked questions</Typography>
 				<Typography

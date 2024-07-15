@@ -5,27 +5,29 @@ import FAQs from '@/components/LandingPages/FAQs';
 import TrendingCourses from '@/components/LandingPages/TrendingCourses';
 import ContactUs from '@/components/LandingPages/ContactUs';
 import CTASection from '@/components/LandingPages/CTASection';
+import Footer from '@/components/LandingPages/Footer';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Button } from '@devshop24/component-library';
 
 const LandingPage = () => {
 	return (
-		<div>
+		<Stack
+			sx={{ p: 0, m: 0, overflow: 'hidden', bgcolor: '#262626', width: '100%' }}
+		>
 			<Header
 				title={
 					<Stack
 						sx={{
 							justifyContent: 'center',
 							alignItems: 'center',
-							textAlign: 'center',
+							// textAlign: 'center',
 						}}
 					>
 						<Typography
 							variant='h1'
 							sx={{
 								color: 'text.onDark',
-								fontSize: { xs: '2rem', md: '3rem' },
 							}}
 						>
 							Doctrina
@@ -36,7 +38,11 @@ const LandingPage = () => {
 					<Stack alignItems={'center'} sx={{ gap: 2 }}>
 						<Typography
 							variant='h3'
-							sx={{ color: 'text.onDark', opacity: 0.9 }}
+							sx={{
+								color: 'text.onDark',
+								opacity: 0.9,
+								textAlign: 'center',
+							}}
 						>
 							A New Era For Medical Aesthetics Education
 						</Typography>
@@ -114,7 +120,7 @@ const LandingPage = () => {
 							'Adapt the platform to your teaching style with features like live class scheduling, survey creation for feedback, and co-instructor collaboration. Create a unique and effective learning environment that meets the needs of your students.',
 					},
 				]}
-				title={'Learn.Teach.Grow'}
+				title={<Typography variant='h1'>Learn.Teach.Grow</Typography>}
 				subtitle='Discover a platform that adapts to your evolving educational and teaching needs in the field of medical aesthetics'
 			/>
 			<CTASection
@@ -170,7 +176,8 @@ const LandingPage = () => {
 			/>
 			<TrendingCourses />
 			<ContactUs />
-		</div>
+			<Footer />
+		</Stack>
 	);
 };
 

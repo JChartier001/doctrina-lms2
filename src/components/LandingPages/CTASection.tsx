@@ -25,7 +25,15 @@ const CTASection = ({
 	descriptionSx,
 }: CTASectionProps) => {
 	return (
-		<Stack sx={{ background: grey[900], p: 10, position: 'relative' }} id={id}>
+		<Stack
+			sx={{
+				background: grey[900],
+				py: { xs: 5, sm: 10, md: 15, lg: 20 },
+				px: { xs: 2, sm: 20 },
+				position: 'relative',
+			}}
+			id={id}
+		>
 			<Box
 				sx={{
 					position: 'absolute',
@@ -49,7 +57,7 @@ const CTASection = ({
 				}}
 				aria-hidden='true'
 			/>
-			<Stack sx={{ width: '80%', m: 'auto', gap: 3, zIndex: 10 }}>
+			<Stack sx={{ width: '100%', m: 'auto', gap: 3, zIndex: 10 }}>
 				<Typography
 					variant='h3'
 					sx={{ color: 'text.onDark', textAlign: 'center', ...titleSx }}

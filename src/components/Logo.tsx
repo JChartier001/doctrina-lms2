@@ -1,6 +1,7 @@
 import { Logo as LogoComponent } from "@devshop24/component-library";
+import { SxProps } from "@mui/material";
 
-const Logo = ({ color }: { color: string }) => {
+const Logo = ({ color, sx }: { color: string, sx?: SxProps }) => {
   return (
     <LogoComponent
       title="Doctrina"
@@ -8,6 +9,8 @@ const Logo = ({ color }: { color: string }) => {
       imageSrc="/logo1.png"
       imageAlt="Doctrina"
       avatarSx={{ width: 50, height: 50 }}
+      mobileDisplay="flex"
+      sx={{...sx}}
       titleSx={{
         color: color,
       }}

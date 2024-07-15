@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.21.2",
-    "@devshop24/component-library": "^0.1.4",
+    "@devshop24/component-library": "^0.1.5",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.16.1",

@@ -5,9 +5,9 @@ import { grey } from '@mui/material/colors';
 import {
 	UserButton,
 	LoginButtons,
-	Logo,
 	MobileMenu,
 } from '@devshop24/component-library';
+import Logo from '@/components/Logo';
 
 import { Box, Link } from '@mui/material';
 
@@ -34,30 +34,50 @@ const Header = async ({ title, subtitle, action, action2 }: HeaderProps) => {
 			? [
 					{ label: 'Dashboard', href: `/u/${user?.username}` },
 					{ label: 'Profile', href: `/u/${user?.username}/profile` },
-					{ label: 'Farms', href: `/farm` },
-					{ label: 'Logout', href: 'logout' },
+					{ label: 'Browse', href: `/browse` },
+					{ label: 'Courses', href: '/instructor/courses' },
+					{ label: 'Analytics', href: '/instructor/analytics' },
+					{ label: 'Settings', href: '/instructor/account' },
+
+					// <ListItemText
+					// 	key='logout'
+					// 	onClick={() => {
+					// 		signOut();
+					// 		router.push('/');
+					// 	}}
+					// >
+					// 	Logout
+					// </ListItemText>,
 				]
 			: [
 					{ label: 'Dashboard', href: `/u/${user?.username}` },
 					{ label: 'Profile', href: `/u/${user?.username}/profile` },
+					{ label: 'Browse', href: `/browse` },
+					{ label: 'Favorites', href: `/u/${user?.username}/favorites` },
+					{ label: 'Messages', href: `/u/${user?.username}/messages` },
 					{ label: 'Logout', href: 'logout' },
 				];
 
+
 	return (
 		<Stack
-			sx={{ bgcolor: grey[900], height: 750, px: 1, position: 'relative' }}
+			sx={{ bgcolor: grey[900], height: 750, position: 'relative' }}
 		>
 			<Stack
 				sx={{
 					flexDirection: 'row',
 					justifyContent: 'space-between',
 					alignItems: 'center',
-					p: 2,
 					zIndex: 10,
 				}}
 			>
 				<Stack flexDirection='row' alignItems='center'>
-					<Stack sx={{ display: { xs: 'flex', lg: 'none' } }}>
+					<Logo
+						
+						color="white"
+						sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', p:2 }}
+					/>
+					<Stack sx={{ display: { xs: 'flex', md: 'none' } }}>
 						<MobileMenu
 							content={
 								<Stack sx={{ p: 2, gap: 2 }}>
@@ -78,21 +98,12 @@ const Header = async ({ title, subtitle, action, action2 }: HeaderProps) => {
 							title='Menu'
 						/>
 					</Stack>
-					<Logo
-						title={'Doctrina'}
-						subtitle={'A New Era For Medical Aesthetics Education'}
-						imageSrc={'/logo1.png'}
-						titleSx={{ color: 'text.onDark' }}
-						subtitleSx={{ color: 'text.onDarkMuted' }}
-						imageAlt={'Farm2Table'}
-						sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-					/>
 				</Stack>
 				<Stack
 					sx={{
-						display: { xs: 'none', lg: 'flex' },
+						display: { xs: 'none', md: 'flex' },
 						flexDirection: 'row',
-						gap: { xs: 3, lg: 10 },
+						gap: { xs: 3, md: 10 },
 					}}
 				>
 					{navigation.map(item => (
@@ -142,13 +153,13 @@ const Header = async ({ title, subtitle, action, action2 }: HeaderProps) => {
 					}}
 					aria-hidden='true'
 				/>
-				<Stack sx={{ zIndex: 50, gap: 2 }}>
+				<Stack sx={{ zIndex: 50, gap: 2, mt: { xs: -10, sm:-20 } }}>
 					{title}
 					{subtitle}
 
 					<Box
 						sx={{
-							mt: 5,
+							mt: {xs: 2, md: 4},
 							display: 'flex',
 							flexDirection: {
 								xs: 'column',
