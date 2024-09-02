@@ -1,21 +1,22 @@
-import { Logo as LogoComponent } from "@devshop24/component-library";
+'use client';
+import { Logo as LogoComponent } from '@devshop24/component-library';
+import { useContext } from 'react';
+import { ThemeContext } from '../providers/ThemeContext';
 
-const Logo = ({ color }: { color: string }) => {
-  return (
-    <LogoComponent
-      title="Doctrina"
-      subtitle="All-in-one Education Platform"
-      imageSrc="/logo1.png"
-      imageAlt="Doctrina"
-      avatarSx={{ width: 50, height: 50 }}
-      titleSx={{
-        color: color,
-      }}
-      subtitleSx={{
-        color: color,
-      }}
-    />
-  );
+const Logo = () => {
+	const { mode } = useContext(ThemeContext);
+	return (
+		<LogoComponent
+			title='Doctrina'
+			subtitle={'A New Era For Medical Aesthetics Education'}
+			imageSrc={mode ? '/logo.png' : '/logo_light.png'}
+			imageAlt='Doctrina'
+			avatarSx={{ width: 50, height: 50 }}
+			titleSx={{ color: 'primary.dark' }}
+			subtitleSx={{ color: 'primary.main' }}
+			sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+		/>
+	);
 };
 
 export default Logo;

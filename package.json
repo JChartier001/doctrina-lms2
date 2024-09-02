@@ -1,39 +1,44 @@
 {
-  "name": "doctrina-lms",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev ",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "formatting": "prettier --check .",
-    "formatting:fix": "prettier --write .",
-    "typescript": "tsc --noEmit",
-    "verify": "yarn formatting:fix && yarn lint && yarn typescript"
-  },
-  "volta": {
-    "node": "20.11.1",
-    "yarn": "1.22.21"
-  },
-  "dependencies": {
-    "@contentful/rich-text-react-renderer": "^15.21.2",
-    "@devshop24/component-library": "^1.0.8",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.15.20",
-    "contentful": "^10.12.2",
-    "next": "14.2.4",
-    "prettier": "^3.3.2",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.4",
-    "typescript": "^5.5.2"
-  }
+	"name": "doctrina-lms",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev ",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"formatting": "prettier --check .",
+		"formatting:fix": "prettier --write .",
+		"typescript": "tsc --noEmit",
+		"verify": "yarn formatting:fix && yarn lint && yarn typescript"
+	},
+	"volta": {
+		"node": "20.11.1",
+		"yarn": "1.22.21"
+	},
+	"dependencies": {
+		"@contentful/rich-text-react-renderer": "^15.22.10",
+		"@devshop24/component-library": "^0.1.11",
+		"@emotion/cache": "^11.13.1",
+		"@emotion/react": "^11.13.3",
+		"@emotion/styled": "^11.13.0",
+		"@hookform/resolvers": "^3.9.0",
+		"@mui/material": "^6.0.1",
+		"@mui/material-nextjs": "^6.0.1",
+		"contentful": "^10.15.0",
+		"next": "14.2.7",
+		"prettier": "^3.3.3",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-hook-form": "^7.53.0",
+		"zod": "^3.23.8"
+	},
+	"devDependencies": {
+		"@types/node": "^22.5.2",
+		"@types/react": "^18.3.5",
+		"@types/react-dom": "^18.3.0",
+		"eslint": "^8.57.0",
+		"eslint-config-next": "14.2.7",
+		"typescript": "^5.5.4"
+	}
 }
