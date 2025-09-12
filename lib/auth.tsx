@@ -1,137 +1,76 @@
 "use client"
 
 import type React from "react"
+import { createContext, useContext, useMemo } from "react"
+import { useQuery } from "convex/react"
+import { api } from "@/convex/_generated/api"
+import { useUser, useClerk } from "@clerk/nextjs"
 
-import { createContext, useContext, useEffect, useState } from "react"
+type Role = "admin" | "instructor" | "student"
 
 type User = {
   id: string
   name: string
   email: string
   image?: string
+  role: Role
 }
 
 type AuthContextType = {
   user: User | null
-  role: "admin" | "instructor" | "student" | null
+  role: Role | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<boolean>
+  signup: (name: string, email: string, password: string, role: Role | string) => Promise<boolean>
   logout: () => void
-}
-
-// Mock users for demonstration
-const mockUsers = {
-  admin: {
-    id: "1",
-    name: "Admin User",
-    email: "admin@doctrina.com",
-    role: "admin",
-    password: "password",
-  },
-  instructor: {
-    id: "2",
-    name: "Dr. Sarah Johnson",
-    email: "instructor@doctrina.com",
-    role: "instructor",
-    password: "password",
-  },
-  student: {
-    id: "3",
-    name: "Michael Chen",
-    email: "student@doctrina.com",
-    role: "student",
-    password: "password",
-  },
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with the admin user for demonstration purposes
-  const [user, setUser] = useState<User | null>(null)
-  const [role, setRole] = useState<"admin" | "instructor" | "student" | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { isLoaded, isSignedIn, user: clerkUser } = useUser()
+  const { signOut } = useClerk()
 
-  // Auto-login with admin user for demonstration
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user")
-    const savedRole = localStorage.getItem("role")
+  const convexUser = useQuery(
+    isLoaded && isSignedIn && clerkUser?.id ? api.users.getByExternalId : undefined,
+    isLoaded && isSignedIn && clerkUser?.id ? { externalId: clerkUser.id } : undefined,
+  ) as any
 
-    if (savedUser && savedRole) {
-      setUser(JSON.parse(savedUser))
-      setRole(savedRole as "admin" | "instructor" | "student")
-    } else {
-      // Auto-login as admin for demonstration
-      const adminUser = {
-        id: mockUsers.admin.id,
-        name: mockUsers.admin.name,
-        email: mockUsers.admin.email,
+  const user: User | null = useMemo(() => {
+    if (!isLoaded || !isSignedIn || !clerkUser) return null
+    if (convexUser) {
+      return {
+        id: convexUser._id,
+        name: convexUser.name,
+        email: convexUser.email,
+        image: convexUser.image,
+        role: convexUser.role as Role,
       }
-      setUser(adminUser)
-      setRole("admin")
-      localStorage.setItem("user", JSON.stringify(adminUser))
-      localStorage.setItem("role", "admin")
     }
+    return null
+  }, [isLoaded, isSignedIn, clerkUser, convexUser])
 
-    setIsLoading(false)
-  }, [])
+  const isLoading = !isLoaded || (isSignedIn && !convexUser)
 
-  const login = async (email: string, password: string) => {
-    setIsLoading(true)
+  const login = async () => {
+    if (typeof window !== "undefined") window.location.assign("/sign-in")
+    return true
+  }
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    let foundUser = null
-    let foundRole = null
-
-    if (email === mockUsers.admin.email && password === mockUsers.admin.password) {
-      foundUser = {
-        id: mockUsers.admin.id,
-        name: mockUsers.admin.name,
-        email: mockUsers.admin.email,
-      }
-      foundRole = "admin"
-    } else if (email === mockUsers.instructor.email && password === mockUsers.instructor.password) {
-      foundUser = {
-        id: mockUsers.instructor.id,
-        name: mockUsers.instructor.name,
-        email: mockUsers.instructor.email,
-      }
-      foundRole = "instructor"
-    } else if (email === mockUsers.student.email && password === mockUsers.student.password) {
-      foundUser = {
-        id: mockUsers.student.id,
-        name: mockUsers.student.name,
-        email: mockUsers.student.email,
-      }
-      foundRole = "student"
-    } else {
-      setIsLoading(false)
-      throw new Error("Invalid credentials")
-    }
-
-    setUser(foundUser)
-    setRole(foundRole)
-    localStorage.setItem("user", JSON.stringify(foundUser))
-    localStorage.setItem("role", foundRole)
-    setIsLoading(false)
+  const signup = async () => {
+    if (typeof window !== "undefined") window.location.assign("/sign-up")
+    return true
   }
 
   const logout = () => {
-    // For demo purposes, instead of logging out completely, we'll switch to the admin user
-    const adminUser = {
-      id: mockUsers.admin.id,
-      name: mockUsers.admin.name,
-      email: mockUsers.admin.email,
-    }
-    setUser(adminUser)
-    setRole("admin")
-    localStorage.setItem("user", JSON.stringify(adminUser))
-    localStorage.setItem("role", "admin")
+    void signOut()
   }
 
-  return <AuthContext.Provider value={{ user, role, isLoading, login, logout }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, role: user?.role ?? null, isLoading, login, signup, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
