@@ -54,7 +54,7 @@ export default function RecommendationsPage() {
 
   // Redirect if not logged in
   if (!isLoading && !user) {
-    router.push("/login")
+    router.push("/sign-in")
     return null
   }
 

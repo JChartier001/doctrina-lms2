@@ -36,7 +36,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login")
+      router.push("/sign-in")
     }
   }, [user, router])
 

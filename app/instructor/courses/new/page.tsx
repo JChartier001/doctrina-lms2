@@ -10,7 +10,7 @@ export default function NewCoursePage() {
 
   useEffect(() => {
     if (!user || role !== "instructor") {
-      router.push("/login")
+      router.push("/sign-in")
       return
     }
 

@@ -104,7 +104,7 @@ export default function TopicPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login")
+      router.push("/sign-in")
     }
   }, [user, router])
 

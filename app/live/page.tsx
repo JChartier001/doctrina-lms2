@@ -22,7 +22,7 @@ export default function LiveSessionsPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login")
+      router.push("/sign-in")
     }
   }, [user, router])
 

@@ -166,7 +166,7 @@ export function SearchResultItem({ result }: SearchResultItemProps) {
 
   return (
     <Link href={result.url}>
-      <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
+      <Card className="cursor-pointer hover:bg-accent/50 hover:text-accent-foreground transition-colors">
         <CardContent className="p-4">
           <div className="flex gap-4">
             {result.image ? (

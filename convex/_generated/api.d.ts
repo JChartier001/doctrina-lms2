@@ -16,6 +16,7 @@ import type {
 import type * as certificates from "../certificates.js";
 import type * as courses from "../courses.js";
 import type * as favorites from "../favorites.js";
+import type * as http from "../http.js";
 import type * as liveSessions from "../liveSessions.js";
 import type * as notifications from "../notifications.js";
 import type * as purchases from "../purchases.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   certificates: typeof certificates;
   courses: typeof courses;
   favorites: typeof favorites;
+  http: typeof http;
   liveSessions: typeof liveSessions;
   notifications: typeof notifications;
   purchases: typeof purchases;

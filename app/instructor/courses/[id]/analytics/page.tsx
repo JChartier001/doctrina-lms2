@@ -44,7 +44,7 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 
   useEffect(() => {
     if (!isLoading && (!user || role !== "instructor")) {
-      router.push("/login")
+      router.push("/sign-in")
     }
   }, [user, role, router, isLoading])
 
