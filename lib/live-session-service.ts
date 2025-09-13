@@ -1,180 +1,249 @@
-// This is a mock service that would be replaced with actual API calls in production
-// In a real implementation, this would connect to a WebRTC service like Twilio, Agora, or Daily.co
+// Live Session Service
+// This service handles live session management using Convex
+
+import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 
 export type LiveSession = {
-  id: string
-  title: string
-  description: string
-  instructorId: string
-  instructorName: string
-  instructorImage: string
-  scheduledFor: Date
-  duration: number // in minutes
-  isRecorded: boolean
-  maxParticipants: number
-  participants: string[] // user IDs
-  status: "scheduled" | "live" | "completed" | "cancelled"
-  recordingUrl?: string
+	_id: Id<'liveSessions'>;
+	_creationTime: number;
+	title: string;
+	description: string;
+	instructorId: Id<'users'>;
+	scheduledFor: number;
+	duration: number;
+	isRecorded: boolean;
+	maxParticipants: number;
+	status: 'scheduled' | 'live' | 'completed' | 'cancelled';
+	recordingUrl?: string;
+};
+
+// Convex-based live session hooks
+export function useAllLiveSessions(
+	status?: 'scheduled' | 'live' | 'completed' | 'cancelled'
+) {
+	const { isEnabled } = useFeatureFlags();
+	const convexSessions = useQuery(
+		api.liveSessions.list,
+		isEnabled('convex_live_sessions') ? { status } : 'skip'
+	);
+
+	if (isEnabled('convex_live_sessions')) {
+		return {
+			data: convexSessions || [],
+			isLoading: convexSessions === undefined,
+			error: null,
+		};
+	}
+
+	// Fallback to mock implementation if Convex is disabled
+	return {
+		data: [],
+		isLoading: false,
+		error: null,
+	};
 }
 
-// Mock data
-const liveSessions: LiveSession[] = [
-  {
-    id: "1",
-    title: "Q&A: Advanced Botox Applications",
-    description:
-      "Join Dr. Johnson for a live Q&A session on advanced Botox applications. Bring your questions and case studies for discussion.",
-    instructorId: "instructor-1",
-    instructorName: "Dr. Sarah Johnson",
-    instructorImage: "/placeholder.svg?height=40&width=40",
-    scheduledFor: new Date(Date.now() + 86400000), // tomorrow
-    duration: 60,
-    isRecorded: true,
-    maxParticipants: 100,
-    participants: ["user-1", "user-2", "user-3"],
-    status: "scheduled",
-  },
-  {
-    id: "2",
-    title: "Live Demo: Facial Contouring Techniques",
-    description:
-      "Watch Dr. Chen demonstrate the latest facial contouring techniques using dermal fillers on a live model.",
-    instructorId: "instructor-2",
-    instructorName: "Dr. Michael Chen",
-    instructorImage: "/placeholder.svg?height=40&width=40",
-    scheduledFor: new Date(Date.now() + 172800000), // day after tomorrow
-    duration: 90,
-    isRecorded: true,
-    maxParticipants: 150,
-    participants: ["user-4", "user-5", "user-6", "user-7"],
-    status: "scheduled",
-  },
-  {
-    id: "3",
-    title: "Complications Management in Aesthetic Medicine",
-    description:
-      "This session covered how to identify, prevent, and manage complications that may arise during aesthetic procedures.",
-    instructorId: "instructor-3",
-    instructorName: "Dr. Emily Rodriguez",
-    instructorImage: "/placeholder.svg?height=40&width=40",
-    scheduledFor: new Date(Date.now() - 345600000), // 4 days ago
-    duration: 75,
-    isRecorded: true,
-    maxParticipants: 200,
-    participants: ["user-8", "user-9", "user-10", "user-11", "user-12"],
-    status: "completed",
-    recordingUrl: "/recordings/session-3.mp4",
-  },
-  {
-    id: "4",
-    title: "Business Strategies for Aesthetic Practices",
-    description:
-      "Learn effective business strategies to grow your aesthetic practice, including marketing, patient retention, and financial management.",
-    instructorId: "instructor-4",
-    instructorName: "Dr. James Wilson",
-    instructorImage: "/placeholder.svg?height=40&width=40",
-    scheduledFor: new Date(Date.now() - 604800000), // 7 days ago
-    duration: 60,
-    isRecorded: true,
-    maxParticipants: 120,
-    participants: ["user-13", "user-14", "user-15"],
-    status: "completed",
-    recordingUrl: "/recordings/session-4.mp4",
-  },
-]
+export function useUpcomingSessions() {
+	const { isEnabled } = useFeatureFlags();
+	const convexUpcoming = useQuery(
+		api.liveSessions.upcoming,
+		isEnabled('convex_live_sessions') ? {} : 'skip'
+	);
 
-export const getLiveSessions = () => {
-  return [...liveSessions]
+	if (isEnabled('convex_live_sessions')) {
+		return {
+			data: convexUpcoming || [],
+			isLoading: convexUpcoming === undefined,
+			error: null,
+		};
+	}
+
+	// Fallback to mock implementation if Convex is disabled
+	return {
+		data: [],
+		isLoading: false,
+		error: null,
+	};
 }
 
-export const getLiveSessionById = (id: string) => {
-  return liveSessions.find((session) => session.id === id)
+export function usePastSessions() {
+	const { isEnabled } = useFeatureFlags();
+	const convexPast = useQuery(
+		api.liveSessions.past,
+		isEnabled('convex_live_sessions') ? {} : 'skip'
+	);
+
+	if (isEnabled('convex_live_sessions')) {
+		return {
+			data: convexPast || [],
+			isLoading: convexPast === undefined,
+			error: null,
+		};
+	}
+
+	// Fallback to mock implementation if Convex is disabled
+	return {
+		data: [],
+		isLoading: false,
+		error: null,
+	};
 }
 
-export const getUpcomingSessions = () => {
-  return liveSessions.filter((session) => session.status === "scheduled")
+export function useLiveSession(id: Id<'liveSessions'>) {
+	const { isEnabled } = useFeatureFlags();
+	const convexSession = useQuery(
+		api.liveSessions.get,
+		isEnabled('convex_live_sessions') ? { id } : 'skip'
+	);
+
+	if (isEnabled('convex_live_sessions')) {
+		return {
+			data: convexSession,
+			isLoading: convexSession === undefined,
+			error: null,
+		};
+	}
+
+	// Fallback to mock implementation if Convex is disabled
+	return {
+		data: null,
+		isLoading: false,
+		error: null,
+	};
 }
 
-export const getPastSessions = () => {
-  return liveSessions.filter((session) => session.status === "completed")
+// Mutation hooks for session management
+export function useJoinSession() {
+	const { isEnabled } = useFeatureFlags();
+	const convexJoin = useMutation(api.liveSessions.join);
+
+	return async (sessionId: Id<'liveSessions'>, userId: Id<'users'>) => {
+		if (isEnabled('convex_live_sessions')) {
+			try {
+				await convexJoin({ sessionId, userId });
+				return true;
+			} catch (error) {
+				console.error('Failed to join session:', error);
+				return false;
+			}
+		}
+
+		// Fallback to mock implementation if Convex is disabled
+		return false;
+	};
 }
 
-export const createLiveSession = (session: Omit<LiveSession, "id" | "status" | "participants">) => {
-  const newSession: LiveSession = {
-    ...session,
-    id: `session-${liveSessions.length + 1}`,
-    status: "scheduled",
-    participants: [],
-  }
-  liveSessions.push(newSession)
-  return newSession
+export function useLeaveSession() {
+	const { isEnabled } = useFeatureFlags();
+	const convexLeave = useMutation(api.liveSessions.leave);
+
+	return async (sessionId: Id<'liveSessions'>, userId: Id<'users'>) => {
+		if (isEnabled('convex_live_sessions')) {
+			try {
+				await convexLeave({ sessionId, userId });
+				return true;
+			} catch (error) {
+				console.error('Failed to leave session:', error);
+				return false;
+			}
+		}
+
+		// Fallback to mock implementation if Convex is disabled
+		return false;
+	};
 }
 
-export const updateLiveSession = (id: string, updates: Partial<LiveSession>) => {
-  const index = liveSessions.findIndex((session) => session.id === id)
-  if (index !== -1) {
-    liveSessions[index] = { ...liveSessions[index], ...updates }
-    return liveSessions[index]
-  }
-  return null
+export function useStartSession() {
+	const { isEnabled } = useFeatureFlags();
+	const convexStart = useMutation(api.liveSessions.start);
+
+	return async (id: Id<'liveSessions'>) => {
+		if (isEnabled('convex_live_sessions')) {
+			try {
+				await convexStart({ id });
+				return true;
+			} catch (error) {
+				console.error('Failed to start session:', error);
+				return false;
+			}
+		}
+
+		// Fallback to mock implementation if Convex is disabled
+		return false;
+	};
 }
 
-export const deleteLiveSession = (id: string) => {
-  const index = liveSessions.findIndex((session) => session.id === id)
-  if (index !== -1) {
-    const deleted = liveSessions.splice(index, 1)
-    return deleted[0]
-  }
-  return null
+export function useEndSession() {
+	const { isEnabled } = useFeatureFlags();
+	const convexEnd = useMutation(api.liveSessions.end);
+
+	return async (id: Id<'liveSessions'>) => {
+		if (isEnabled('convex_live_sessions')) {
+			try {
+				await convexEnd({ id });
+				return true;
+			} catch (error) {
+				console.error('Failed to end session:', error);
+				return false;
+			}
+		}
+
+		// Fallback to mock implementation if Convex is disabled
+		return false;
+	};
 }
 
-export const joinSession = (sessionId: string, userId: string) => {
-  const session = getLiveSessionById(sessionId)
-  if (session && !session.participants.includes(userId)) {
-    session.participants.push(userId)
-    return true
-  }
-  return false
+export function useCancelSession() {
+	const { isEnabled } = useFeatureFlags();
+	const convexCancel = useMutation(api.liveSessions.cancel);
+
+	return async (id: Id<'liveSessions'>) => {
+		if (isEnabled('convex_live_sessions')) {
+			try {
+				await convexCancel({ id });
+				return true;
+			} catch (error) {
+				console.error('Failed to cancel session:', error);
+				return false;
+			}
+		}
+
+		// Fallback to mock implementation if Convex is disabled
+		return false;
+	};
 }
 
-export const leaveSession = (sessionId: string, userId: string) => {
-  const session = getLiveSessionById(sessionId)
-  if (session) {
-    const index = session.participants.indexOf(userId)
-    if (index !== -1) {
-      session.participants.splice(index, 1)
-      return true
-    }
-  }
-  return false
+// Legacy function exports for backward compatibility (deprecated)
+export function getUpcomingSessions() {
+	console.warn(
+		'getUpcomingSessions is deprecated. Use useUpcomingSessions hook instead.'
+	);
+	return [];
 }
 
-export const startSession = (sessionId: string) => {
-  const session = getLiveSessionById(sessionId)
-  if (session && session.status === "scheduled") {
-    session.status = "live"
-    return session
-  }
-  return null
+export function getPastSessions() {
+	console.warn(
+		'getPastSessions is deprecated. Use usePastSessions hook instead.'
+	);
+	return [];
 }
 
-export const endSession = (sessionId: string) => {
-  const session = getLiveSessionById(sessionId)
-  if (session && session.status === "live") {
-    session.status = "completed"
-    if (session.isRecorded) {
-      session.recordingUrl = `/recordings/session-${session.id}.mp4`
-    }
-    return session
-  }
-  return null
+export function getLiveSessionById(id: string) {
+	console.warn(
+		'getLiveSessionById is deprecated. Use useLiveSession hook instead.'
+	);
+	return null;
 }
 
-export const cancelSession = (sessionId: string) => {
-  const session = getLiveSessionById(sessionId)
-  if (session && session.status === "scheduled") {
-    session.status = "cancelled"
-    return session
-  }
-  return null
+export function joinSession(sessionId: string, userId: string) {
+	console.warn('joinSession is deprecated. Use useJoinSession hook instead.');
+	return Promise.resolve(false);
+}
+
+export function leaveSession(sessionId: string, userId: string) {
+	console.warn('leaveSession is deprecated. Use useLeaveSession hook instead.');
+	return Promise.resolve(false);
 }
