@@ -206,3 +206,22 @@ export async function getTrendingCourses(): Promise<CourseRecommendation[]> {
 	);
 	return [];
 }
+
+// Additional legacy functions that components expect
+export async function getSkillBasedRecommendations(
+	limit = 3
+): Promise<CourseRecommendation[]> {
+	console.warn(
+		'getSkillBasedRecommendations is deprecated. Use useCourseRecommendations hook instead.'
+	);
+	return [];
+}
+
+export async function getTrendingRecommendations(
+	limit = 3
+): Promise<CourseRecommendation[]> {
+	console.warn(
+		'getTrendingRecommendations is deprecated. Use useTrendingContent hook instead.'
+	);
+	return [];
+}

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { Download, Share2 } from "lucide-react"
-import QRCode from "qrcode.react"
+import { QRCodeCanvas } from "qrcode.react"
 import html2canvas from "html2canvas"
 import { jsPDF } from "jspdf"
 
@@ -150,7 +150,7 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
             {/* QR Code */}
             <div className="text-center">
               <div className="bg-white p-1 rounded-md inline-block mb-1">
-                <QRCode value={verificationUrl} size={80} level="H" renderAs="svg" />
+                <QRCodeCanvas value={verificationUrl} size={80} level="H" />
               </div>
               <p className="text-xs text-gray-500">Verification Code</p>
               <p className="text-xs font-mono">{certificate.verificationCode}</p>

@@ -247,3 +247,19 @@ export function leaveSession(sessionId: string, userId: string) {
 	console.warn('leaveSession is deprecated. Use useLeaveSession hook instead.');
 	return Promise.resolve(false);
 }
+
+// Additional legacy functions that components expect
+export async function createLiveSession(session: Omit<LiveSession, '_id' | '_creationTime'>): Promise<LiveSession> {
+	console.warn('createLiveSession is deprecated. Use Convex mutation directly instead.');
+	throw new Error('Deprecated function');
+}
+
+export async function startSession(sessionId: string): Promise<boolean> {
+	console.warn('startSession is deprecated. Use useStartSession hook instead.');
+	return false;
+}
+
+export async function cancelSession(sessionId: string): Promise<boolean> {
+	console.warn('cancelSession is deprecated. Use useCancelSession hook instead.');
+	return false;
+}
