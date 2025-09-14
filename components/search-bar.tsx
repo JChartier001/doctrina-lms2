@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -55,12 +55,21 @@ export function SearchBar({
 	);
 	const { data: convexSuggestions } = suggestionsResult;
 
+	// Update suggestions only when the actual content changes (not just reference)
 	useEffect(() => {
-		if (convexSuggestions) {
-			setSuggestions(convexSuggestions);
-		} else {
-			setSuggestions([]);
-		}
+		const newSuggestions = convexSuggestions || [];
+		setSuggestions(prevSuggestions => {
+			// Only update if the content actually changed
+			if (prevSuggestions.length !== newSuggestions.length) {
+				return newSuggestions;
+			}
+			for (let i = 0; i < newSuggestions.length; i++) {
+				if (prevSuggestions[i] !== newSuggestions[i]) {
+					return newSuggestions;
+				}
+			}
+			return prevSuggestions; // No change needed
+		});
 	}, [convexSuggestions]);
 
 	const handleSearch = (searchQuery: string) => {

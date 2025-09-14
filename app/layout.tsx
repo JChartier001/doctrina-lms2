@@ -50,8 +50,6 @@ export default function RootLayout({
 						</header>
 						<main className='flex-1 px-4'>{children}</main>
 					</div>
-
-					{/* </FeatureFlagsProvider> */}
 				</Providers>
 			</body>
 		</html>

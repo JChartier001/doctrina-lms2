@@ -63,7 +63,7 @@ export function DashboardRecommendations() {
 					</TabsList>
 
 					<TabsContent value='foryou' className='space-y-6'>
-						{loading ? (
+						{isLoading ? (
 							<RecommendationSkeleton />
 						) : (
 							<RecommendationSlider
@@ -75,7 +75,7 @@ export function DashboardRecommendations() {
 					</TabsContent>
 
 					<TabsContent value='pathways' className='space-y-6'>
-						{loading ? (
+						{isLoading ? (
 							<RecommendationSkeleton />
 						) : (
 							<RecommendationSlider
@@ -87,7 +87,7 @@ export function DashboardRecommendations() {
 					</TabsContent>
 
 					<TabsContent value='skills' className='space-y-6'>
-						{loading ? (
+						{isLoading ? (
 							<RecommendationSkeleton />
 						) : (
 							<RecommendationSlider
@@ -99,7 +99,7 @@ export function DashboardRecommendations() {
 					</TabsContent>
 
 					<TabsContent value='trending' className='space-y-6'>
-						{loading ? (
+						{isLoading ? (
 							<RecommendationSkeleton />
 						) : (
 							<RecommendationSlider

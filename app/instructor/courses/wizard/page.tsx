@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { Progress } from '@/components/ui/progress';
 import {
 	ChevronLeft,
@@ -14,7 +14,6 @@ import {
 	Eye,
 	CheckCircle2,
 } from 'lucide-react';
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -25,6 +24,11 @@ import { StructureStep } from '@/components/course-wizard/structure-step';
 import { ContentStep } from '@/components/course-wizard/content-step';
 import { PricingStep } from '@/components/course-wizard/pricing-step';
 import { ReviewStep } from '@/components/course-wizard/review-step';
+import { FormProvider, useForm } from 'react-hook-form';
+import {
+	CreateCourseDefaultValues,
+	CreateCourseWizardType,
+} from '@/schema/CourseWizardSchema';
 
 // Define the course data structure
 export interface CourseData {
@@ -91,14 +95,17 @@ const initialCourseData: CourseData = {
 };
 
 export default function CourseWizard() {
+	const form = useForm<CreateCourseWizardType>({
+		mode: 'onChange',
+		reValidateMode: 'onBlur',
+		defaultValues: CreateCourseDefaultValues,
+	});
 	const [currentStep, setCurrentStep] = useState(0);
-	const [courseData, setCourseData] = useState<CourseData>(initialCourseData);
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const { user, role } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
-	const { isEnabled } = useFeatureFlags();
 
 	// Convex mutations
 	const createCourse = useMutation(api.courses.create);
@@ -137,43 +144,33 @@ export default function CourseWizard() {
 		setIsSaving(true);
 
 		try {
-			if (isEnabled('convex_courses')) {
-				// Use Convex to save/update course
-				const courseParams = {
-					title: courseData.title,
-					description: courseData.description,
-					instructorId: user!.id as Id<'users'>,
-					level: 'beginner' as const,
-					duration: '8 weeks', // Default duration
-					price: parseFloat(courseData.price) || 0,
-					thumbnailUrl: courseData.thumbnail || undefined,
-				};
+			// Use Convex to save/update course
+			const courseParams = {
+				title: courseData.title,
+				description: courseData.description,
+				instructorId: user!.id as Id<'users'>,
+				level: 'beginner' as const,
+				duration: '8 weeks', // Default duration
+				price: parseFloat(courseData.price) || 0,
+				thumbnailUrl: courseData.thumbnail || undefined,
+			};
 
-				if (courseData.id) {
-					// Update existing course
-					await updateCourse({
-						id: courseData.id as Id<'courses'>,
-						...courseParams,
-					});
-				} else {
-					// Create new course
-					const courseId = await createCourse(courseParams);
-					setCourseData(prev => ({ ...prev, id: courseId }));
-				}
-
-				toast({
-					title: 'Draft saved',
-					description: 'Your course draft has been saved successfully.',
+			if (courseData.id) {
+				// Update existing course
+				await updateCourse({
+					id: courseData.id as Id<'courses'>,
+					...courseParams,
 				});
 			} else {
-				// Use mock service
-				setTimeout(() => {
-					toast({
-						title: 'Draft saved',
-						description: 'Your course draft has been saved successfully.',
-					});
-				}, 1500);
+				// Create new course
+				const courseId = await createCourse(courseParams);
+				setCourseData(prev => ({ ...prev, id: courseId }));
 			}
+
+			toast({
+				title: 'Draft saved',
+				description: 'Your course draft has been saved successfully.',
+			});
 		} catch (error) {
 			console.error('Failed to save draft:', error);
 			toast({
@@ -200,45 +197,34 @@ export default function CourseWizard() {
 		setIsLoading(true);
 
 		try {
-			if (isEnabled('convex_courses')) {
-				// Use Convex to publish course
-				const courseParams = {
-					title: courseData.title,
-					description: courseData.description,
-					instructorId: user!.id as Id<'users'>,
-					level: 'beginner' as const,
-					duration: '8 weeks', // Default duration
-					price: parseFloat(courseData.price) || 0,
-					thumbnailUrl: courseData.thumbnail || undefined,
-				};
+			// Use Convex to publish course
+			const courseParams = {
+				title: courseData.title,
+				description: courseData.description,
+				instructorId: user!.id as Id<'users'>,
+				level: 'beginner' as const,
+				duration: '8 weeks', // Default duration
+				price: parseFloat(courseData.price) || 0,
+				thumbnailUrl: courseData.thumbnail || undefined,
+			};
 
-				if (courseData.id) {
-					// Update existing course
-					await updateCourse({
-						id: courseData.id as Id<'courses'>,
-						...courseParams,
-					});
-				} else {
-					// Create new course
-					const courseId = await createCourse(courseParams);
-					setCourseData(prev => ({ ...prev, id: courseId }));
-				}
-
-				toast({
-					title: 'Course published',
-					description: 'Your course has been published successfully.',
+			if (courseData.id) {
+				// Update existing course
+				await updateCourse({
+					id: courseData.id as Id<'courses'>,
+					...courseParams,
 				});
-				router.push('/instructor/dashboard');
 			} else {
-				// Use mock service
-				setTimeout(() => {
-					toast({
-						title: 'Course published',
-						description: 'Your course has been published successfully.',
-					});
-					router.push('/instructor/dashboard');
-				}, 2000);
+				// Create new course
+				const courseId = await createCourse(courseParams);
+				setCourseData(prev => ({ ...prev, id: courseId }));
 			}
+
+			toast({
+				title: 'Course published',
+				description: 'Your course has been published successfully.',
+			});
+			router.push('/instructor/dashboard');
 		} catch (error) {
 			console.error('Failed to publish course:', error);
 			toast({
@@ -317,10 +303,9 @@ export default function CourseWizard() {
 
 				{/* Current step content */}
 				<Card className='p-6'>
-					<CurrentStepComponent
-						courseData={courseData}
-						updateCourseData={updateCourseData}
-					/>
+					<FormProvider {...form}>
+						<CurrentStepComponent />
+					</FormProvider>
 				</Card>
 
 				{/* Navigation buttons */}

@@ -33,7 +33,7 @@ export function FeaturedResources() {
 		);
 	}
 
-	if (resources.length === 0) {
+	if (resources && resources.length === 0) {
 		return null;
 	}
 
@@ -48,8 +48,8 @@ export function FeaturedResources() {
 				</Button>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-				{resources.map(resource => (
-					<Link key={resource.id} href={`/resources/${resource.id}`}>
+				{resources?.map(resource => (
+					<Link key={resource._id} href={`/resources/${resource._id}`}>
 						<Card className='h-full overflow-hidden hover:shadow-md transition-shadow'>
 							<div className='aspect-video relative'>
 								<img

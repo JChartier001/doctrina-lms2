@@ -1,7 +1,6 @@
 // Search Service
 // This service handles search functionality across the platform using Convex
 
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { debounce } from '@/lib/utils';
@@ -42,27 +41,15 @@ export function useUnifiedSearch(
 	limit?: number,
 	entityTypes?: SearchResultType[]
 ) {
-	const { isEnabled } = useFeatureFlags();
+	const convexSearch = useQuery(api.search.unifiedSearch, {
+		query,
+		limit,
+		entityTypes,
+	});
 
-	const convexSearch = useQuery(
-		api.search.unifiedSearch,
-		isEnabled('convex_resources') || isEnabled('convex_courses')
-			? { query, limit, entityTypes }
-			: 'skip'
-	);
-
-	if (isEnabled('convex_resources') || isEnabled('convex_courses')) {
-		return {
-			data: convexSearch || [],
-			isLoading: convexSearch === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexSearch || [],
+		isLoading: convexSearch === undefined,
 		error: null,
 	};
 }
@@ -73,58 +60,29 @@ export function useAdvancedSearch(
 	limit?: number,
 	offset?: number
 ) {
-	const { isEnabled } = useFeatureFlags();
+	const convexAdvancedSearch = useQuery(api.search.advancedSearch, {
+		query,
+		filters,
+		limit,
+		offset,
+	});
 
-	const convexAdvancedSearch = useQuery(
-		api.search.advancedSearch,
-		isEnabled('convex_resources') || isEnabled('convex_courses')
-			? {
-					query,
-					filters,
-					limit,
-					offset,
-				}
-			: 'skip'
-	);
-
-	if (isEnabled('convex_resources') || isEnabled('convex_courses')) {
-		return {
-			data: convexAdvancedSearch || { results: [], total: 0, hasMore: false },
-			isLoading: convexAdvancedSearch === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: { results: [], total: 0, hasMore: false },
-		isLoading: false,
+		data: convexAdvancedSearch || { results: [], total: 0, hasMore: false },
+		isLoading: convexAdvancedSearch === undefined,
 		error: null,
 	};
 }
 
 export function useSearchSuggestions(query: string, limit?: number) {
-	const { isEnabled } = useFeatureFlags();
+	const convexSuggestions = useQuery(api.search.searchSuggestions, {
+		query,
+		limit,
+	});
 
-	const convexSuggestions = useQuery(
-		api.search.searchSuggestions,
-		isEnabled('convex_resources') || isEnabled('convex_courses')
-			? { query, limit }
-			: 'skip'
-	);
-
-	if (isEnabled('convex_resources') || isEnabled('convex_courses')) {
-		return {
-			data: convexSuggestions || [],
-			isLoading: convexSuggestions === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexSuggestions || [],
+		isLoading: convexSuggestions === undefined,
 		error: null,
 	};
 }

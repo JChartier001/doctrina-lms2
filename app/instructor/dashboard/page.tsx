@@ -22,7 +22,6 @@ import {
 	Clock,
 	BarChart2,
 } from 'lucide-react';
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -30,14 +29,10 @@ import { Id } from '@/convex/_generated/dataModel';
 export default function InstructorDashboardPage() {
 	const { user, role } = useAuth();
 	const router = useRouter();
-	const { isEnabled } = useFeatureFlags();
-
 	// Convex query for instructor's courses
 	const instructorCourses = useQuery(
 		api.courses.list,
-		isEnabled('convex_courses') && user
-			? { instructorId: user.id as Id<'users'> }
-			: 'skip'
+		user ? { instructorId: user.id as Id<'users'> } : 'skip'
 	);
 
 	useEffect(() => {
@@ -232,7 +227,7 @@ export default function InstructorDashboardPage() {
 					</div>
 
 					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-						{isEnabled('convex_courses') && instructorCourses ? (
+						{instructorCourses ? (
 							instructorCourses.map(course => (
 								<Card key={course._id}>
 									<CardContent className='p-0'>

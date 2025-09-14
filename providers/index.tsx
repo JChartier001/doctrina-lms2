@@ -1,7 +1,6 @@
 'use client';
 import { AuthProvider } from '@/lib/auth';
 import ConvexClientProvider from './ConvexProvider';
-import { FeatureFlagsProvider } from './FeatureFlagProvider';
 import { ThemeProvider } from './ThemeProvider';
 import { ClerkProvider } from '@clerk/nextjs';
 
@@ -10,9 +9,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 		<ClerkProvider>
 			<ConvexClientProvider>
 				<ThemeProvider>
-					<AuthProvider>
-						<FeatureFlagsProvider>{children}</FeatureFlagsProvider>
-					</AuthProvider>
+					<AuthProvider>{children}</AuthProvider>
 				</ThemeProvider>
 			</ConvexClientProvider>
 		</ClerkProvider>

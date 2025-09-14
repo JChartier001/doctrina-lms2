@@ -1,7 +1,6 @@
 // Recommendation Service
 // This service generates personalized content recommendations for users using Convex
 
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -57,25 +56,17 @@ export interface UserInterest {
 
 // Convex-based recommendation hooks
 export function useCourseRecommendations(userId: Id<'users'>, limit?: number) {
-	const { isEnabled } = useFeatureFlags();
-
 	const convexRecommendations = useQuery(
 		api.recommendations.getCourseRecommendations,
-		isEnabled('convex_courses') ? { userId, limit } : 'skip'
+		{
+			userId,
+			limit,
+		}
 	);
 
-	if (isEnabled('convex_courses')) {
-		return {
-			data: convexRecommendations || [],
-			isLoading: convexRecommendations === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexRecommendations || [],
+		isLoading: convexRecommendations === undefined,
 		error: null,
 	};
 }
@@ -84,75 +75,45 @@ export function useResourceRecommendations(
 	userId: Id<'users'>,
 	limit?: number
 ) {
-	const { isEnabled } = useFeatureFlags();
-
 	const convexRecommendations = useQuery(
 		api.recommendations.getResourceRecommendations,
-		isEnabled('convex_resources') ? { userId, limit } : 'skip'
+		{
+			userId,
+			limit,
+		}
 	);
 
-	if (isEnabled('convex_resources')) {
-		return {
-			data: convexRecommendations || [],
-			isLoading: convexRecommendations === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexRecommendations || [],
+		isLoading: convexRecommendations === undefined,
 		error: null,
 	};
 }
 
 export function usePathwayRecommendations(userId: Id<'users'>, limit?: number) {
-	const { isEnabled } = useFeatureFlags();
-
 	const convexRecommendations = useQuery(
 		api.recommendations.getPathwayRecommendations,
-		isEnabled('convex_courses') ? { userId, limit } : 'skip'
+		{
+			userId,
+			limit,
+		}
 	);
 
-	if (isEnabled('convex_courses')) {
-		return {
-			data: convexRecommendations || [],
-			isLoading: convexRecommendations === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexRecommendations || [],
+		isLoading: convexRecommendations === undefined,
 		error: null,
 	};
 }
 
 export function useTrendingContent(limit?: number) {
-	const { isEnabled } = useFeatureFlags();
+	const convexTrending = useQuery(api.recommendations.getTrendingContent, {
+		limit,
+	});
 
-	const convexTrending = useQuery(
-		api.recommendations.getTrendingContent,
-		isEnabled('convex_resources') || isEnabled('convex_courses')
-			? { limit }
-			: 'skip'
-	);
-
-	if (isEnabled('convex_resources') || isEnabled('convex_courses')) {
-		return {
-			data: convexTrending || [],
-			isLoading: convexTrending === undefined,
-			error: null,
-		};
-	}
-
-	// Fallback when Convex is disabled
 	return {
-		data: [],
-		isLoading: false,
+		data: convexTrending || [],
+		isLoading: convexTrending === undefined,
 		error: null,
 	};
 }

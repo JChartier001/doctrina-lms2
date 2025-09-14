@@ -19,22 +19,21 @@ import {
 	BarChart2,
 } from '@/components/icons';
 import { DashboardRecommendations } from '@/components/recommendation/dashboard-recommendations';
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { useStudentAnalytics } from '@/lib/analytics-service';
 import Link from 'next/link';
 
 export default function DashboardPage() {
 	const { user, isLoading } = useAuth();
 	const router = useRouter();
-	const { isEnabled } = useFeatureFlags();
 
 	// Convex queries
-	const enrolledCourses = useQuery(
-		api.courses.list,
-		isEnabled('convex_courses') && user ? {} : 'skip'
-	);
+	const enrolledCourses = useQuery(api.courses.list, user ? {} : 'skip');
+
+	// Student analytics for dashboard metrics
+	const studentAnalytics = useStudentAnalytics(user?.id as Id<'users'>);
 
 	// Show loading state while checking auth
 	if (isLoading) {
@@ -76,9 +75,15 @@ export default function DashboardPage() {
 								<GraduationCapIcon className='h-4 w-4 text-muted-foreground' />
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>12</div>
+								<div className='text-2xl font-bold'>
+									{studentAnalytics.data
+										? studentAnalytics.data.overview.enrolledCourses
+										: 0}
+								</div>
 								<p className='text-xs text-muted-foreground'>
-									+2 from last month
+									{studentAnalytics.data
+										? `${studentAnalytics.data.recentActivity.purchases} new this month`
+										: 'No recent enrollments'}
 								</p>
 							</CardContent>
 						</Card>
@@ -91,9 +96,15 @@ export default function DashboardPage() {
 								<BookOpenIcon className='h-4 w-4 text-muted-foreground' />
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>7</div>
+								<div className='text-2xl font-bold'>
+									{studentAnalytics.data
+										? studentAnalytics.data.overview.completedCourses
+										: 0}
+								</div>
 								<p className='text-xs text-muted-foreground'>
-									+1 from last month
+									{studentAnalytics.data
+										? `${studentAnalytics.data.recentActivity.certificates} completed this month`
+										: 'No recent completions'}
 								</p>
 							</CardContent>
 						</Card>
@@ -106,9 +117,11 @@ export default function DashboardPage() {
 								<CalendarIcon className='h-4 w-4 text-muted-foreground' />
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>3</div>
+								<div className='text-2xl font-bold'>
+									Coming Soon {/* TODO: Add live session count query */}
+								</div>
 								<p className='text-xs text-muted-foreground'>
-									Next: Tomorrow, 2:00 PM
+									Live sessions available soon
 								</p>
 							</CardContent>
 						</Card>
@@ -119,9 +132,11 @@ export default function DashboardPage() {
 								<UsersIcon className='h-4 w-4 text-muted-foreground' />
 							</CardHeader>
 							<CardContent>
-								<div className='text-2xl font-bold'>+573</div>
+								<div className='text-2xl font-bold'>
+									Coming Soon {/* TODO: Add community/discussion analytics */}
+								</div>
 								<p className='text-xs text-muted-foreground'>
-									5 new discussions today
+									Community features available soon
 								</p>
 							</CardContent>
 						</Card>
@@ -134,21 +149,80 @@ export default function DashboardPage() {
 							</CardHeader>
 							<CardContent>
 								<div className='space-y-4'>
-									{[1, 2, 3].map(i => (
-										<div key={i} className='flex items-center'>
-											<div className='mr-4 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center'>
-												<GraduationCapIcon className='h-5 w-5 text-primary' />
+									{studentAnalytics.data ? (
+										// Show real activity when available
+										<>
+											{studentAnalytics.data.overview.enrolledCourses > 0 && (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center'>
+														<GraduationCapIcon className='h-5 w-5 text-primary' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															{studentAnalytics.data.overview.enrolledCourses}{' '}
+															courses enrolled
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															{studentAnalytics.data.recentActivity.purchases >
+															0
+																? `${studentAnalytics.data.recentActivity.purchases} enrolled this month`
+																: 'Recent enrollment activity'}
+														</p>
+													</div>
+												</div>
+											)}
+											{studentAnalytics.data.overview.completedCourses > 0 && (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-green-100 flex items-center justify-center'>
+														<BookOpenIcon className='h-5 w-5 text-green-600' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															{studentAnalytics.data.overview.completedCourses}{' '}
+															courses completed
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															{studentAnalytics.data.recentActivity
+																.certificates > 0
+																? `${studentAnalytics.data.recentActivity.certificates} completed this month`
+																: 'Recent completion activity'}
+														</p>
+													</div>
+												</div>
+											)}
+											{studentAnalytics.data.overview.favoriteResources > 0 && (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center'>
+														<BookOpenIcon className='h-5 w-5 text-blue-600' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															{studentAnalytics.data.overview.favoriteResources}{' '}
+															resources favorited
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															Saved for later reading
+														</p>
+													</div>
+												</div>
+											)}
+										</>
+									) : (
+										// Show placeholder when no data or Convex disabled
+										<div className='flex items-center'>
+											<div className='mr-4 h-9 w-9 rounded-full bg-muted flex items-center justify-center'>
+												<GraduationCapIcon className='h-5 w-5 text-muted-foreground' />
 											</div>
 											<div className='space-y-1'>
 												<p className='text-sm font-medium leading-none'>
-													Completed Module {i} in Advanced Injection Techniques
+													No recent activity
 												</p>
 												<p className='text-sm text-muted-foreground'>
-													{i} day{i > 1 ? 's' : ''} ago
+													Start your learning journey
 												</p>
 											</div>
 										</div>
-									))}
+									)}
 								</div>
 							</CardContent>
 						</Card>
@@ -162,26 +236,77 @@ export default function DashboardPage() {
 							</CardHeader>
 							<CardContent>
 								<div className='space-y-4'>
-									{[
-										'Facial Anatomy Masterclass',
-										'Business Management for Aesthetics',
-										'Advanced Dermal Fillers',
-									].map((course, i) => (
-										<div key={i} className='flex items-center'>
-											<div className='mr-4 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center'>
-												<BookOpenIcon className='h-5 w-5 text-primary' />
+									{studentAnalytics.data ? (
+										// Show enrollment status
+										<>
+											{studentAnalytics.data.overview.enrolledCourses > 0 ? (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-green-100 flex items-center justify-center'>
+														<BookOpenIcon className='h-5 w-5 text-green-600' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															{
+																studentAnalytics.data.learningProgress
+																	.inProgress
+															}{' '}
+															in progress
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															Continue your learning journey
+														</p>
+													</div>
+												</div>
+											) : (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center'>
+														<BookOpenIcon className='h-5 w-5 text-primary' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															Ready to start learning
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															Browse available courses
+														</p>
+													</div>
+												</div>
+											)}
+											{studentAnalytics.data.overview.completedCourses > 0 && (
+												<div className='flex items-center'>
+													<div className='mr-4 h-9 w-9 rounded-full bg-blue-100 flex items-center justify-center'>
+														<GraduationCapIcon className='h-5 w-5 text-blue-600' />
+													</div>
+													<div className='space-y-1'>
+														<p className='text-sm font-medium leading-none'>
+															{Math.round(
+																studentAnalytics.data.overview.completionRate
+															)}
+															% completion rate
+														</p>
+														<p className='text-sm text-muted-foreground'>
+															Great progress!
+														</p>
+													</div>
+												</div>
+											)}
+										</>
+									) : (
+										// Show placeholder when no data
+										<div className='flex items-center'>
+											<div className='mr-4 h-9 w-9 rounded-full bg-muted flex items-center justify-center'>
+												<BookOpenIcon className='h-5 w-5 text-muted-foreground' />
 											</div>
 											<div className='space-y-1'>
 												<p className='text-sm font-medium leading-none'>
-													{course}
+													Learning dashboard
 												</p>
 												<p className='text-sm text-muted-foreground'>
-													{['Beginner', 'Intermediate', 'Advanced'][i]} ·{' '}
-													{[4, 6, 8][i]} hours
+													Track your progress here
 												</p>
 											</div>
 										</div>
-									))}
+									)}
 								</div>
 								<Button variant='outline' className='w-full mt-4' asChild>
 									<Link href='/recommendations'>View All Recommendations</Link>
@@ -196,72 +321,53 @@ export default function DashboardPage() {
 				<TabsContent value='courses' className='space-y-4'>
 					<h2 className='text-2xl font-bold'>My Courses</h2>
 					<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-						{isEnabled('convex_courses') && enrolledCourses
-							? enrolledCourses.map(course => (
-									<Card key={course._id}>
-										<CardHeader>
-											<CardTitle>{course.title}</CardTitle>
-											<CardDescription>
-												{course.level || 'Beginner'} ·{' '}
-												{course.duration || '8 weeks'}
-											</CardDescription>
-										</CardHeader>
-										<CardContent>
-											<div className='space-y-2'>
-												<div className='flex justify-between text-sm'>
-													<span>Progress</span>
-													<span>0%</span> {/* TODO: Add progress tracking */}
-												</div>
-												<div className='h-2 bg-secondary rounded-full overflow-hidden'>
-													<div
-														className='h-full bg-primary'
-														style={{ width: '0%' }}
-													/>
-												</div>
-												<Button
-													variant='outline'
-													className='w-full mt-2'
-													onClick={() => router.push(`/courses/${course._id}`)}
-												>
-													View Course
-												</Button>
+						{enrolledCourses ? (
+							enrolledCourses.map(course => (
+								<Card key={course._id}>
+									<CardHeader>
+										<CardTitle>{course.title}</CardTitle>
+										<CardDescription>
+											{course.level || 'Beginner'} ·{' '}
+											{course.duration || '8 weeks'}
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<div className='space-y-2'>
+											<div className='flex justify-between text-sm'>
+												<span>Progress</span>
+												<span>0%</span> {/* TODO: Add progress tracking */}
 											</div>
-										</CardContent>
-									</Card>
-								))
-							: // Fallback to mock data when Convex is disabled
-								[
-									'Introduction to Medical Aesthetics',
-									'Advanced Injection Techniques',
-									'Facial Anatomy for Practitioners',
-								].map((course, i) => (
-									<Card key={i}>
-										<CardHeader>
-											<CardTitle>{course}</CardTitle>
-											<CardDescription>
-												{['Beginner', 'Advanced', 'Intermediate'][i]} ·{' '}
-												{[10, 15, 12][i]} hours
-											</CardDescription>
-										</CardHeader>
-										<CardContent>
-											<div className='space-y-2'>
-												<div className='flex justify-between text-sm'>
-													<span>Progress</span>
-													<span>{[75, 45, 90][i]}%</span>
-												</div>
-												<div className='h-2 bg-secondary rounded-full overflow-hidden'>
-													<div
-														className='h-full bg-primary'
-														style={{ width: `${[75, 45, 90][i]}%` }}
-													/>
-												</div>
-												<Button variant='outline' className='w-full mt-2'>
-													Continue
-												</Button>
+											<div className='h-2 bg-secondary rounded-full overflow-hidden'>
+												<div
+													className='h-full bg-primary'
+													style={{ width: '0%' }}
+												/>
 											</div>
-										</CardContent>
-									</Card>
-								))}
+											<Button
+												variant='outline'
+												className='w-full mt-2'
+												onClick={() => router.push(`/courses/${course._id}`)}
+											>
+												View Course
+											</Button>
+										</div>
+									</CardContent>
+								</Card>
+							))
+						) : (
+							// Show empty state when no courses
+							<div className='col-span-full flex flex-col items-center justify-center py-12 text-center'>
+								<BookOpenIcon className='h-12 w-12 text-muted-foreground mb-4' />
+								<h3 className='text-lg font-semibold mb-2'>No courses yet</h3>
+								<p className='text-muted-foreground mb-4'>
+									You haven't enrolled in any courses yet. Browse our catalog to
+									get started!
+								</p>
+								<Button asChild>
+									<Link href='/courses'>Browse Courses</Link>
+								</Button>
+							</div>
+						)}
 					</div>
 				</TabsContent>
 

@@ -1,7 +1,6 @@
 import { api } from '@/convex/_generated/api';
 import { useMutation } from 'convex/react';
 import { Id } from '@/convex/_generated/dataModel';
-import { useFeatureFlags } from '@/providers/FeatureFlagProvider';
 
 // Mock course data for migration
 const mockCourseData = {
@@ -134,24 +133,11 @@ export function useCourseMigration() {
 	return { migrateCourseData };
 }
 
-// Hook to get course data with feature flag support
+// Hook to get course data
 export function useCourseData(courseId: string) {
-	const { isEnabled } = useFeatureFlags();
-	const convexEnabled = isEnabled('convex_courses');
-
-	// For now, return mock data if Convex is not enabled
-	// In the future, this will use Convex queries
-	if (!convexEnabled) {
-		return {
-			data: mockCourseData,
-			isLoading: false,
-			error: null,
-		};
-	}
-
-	// TODO: Implement Convex query when ready
+	// TODO: Implement Convex query
 	return {
-		data: null,
+		data: mockCourseData,
 		isLoading: false,
 		error: null,
 	};
