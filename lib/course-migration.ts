@@ -1,13 +1,13 @@
-import { api } from '@/convex/_generated/api';
 import { useMutation } from 'convex/react';
+
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
 // Mock course data for migration
 const mockCourseData = {
 	id: 'course-1',
 	title: 'Introduction to Medical Aesthetics',
-	description:
-		'Learn the fundamentals of medical aesthetics in this comprehensive course.',
+	description: 'Learn the fundamentals of medical aesthetics in this comprehensive course.',
 	longDescription: `This comprehensive course is designed for medical professionals who want to build a strong foundation in medical aesthetics.
 
 Over the course of 8 weeks, you'll learn from industry experts through a combination of video lessons, live demonstrations, interactive workshops, and hands-on training opportunities.
@@ -134,7 +134,7 @@ export function useCourseMigration() {
 }
 
 // Hook to get course data
-export function useCourseData(courseId: string) {
+export function useCourseData(_courseId: string) {
 	// TODO: Implement Convex query
 	return {
 		data: mockCourseData,

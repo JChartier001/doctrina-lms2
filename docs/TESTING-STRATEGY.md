@@ -11,12 +11,14 @@ This document outlines the testing strategy for Doctrina LMS, focusing on **smar
 **Core Principle:** Test based on risk and impact, not coverage numbers.
 
 **Our Approach:**
+
 - **100% coverage** on code that handles money or security
 - **85% coverage** on core features users pay for
 - **70% coverage** on UI and less critical paths
 - **0% coverage** on defensive code and "impossible" edge cases (documented why)
 
 **Why this works:**
+
 - Protects financial and legal liability
 - Tests features that actually matter to users
 - Doesn't waste time testing things that are obvious when broken
@@ -57,6 +59,7 @@ This document outlines the testing strategy for Doctrina LMS, focusing on **smar
 ### 3.1 Financial Code - 100% Coverage Required
 
 **Criteria:**
+
 - Handles money/payments
 - Calculates commissions or payouts
 - Determines refund eligibility
@@ -67,32 +70,29 @@ This document outlines the testing strategy for Doctrina LMS, focusing on **smar
 ```typescript
 // ✅ MUST TEST - Platform commission calculation
 // lib/payments.ts
-export function calculatePlatformCommission(
-  amount: number,
-  coursePrice: number
-): number {
-  const commissionRate = 0.15; // 15% platform fee
-  return amount * commissionRate;
+export function calculatePlatformCommission(amount: number, coursePrice: number): number {
+	const commissionRate = 0.15; // 15% platform fee
+	return amount * commissionRate;
 }
 
 // Test EVERY edge case
 describe('calculatePlatformCommission', () => {
-  it('calculates 15% commission correctly', () => {
-    expect(calculatePlatformCommission(100, 100)).toBe(15);
-    expect(calculatePlatformCommission(299, 299)).toBe(44.85);
-  });
+	it('calculates 15% commission correctly', () => {
+		expect(calculatePlatformCommission(100, 100)).toBe(15);
+		expect(calculatePlatformCommission(299, 299)).toBe(44.85);
+	});
 
-  it('handles zero amount', () => {
-    expect(calculatePlatformCommission(0, 0)).toBe(0);
-  });
+	it('handles zero amount', () => {
+		expect(calculatePlatformCommission(0, 0)).toBe(0);
+	});
 
-  it('handles fractional cents correctly', () => {
-    expect(calculatePlatformCommission(99.99, 99.99)).toBe(14.9985);
-  });
+	it('handles fractional cents correctly', () => {
+		expect(calculatePlatformCommission(99.99, 99.99)).toBe(14.9985);
+	});
 
-  it('handles large amounts', () => {
-    expect(calculatePlatformCommission(9999, 9999)).toBe(1499.85);
-  });
+	it('handles large amounts', () => {
+		expect(calculatePlatformCommission(9999, 9999)).toBe(1499.85);
+	});
 });
 ```
 
@@ -100,194 +100,184 @@ describe('calculatePlatformCommission', () => {
 // ✅ MUST TEST - Refund eligibility
 // lib/refunds.ts
 const REFUND_POLICY_CONFIG = {
-  generous: { days: 30, maxCompletion: 0.5 },
-  standard: { days: 14, maxCompletion: 0.3 },
-  strict: { days: 7, maxCompletion: 0.1 },
+	generous: { days: 30, maxCompletion: 0.5 },
+	standard: { days: 14, maxCompletion: 0.3 },
+	strict: { days: 7, maxCompletion: 0.1 },
 };
 
-export function canRefund(
-  purchase: Purchase,
-  course: Course,
-  progress: LessonProgress[]
-): RefundResult {
-  const policy = REFUND_POLICY_CONFIG[course.refundPolicy || 'standard'];
-  const daysSince = getDaysSince(purchase.createdAt);
-  const totalLessons = course.lessonCount;
-  const completedLessons = progress.filter(p => p.completed).length;
-  const completion = completedLessons / totalLessons;
+export function canRefund(purchase: Purchase, course: Course, progress: LessonProgress[]): RefundResult {
+	const policy = REFUND_POLICY_CONFIG[course.refundPolicy || 'standard'];
+	const daysSince = getDaysSince(purchase.createdAt);
+	const totalLessons = course.lessonCount;
+	const completedLessons = progress.filter(p => p.completed).length;
+	const completion = completedLessons / totalLessons;
 
-  if (daysSince > policy.days) {
-    return {
-      allowed: false,
-      reason: 'OUTSIDE_WINDOW',
-      message: `Refund requests must be made within ${policy.days} days`,
-    };
-  }
+	if (daysSince > policy.days) {
+		return {
+			allowed: false,
+			reason: 'OUTSIDE_WINDOW',
+			message: `Refund requests must be made within ${policy.days} days`,
+		};
+	}
 
-  if (completion > policy.maxCompletion) {
-    return {
-      allowed: false,
-      reason: 'TOO_MUCH_COMPLETED',
-      message: `You've completed ${Math.round(completion * 100)}% of the course`,
-    };
-  }
+	if (completion > policy.maxCompletion) {
+		return {
+			allowed: false,
+			reason: 'TOO_MUCH_COMPLETED',
+			message: `You've completed ${Math.round(completion * 100)}% of the course`,
+		};
+	}
 
-  return {
-    allowed: true,
-    refundAmount: purchase.amount,
-  };
+	return {
+		allowed: true,
+		refundAmount: purchase.amount,
+	};
 }
 
 // Test EVERY policy, EVERY branch
 describe('canRefund', () => {
-  describe('Generous Policy (30 days, 50% completion)', () => {
-    const course = {
-      refundPolicy: 'generous',
-      lessonCount: 10
-    };
+	describe('Generous Policy (30 days, 50% completion)', () => {
+		const course = {
+			refundPolicy: 'generous',
+			lessonCount: 10,
+		};
 
-    it('allows refund within window and completion', () => {
-      const purchase = {
-        createdAt: daysAgo(20),
-        amount: 29900,
-      };
-      const progress = [
-        { lessonId: '1', completed: true },
-        { lessonId: '2', completed: true },
-        { lessonId: '3', completed: true },
-        { lessonId: '4', completed: true }, // 40% complete
-      ];
+		it('allows refund within window and completion', () => {
+			const purchase = {
+				createdAt: daysAgo(20),
+				amount: 29900,
+			};
+			const progress = [
+				{ lessonId: '1', completed: true },
+				{ lessonId: '2', completed: true },
+				{ lessonId: '3', completed: true },
+				{ lessonId: '4', completed: true }, // 40% complete
+			];
 
-      const result = canRefund(purchase, course, progress);
+			const result = canRefund(purchase, course, progress);
 
-      expect(result.allowed).toBe(true);
-      expect(result.refundAmount).toBe(29900);
-    });
+			expect(result.allowed).toBe(true);
+			expect(result.refundAmount).toBe(29900);
+		});
 
-    it('allows refund at exact window limit (day 30)', () => {
-      const purchase = {
-        createdAt: daysAgo(30),
-        amount: 29900,
-      };
-      const progress = [{ lessonId: '1', completed: true }];
+		it('allows refund at exact window limit (day 30)', () => {
+			const purchase = {
+				createdAt: daysAgo(30),
+				amount: 29900,
+			};
+			const progress = [{ lessonId: '1', completed: true }];
 
-      expect(canRefund(purchase, course, progress).allowed).toBe(true);
-    });
+			expect(canRefund(purchase, course, progress).allowed).toBe(true);
+		});
 
-    it('allows refund at exact completion limit (50%)', () => {
-      const purchase = {
-        createdAt: daysAgo(10),
-        amount: 29900,
-      };
-      const progress = Array(5).fill(null).map((_, i) => ({
-        lessonId: `${i}`,
-        completed: true,
-      })); // Exactly 50%
+		it('allows refund at exact completion limit (50%)', () => {
+			const purchase = {
+				createdAt: daysAgo(10),
+				amount: 29900,
+			};
+			const progress = Array(5)
+				.fill(null)
+				.map((_, i) => ({
+					lessonId: `${i}`,
+					completed: true,
+				})); // Exactly 50%
 
-      expect(canRefund(purchase, course, progress).allowed).toBe(true);
-    });
+			expect(canRefund(purchase, course, progress).allowed).toBe(true);
+		});
 
-    it('denies refund one day outside window (day 31)', () => {
-      const purchase = {
-        createdAt: daysAgo(31),
-        amount: 29900,
-      };
-      const progress = [{ lessonId: '1', completed: true }];
+		it('denies refund one day outside window (day 31)', () => {
+			const purchase = {
+				createdAt: daysAgo(31),
+				amount: 29900,
+			};
+			const progress = [{ lessonId: '1', completed: true }];
 
-      const result = canRefund(purchase, course, progress);
+			const result = canRefund(purchase, course, progress);
 
-      expect(result.allowed).toBe(false);
-      expect(result.reason).toBe('OUTSIDE_WINDOW');
-    });
+			expect(result.allowed).toBe(false);
+			expect(result.reason).toBe('OUTSIDE_WINDOW');
+		});
 
-    it('denies refund one percent over completion (51%)', () => {
-      const purchase = {
-        createdAt: daysAgo(10),
-        amount: 29900,
-      };
-      const progress = Array(6).fill(null).map((_, i) => ({
-        lessonId: `${i}`,
-        completed: true,
-      })); // 60% complete
+		it('denies refund one percent over completion (51%)', () => {
+			const purchase = {
+				createdAt: daysAgo(10),
+				amount: 29900,
+			};
+			const progress = Array(6)
+				.fill(null)
+				.map((_, i) => ({
+					lessonId: `${i}`,
+					completed: true,
+				})); // 60% complete
 
-      const result = canRefund(purchase, course, progress);
+			const result = canRefund(purchase, course, progress);
 
-      expect(result.allowed).toBe(false);
-      expect(result.reason).toBe('TOO_MUCH_COMPLETED');
-    });
-  });
+			expect(result.allowed).toBe(false);
+			expect(result.reason).toBe('TOO_MUCH_COMPLETED');
+		});
+	});
 
-  describe('Standard Policy (14 days, 30% completion)', () => {
-    // Repeat all boundary tests for standard policy
-  });
+	describe('Standard Policy (14 days, 30% completion)', () => {
+		// Repeat all boundary tests for standard policy
+	});
 
-  describe('Strict Policy (7 days, 10% completion)', () => {
-    // Repeat all boundary tests for strict policy
-  });
+	describe('Strict Policy (7 days, 10% completion)', () => {
+		// Repeat all boundary tests for strict policy
+	});
 });
 ```
 
 ```typescript
 // ✅ MUST TEST - Instructor payout calculation
 // lib/payouts.ts
-export function calculateInstructorPayout(
-  purchases: Purchase[],
-  refunds: Refund[]
-): number {
-  const totalEarnings = purchases.reduce((sum, p) => sum + p.amount, 0);
-  const totalRefunds = refunds.reduce((sum, r) => sum + r.amount, 0);
-  const platformFee = (totalEarnings - totalRefunds) * 0.15;
+export function calculateInstructorPayout(purchases: Purchase[], refunds: Refund[]): number {
+	const totalEarnings = purchases.reduce((sum, p) => sum + p.amount, 0);
+	const totalRefunds = refunds.reduce((sum, r) => sum + r.amount, 0);
+	const platformFee = (totalEarnings - totalRefunds) * 0.15;
 
-  return totalEarnings - totalRefunds - platformFee;
+	return totalEarnings - totalRefunds - platformFee;
 }
 
 // Test with real scenarios
 describe('calculateInstructorPayout', () => {
-  it('calculates payout with no refunds', () => {
-    const purchases = [
-      { amount: 29900 },
-      { amount: 19900 },
-    ];
+	it('calculates payout with no refunds', () => {
+		const purchases = [{ amount: 29900 }, { amount: 19900 }];
 
-    // Total: $499.00
-    // Fee: $74.85 (15%)
-    // Payout: $424.15
-    expect(calculateInstructorPayout(purchases, [])).toBe(42415);
-  });
+		// Total: $499.00
+		// Fee: $74.85 (15%)
+		// Payout: $424.15
+		expect(calculateInstructorPayout(purchases, [])).toBe(42415);
+	});
 
-  it('deducts refunds from payout', () => {
-    const purchases = [
-      { amount: 29900 },
-      { amount: 19900 },
-    ];
-    const refunds = [
-      { amount: 19900 },
-    ];
+	it('deducts refunds from payout', () => {
+		const purchases = [{ amount: 29900 }, { amount: 19900 }];
+		const refunds = [{ amount: 19900 }];
 
-    // Total: $499.00
-    // Refunds: $199.00
-    // Net: $300.00
-    // Fee: $45.00 (15%)
-    // Payout: $255.00
-    expect(calculateInstructorPayout(purchases, refunds)).toBe(25500);
-  });
+		// Total: $499.00
+		// Refunds: $199.00
+		// Net: $300.00
+		// Fee: $45.00 (15%)
+		// Payout: $255.00
+		expect(calculateInstructorPayout(purchases, refunds)).toBe(25500);
+	});
 
-  it('handles zero earnings', () => {
-    expect(calculateInstructorPayout([], [])).toBe(0);
-  });
+	it('handles zero earnings', () => {
+		expect(calculateInstructorPayout([], [])).toBe(0);
+	});
 
-  it('handles all refunded', () => {
-    const purchases = [{ amount: 29900 }];
-    const refunds = [{ amount: 29900 }];
+	it('handles all refunded', () => {
+		const purchases = [{ amount: 29900 }];
+		const refunds = [{ amount: 29900 }];
 
-    expect(calculateInstructorPayout(purchases, refunds)).toBe(0);
-  });
+		expect(calculateInstructorPayout(purchases, refunds)).toBe(0);
+	});
 });
 ```
 
 ### 3.2 Security & Access Control - 100% Coverage Required
 
 **Criteria:**
+
 - Authentication checks
 - Authorization logic
 - Data access permissions
@@ -299,105 +289,105 @@ describe('calculateInstructorPayout', () => {
 // ✅ MUST TEST - Course access verification
 // convex/courses.ts
 export const hasAccess = query({
-  args: {
-    userId: v.id('users'),
-    courseId: v.id('courses'),
-  },
-  handler: async (ctx, { userId, courseId }) => {
-    const purchase = await ctx.db
-      .query('purchases')
-      .withIndex('by_user', q => q.eq('userId', userId))
-      .filter(q => q.eq(q.field('courseId'), courseId))
-      .first();
+	args: {
+		userId: v.id('users'),
+		courseId: v.id('courses'),
+	},
+	handler: async (ctx, { userId, courseId }) => {
+		const purchase = await ctx.db
+			.query('purchases')
+			.withIndex('by_user', q => q.eq('userId', userId))
+			.filter(q => q.eq(q.field('courseId'), courseId))
+			.first();
 
-    if (!purchase) return false;
-    if (purchase.status === 'expired') return false;
-    if (purchase.status === 'open') return false;
+		if (!purchase) return false;
+		if (purchase.status === 'expired') return false;
+		if (purchase.status === 'open') return false;
 
-    return purchase.status === 'complete';
-  },
+		return purchase.status === 'complete';
+	},
 });
 
 // Test EVERY access scenario
 describe('Course access control', () => {
-  let t: ConvexTestingHelper;
+	let t: ConvexTestingHelper;
 
-  beforeEach(() => {
-    t = new ConvexTestingHelper();
-  });
+	beforeEach(() => {
+		t = new ConvexTestingHelper();
+	});
 
-  it('allows access for completed purchase', async () => {
-    await t.mutation(api.purchases.create, {
-      userId: 'u1',
-      courseId: 'c1',
-      amount: 29900,
-      status: 'complete',
-    });
+	it('allows access for completed purchase', async () => {
+		await t.mutation(api.purchases.create, {
+			userId: 'u1',
+			courseId: 'c1',
+			amount: 29900,
+			status: 'complete',
+		});
 
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'u1',
-      courseId: 'c1',
-    });
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'u1',
+			courseId: 'c1',
+		});
 
-    expect(hasAccess).toBe(true);
-  });
+		expect(hasAccess).toBe(true);
+	});
 
-  it('denies access without purchase', async () => {
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'u1',
-      courseId: 'c1',
-    });
+	it('denies access without purchase', async () => {
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'u1',
+			courseId: 'c1',
+		});
 
-    expect(hasAccess).toBe(false);
-  });
+		expect(hasAccess).toBe(false);
+	});
 
-  it('denies access for expired purchase', async () => {
-    await t.mutation(api.purchases.create, {
-      userId: 'u1',
-      courseId: 'c1',
-      amount: 29900,
-      status: 'expired',
-    });
+	it('denies access for expired purchase', async () => {
+		await t.mutation(api.purchases.create, {
+			userId: 'u1',
+			courseId: 'c1',
+			amount: 29900,
+			status: 'expired',
+		});
 
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'u1',
-      courseId: 'c1',
-    });
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'u1',
+			courseId: 'c1',
+		});
 
-    expect(hasAccess).toBe(false);
-  });
+		expect(hasAccess).toBe(false);
+	});
 
-  it('denies access for open (unpaid) purchase', async () => {
-    await t.mutation(api.purchases.create, {
-      userId: 'u1',
-      courseId: 'c1',
-      amount: 29900,
-      status: 'open',
-    });
+	it('denies access for open (unpaid) purchase', async () => {
+		await t.mutation(api.purchases.create, {
+			userId: 'u1',
+			courseId: 'c1',
+			amount: 29900,
+			status: 'open',
+		});
 
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'u1',
-      courseId: 'c1',
-    });
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'u1',
+			courseId: 'c1',
+		});
 
-    expect(hasAccess).toBe(false);
-  });
+		expect(hasAccess).toBe(false);
+	});
 
-  it('denies access to different user', async () => {
-    await t.mutation(api.purchases.create, {
-      userId: 'u1',
-      courseId: 'c1',
-      amount: 29900,
-      status: 'complete',
-    });
+	it('denies access to different user', async () => {
+		await t.mutation(api.purchases.create, {
+			userId: 'u1',
+			courseId: 'c1',
+			amount: 29900,
+			status: 'complete',
+		});
 
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'u2',
-      courseId: 'c1',
-    });
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'u2',
+			courseId: 'c1',
+		});
 
-    expect(hasAccess).toBe(false);
-  });
+		expect(hasAccess).toBe(false);
+	});
 });
 ```
 
@@ -405,76 +395,76 @@ describe('Course access control', () => {
 // ✅ MUST TEST - Instructor verification status
 // convex/users.ts
 export const canCreateCourse = query({
-  args: { userId: v.id('users') },
-  handler: async (ctx, { userId }) => {
-    const user = await ctx.db.get(userId);
+	args: { userId: v.id('users') },
+	handler: async (ctx, { userId }) => {
+		const user = await ctx.db.get(userId);
 
-    if (!user) return false;
-    if (!user.isInstructor) return false;
+		if (!user) return false;
+		if (!user.isInstructor) return false;
 
-    // Check if instructor verification is complete
-    const application = await ctx.db
-      .query('instructorApplications')
-      .withIndex('by_user', q => q.eq('userId', userId))
-      .first();
+		// Check if instructor verification is complete
+		const application = await ctx.db
+			.query('instructorApplications')
+			.withIndex('by_user', q => q.eq('userId', userId))
+			.first();
 
-    return application?.status === 'approved';
-  },
+		return application?.status === 'approved';
+	},
 });
 
 // Test ALL permission scenarios
 describe('Instructor permissions', () => {
-  it('allows verified instructor to create courses', async () => {
-    const userId = await t.mutation(api.users.create, {
-      firstName: 'Jane',
-      lastName: 'Instructor',
-      email: 'jane@example.com',
-      isInstructor: true,
-      isAdmin: false,
-    });
+	it('allows verified instructor to create courses', async () => {
+		const userId = await t.mutation(api.users.create, {
+			firstName: 'Jane',
+			lastName: 'Instructor',
+			email: 'jane@example.com',
+			isInstructor: true,
+			isAdmin: false,
+		});
 
-    await t.mutation(api.instructorApplications.create, {
-      userId,
-      status: 'approved',
-    });
+		await t.mutation(api.instructorApplications.create, {
+			userId,
+			status: 'approved',
+		});
 
-    const canCreate = await t.query(api.users.canCreateCourse, { userId });
+		const canCreate = await t.query(api.users.canCreateCourse, { userId });
 
-    expect(canCreate).toBe(true);
-  });
+		expect(canCreate).toBe(true);
+	});
 
-  it('denies non-instructor from creating courses', async () => {
-    const userId = await t.mutation(api.users.create, {
-      firstName: 'John',
-      lastName: 'Student',
-      email: 'john@example.com',
-      isInstructor: false,
-      isAdmin: false,
-    });
+	it('denies non-instructor from creating courses', async () => {
+		const userId = await t.mutation(api.users.create, {
+			firstName: 'John',
+			lastName: 'Student',
+			email: 'john@example.com',
+			isInstructor: false,
+			isAdmin: false,
+		});
 
-    const canCreate = await t.query(api.users.canCreateCourse, { userId });
+		const canCreate = await t.query(api.users.canCreateCourse, { userId });
 
-    expect(canCreate).toBe(false);
-  });
+		expect(canCreate).toBe(false);
+	});
 
-  it('denies pending instructor application', async () => {
-    const userId = await t.mutation(api.users.create, {
-      firstName: 'Jane',
-      lastName: 'Pending',
-      email: 'jane@example.com',
-      isInstructor: true,
-      isAdmin: false,
-    });
+	it('denies pending instructor application', async () => {
+		const userId = await t.mutation(api.users.create, {
+			firstName: 'Jane',
+			lastName: 'Pending',
+			email: 'jane@example.com',
+			isInstructor: true,
+			isAdmin: false,
+		});
 
-    await t.mutation(api.instructorApplications.create, {
-      userId,
-      status: 'pending',
-    });
+		await t.mutation(api.instructorApplications.create, {
+			userId,
+			status: 'pending',
+		});
 
-    const canCreate = await t.query(api.users.canCreateCourse, { userId });
+		const canCreate = await t.query(api.users.canCreateCourse, { userId });
 
-    expect(canCreate).toBe(false);
-  });
+		expect(canCreate).toBe(false);
+	});
 });
 ```
 
@@ -485,6 +475,7 @@ describe('Instructor permissions', () => {
 ### 4.1 Core Business Logic - 85% Coverage Target
 
 **Criteria:**
+
 - Main user workflows
 - Features users pay for
 - Calculations that affect UX
@@ -497,125 +488,136 @@ describe('Instructor permissions', () => {
 ```typescript
 // ✅ SHOULD TEST - Course progress calculation
 // lib/progress.ts
-export function calculateCourseProgress(
-  completedLessons: LessonProgress[],
-  totalLessons: number
-): ProgressResult {
-  const completed = completedLessons.filter(l => l.completed).length;
-  const percentage = (completed / totalLessons) * 100;
-  const isComplete = completed === totalLessons;
+export function calculateCourseProgress(completedLessons: LessonProgress[], totalLessons: number): ProgressResult {
+	const completed = completedLessons.filter(l => l.completed).length;
+	const percentage = (completed / totalLessons) * 100;
+	const isComplete = completed === totalLessons;
 
-  return {
-    completed,
-    totalLessons,
-    percentage,
-    isComplete,
-  };
+	return {
+		completed,
+		totalLessons,
+		percentage,
+		isComplete,
+	};
 }
 
 // Test common paths, skip rare combinations
 describe('calculateCourseProgress', () => {
-  it('calculates progress for partially completed course', () => {
-    const progress = [
-      { lessonId: '1', completed: true },
-      { lessonId: '2', completed: true },
-      { lessonId: '3', completed: false },
-      { lessonId: '4', completed: false },
-    ];
+	it('calculates progress for partially completed course', () => {
+		const progress = [
+			{ lessonId: '1', completed: true },
+			{ lessonId: '2', completed: true },
+			{ lessonId: '3', completed: false },
+			{ lessonId: '4', completed: false },
+		];
 
-    const result = calculateCourseProgress(progress, 4);
+		const result = calculateCourseProgress(progress, 4);
 
-    expect(result.completed).toBe(2);
-    expect(result.percentage).toBe(50);
-    expect(result.isComplete).toBe(false);
-  });
+		expect(result.completed).toBe(2);
+		expect(result.percentage).toBe(50);
+		expect(result.isComplete).toBe(false);
+	});
 
-  it('marks course complete when all lessons done', () => {
-    const progress = Array(10).fill(null).map((_, i) => ({
-      lessonId: `${i}`,
-      completed: true,
-    }));
+	it('marks course complete when all lessons done', () => {
+		const progress = Array(10)
+			.fill(null)
+			.map((_, i) => ({
+				lessonId: `${i}`,
+				completed: true,
+			}));
 
-    const result = calculateCourseProgress(progress, 10);
+		const result = calculateCourseProgress(progress, 10);
 
-    expect(result.percentage).toBe(100);
-    expect(result.isComplete).toBe(true);
-  });
+		expect(result.percentage).toBe(100);
+		expect(result.isComplete).toBe(true);
+	});
 
-  it('handles zero progress', () => {
-    const result = calculateCourseProgress([], 10);
+	it('handles zero progress', () => {
+		const result = calculateCourseProgress([], 10);
 
-    expect(result.completed).toBe(0);
-    expect(result.percentage).toBe(0);
-    expect(result.isComplete).toBe(false);
-  });
+		expect(result.completed).toBe(0);
+		expect(result.percentage).toBe(0);
+		expect(result.isComplete).toBe(false);
+	});
 
-  // ❌ DON'T TEST: Every possible lesson count (1-1000)
-  // ❌ DON'T TEST: Floating point precision edge cases
-  // ✅ DO TEST: Key milestones (0%, 50%, 100%)
+	// ❌ DON'T TEST: Every possible lesson count (1-1000)
+	// ❌ DON'T TEST: Floating point precision edge cases
+	// ✅ DO TEST: Key milestones (0%, 50%, 100%)
 });
 ```
 
 ```typescript
 // ✅ SHOULD TEST - Certificate generation eligibility
 // lib/certificates.ts
-export function canGenerateCertificate(
-  courseProgress: ProgressResult,
-  course: Course
-): CertificateEligibility {
-  if (!course.certificateEnabled) {
-    return {
-      eligible: false,
-      reason: 'CERTIFICATE_NOT_ENABLED',
-    };
-  }
+export function canGenerateCertificate(courseProgress: ProgressResult, course: Course): CertificateEligibility {
+	if (!course.certificateEnabled) {
+		return {
+			eligible: false,
+			reason: 'CERTIFICATE_NOT_ENABLED',
+		};
+	}
 
-  if (!courseProgress.isComplete) {
-    return {
-      eligible: false,
-      reason: 'COURSE_NOT_COMPLETE',
-      progress: courseProgress.percentage,
-    };
-  }
+	if (!courseProgress.isComplete) {
+		return {
+			eligible: false,
+			reason: 'COURSE_NOT_COMPLETE',
+			progress: courseProgress.percentage,
+		};
+	}
 
-  return {
-    eligible: true,
-  };
+	return {
+		eligible: true,
+	};
 }
 
 // Test typical cases
 describe('canGenerateCertificate', () => {
-  it('allows certificate for completed course', () => {
-    const progress = { completed: 10, totalLessons: 10, percentage: 100, isComplete: true };
-    const course = { certificateEnabled: true };
+	it('allows certificate for completed course', () => {
+		const progress = {
+			completed: 10,
+			totalLessons: 10,
+			percentage: 100,
+			isComplete: true,
+		};
+		const course = { certificateEnabled: true };
 
-    const result = canGenerateCertificate(progress, course);
+		const result = canGenerateCertificate(progress, course);
 
-    expect(result.eligible).toBe(true);
-  });
+		expect(result.eligible).toBe(true);
+	});
 
-  it('denies certificate for incomplete course', () => {
-    const progress = { completed: 5, totalLessons: 10, percentage: 50, isComplete: false };
-    const course = { certificateEnabled: true };
+	it('denies certificate for incomplete course', () => {
+		const progress = {
+			completed: 5,
+			totalLessons: 10,
+			percentage: 50,
+			isComplete: false,
+		};
+		const course = { certificateEnabled: true };
 
-    const result = canGenerateCertificate(progress, course);
+		const result = canGenerateCertificate(progress, course);
 
-    expect(result.eligible).toBe(false);
-    expect(result.reason).toBe('COURSE_NOT_COMPLETE');
-  });
+		expect(result.eligible).toBe(false);
+		expect(result.reason).toBe('COURSE_NOT_COMPLETE');
+	});
 
-  it('denies certificate when not enabled', () => {
-    const progress = { completed: 10, totalLessons: 10, percentage: 100, isComplete: true };
-    const course = { certificateEnabled: false };
+	it('denies certificate when not enabled', () => {
+		const progress = {
+			completed: 10,
+			totalLessons: 10,
+			percentage: 100,
+			isComplete: true,
+		};
+		const course = { certificateEnabled: false };
 
-    const result = canGenerateCertificate(progress, course);
+		const result = canGenerateCertificate(progress, course);
 
-    expect(result.eligible).toBe(false);
-    expect(result.reason).toBe('CERTIFICATE_NOT_ENABLED');
-  });
+		expect(result.eligible).toBe(false);
+		expect(result.reason).toBe('CERTIFICATE_NOT_ENABLED');
+	});
 
-  // ❌ DON'T TEST: progress = 99.9999% (impossible via UI)
-  // ❌ DON'T TEST: certificateEnabled = undefined (TypeScript prevents)
+	// ❌ DON'T TEST: progress = 99.9999% (impossible via UI)
+	// ❌ DON'T TEST: certificateEnabled = undefined (TypeScript prevents)
 });
 ```
 
@@ -623,116 +625,114 @@ describe('canGenerateCertificate', () => {
 // ✅ SHOULD TEST - Lesson completion tracking
 // convex/lessons.ts
 export const markComplete = mutation({
-  args: {
-    userId: v.id('users'),
-    lessonId: v.id('lessons'),
-    timeSpent: v.number(),
-  },
-  handler: async (ctx, { userId, lessonId, timeSpent }) => {
-    const lesson = await ctx.db.get(lessonId);
-    if (!lesson) throw new Error('Lesson not found');
+	args: {
+		userId: v.id('users'),
+		lessonId: v.id('lessons'),
+		timeSpent: v.number(),
+	},
+	handler: async (ctx, { userId, lessonId, timeSpent }) => {
+		const lesson = await ctx.db.get(lessonId);
+		if (!lesson) throw new Error('Lesson not found');
 
-    // Check if user has access to course
-    const hasAccess = await ctx.runQuery(api.courses.hasAccess, {
-      userId,
-      courseId: lesson.courseId,
-    });
+		// Check if user has access to course
+		const hasAccess = await ctx.runQuery(api.courses.hasAccess, {
+			userId,
+			courseId: lesson.courseId,
+		});
 
-    if (!hasAccess) {
-      throw new Error('No access to this course');
-    }
+		if (!hasAccess) {
+			throw new Error('No access to this course');
+		}
 
-    // Check if already completed
-    const existing = await ctx.db
-      .query('lessonProgress')
-      .withIndex('by_user_lesson', q =>
-        q.eq('userId', userId).eq('lessonId', lessonId)
-      )
-      .first();
+		// Check if already completed
+		const existing = await ctx.db
+			.query('lessonProgress')
+			.withIndex('by_user_lesson', q => q.eq('userId', userId).eq('lessonId', lessonId))
+			.first();
 
-    if (existing) {
-      // Update time spent
-      await ctx.db.patch(existing._id, {
-        timeSpent: existing.timeSpent + timeSpent,
-        lastAccessedAt: Date.now(),
-      });
-      return existing._id;
-    }
+		if (existing) {
+			// Update time spent
+			await ctx.db.patch(existing._id, {
+				timeSpent: existing.timeSpent + timeSpent,
+				lastAccessedAt: Date.now(),
+			});
+			return existing._id;
+		}
 
-    // Create new progress record
-    return await ctx.db.insert('lessonProgress', {
-      userId,
-      lessonId,
-      courseId: lesson.courseId,
-      completed: true,
-      completedAt: Date.now(),
-      timeSpent,
-    });
-  },
+		// Create new progress record
+		return await ctx.db.insert('lessonProgress', {
+			userId,
+			lessonId,
+			courseId: lesson.courseId,
+			completed: true,
+			completedAt: Date.now(),
+			timeSpent,
+		});
+	},
 });
 
 // Test main workflow
 describe('Lesson completion', () => {
-  it('marks lesson as complete for enrolled user', async () => {
-    const courseId = await createTestCourse();
-    const lessonId = await createTestLesson(courseId);
-    const userId = await createTestUser();
-    await enrollUser(userId, courseId);
+	it('marks lesson as complete for enrolled user', async () => {
+		const courseId = await createTestCourse();
+		const lessonId = await createTestLesson(courseId);
+		const userId = await createTestUser();
+		await enrollUser(userId, courseId);
 
-    const progressId = await t.mutation(api.lessons.markComplete, {
-      userId,
-      lessonId,
-      timeSpent: 300,
-    });
+		const progressId = await t.mutation(api.lessons.markComplete, {
+			userId,
+			lessonId,
+			timeSpent: 300,
+		});
 
-    const progress = await t.query(api.lessonProgress.get, { id: progressId });
+		const progress = await t.query(api.lessonProgress.get, { id: progressId });
 
-    expect(progress.completed).toBe(true);
-    expect(progress.timeSpent).toBe(300);
-  });
+		expect(progress.completed).toBe(true);
+		expect(progress.timeSpent).toBe(300);
+	});
 
-  it('throws error for non-enrolled user', async () => {
-    const courseId = await createTestCourse();
-    const lessonId = await createTestLesson(courseId);
-    const userId = await createTestUser();
-    // NOT enrolled
+	it('throws error for non-enrolled user', async () => {
+		const courseId = await createTestCourse();
+		const lessonId = await createTestLesson(courseId);
+		const userId = await createTestUser();
+		// NOT enrolled
 
-    await expect(
-      t.mutation(api.lessons.markComplete, {
-        userId,
-        lessonId,
-        timeSpent: 300,
-      })
-    ).rejects.toThrow('No access to this course');
-  });
+		await expect(
+			t.mutation(api.lessons.markComplete, {
+				userId,
+				lessonId,
+				timeSpent: 300,
+			}),
+		).rejects.toThrow('No access to this course');
+	});
 
-  it('accumulates time spent on re-completion', async () => {
-    const courseId = await createTestCourse();
-    const lessonId = await createTestLesson(courseId);
-    const userId = await createTestUser();
-    await enrollUser(userId, courseId);
+	it('accumulates time spent on re-completion', async () => {
+		const courseId = await createTestCourse();
+		const lessonId = await createTestLesson(courseId);
+		const userId = await createTestUser();
+		await enrollUser(userId, courseId);
 
-    // First completion
-    await t.mutation(api.lessons.markComplete, {
-      userId,
-      lessonId,
-      timeSpent: 300,
-    });
+		// First completion
+		await t.mutation(api.lessons.markComplete, {
+			userId,
+			lessonId,
+			timeSpent: 300,
+		});
 
-    // Second time (reviewing)
-    await t.mutation(api.lessons.markComplete, {
-      userId,
-      lessonId,
-      timeSpent: 120,
-    });
+		// Second time (reviewing)
+		await t.mutation(api.lessons.markComplete, {
+			userId,
+			lessonId,
+			timeSpent: 120,
+		});
 
-    const progress = await t.query(api.lessonProgress.getByUserAndLesson, {
-      userId,
-      lessonId,
-    });
+		const progress = await t.query(api.lessonProgress.getByUserAndLesson, {
+			userId,
+			lessonId,
+		});
 
-    expect(progress.timeSpent).toBe(420); // 300 + 120
-  });
+		expect(progress.timeSpent).toBe(420); // 300 + 120
+	});
 });
 ```
 
@@ -743,6 +743,7 @@ describe('Lesson completion', () => {
 ### 5.1 UI Components - 70% Coverage Target
 
 **Criteria:**
+
 - Visual components
 - Layout logic
 - Non-critical user interactions
@@ -851,6 +852,7 @@ describe('CourseSearch', () => {
 ### 6.1 Defensive Code - Document Why Skipped
 
 **Criteria:**
+
 - "This should never happen" checks
 - Type safety guards (TypeScript already enforces)
 - Impossible states
@@ -860,30 +862,30 @@ describe('CourseSearch', () => {
 ```typescript
 // convex/courses.ts
 export const get = query({
-  args: { id: v.id('courses') },
-  handler: async (ctx, { id }) => {
-    const course = await ctx.db.get(id);
+	args: { id: v.id('courses') },
+	handler: async (ctx, { id }) => {
+		const course = await ctx.db.get(id);
 
-    // COVERAGE_SKIP: Defensive check for data corruption
-    // This would only happen if database got corrupted, which we can't
-    // simulate in tests. Monitored via Sentry in production.
-    if (course && !course.title) {
-      console.error('Corrupted course: missing title', { id });
-      throw new Error('Course data corrupted');
-    }
+		// COVERAGE_SKIP: Defensive check for data corruption
+		// This would only happen if database got corrupted, which we can't
+		// simulate in tests. Monitored via Sentry in production.
+		if (course && !course.title) {
+			console.error('Corrupted course: missing title', { id });
+			throw new Error('Course data corrupted');
+		}
 
-    return course;
-  },
+		return course;
+	},
 });
 
 // COVERAGE_SKIP: TypeScript guarantees number type at compile time
 // This defensive check is for runtime type coercion safety only
 export function formatPrice(price: number): string {
-  if (typeof price !== 'number') {
-    console.warn('Non-number price received', { price });
-    return '$0.00';
-  }
-  return `$${(price / 100).toFixed(2)}`;
+	if (typeof price !== 'number') {
+		console.warn('Non-number price received', { price });
+		return '$0.00';
+	}
+	return `$${(price / 100).toFixed(2)}`;
 }
 ```
 
@@ -913,19 +915,19 @@ export async function sendEnrollmentConfirmation(user: User, course: Course) {
 ```typescript
 // lib/analytics.ts
 export function trackCourseView(courseId: string) {
-  // COVERAGE_SKIP: Pure analytics tracking - no business logic
-  // If this breaks, we lose tracking but app still works
-  if (typeof window !== 'undefined') {
-    gtag('event', 'course_view', {
-      course_id: courseId,
-      timestamp: Date.now(),
-    });
-  }
+	// COVERAGE_SKIP: Pure analytics tracking - no business logic
+	// If this breaks, we lose tracking but app still works
+	if (typeof window !== 'undefined') {
+		gtag('event', 'course_view', {
+			course_id: courseId,
+			timestamp: Date.now(),
+		});
+	}
 }
 
 export function logUserAction(userId: string, action: string) {
-  // COVERAGE_SKIP: Logging only - no conditional logic to test
-  console.log(`[User ${userId}] ${action}`);
+	// COVERAGE_SKIP: Logging only - no conditional logic to test
+	console.log(`[User ${userId}] ${action}`);
 }
 ```
 
@@ -935,12 +937,12 @@ export function logUserAction(userId: string, action: string) {
 // config/platform.ts
 // COVERAGE_SKIP: Static configuration - no logic to test
 export const PLATFORM_CONFIG = {
-  commissionRate: 0.15, // 15%
-  refundPolicies: {
-    generous: { days: 30, maxCompletion: 0.5 },
-    standard: { days: 14, maxCompletion: 0.3 },
-    strict: { days: 7, maxCompletion: 0.1 },
-  },
+	commissionRate: 0.15, // 15%
+	refundPolicies: {
+		generous: { days: 30, maxCompletion: 0.5 },
+		standard: { days: 14, maxCompletion: 0.3 },
+		strict: { days: 7, maxCompletion: 0.1 },
+	},
 };
 
 // lib/constants.ts
@@ -980,19 +982,19 @@ Would a bug be immediately obvious?
 
 ### Quick Reference Table
 
-| Code Type | Test? | Coverage | Why |
-|-----------|-------|----------|-----|
-| Payment processing | ✅ MUST | 100% | Money = lawsuits |
-| Refund logic | ✅ MUST | 100% | Financial disputes |
-| Access control | ✅ MUST | 100% | Security critical |
-| Course enrollment | ✅ MUST | 100% | Core transaction |
-| Progress tracking | ✅ SHOULD | 85% | Core feature |
-| Certificate generation | ✅ SHOULD | 85% | Core feature |
-| Course search | ✅ SHOULD | 85% | User-facing |
-| UI components | 🤔 NICE | 70% | Visual testing easier |
-| Defensive null checks | ❌ SKIP | 0% | TypeScript prevents |
-| Third-party errors | ❌ SKIP | 0% | Can't control |
-| Logging/analytics | ❌ SKIP | 0% | No business logic |
+| Code Type              | Test?     | Coverage | Why                   |
+| ---------------------- | --------- | -------- | --------------------- |
+| Payment processing     | ✅ MUST   | 100%     | Money = lawsuits      |
+| Refund logic           | ✅ MUST   | 100%     | Financial disputes    |
+| Access control         | ✅ MUST   | 100%     | Security critical     |
+| Course enrollment      | ✅ MUST   | 100%     | Core transaction      |
+| Progress tracking      | ✅ SHOULD | 85%      | Core feature          |
+| Certificate generation | ✅ SHOULD | 85%      | Core feature          |
+| Course search          | ✅ SHOULD | 85%      | User-facing           |
+| UI components          | 🤔 NICE   | 70%      | Visual testing easier |
+| Defensive null checks  | ❌ SKIP   | 0%       | TypeScript prevents   |
+| Third-party errors     | ❌ SKIP   | 0%       | Can't control         |
+| Logging/analytics      | ❌ SKIP   | 0%       | No business logic     |
 
 ---
 
@@ -1001,11 +1003,13 @@ Would a bug be immediately obvious?
 ### 8.1 Unit Testing with Vitest
 
 **Installation:**
+
 ```bash
 npm install -D vitest @vitest/ui @testing-library/react @testing-library/jest-dom @testing-library/user-event
 ```
 
 **Configuration:**
+
 ```typescript
 // vitest.config.ts
 import { defineConfig } from 'vitest/config';
@@ -1013,101 +1017,96 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './test/setup.ts',
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'test/',
-        '**/*.config.*',
-        '**/types/**',
-        'convex/_generated/**',
-      ],
-      // Priority-based thresholds
-      thresholds: {
-        // Critical: 100%
-        './lib/payments/**': {
-          lines: 100,
-          functions: 100,
-          branches: 100,
-          statements: 100,
-        },
-        './lib/refunds/**': {
-          lines: 100,
-          functions: 100,
-          branches: 100,
-          statements: 100,
-        },
-        './lib/payouts/**': {
-          lines: 100,
-          functions: 100,
-          branches: 100,
-          statements: 100,
-        },
-        './convex/purchases.ts': {
-          lines: 100,
-          functions: 100,
-          branches: 100,
-        },
+	plugins: [react()],
+	test: {
+		environment: 'jsdom',
+		globals: true,
+		setupFiles: './test/setup.ts',
+		coverage: {
+			provider: 'v8',
+			reporter: ['text', 'json', 'html'],
+			exclude: ['node_modules/', 'test/', '**/*.config.*', '**/types/**', 'convex/_generated/**'],
+			// Priority-based thresholds
+			thresholds: {
+				// Critical: 100%
+				'./lib/payments/**': {
+					lines: 100,
+					functions: 100,
+					branches: 100,
+					statements: 100,
+				},
+				'./lib/refunds/**': {
+					lines: 100,
+					functions: 100,
+					branches: 100,
+					statements: 100,
+				},
+				'./lib/payouts/**': {
+					lines: 100,
+					functions: 100,
+					branches: 100,
+					statements: 100,
+				},
+				'./convex/purchases.ts': {
+					lines: 100,
+					functions: 100,
+					branches: 100,
+				},
 
-        // Core features: 85%
-        './convex/courses.ts': {
-          lines: 85,
-          functions: 85,
-          branches: 80,
-        },
-        './convex/lessons.ts': {
-          lines: 85,
-          functions: 85,
-          branches: 80,
-        },
-        './convex/certificates.ts': {
-          lines: 85,
-          functions: 85,
-          branches: 80,
-        },
-        './lib/progress.ts': {
-          lines: 85,
-          functions: 90,
-          branches: 80,
-        },
+				// Core features: 85%
+				'./convex/courses.ts': {
+					lines: 85,
+					functions: 85,
+					branches: 80,
+				},
+				'./convex/lessons.ts': {
+					lines: 85,
+					functions: 85,
+					branches: 80,
+				},
+				'./convex/certificates.ts': {
+					lines: 85,
+					functions: 85,
+					branches: 80,
+				},
+				'./lib/progress.ts': {
+					lines: 85,
+					functions: 90,
+					branches: 80,
+				},
 
-        // UI: 70%
-        './components/**': {
-          lines: 70,
-          functions: 75,
-          branches: 65,
-        },
-        './app/**': {
-          lines: 70,
-          functions: 70,
-          branches: 65,
-        },
+				// UI: 70%
+				'./components/**': {
+					lines: 70,
+					functions: 75,
+					branches: 65,
+				},
+				'./app/**': {
+					lines: 70,
+					functions: 70,
+					branches: 65,
+				},
 
-        // Overall: 80%
-        global: {
-          lines: 80,
-          functions: 80,
-          branches: 75,
-          statements: 80,
-        },
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './'),
-    },
-  },
+				// Overall: 80%
+				global: {
+					lines: 80,
+					functions: 80,
+					branches: 75,
+					statements: 80,
+				},
+			},
+		},
+	},
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, './'),
+		},
+	},
 });
 ```
 
 **Setup File:**
+
 ```typescript
 // test/setup.ts
 import '@testing-library/jest-dom';
@@ -1115,25 +1114,26 @@ import { vi } from 'vitest';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    prefetch: vi.fn(),
-  }),
-  usePathname: () => '/',
-  useSearchParams: () => new URLSearchParams(),
+	useRouter: () => ({
+		push: vi.fn(),
+		replace: vi.fn(),
+		prefetch: vi.fn(),
+	}),
+	usePathname: () => '/',
+	useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock Convex client
 vi.mock('convex/react', () => ({
-  useQuery: vi.fn(),
-  useMutation: vi.fn(),
-  useAction: vi.fn(),
-  ConvexProvider: ({ children }: { children: React.ReactNode }) => children,
+	useQuery: vi.fn(),
+	useMutation: vi.fn(),
+	useAction: vi.fn(),
+	ConvexProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 ```
 
 **Run Tests:**
+
 ```bash
 # Run all tests
 npm run test
@@ -1149,26 +1149,29 @@ npm run test:ui
 ```
 
 **Package.json scripts:**
+
 ```json
 {
-  "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest run --coverage",
-    "test:critical": "vitest run --coverage --config vitest.critical.config.ts"
-  }
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:ui": "vitest --ui",
+		"test:coverage": "vitest run --coverage",
+		"test:critical": "vitest run --coverage --config vitest.critical.config.ts"
+	}
 }
 ```
 
 ### 8.2 Integration Testing with Convex
 
 **Installation:**
+
 ```bash
 npm install -D convex-test
 ```
 
 **Basic Test Setup:**
+
 ```typescript
 // test/integration/enrollment.test.ts
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -1176,252 +1179,253 @@ import { ConvexTestingHelper } from 'convex-test';
 import { api } from '@/convex/_generated/api';
 
 describe('Course Enrollment Integration', () => {
-  let t: ConvexTestingHelper;
+	let t: ConvexTestingHelper;
 
-  beforeEach(async () => {
-    t = new ConvexTestingHelper();
-    await t.run(async (ctx) => {
-      // Set up test data
-      await ctx.db.insert('users', {
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'test@example.com',
-        isInstructor: false,
-        isAdmin: false,
-      });
-    });
-  });
+	beforeEach(async () => {
+		t = new ConvexTestingHelper();
+		await t.run(async ctx => {
+			// Set up test data
+			await ctx.db.insert('users', {
+				firstName: 'Test',
+				lastName: 'User',
+				email: 'test@example.com',
+				isInstructor: false,
+				isAdmin: false,
+			});
+		});
+	});
 
-  it('creates purchase with valid payment', async () => {
-    const courseId = await t.mutation(api.courses.create, {
-      title: 'Test Course',
-      description: 'Description',
-      instructorId: 'instructor-1',
-      price: 29900,
-    });
+	it('creates purchase with valid payment', async () => {
+		const courseId = await t.mutation(api.courses.create, {
+			title: 'Test Course',
+			description: 'Description',
+			instructorId: 'instructor-1',
+			price: 29900,
+		});
 
-    const purchaseId = await t.mutation(api.purchases.create, {
-      userId: 'user-1',
-      courseId,
-      amount: 29900,
-      currency: 'usd',
-    });
+		const purchaseId = await t.mutation(api.purchases.create, {
+			userId: 'user-1',
+			courseId,
+			amount: 29900,
+			currency: 'usd',
+		});
 
-    const purchase = await t.query(api.purchases.get, {
-      id: purchaseId,
-    });
+		const purchase = await t.query(api.purchases.get, {
+			id: purchaseId,
+		});
 
-    expect(purchase.status).toBe('complete');
-    expect(purchase.amount).toBe(29900);
-  });
+		expect(purchase.status).toBe('complete');
+		expect(purchase.amount).toBe(29900);
+	});
 
-  it('grants course access after purchase', async () => {
-    const courseId = await createTestCourse();
+	it('grants course access after purchase', async () => {
+		const courseId = await createTestCourse();
 
-    await t.mutation(api.purchases.create, {
-      userId: 'user-1',
-      courseId,
-      amount: 29900,
-      currency: 'usd',
-    });
+		await t.mutation(api.purchases.create, {
+			userId: 'user-1',
+			courseId,
+			amount: 29900,
+			currency: 'usd',
+		});
 
-    const hasAccess = await t.query(api.courses.hasAccess, {
-      userId: 'user-1',
-      courseId,
-    });
+		const hasAccess = await t.query(api.courses.hasAccess, {
+			userId: 'user-1',
+			courseId,
+		});
 
-    expect(hasAccess).toBe(true);
-  });
+		expect(hasAccess).toBe(true);
+	});
 
-  it('tracks lesson completion', async () => {
-    const courseId = await createTestCourse();
-    const lessonId = await createTestLesson(courseId);
-    await enrollUser('user-1', courseId);
+	it('tracks lesson completion', async () => {
+		const courseId = await createTestCourse();
+		const lessonId = await createTestLesson(courseId);
+		await enrollUser('user-1', courseId);
 
-    await t.mutation(api.lessons.markComplete, {
-      userId: 'user-1',
-      lessonId,
-      timeSpent: 300,
-    });
+		await t.mutation(api.lessons.markComplete, {
+			userId: 'user-1',
+			lessonId,
+			timeSpent: 300,
+		});
 
-    const progress = await t.query(api.lessonProgress.getByUser, {
-      userId: 'user-1',
-      courseId,
-    });
+		const progress = await t.query(api.lessonProgress.getByUser, {
+			userId: 'user-1',
+			courseId,
+		});
 
-    expect(progress).toHaveLength(1);
-    expect(progress[0].completed).toBe(true);
-  });
+		expect(progress).toHaveLength(1);
+		expect(progress[0].completed).toBe(true);
+	});
 });
 ```
 
 **Testing Mutations:**
+
 ```typescript
 // test/integration/refunds.test.ts
 describe('Refund Integration', () => {
-  it('processes refund within policy window', async () => {
-    const purchaseId = await createTestPurchase({
-      amount: 29900,
-      createdAt: Date.now() - (10 * 24 * 60 * 60 * 1000), // 10 days ago
-    });
+	it('processes refund within policy window', async () => {
+		const purchaseId = await createTestPurchase({
+			amount: 29900,
+			createdAt: Date.now() - 10 * 24 * 60 * 60 * 1000, // 10 days ago
+		});
 
-    const refundId = await t.mutation(api.purchases.refund, {
-      purchaseId,
-      reason: 'Not what I expected',
-    });
+		const refundId = await t.mutation(api.purchases.refund, {
+			purchaseId,
+			reason: 'Not what I expected',
+		});
 
-    const refund = await t.query(api.refunds.get, { id: refundId });
+		const refund = await t.query(api.refunds.get, { id: refundId });
 
-    expect(refund.amount).toBe(29900);
-    expect(refund.status).toBe('completed');
-  });
+		expect(refund.amount).toBe(29900);
+		expect(refund.status).toBe('completed');
+	});
 
-  it('denies refund outside policy window', async () => {
-    const purchaseId = await createTestPurchase({
-      amount: 29900,
-      createdAt: Date.now() - (31 * 24 * 60 * 60 * 1000), // 31 days ago
-    });
+	it('denies refund outside policy window', async () => {
+		const purchaseId = await createTestPurchase({
+			amount: 29900,
+			createdAt: Date.now() - 31 * 24 * 60 * 60 * 1000, // 31 days ago
+		});
 
-    await expect(
-      t.mutation(api.purchases.refund, {
-        purchaseId,
-        reason: 'Too late',
-      })
-    ).rejects.toThrow('Refund window expired');
-  });
+		await expect(
+			t.mutation(api.purchases.refund, {
+				purchaseId,
+				reason: 'Too late',
+			}),
+		).rejects.toThrow('Refund window expired');
+	});
 });
 ```
 
 ### 8.3 End-to-End Testing with Playwright
 
 **Installation:**
+
 ```bash
 npm install -D @playwright/test
 npx playwright install
 ```
 
 **Configuration:**
+
 ```typescript
 // playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './e2e',
-  fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-  },
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-  ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
+	testDir: './e2e',
+	fullyParallel: true,
+	forbidOnly: !!process.env.CI,
+	retries: process.env.CI ? 2 : 0,
+	workers: process.env.CI ? 1 : undefined,
+	reporter: 'html',
+	use: {
+		baseURL: 'http://localhost:3000',
+		trace: 'on-first-retry',
+		screenshot: 'only-on-failure',
+	},
+	projects: [
+		{
+			name: 'chromium',
+			use: { ...devices['Desktop Chrome'] },
+		},
+		{
+			name: 'Mobile Chrome',
+			use: { ...devices['Pixel 5'] },
+		},
+	],
+	webServer: {
+		command: 'npm run dev',
+		url: 'http://localhost:3000',
+		reuseExistingServer: !process.env.CI,
+	},
 });
 ```
 
 **Critical Journey Tests:**
+
 ```typescript
 // e2e/course-purchase.spec.ts
 import { test, expect } from '@playwright/test';
 
 test.describe('Course Purchase Flow', () => {
-  test('complete course purchase journey', async ({ page }) => {
-    // 1. Sign in
-    await page.goto('/sign-in');
-    await page.fill('input[name="identifier"]', 'student@test.com');
-    await page.fill('input[name="password"]', 'TestP@ss123');
-    await page.click('button[type="submit"]');
+	test('complete course purchase journey', async ({ page }) => {
+		// 1. Sign in
+		await page.goto('/sign-in');
+		await page.fill('input[name="identifier"]', 'student@test.com');
+		await page.fill('input[name="password"]', 'TestP@ss123');
+		await page.click('button[type="submit"]');
 
-    // 2. Browse courses
-    await page.goto('/courses');
-    await expect(page.locator('h1')).toContainText('Browse Courses');
+		// 2. Browse courses
+		await page.goto('/courses');
+		await expect(page.locator('h1')).toContainText('Browse Courses');
 
-    // 3. View course details
-    await page.click('text=Advanced Botox Techniques');
-    await expect(page.locator('h1')).toContainText('Advanced Botox');
-    await expect(page.locator('text=$299')).toBeVisible();
+		// 3. View course details
+		await page.click('text=Advanced Botox Techniques');
+		await expect(page.locator('h1')).toContainText('Advanced Botox');
+		await expect(page.locator('text=$299')).toBeVisible();
 
-    // 4. Start enrollment
-    await page.click('button:has-text("Enroll Now")');
+		// 4. Start enrollment
+		await page.click('button:has-text("Enroll Now")');
 
-    // 5. Complete Stripe checkout
-    const stripeFrame = page.frameLocator('iframe[name*="stripe"]');
-    await stripeFrame.fill('input[name="cardNumber"]', '4242424242424242');
-    await stripeFrame.fill('input[name="cardExpiry"]', '1230');
-    await stripeFrame.fill('input[name="cardCvc"]', '123');
-    await stripeFrame.fill('input[name="billingName"]', 'Test User');
+		// 5. Complete Stripe checkout
+		const stripeFrame = page.frameLocator('iframe[name*="stripe"]');
+		await stripeFrame.fill('input[name="cardNumber"]', '4242424242424242');
+		await stripeFrame.fill('input[name="cardExpiry"]', '1230');
+		await stripeFrame.fill('input[name="cardCvc"]', '123');
+		await stripeFrame.fill('input[name="billingName"]', 'Test User');
 
-    await page.click('button:has-text("Pay $299")');
+		await page.click('button:has-text("Pay $299")');
 
-    // 6. Verify redirect to learning interface
-    await expect(page).toHaveURL(/\/courses\/.*\/learn/, { timeout: 10000 });
+		// 6. Verify redirect to learning interface
+		await expect(page).toHaveURL(/\/courses\/.*\/learn/, { timeout: 10000 });
 
-    // 7. Verify course content is accessible
-    await expect(page.locator('text=Lesson 1')).toBeVisible();
-    await expect(page.locator('.lesson-player')).toBeVisible();
-  });
+		// 7. Verify course content is accessible
+		await expect(page.locator('text=Lesson 1')).toBeVisible();
+		await expect(page.locator('.lesson-player')).toBeVisible();
+	});
 
-  test('prevent access without purchase', async ({ page }) => {
-    await page.goto('/sign-in');
-    await page.fill('input[name="identifier"]', 'student@test.com');
-    await page.fill('input[name="password"]', 'TestP@ss123');
-    await page.click('button[type="submit"]');
+	test('prevent access without purchase', async ({ page }) => {
+		await page.goto('/sign-in');
+		await page.fill('input[name="identifier"]', 'student@test.com');
+		await page.fill('input[name="password"]', 'TestP@ss123');
+		await page.click('button[type="submit"]');
 
-    // Try to directly access course learning page
-    await page.goto('/courses/test-course-id/learn');
+		// Try to directly access course learning page
+		await page.goto('/courses/test-course-id/learn');
 
-    // Should redirect to course details page
-    await expect(page).toHaveURL(/\/courses\/test-course-id$/);
-    await expect(page.locator('text=Enroll Now')).toBeVisible();
-  });
+		// Should redirect to course details page
+		await expect(page).toHaveURL(/\/courses\/test-course-id$/);
+		await expect(page.locator('text=Enroll Now')).toBeVisible();
+	});
 });
 ```
 
 ```typescript
 // e2e/lesson-completion.spec.ts
 test.describe('Lesson Completion', () => {
-  test('mark lesson complete and update progress', async ({ page }) => {
-    await loginAsStudent(page);
-    await enrollInTestCourse(page);
+	test('mark lesson complete and update progress', async ({ page }) => {
+		await loginAsStudent(page);
+		await enrollInTestCourse(page);
 
-    // Navigate to course
-    await page.goto('/dashboard');
-    await page.click('text=My Courses');
-    await page.click('text=Test Course');
+		// Navigate to course
+		await page.goto('/dashboard');
+		await page.click('text=My Courses');
+		await page.click('text=Test Course');
 
-    // Start first lesson
-    await page.click('text=Lesson 1: Introduction');
-    await expect(page.locator('video')).toBeVisible();
+		// Start first lesson
+		await page.click('text=Lesson 1: Introduction');
+		await expect(page.locator('video')).toBeVisible();
 
-    // Wait for video to play for a few seconds
-    await page.waitForTimeout(3000);
+		// Wait for video to play for a few seconds
+		await page.waitForTimeout(3000);
 
-    // Mark as complete
-    await page.click('button:has-text("Mark as Complete")');
+		// Mark as complete
+		await page.click('button:has-text("Mark as Complete")');
 
-    // Verify progress updated
-    await expect(page.locator('text=1 of 10 lessons complete')).toBeVisible();
-    await expect(page.locator('.progress-bar')).toHaveAttribute(
-      'aria-valuenow',
-      '10'
-    );
-  });
+		// Verify progress updated
+		await expect(page.locator('text=1 of 10 lessons complete')).toBeVisible();
+		await expect(page.locator('.progress-bar')).toHaveAttribute('aria-valuenow', '10');
+	});
 });
 ```
 
@@ -1523,55 +1527,51 @@ import { defineConfig } from 'vitest/config';
 import baseConfig from './vitest.config';
 
 export default defineConfig({
-  ...baseConfig,
-  test: {
-    ...baseConfig.test,
-    include: [
-      'lib/payments/**/*.test.ts',
-      'lib/refunds/**/*.test.ts',
-      'lib/payouts/**/*.test.ts',
-      'convex/purchases.test.ts',
-    ],
-    coverage: {
-      ...baseConfig.test.coverage,
-      thresholds: {
-        lines: 100,
-        functions: 100,
-        branches: 100,
-        statements: 100,
-      },
-    },
-  },
+	...baseConfig,
+	test: {
+		...baseConfig.test,
+		include: [
+			'lib/payments/**/*.test.ts',
+			'lib/refunds/**/*.test.ts',
+			'lib/payouts/**/*.test.ts',
+			'convex/purchases.test.ts',
+		],
+		coverage: {
+			...baseConfig.test.coverage,
+			thresholds: {
+				lines: 100,
+				functions: 100,
+				branches: 100,
+				statements: 100,
+			},
+		},
+	},
 });
 ```
 
 ### 9.3 Pre-Commit Hooks
 
 **Installation:**
+
 ```bash
 npm install -D husky lint-staged
 npx husky install
 ```
 
 **Configuration:**
+
 ```json
 // package.json
 {
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write",
-      "vitest related --run --coverage=false"
-    ],
-    "convex/**/*.ts": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  }
+	"lint-staged": {
+		"*.{ts,tsx}": ["eslint --fix", "prettier --write", "vitest related --run --coverage=false"],
+		"convex/**/*.ts": ["eslint --fix", "prettier --write"]
+	}
 }
 ```
 
 **Husky Hook:**
+
 ```bash
 # .husky/pre-commit
 #!/usr/bin/env sh
@@ -1590,17 +1590,20 @@ npm run test:critical
 ### 10.1 When to Update Tests
 
 **Always update when:**
+
 - Business logic changes (refund policy, commission rates)
 - Security rules change (access control)
 - Payment flow changes
 - Core features modified
 
 **Consider updating when:**
+
 - UI components change significantly
 - New edge cases discovered in production
 - Data model changes
 
 **Don't update when:**
+
 - Visual styling changes only
 - Unrelated features added
 - Comments or documentation updated
@@ -1608,36 +1611,48 @@ npm run test:critical
 ### 10.2 Removing Obsolete Tests
 
 **Delete tests when:**
+
 - Feature completely removed
 - Code path no longer possible
 - Test duplicates another test
 - Code replaced with library function
 
 **Example:**
+
 ```typescript
 // ❌ DELETE - Feature removed
 describe('Old refund approval flow', () => {
-  // This workflow was replaced with automated system
-  // Delete these tests
+	// This workflow was replaced with automated system
+	// Delete these tests
 });
 
 // ❌ DELETE - Duplicate test
-it('calculates commission', () => {/*...*/});
-it('computes platform fee', () => {/*...*/}); // Same thing
+it('calculates commission', () => {
+	/*...*/
+});
+it('computes platform fee', () => {
+	/*...*/
+}); // Same thing
 
 // ✅ KEEP - Tests different scenarios
-it('calculates commission for standard course', () => {/*...*/});
-it('calculates commission with discount applied', () => {/*...*/});
+it('calculates commission for standard course', () => {
+	/*...*/
+});
+it('calculates commission with discount applied', () => {
+	/*...*/
+});
 ```
 
 ### 10.3 Test Performance
 
 **Keep tests fast:**
+
 - Unit tests: <100ms each
 - Integration tests: <1s each
 - E2E tests: <30s each
 
 **Slow test warning signs:**
+
 - Unnecessary database calls
 - Real API calls (use mocks)
 - Waiting for arbitrary timeouts
@@ -1645,6 +1660,7 @@ it('calculates commission with discount applied', () => {/*...*/});
 - Loading entire application for unit tests
 
 **Optimization strategies:**
+
 ```typescript
 // ❌ SLOW - Loads entire app
 import { App } from '@/app/page';
@@ -1769,37 +1785,37 @@ describe('error scenarios', () => {
 import { vi } from 'vitest';
 
 describe('with mocked dependencies', () => {
-  it('sends email on enrollment', async () => {
-    const sendEmail = vi.fn().mockResolvedValue({ success: true });
+	it('sends email on enrollment', async () => {
+		const sendEmail = vi.fn().mockResolvedValue({ success: true });
 
-    await createEnrollment({
-      userId: 'user-1',
-      courseId: 'course-1',
-      emailService: { send: sendEmail },
-    });
+		await createEnrollment({
+			userId: 'user-1',
+			courseId: 'course-1',
+			emailService: { send: sendEmail },
+		});
 
-    expect(sendEmail).toHaveBeenCalledWith({
-      to: 'user@example.com',
-      subject: 'Enrollment Confirmation',
-      template: 'enrollment-confirmation',
-      data: expect.objectContaining({
-        courseName: expect.any(String),
-      }),
-    });
-  });
+		expect(sendEmail).toHaveBeenCalledWith({
+			to: 'user@example.com',
+			subject: 'Enrollment Confirmation',
+			template: 'enrollment-confirmation',
+			data: expect.objectContaining({
+				courseName: expect.any(String),
+			}),
+		});
+	});
 
-  it('continues even if email fails', async () => {
-    const sendEmail = vi.fn().mockRejectedValue(new Error('SMTP error'));
+	it('continues even if email fails', async () => {
+		const sendEmail = vi.fn().mockRejectedValue(new Error('SMTP error'));
 
-    const result = await createEnrollment({
-      userId: 'user-1',
-      courseId: 'course-1',
-      emailService: { send: sendEmail },
-    });
+		const result = await createEnrollment({
+			userId: 'user-1',
+			courseId: 'course-1',
+			emailService: { send: sendEmail },
+		});
 
-    // Enrollment should succeed despite email failure
-    expect(result.success).toBe(true);
-  });
+		// Enrollment should succeed despite email failure
+		expect(result.success).toBe(true);
+	});
 });
 ```
 
@@ -1858,31 +1874,29 @@ import { enrollInCourse } from './enroll';
 import { api } from '@/convex/_generated/api';
 
 describe('enrollInCourse server action', () => {
-  it('creates purchase and redirects', async () => {
-    vi.spyOn(api.purchases, 'create').mockResolvedValue('purchase-123');
+	it('creates purchase and redirects', async () => {
+		vi.spyOn(api.purchases, 'create').mockResolvedValue('purchase-123');
 
-    const result = await enrollInCourse({
-      courseId: 'course-1',
-      paymentIntentId: 'pi_123',
-    });
+		const result = await enrollInCourse({
+			courseId: 'course-1',
+			paymentIntentId: 'pi_123',
+		});
 
-    expect(result.success).toBe(true);
-    expect(result.redirect).toBe('/courses/course-1/learn');
-  });
+		expect(result.success).toBe(true);
+		expect(result.redirect).toBe('/courses/course-1/learn');
+	});
 
-  it('handles payment failure', async () => {
-    vi.spyOn(api.purchases, 'create').mockRejectedValue(
-      new Error('Payment failed')
-    );
+	it('handles payment failure', async () => {
+		vi.spyOn(api.purchases, 'create').mockRejectedValue(new Error('Payment failed'));
 
-    const result = await enrollInCourse({
-      courseId: 'course-1',
-      paymentIntentId: 'pi_failed',
-    });
+		const result = await enrollInCourse({
+			courseId: 'course-1',
+			paymentIntentId: 'pi_failed',
+		});
 
-    expect(result.success).toBe(false);
-    expect(result.error).toBe('PAYMENT_FAILED');
-  });
+		expect(result.success).toBe(false);
+		expect(result.error).toBe('PAYMENT_FAILED');
+	});
 });
 ```
 
@@ -1893,19 +1907,21 @@ describe('enrollInCourse server action', () => {
 ### 13.1 Test Documentation
 
 **Good test names:**
+
 ```typescript
 // ✅ GOOD - Describes what and expected outcome
-it('denies refund after 30 days on generous policy')
-it('calculates 15% commission on course purchase')
-it('allows instructor to create course after verification')
+it('denies refund after 30 days on generous policy');
+it('calculates 15% commission on course purchase');
+it('allows instructor to create course after verification');
 
 // ❌ BAD - Vague or implementation-focused
-it('test refund')
-it('commission calculation')
-it('it works')
+it('test refund');
+it('commission calculation');
+it('it works');
 ```
 
 **Test comments:**
+
 ```typescript
 it('allows partial refund for early cancellation', () => {
   // Given: User enrolled 5 days ago in a $299 course
@@ -1921,6 +1937,7 @@ it('allows partial refund for early cancellation', () => {
 ### 13.2 Coverage Reports
 
 **Generate and view reports:**
+
 ```bash
 # Generate coverage
 npm run test:coverage
@@ -1930,6 +1947,7 @@ open coverage/index.html
 ```
 
 **CI/CD integration:**
+
 ```yaml
 # Upload to Codecov
 - uses: codecov/codecov-action@v3

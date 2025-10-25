@@ -1,5 +1,6 @@
-import { Id } from '@/convex/_generated/dataModel';
 import { z } from 'zod';
+
+import { Id } from '@/convex/_generated/dataModel';
 
 export const CreateCourseQuestionSchema = z.object({
 	question: z.string(),
@@ -36,9 +37,7 @@ export const CreateCourseWizardSchema = z.object({
 export type CreateCourseWizardType = z.infer<typeof CreateCourseWizardSchema>;
 export type CreateCourseSectionType = z.infer<typeof CreateCourseSectionSchema>;
 export type CreateCourseLessonType = z.infer<typeof CreateCourseLessonSchema>;
-export type CreateCourseQuestionType = z.infer<
-	typeof CreateCourseQuestionSchema
->;
+export type CreateCourseQuestionType = z.infer<typeof CreateCourseQuestionSchema>;
 
 export const CreateCourseDefaultValues: CreateCourseWizardType = {
 	title: '',

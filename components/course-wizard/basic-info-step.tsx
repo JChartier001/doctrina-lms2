@@ -1,27 +1,15 @@
 'use client';
 
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
+import { Controller, useFormContext } from 'react-hook-form';
 
-import { useFormContext, Controller } from 'react-hook-form';
-import { CreateCourseWizardType } from '@/schema/CourseWizardSchema';
-import {
-	FormControl,
-	FormDescription,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form';
-import { MultiSelect } from '@/components/ui/multi-select';
 import ImageUpload from '@/components/image-upload';
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { MultiSelect } from '@/components/ui/multi-select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { CreateCourseWizardType } from '@/schema/CourseWizardSchema';
 
 // Mock categories for medical aesthetics
 const categories = [
@@ -50,28 +38,23 @@ export function BasicInfoStep() {
 	const { control } = useFormContext<CreateCourseWizardType>();
 
 	return (
-		<div className='space-y-6'>
+		<div className="space-y-6">
 			<div>
-				<h2 className='text-2xl font-bold mb-4'>Basic Information</h2>
-				<p className='text-muted-foreground mb-6'>
-					Provide the basic details about your course. This information will be
-					displayed on the course listing page.
+				<h2 className="text-2xl font-bold mb-4">Basic Information</h2>
+				<p className="text-muted-foreground mb-6">
+					Provide the basic details about your course. This information will be displayed on the course listing page.
 				</p>
 			</div>
 
-			<div className='space-y-5'>
+			<div className="space-y-5">
 				<Controller
 					control={control}
-					name='title'
+					name="title"
 					render={({ field, fieldState: { error } }) => (
 						<FormItem>
 							<FormLabel>Course Title</FormLabel>
 							<FormControl>
-								<Input
-									id='title'
-									placeholder='e.g., Advanced Botox Techniques for Medical Professionals'
-									{...field}
-								/>
+								<Input id="title" placeholder="e.g., Advanced Botox Techniques for Medical Professionals" {...field} />
 							</FormControl>
 							{error && <FormMessage>{error?.message}</FormMessage>}
 						</FormItem>
@@ -79,37 +62,37 @@ export function BasicInfoStep() {
 				/>
 				<Controller
 					control={control}
-					name='description'
+					name="description"
 					render={({ field, fieldState: { error } }) => (
 						<FormItem>
 							<FormLabel>Course Description</FormLabel>
 							<FormControl>
 								<Textarea
-									id='description'
-									placeholder='Describe what students will learn in your course...'
+									id="description"
+									placeholder="Describe what students will learn in your course..."
 									{...field}
 									rows={6}
 								/>
 							</FormControl>
 							<FormDescription>
-								Write a compelling description that explains what your course
-								covers and its benefits (1000 characters max).
+								Write a compelling description that explains what your course covers and its benefits (1000 characters
+								max).
 							</FormDescription>
 							{error && <FormMessage>{error?.message}</FormMessage>}
 						</FormItem>
 					)}
 				/>
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<Controller
 						control={control}
-						name='description'
+						name="description"
 						render={({ field, fieldState: { error } }) => (
-							<FormItem className='space-y-2'>
+							<FormItem className="space-y-2">
 								<FormLabel>Category</FormLabel>
 								<FormControl>
 									<Select {...field}>
-										<SelectTrigger id='category' className='w-full'>
-											<SelectValue placeholder='Select a category' />
+										<SelectTrigger id="category" className="w-full">
+											<SelectValue placeholder="Select a category" />
 										</SelectTrigger>
 										<SelectContent>
 											{categories.map(category => (
@@ -120,9 +103,7 @@ export function BasicInfoStep() {
 										</SelectContent>
 									</Select>
 								</FormControl>
-								<FormDescription>
-									Choose the category that best fits your course content.
-								</FormDescription>
+								<FormDescription>Choose the category that best fits your course content.</FormDescription>
 
 								{error && <FormMessage>{error?.message}</FormMessage>}
 							</FormItem>
@@ -130,52 +111,43 @@ export function BasicInfoStep() {
 					/>
 					<Controller
 						control={control}
-						name='prerequisites'
+						name="prerequisites"
 						render={({ field, fieldState: { error } }) => (
-							<FormItem className='space-y-2'>
+							<FormItem className="space-y-2">
 								<FormLabel>Prerequisites</FormLabel>
 								<FormControl>
 									<MultiSelect
 										value={field.value || []}
 										onChange={field.onChange}
 										options={prerequisiteOptions}
-										placeholder='Select prerequisites'
+										placeholder="Select prerequisites"
 									/>
 								</FormControl>
-								<FormDescription>
-									Specify any prerequisites or requirements for taking this
-									course.
-								</FormDescription>
+								<FormDescription>Specify any prerequisites or requirements for taking this course.</FormDescription>
 								{error && <FormMessage>{error?.message}</FormMessage>}
 							</FormItem>
 						)}
 					/>
 				</div>
-				<div className='space-y-5'>
-					<Label className='text-lg font-medium'>Course Settings</Label>
-					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+				<div className="space-y-5">
+					<Label className="text-lg font-medium">Course Settings</Label>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<Controller
 							control={control}
-							name='certificateOption'
+							name="certificateOption"
 							render={({ field, fieldState: { error } }) => (
-								<FormItem className='space-y-2'>
+								<FormItem className="space-y-2">
 									<FormLabel>Certificate</FormLabel>
 									<FormControl>
 										<Select {...field}>
-											<SelectTrigger id='certificateOption' className='w-full'>
-												<SelectValue placeholder='Certificate options' />
+											<SelectTrigger id="certificateOption" className="w-full">
+												<SelectValue placeholder="Certificate options" />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value='auto'>
-													Auto-generate upon completion
-												</SelectItem>
-												<SelectItem value='quiz'>
-													Require final quiz completion
-												</SelectItem>
-												<SelectItem value='manual'>
-													Manual approval by instructor
-												</SelectItem>
-												<SelectItem value='none'>No certificate</SelectItem>
+												<SelectItem value="auto">Auto-generate upon completion</SelectItem>
+												<SelectItem value="quiz">Require final quiz completion</SelectItem>
+												<SelectItem value="manual">Manual approval by instructor</SelectItem>
+												<SelectItem value="none">No certificate</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormControl>
@@ -186,19 +158,19 @@ export function BasicInfoStep() {
 
 						<Controller
 							control={control}
-							name='discussionOption'
+							name="discussionOption"
 							render={({ field, fieldState: { error } }) => (
-								<FormItem className='space-y-2'>
+								<FormItem className="space-y-2">
 									<FormLabel>Discussion Forum</FormLabel>
 									<FormControl>
 										<Select {...field}>
-											<SelectTrigger id='discussionOption' className='w-full'>
-												<SelectValue placeholder='Discussion options' />
+											<SelectTrigger id="discussionOption" className="w-full">
+												<SelectValue placeholder="Discussion options" />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value='enabled'>Enabled</SelectItem>
-												<SelectItem value='moderated'>Moderated</SelectItem>
-												<SelectItem value='disabled'>Disabled</SelectItem>
+												<SelectItem value="enabled">Enabled</SelectItem>
+												<SelectItem value="moderated">Moderated</SelectItem>
+												<SelectItem value="disabled">Disabled</SelectItem>
 											</SelectContent>
 										</Select>
 									</FormControl>
@@ -209,7 +181,7 @@ export function BasicInfoStep() {
 					</div>
 					<Controller
 						control={control}
-						name='thumbnail'
+						name="thumbnail"
 						render={({ field, fieldState: { error } }) => (
 							<FormItem>
 								<FormControl>
@@ -217,7 +189,7 @@ export function BasicInfoStep() {
 										value={field.value ? [field.value] : []}
 										onChange={value => field.onChange(value?.[0] || null)}
 										maxImages={1}
-										label='Course Thumbnail'
+										label="Course Thumbnail"
 									/>
 								</FormControl>
 								{error && <FormMessage>{error?.message}</FormMessage>}

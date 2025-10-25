@@ -1,33 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth';
+import { Eye, MoreHorizontal, Search, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-	getAllCertificateTemplates,
-	useRemoveCertificate,
-	type Certificate,
-	type CertificateTemplate,
-} from '@/lib/certificate-service';
-import { Id } from '@/convex/_generated/dataModel';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+
 import { CertificateDisplay } from '@/components/certificate-display';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Dialog,
 	DialogContent,
@@ -44,8 +24,16 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from 'react-toastify';
-import { Eye, MoreHorizontal, Search, Trash } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Id } from '@/convex/_generated/dataModel';
+import { useAuth } from '@/lib/auth';
+import {
+	type Certificate,
+	type CertificateTemplate,
+	getAllCertificateTemplates,
+	useRemoveCertificate,
+} from '@/lib/certificate-service';
 
 // Mock function to get all certificates (admin only)
 function getAllCertificates(): Certificate[] {
@@ -98,12 +86,9 @@ export default function AdminCertificatesPage() {
 	const removeCertificateMutation = useRemoveCertificate();
 
 	const [certificates, setCertificates] = useState<Certificate[]>([]);
-	const [filteredCertificates, setFilteredCertificates] = useState<
-		Certificate[]
-	>([]);
+	const [filteredCertificates, setFilteredCertificates] = useState<Certificate[]>([]);
 	const [searchQuery, setSearchQuery] = useState('');
-	const [selectedCertificate, setSelectedCertificate] =
-		useState<Certificate | null>(null);
+	const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
 	const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
 
 	useEffect(() => {
@@ -135,7 +120,7 @@ export default function AdminCertificatesPage() {
 			cert =>
 				cert.userName.toLowerCase().includes(query) ||
 				cert.courseName.toLowerCase().includes(query) ||
-				cert.verificationCode.toLowerCase().includes(query)
+				cert.verificationCode.toLowerCase().includes(query),
 		);
 
 		setFilteredCertificates(filtered);
@@ -146,23 +131,19 @@ export default function AdminCertificatesPage() {
 			await removeCertificateMutation({ id: certId as Id<'certificates'> });
 
 			// Update the certificates list
-			const updatedCertificates = certificates.filter(
-				cert => cert._id !== certId
-			);
+			const updatedCertificates = certificates.filter(cert => cert._id !== certId);
 			setCertificates(updatedCertificates);
 			setFilteredCertificates(
 				updatedCertificates.filter(
 					cert =>
 						cert.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
 						cert.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						cert.verificationCode
-							.toLowerCase()
-							.includes(searchQuery.toLowerCase())
-				)
+						cert.verificationCode.toLowerCase().includes(searchQuery.toLowerCase()),
+				),
 			);
 
 			toast.success('Certificate Deleted. The certificate has been deleted successfully.');
-			} catch (error) {
+		} catch (error) {
 			console.error('Failed to delete certificate:', error);
 			toast.error('Failed to delete the certificate. Please try again.');
 		}
@@ -173,28 +154,26 @@ export default function AdminCertificatesPage() {
 	}
 
 	return (
-		<div className='container py-10'>
-			<h1 className='text-3xl font-bold mb-6'>Certificate Management</h1>
+		<div className="container py-10">
+			<h1 className="text-3xl font-bold mb-6">Certificate Management</h1>
 
-			<div className='flex items-center justify-between mb-6'>
-				<div className='relative w-full max-w-sm'>
-					<Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
+			<div className="flex items-center justify-between mb-6">
+				<div className="relative w-full max-w-sm">
+					<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 					<Input
-						type='search'
-						placeholder='Search certificates...'
-						className='pl-8'
+						type="search"
+						placeholder="Search certificates..."
+						className="pl-8"
 						value={searchQuery}
 						onChange={e => setSearchQuery(e.target.value)}
 					/>
 				</div>
 			</div>
 
-			<Card className='mb-8'>
+			<Card className="mb-8">
 				<CardHeader>
 					<CardTitle>All Certificates</CardTitle>
-					<CardDescription>
-						Manage all certificates issued on the platform
-					</CardDescription>
+					<CardDescription>Manage all certificates issued on the platform</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Table>
@@ -205,39 +184,33 @@ export default function AdminCertificatesPage() {
 								<TableHead>Course</TableHead>
 								<TableHead>Issue Date</TableHead>
 								<TableHead>Verification Code</TableHead>
-								<TableHead className='text-right'>Actions</TableHead>
+								<TableHead className="text-right">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
 							{filteredCertificates.length === 0 ? (
 								<TableRow>
-									<TableCell colSpan={6} className='text-center py-4'>
+									<TableCell colSpan={6} className="text-center py-4">
 										No certificates found
 									</TableCell>
 								</TableRow>
 							) : (
 								filteredCertificates.map(cert => (
 									<TableRow key={cert._id}>
-										<TableCell className='font-mono text-xs'>
-											{cert._id}
-										</TableCell>
+										<TableCell className="font-mono text-xs">{cert._id}</TableCell>
 										<TableCell>{cert.userName}</TableCell>
 										<TableCell>{cert.courseName}</TableCell>
-										<TableCell>
-											{new Date(cert.issueDate).toLocaleDateString()}
-										</TableCell>
-										<TableCell className='font-mono text-xs'>
-											{cert.verificationCode}
-										</TableCell>
-										<TableCell className='text-right'>
+										<TableCell>{new Date(cert.issueDate).toLocaleDateString()}</TableCell>
+										<TableCell className="font-mono text-xs">{cert.verificationCode}</TableCell>
+										<TableCell className="text-right">
 											<DropdownMenu>
 												<DropdownMenuTrigger asChild>
-													<Button variant='ghost' size='icon'>
-														<MoreHorizontal className='h-4 w-4' />
-														<span className='sr-only'>Actions</span>
+													<Button variant="ghost" size="icon">
+														<MoreHorizontal className="h-4 w-4" />
+														<span className="sr-only">Actions</span>
 													</Button>
 												</DropdownMenuTrigger>
-												<DropdownMenuContent align='end'>
+												<DropdownMenuContent align="end">
 													<DropdownMenuLabel>Actions</DropdownMenuLabel>
 													<DropdownMenuSeparator />
 													<Dialog>
@@ -248,11 +221,11 @@ export default function AdminCertificatesPage() {
 																	setSelectedCertificate(cert);
 																}}
 															>
-																<Eye className='mr-2 h-4 w-4' />
+																<Eye className="mr-2 h-4 w-4" />
 																View Certificate
 															</DropdownMenuItem>
 														</DialogTrigger>
-														<DialogContent className='max-w-4xl'>
+														<DialogContent className="max-w-4xl">
 															<DialogHeader>
 																<DialogTitle>Certificate Preview</DialogTitle>
 																<DialogDescription>
@@ -260,21 +233,18 @@ export default function AdminCertificatesPage() {
 																</DialogDescription>
 															</DialogHeader>
 															{selectedCertificate && (
-																<CertificateDisplay
-																	certificate={selectedCertificate}
-																	showControls={false}
-																/>
+																<CertificateDisplay certificate={selectedCertificate} showControls={false} />
 															)}
 														</DialogContent>
 													</Dialog>
 													<DropdownMenuItem
-														className='text-red-600'
+														className="text-red-600"
 														onSelect={e => {
 															e.preventDefault();
 															handleDeleteCertificate(cert._id);
 														}}
 													>
-														<Trash className='mr-2 h-4 w-4' />
+														<Trash className="mr-2 h-4 w-4" />
 														Delete Certificate
 													</DropdownMenuItem>
 												</DropdownMenuContent>
@@ -291,26 +261,22 @@ export default function AdminCertificatesPage() {
 			<Card>
 				<CardHeader>
 					<CardTitle>Certificate Templates</CardTitle>
-					<CardDescription>
-						Manage certificate templates used for different course types
-					</CardDescription>
+					<CardDescription>Manage certificate templates used for different course types</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 						{templates.map(template => (
-							<Card key={template.id} className='overflow-hidden'>
+							<Card key={template.id} className="overflow-hidden">
 								<div
-									className='aspect-[1.414/1] bg-cover bg-center'
+									className="aspect-[1.414/1] bg-cover bg-center"
 									style={{
 										backgroundImage: `url(${template.imageUrl})`,
 										backgroundColor: `${template.primaryColor}22`,
 									}}
 								></div>
-								<CardContent className='p-4'>
-									<h3 className='font-medium'>{template.name}</h3>
-									<p className='text-sm text-muted-foreground'>
-										{template.description}
-									</p>
+								<CardContent className="p-4">
+									<h3 className="font-medium">{template.name}</h3>
+									<p className="text-sm text-muted-foreground">{template.description}</p>
 								</CardContent>
 							</Card>
 						))}

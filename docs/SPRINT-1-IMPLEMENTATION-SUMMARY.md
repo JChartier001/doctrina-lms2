@@ -1,4 +1,5 @@
 # Sprint 1 Implementation Summary
+
 ## Doctrina LMS2 - Backend Functions Implemented
 
 **Sprint:** Sprint 1 (Weeks 1-2)
@@ -12,18 +13,22 @@
 ### 1. Database Schema Updates (`convex/schema.ts`)
 
 #### Users Table - Fixed Role Schema ✅
+
 **Changed from:**
+
 ```typescript
-role: v.union(v.literal('admin'), v.literal('instructor'), v.literal('student'))
+role: v.union(v.literal('admin'), v.literal('instructor'), v.literal('student'));
 ```
 
 **Changed to:**
+
 ```typescript
 isInstructor: v.boolean(), // Can create and teach courses
 isAdmin: v.boolean(),       // Platform administration access
 ```
 
 **Also added:**
+
 - `profilePhotoUrl: v.optional(v.string())`
 - `bio: v.optional(v.string())`
 - `title: v.optional(v.string())` // Professional title
@@ -32,28 +37,34 @@ isAdmin: v.boolean(),       // Platform administration access
 #### New Tables Added ✅
 
 **courseModules** - Course curriculum sections
+
 - Fields: courseId, title, description, order, createdAt
 - Indexes: by_course, by_course_order
 - Supports drag-drop reordering
 
 **lessons** - Individual lessons within modules
+
 - Fields: moduleId, title, description, type (video/quiz/assignment), duration, videoUrl, videoId, content, isPreview, order, createdAt
 - Indexes: by_module, by_module_order
 - Supports video, quiz, and assignment types
 - Preview lessons accessible without enrollment
 
 **enrollments** - Student course enrollments
+
 - Fields: userId (string), courseId, purchaseId, enrolledAt, completedAt, progressPercent (0-100)
 - Indexes: by_user, by_course, by_user_course
 - Links purchases to course access
 
 **lessonProgress** - Track lesson completion (Sprint 2)
+
 - Ready for implementation in Sprint 2
 
 **quizzes, quizQuestions, quizAttempts** - Quiz system (Sprint 2)
+
 - Ready for implementation in Sprint 2
 
 **courseReviews** - Course ratings and reviews (Sprint 3)
+
 - Ready for implementation in Sprint 3
 
 ---
@@ -61,7 +72,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ### 2. New Convex Files Created
 
 #### `convex/courseModules.ts` ✅
+
 **Functions implemented:**
+
 - ✅ `create()` - Create course module with authorization
 - ✅ `list()` - Get all modules for a course (sorted by order)
 - ✅ `get()` - Get single module by ID
@@ -74,7 +87,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ---
 
 #### `convex/lessons.ts` ✅
+
 **Functions implemented:**
+
 - ✅ `create()` - Create lesson with authorization
 - ✅ `list()` - Get all lessons for a module (sorted by order)
 - ✅ `get()` - Get lesson with **access control logic**:
@@ -89,7 +104,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ---
 
 #### `convex/enrollments.ts` ✅
+
 **Functions implemented:**
+
 - ✅ `create()` - Create enrollment after payment (idempotent for webhook retries)
 - ✅ `isEnrolled()` - Check if user enrolled in course
 - ✅ `getCurrentUserEnrollment()` - Get current user's enrollment for a course
@@ -100,6 +117,7 @@ isAdmin: v.boolean(),       // Platform administration access
 - ✅ `updateProgress()` - Update enrollment progress percentage
 
 **Features:**
+
 - Creates welcome notification on enrollment
 - Triggers certificate generation at 100% completion
 - Privacy protection: instructors see aggregate data, not individual student PII
@@ -107,7 +125,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ---
 
 #### `convex/payments.ts` ✅
+
 **Functions implemented:**
+
 - ✅ `createCheckoutSession()` - Stripe Checkout integration (action)
   - Verifies user not already enrolled
   - Creates Stripe session with course metadata
@@ -120,7 +140,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ### 3. API Routes Created
 
 #### `app/api/webhooks/stripe/route.ts` ✅
+
 **Webhook handler for Stripe events:**
+
 - ✅ Verifies Stripe signature (security)
 - ✅ Handles `checkout.session.completed` event:
   - Creates purchase record
@@ -134,7 +156,9 @@ isAdmin: v.boolean(),       // Platform administration access
 ### 4. Enhanced Existing Files
 
 #### `convex/courses.ts` - Enhanced ✅
+
 **New function added:**
+
 - ✅ `getWithCurriculum()` - Comprehensive course query returning:
   - Full course details
   - Complete curriculum (modules → lessons)
@@ -145,7 +169,9 @@ isAdmin: v.boolean(),       // Platform administration access
   - Used by `/courses/[id]` course detail page
 
 #### `convex/purchases.ts` - Updated ✅
+
 **Changes:**
+
 - ✅ Updated `userId` from `v.id("users")` to `v.string()` (Clerk external ID)
 - ✅ Added `stripeSessionId` parameter
 - ✅ Added `status` parameter to create() function
@@ -155,6 +181,7 @@ isAdmin: v.boolean(),       // Platform administration access
 ## How the UI Now Works with Backend
 
 ### Course Creation Flow (Instructor)
+
 1. Instructor uses `/instructor/courses/wizard`
 2. **Step 1:** Calls `courses.create()` with basic info → saves draft
 3. **Step 2:** Calls `courseModules.create()` to add sections
@@ -163,6 +190,7 @@ isAdmin: v.boolean(),       // Platform administration access
 6. **Step 5:** Calls `courses.update()` to publish
 
 ### Course Detail Page (`/courses/[id]`)
+
 1. Calls `courses.getWithCurriculum(courseId)`
 2. Receives course with:
    - Full curriculum (modules and lessons)
@@ -172,6 +200,7 @@ isAdmin: v.boolean(),       // Platform administration access
 3. Displays preview lessons (marked `isPreview: true`)
 
 ### Course Purchase Flow
+
 1. Student clicks "Enroll Now" on `/courses/[id]`
 2. Frontend calls `payments.createCheckoutSession(courseId)`
 3. Redirects to Stripe Checkout hosted page
@@ -183,6 +212,7 @@ isAdmin: v.boolean(),       // Platform administration access
 9. Student can now access `/courses/[id]/learn`
 
 ### Course Learning Page (`/courses/[id]/learn`)
+
 1. Frontend calls `enrollments.getCurrentUserEnrollment(courseId)`
 2. If not enrolled, redirects to course detail page
 3. If enrolled, calls `lessons.get(lessonId)` for current lesson
@@ -191,6 +221,7 @@ isAdmin: v.boolean(),       // Platform administration access
 6. (Sprint 2) Student marks lesson complete → updates progress
 
 ### Student Dashboard (`/dashboard`)
+
 1. Calls `enrollments.getMyEnrollments()`
 2. Returns enrolled courses with progress percentages
 3. "Continue Learning" button navigates to last incomplete lesson
@@ -223,6 +254,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## Testing Sprint 1 Implementation
 
 ### 1. Start Convex Dev Server
+
 ```bash
 npx convex dev
 ```
@@ -230,6 +262,7 @@ npx convex dev
 **Expected:** Schema compiles successfully, tables created
 
 ### 2. Test Course Creation (Instructor)
+
 ```bash
 # In Convex dashboard or via API:
 # 1. Create course
@@ -239,6 +272,7 @@ npx convex dev
 ```
 
 ### 3. Test Enrollment Flow
+
 ```bash
 # 1. Create Stripe test checkout (use test card)
 # 2. Complete payment
@@ -248,6 +282,7 @@ npx convex dev
 ```
 
 ### 4. Test Access Control
+
 ```bash
 # 1. Try accessing non-preview lesson without enrollment
 # Expected: Error "Not enrolled in this course"
@@ -260,6 +295,7 @@ npx convex dev
 ## What Works Now ✅
 
 **Instructor Workflows:**
+
 - ✅ Create courses with basic info
 - ✅ Add modules (sections) to courses
 - ✅ Add lessons to modules
@@ -269,6 +305,7 @@ npx convex dev
 - ✅ View course with full curriculum
 
 **Student Workflows:**
+
 - ✅ Browse courses
 - ✅ View course details with curriculum
 - ✅ See instructor credentials
@@ -279,6 +316,7 @@ npx convex dev
 - ✅ View enrolled courses on dashboard
 
 **Platform:**
+
 - ✅ Secure access control (preview vs. paid content)
 - ✅ Instructor authorization (only course owner can edit)
 - ✅ Payment processing (Stripe integration)
@@ -289,23 +327,28 @@ npx convex dev
 ## What's NOT Working Yet (Sprint 2+ Needed)
 
 ❌ **Progress Tracking:**
+
 - Can't mark lessons as complete
 - Progress percentage doesn't update
 - Can't resume where left off
 
 ❌ **Quizzes:**
+
 - Can't create quiz questions
 - Can't take quizzes
 - Can't grade quiz submissions
 
 ❌ **Certificates:**
+
 - Certificate generation exists but not triggered (needs 100% completion detection)
 
 ❌ **Reviews:**
+
 - Can't submit course reviews
 - Average rating not calculated from actual reviews (schema ready, functions not implemented)
 
 ❌ **Instructor Analytics:**
+
 - Analytics queries exist but may need enhancement for course-specific metrics
 
 ---
@@ -339,22 +382,27 @@ npx convex dev
 ## Files Modified/Created This Sprint
 
 **Schema:**
+
 - ✅ `convex/schema.ts` - Updated users table, added 8 new tables
 
 **New Convex Files:**
+
 - ✅ `convex/courseModules.ts` - 6 functions (134 lines)
 - ✅ `convex/lessons.ts` - 6 functions (180 lines)
 - ✅ `convex/enrollments.ts` - 8 functions (150 lines)
 - ✅ `convex/payments.ts` - 1 action (Stripe integration, 50 lines)
 
 **Enhanced Convex Files:**
+
 - ✅ `convex/courses.ts` - Added `getWithCurriculum()` query
 - ✅ `convex/purchases.ts` - Updated to use Clerk external IDs
 
 **API Routes:**
+
 - ✅ `app/api/webhooks/stripe/route.ts` - Stripe webhook handler (75 lines)
 
 **Documentation:**
+
 - ✅ `docs/BACKEND-IMPLEMENTATION-EPICS.md`
 - ✅ `docs/BACKEND-BACKLOG.md`
 - ✅ `docs/PRD.md`
@@ -366,6 +414,7 @@ npx convex dev
 ## Developer Handoff Checklist
 
 Before testing:
+
 - [ ] Run `npx convex dev` to deploy schema changes
 - [ ] Add Stripe environment variables to `.env.local`
 - [ ] Install Stripe: `npm install stripe`
@@ -373,6 +422,7 @@ Before testing:
 - [ ] Restart Next.js dev server: `yarn dev`
 
 After deployment:
+
 - [ ] Verify tables created in Convex dashboard
 - [ ] Test course creation wizard (can now save curriculum)
 - [ ] Test purchase flow end-to-end

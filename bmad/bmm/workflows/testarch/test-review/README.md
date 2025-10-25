@@ -165,9 +165,9 @@ await expect(page.locator('.text')).toBeVisible();
 
 ```typescript
 test.describe('1.3-E2E-001: User Login Flow', () => {
-  test('should log in successfully with valid credentials', async ({ page }) => {
-    // Test implementation
-  });
+	test('should log in successfully with valid credentials', async ({ page }) => {
+		// Test implementation
+	});
 });
 ```
 
@@ -175,9 +175,9 @@ test.describe('1.3-E2E-001: User Login Flow', () => {
 
 ```typescript
 test.describe('Login', () => {
-  test('login works', async ({ page }) => {
-    // Test implementation
-  });
+	test('login works', async ({ page }) => {
+		// Test implementation
+	});
 });
 ```
 
@@ -191,11 +191,11 @@ test.describe('Login', () => {
 
 ```typescript
 test.describe('P0: Critical User Journey - Checkout', () => {
-  // Critical tests
+	// Critical tests
 });
 
 test.describe('P2: Edge Case - International Addresses', () => {
-  // Nice-to-have tests
+	// Nice-to-have tests
 });
 ```
 
@@ -209,7 +209,9 @@ test.describe('P2: Edge Case - International Addresses', () => {
 
 ```typescript
 // ✅ Good: Explicit wait for condition
-await expect(page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 10000 });
+await expect(page.locator('[data-testid="user-menu"]')).toBeVisible({
+	timeout: 10000,
+});
 ```
 
 **FAIL**: Hard waits introduce flakiness
@@ -239,9 +241,9 @@ await expect(page.locator('[data-testid="status"]')).toHaveText('Active');
 // ❌ Bad: Conditional logic
 const status = await page.locator('[data-testid="status"]').textContent();
 if (status === 'Active') {
-  await page.click('[data-testid="deactivate"]');
+	await page.click('[data-testid="deactivate"]');
 } else {
-  await page.click('[data-testid="activate"]');
+	await page.click('[data-testid="activate"]');
 }
 ```
 
@@ -255,8 +257,8 @@ if (status === 'Active') {
 
 ```typescript
 test.afterEach(async ({ page, testUser }) => {
-  // Cleanup: Delete test user
-  await api.deleteUser(testUser.id);
+	// Cleanup: Delete test user
+	await api.deleteUser(testUser.id);
 });
 ```
 
@@ -267,11 +269,11 @@ test.afterEach(async ({ page, testUser }) => {
 let userId: string;
 
 test('create user', async () => {
-  userId = await createUser(); // Sets global
+	userId = await createUser(); // Sets global
 });
 
 test('update user', async () => {
-  await updateUser(userId); // Depends on previous test
+	await updateUser(userId); // Depends on previous test
 });
 ```
 
@@ -286,16 +288,16 @@ test('update user', async () => {
 ```typescript
 // ✅ Good: Pure function fixture
 const createAuthenticatedPage = async (page: Page, user: User) => {
-  await loginPage.login(user.email, user.password);
-  return page;
+	await loginPage.login(user.email, user.password);
+	return page;
 };
 
 const test = base.extend({
-  authenticatedPage: async ({ page }, use) => {
-    const user = createTestUser();
-    const authedPage = await createAuthenticatedPage(page, user);
-    await use(authedPage);
-  },
+	authenticatedPage: async ({ page }, use) => {
+		const user = createTestUser();
+		const authedPage = await createAuthenticatedPage(page, user);
+		await use(authedPage);
+	},
 });
 ```
 
@@ -304,11 +306,11 @@ const test = base.extend({
 ```typescript
 // ❌ Bad: Repeated setup in every test
 test('test 1', async ({ page }) => {
-  await page.goto('/login');
-  await page.fill('[name="email"]', 'test@example.com');
-  await page.fill('[name="password"]', 'password123');
-  await page.click('[type="submit"]');
-  // Test logic
+	await page.goto('/login');
+	await page.fill('[name="email"]', 'test@example.com');
+	await page.fill('[name="password"]', 'password123');
+	await page.click('[type="submit"]');
+	// Test logic
 });
 ```
 
@@ -325,9 +327,9 @@ test('test 1', async ({ page }) => {
 import { createTestUser } from './factories/user-factory';
 
 test('user can update profile', async ({ page }) => {
-  const user = createTestUser({ role: 'admin' });
-  await api.createUser(user); // API-first setup
-  // Test UI interaction
+	const user = createTestUser({ role: 'admin' });
+	await api.createUser(user); // API-first setup
+	// Test UI interaction
 });
 ```
 
@@ -349,7 +351,7 @@ await page.fill('[name="phone"]', '555-1234');
 
 ```typescript
 // ✅ Good: Intercept before navigation
-await page.route('**/api/users', (route) => route.fulfill({ json: mockUsers }));
+await page.route('**/api/users', route => route.fulfill({ json: mockUsers }));
 await page.goto('/users'); // Navigate after route setup
 ```
 
@@ -358,7 +360,7 @@ await page.goto('/users'); // Navigate after route setup
 ```typescript
 // ❌ Bad: Navigate before intercept
 await page.goto('/users');
-await page.route('**/api/users', (route) => route.fulfill({ json: mockUsers })); // Too late!
+await page.route('**/api/users', route => route.fulfill({ json: mockUsers })); // Too late!
 ```
 
 **Knowledge**: network-first.md

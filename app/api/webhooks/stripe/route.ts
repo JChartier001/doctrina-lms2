@@ -1,8 +1,9 @@
+import { ConvexHttpClient } from 'convex/browser';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
+
 import { api } from '@/convex/_generated/api';
-import { ConvexHttpClient } from 'convex/browser';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 	apiVersion: '2024-12-18.acacia',
@@ -17,26 +18,16 @@ export async function POST(req: Request) {
 
 	if (!signature) {
 		console.error('No Stripe signature found');
-		return NextResponse.json(
-			{ error: 'No signature' },
-			{ status: 400 }
-		);
+		return NextResponse.json({ error: 'No signature' }, { status: 400 });
 	}
 
 	let event: Stripe.Event;
 
 	try {
-		event = stripe.webhooks.constructEvent(
-			body,
-			signature,
-			process.env.STRIPE_WEBHOOK_SECRET!
-		);
+		event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
 	} catch (err: any) {
 		console.error('Webhook signature verification failed:', err.message);
-		return NextResponse.json(
-			{ error: 'Invalid signature' },
-			{ status: 400 }
-		);
+		return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
 	}
 
 	console.log('Received Stripe event:', event.type);
@@ -91,9 +82,6 @@ export async function POST(req: Request) {
 		return NextResponse.json({ received: true });
 	} catch (error: any) {
 		console.error('Error processing webhook:', error);
-		return NextResponse.json(
-			{ error: error.message },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }

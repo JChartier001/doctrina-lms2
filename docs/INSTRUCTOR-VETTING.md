@@ -25,6 +25,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Standard:** "Reasonable Care" - Courts assess whether the platform exercised appropriate caution given the circumstances.
 
 **Our Position:** As a healthcare education marketplace, we verify core credentials (license, insurance, identity) but do NOT:
+
 - Guarantee instructor quality or teaching ability
 - Assess course content accuracy (instructor's responsibility)
 - Verify every claimed certification or credential
@@ -39,6 +40,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### 2.1 Professional License (REQUIRED)
 
 **Accepted License Types:**
+
 - Physician: MD or DO
 - Nurse Practitioner: NP (all specialties)
 - Physician Assistant: PA or PA-C
@@ -48,6 +50,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 - Other healthcare licenses: Review on case-by-case basis
 
 **License Requirements:**
+
 - Must be ACTIVE (not expired)
 - Must be UNRESTRICTED (no disciplinary actions or practice limitations)
 - Must be from a US state (US-only platform for MVP)
@@ -56,16 +59,19 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### 2.2 Professional Liability Insurance (REQUIRED)
 
 **Minimum Coverage:**
+
 - $1,000,000 per occurrence
 - $3,000,000 aggregate
 - Policy MUST cover "teaching," "instruction," or "education" activities
 
 **Accepted Proof:**
+
 - Current Certificate of Insurance (COI)
 - Insurance declarations page
 - Direct confirmation from insurance company
 
 **Verification:**
+
 - Named insured must match instructor's legal name
 - Coverage dates must be current
 - Coverage amounts must meet minimums
@@ -74,11 +80,13 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### 2.3 Clinical Experience (REQUIRED)
 
 **For Clinical/Procedure Courses:**
+
 - Minimum 3 years active practice performing procedures being taught
 - Current active practice strongly preferred
 - Documented procedure volume (e.g., "performed 1,000+ Botox treatments")
 
 **For Business/Practice Management Courses:**
+
 - Documented business success in medical aesthetics
 - Minimum 2 years running aesthetic practice
 - Demonstrated growth metrics
@@ -86,12 +94,14 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### 2.4 Identity Verification (REQUIRED)
 
 **Method:** Third-party identity verification service
+
 - Stripe Identity (preferred - already integrated with payments)
 - Persona
 - Truework
 - Other FCRA-compliant service
 
 **What's Verified:**
+
 - Government-issued photo ID (driver's license, passport)
 - Name matches application
 - Photo matches ID
@@ -100,6 +110,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### 2.5 Independent Contractor Agreement (REQUIRED)
 
 **Must Include:**
+
 - Independent contractor status (not employee)
 - Instructor representations and warranties about credentials
 - Indemnification clauses (instructor indemnifies platform)
@@ -108,6 +119,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 - Termination provisions
 
 **Signature:**
+
 - Electronic signature acceptable (DocuSign, Clerk Flows, etc.)
 - Must be dated
 - Both parties receive signed copy
@@ -119,6 +131,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### STAGE 1: Application Submission
 
 **Instructor Actions:**
+
 1. Completes application form with:
    - Full legal name
    - Professional license information (type, number, state)
@@ -128,6 +141,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
    - Proposed course topics
 
 **Platform Actions:**
+
 1. Review application for completeness
 2. Screen for obvious red flags:
    - Unlicensed individuals
@@ -147,6 +161,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 ### STAGE 2: Document Collection
 
 **Platform Requests (via email template):**
+
 1. Copy of current professional license (front and back)
 2. Current Certificate of Insurance (COI)
 3. Government-issued photo ID (for identity verification)
@@ -154,16 +169,19 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 5. Professional headshot (for instructor profile)
 
 **Platform Provides:**
+
 - Secure upload link (via platform or file storage service)
 - Clear deadline (7 days to submit documents)
 - Instructions for each document type
 - Contact information for questions
 
 **Instructor Actions:**
+
 - Upload requested documents within 7 days
 - Respond to any clarification requests
 
 **Platform Actions:**
+
 - Send reminder at day 5 if documents not received
 - Mark application "Incomplete" if no response after 14 days
 - Review documents within 24 hours of receipt
@@ -171,6 +189,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Timeline:** 7 days for instructor to submit; 24 hours for platform review
 
 **Current Implementation:** `/instructor/verification` page collects:
+
 - License number, state, expiry date
 - License document upload
 - Government ID upload
@@ -185,6 +204,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **For Nurses (RN, NP, LPN):**
 
 **Option A: Nursys e-Notify (Preferred)**
+
 1. Go to [nursys.com](https://www.nursys.com)
 2. Create account or log in
 3. Search for nurse by license number and state
@@ -198,6 +218,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 7. Save to instructor file
 
 **Option B: State Board Website**
+
 1. Navigate to state nursing board website
 2. Use "License Verification" or "License Lookup" tool
 3. Search by license number and name
@@ -206,6 +227,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 6. Save to instructor file
 
 **For Physicians (MD, DO):**
+
 1. Navigate to state medical board website
 2. Search physician by name and license number
 3. Verify:
@@ -217,11 +239,13 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 5. Save to instructor file
 
 **For PAs, Dentists, Other Professionals:**
+
 1. Navigate to appropriate state licensing board
 2. Follow similar verification process
 3. Document results
 
 **Verification Checklist:**
+
 - [ ] License number matches application
 - [ ] Name matches application (exactly)
 - [ ] License is ACTIVE status
@@ -232,6 +256,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 - [ ] Verification date documented
 
 **If Discrepancies Found:**
+
 - Email instructor immediately with specific issue
 - Request explanation within 48 hours
 - Suspend application pending resolution
@@ -246,6 +271,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Review Certificate of Insurance (COI):**
 
 **Required Elements:**
+
 - [ ] Named insured matches instructor's legal name
 - [ ] Policy type: Professional Liability or Errors & Omissions
 - [ ] Coverage amounts meet minimums:
@@ -258,11 +284,13 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Verification Methods:**
 
 **Method 1: Review COI Directly**
+
 - Most COIs list covered activities
 - Look for "Education," "Teaching," "Instruction" in covered services
 - If unclear, proceed to Method 2
 
 **Method 2: Contact Insurance Agent**
+
 - COI lists agent name and phone number
 - Call agent: "We're verifying coverage for [Instructor Name]. Does their professional liability policy cover teaching and instruction activities?"
 - Document agent response (name, date, answer)
@@ -270,6 +298,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 - If no → Request instructor obtain rider or new policy
 
 **Method 3: Request Declarations Page**
+
 - Ask instructor for full policy declarations page
 - Review covered activities section
 - Verify teaching is included
@@ -277,16 +306,19 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Common Issues:**
 
 **Issue:** Policy excludes teaching
+
 - **Solution:** Instructor must add teaching rider (usually $200-500/year additional)
 - **Timeline:** Give instructor 14 days to update policy
 - **Verification:** Request updated COI showing teaching coverage
 
 **Issue:** Coverage amounts insufficient
+
 - **Solution:** Instructor must increase coverage limits
 - **Timeline:** 14 days to provide updated COI
 - **Alternative:** Some insurers offer "teaching-only" policies at lower premiums
 
 **Issue:** Policy expired
+
 - **Solution:** Request current COI
 - **Action:** Cannot approve until current policy provided
 
@@ -301,10 +333,12 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Process:**
 
 **Step 1: Review Proposed Course Topics**
+
 - List all procedures instructor plans to teach
 - Example: Botox injections, dermal fillers, laser hair removal, chemical peels
 
 **Step 2: Research State Scope of Practice**
+
 - Identify instructor's license type and state
 - Research that state's scope of practice for that license type
 - Use resources:
@@ -313,28 +347,33 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
   - American Med Spa Association state guide
 
 **Step 3: Verify Instructor Can Perform Procedures**
+
 - Cross-reference procedures with scope of practice
 - Determine if instructor can legally perform these procedures in their state
 
 **Examples:**
 
 **Example 1: RN in California Teaching Botox**
+
 - California allows RNs to administer Botox under physician supervision
 - **Verification:** RN can legally perform → RN can teach
 - **Note Required on Course:** "California requires physician supervision; check your state's requirements"
 
 **Example 2: Esthetician Teaching Injectable Procedures**
+
 - NO US state allows estheticians to perform injectable procedures
 - **Rejection Reason:** Estheticians cannot legally perform injectables → Cannot teach
 - **Alternative:** Esthetician could teach surface treatments (facials, microdermabrasion, etc.)
 
 **Example 3: NP in Arizona Teaching Laser Treatments**
+
 - Arizona is full practice authority state
 - NPs can perform laser treatments independently
 - **Verification:** NP can legally perform → NP can teach
 - **Note Required:** "Scope of practice varies by state; verify your state allows this procedure"
 
 **Step 4: Document Scope Determination**
+
 - Create scope of practice memo for instructor file:
   - Instructor license type and state
   - Procedures proposed to teach
@@ -351,22 +390,26 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Automated Process via Stripe Identity:**
 
 **Step 1: Send Identity Verification Link**
+
 1. Generate Stripe Identity verification session
 2. Email link to instructor
 3. Expires in 7 days
 
 **Step 2: Instructor Completes Verification**
+
 1. Takes photo of government-issued ID
 2. Takes selfie for liveness check
 3. Stripe compares photo to ID
 4. Results returned to platform
 
 **Step 3: Review Results**
+
 - **Verified:** ID is authentic, photo matches, not expired → Approved
 - **Failed:** ID issues detected → Contact instructor to retry
 - **Fraud Suspected:** Reject application immediately
 
 **Manual Backup (if Stripe Identity unavailable):**
+
 1. Request clear photo or scan of government ID (front and back)
 2. Video call with instructor to verify appearance matches ID
 3. Document verification (screenshots, notes)
@@ -383,6 +426,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 **Process:**
 
 **Step 1: Prepare Agreement**
+
 - Use standard Independent Contractor Agreement template
 - Fill in instructor-specific information:
   - Legal name
@@ -391,22 +435,26 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
   - Payment terms (platform revenue share)
 
 **Step 2: Send for Signature**
+
 - Use DocuSign, Clerk Flows, or similar e-signature platform
 - Include signing deadline (7 days)
 - Provide copy of agreement for instructor review before signing
 
 **Step 3: Instructor Reviews and Signs**
+
 - Instructor receives agreement
 - Reviews terms (encourage consulting attorney if desired)
 - Electronically signs
 
 **Step 4: Platform Countersigns**
+
 - Admin reviews signed agreement
 - Platform representative countersigns
 - Fully executed agreement saved to instructor file
 - Copy sent to instructor automatically
 
 **Key Agreement Provisions to Verify:**
+
 - Independent contractor status acknowledged
 - Instructor represents credentials are accurate
 - Indemnification clauses present
@@ -425,6 +473,7 @@ Doctrina LMS operates as an **educational marketplace**, not an accredited insti
 Before approving instructor, verify ALL requirements met:
 
 **Documents Received:**
+
 - [ ] Professional license copy (uploaded)
 - [ ] Certificate of Insurance (COI) (uploaded)
 - [ ] Government-issued photo ID (uploaded or verified via Stripe)
@@ -432,6 +481,7 @@ Before approving instructor, verify ALL requirements met:
 - [ ] Professional headshot (uploaded)
 
 **Verifications Completed:**
+
 - [ ] License verified with primary source (Nursys or state board)
 - [ ] License is active and unrestricted
 - [ ] Insurance verified and meets minimums ($1M/$3M)
@@ -441,11 +491,13 @@ Before approving instructor, verify ALL requirements met:
 - [ ] Name consistency across all documents
 
 **Agreements Signed:**
+
 - [ ] Independent Contractor Agreement fully executed
 - [ ] Instructor acknowledged contractor status
 - [ ] Indemnification clauses included
 
 **Profile Ready:**
+
 - [ ] Instructor bio written or reviewed
 - [ ] Professional headshot uploaded
 - [ ] Credentials listed accurately
@@ -454,6 +506,7 @@ Before approving instructor, verify ALL requirements met:
 **Final Decision:**
 
 **If ALL items checked:**
+
 - **APPROVE INSTRUCTOR**
 - Update user record: Set `isInstructor = true`
 - Send approval email with next steps
@@ -462,12 +515,14 @@ Before approving instructor, verify ALL requirements met:
 - Allow course creation via wizard
 
 **If ANY items missing or failed:**
+
 - **PENDING** status - Request missing items
 - Give deadline for completion (typically 7-14 days)
 - Send reminder emails at intervals
 - If no response after 30 days → Mark application "Expired"
 
 **If serious issues discovered:**
+
 - **REJECT APPLICATION**
 - Send rejection email with clear reason
 - Document reason in instructor file
@@ -482,6 +537,7 @@ Before approving instructor, verify ALL requirements met:
 ### InstructorApplications Table
 
 **Fields:**
+
 ```typescript
 {
   _id: Id<'instructorApplications'>,
@@ -544,6 +600,7 @@ Before approving instructor, verify ALL requirements met:
 ```
 
 **Indexes:**
+
 - `by_user` - Get application for specific user
 - `by_status` - Query applications by status
 - `by_submitted` - Sort by submission date
@@ -555,10 +612,12 @@ Before approving instructor, verify ALL requirements met:
 ### 5.1 Annual Re-Verification
 
 **Required Annually:**
+
 - License verification (check status via Nursys or state board)
 - Insurance verification (request updated COI)
 
 **Process:**
+
 1. 60 days before license expiration → Email instructor requesting renewal confirmation
 2. 30 days before insurance expiration → Email instructor requesting updated COI
 3. If expired → Set `isInstructor = false` until updated documents received
@@ -569,12 +628,14 @@ Before approving instructor, verify ALL requirements met:
 ### 5.2 Ongoing Monitoring
 
 **Automated (if using Nursys e-Notify):**
+
 - Receive alerts if license status changes (suspended, revoked, disciplinary action)
 - Immediately set `isInstructor = false` if alert received
 - Contact instructor to investigate
 - Reinstate only after resolution confirmed
 
 **Manual (if not using e-Notify):**
+
 - Quarterly random sampling of instructor licenses
 - Verify 10-20% of instructors each quarter
 - Investigate any status changes
@@ -582,6 +643,7 @@ Before approving instructor, verify ALL requirements met:
 ### 5.3 Student Complaint Triggers
 
 **If student complaints received:**
+
 - Review complaint details
 - Investigate instructor conduct
 - Document findings
@@ -595,6 +657,7 @@ Before approving instructor, verify ALL requirements met:
 ## 6. Implementation Checklist
 
 ### Phase 1: MVP (Minimum Viable Vetting)
+
 - [ ] Create `instructorApplications` table in Convex
 - [ ] Update `/instructor/verification` form to collect all required fields
 - [ ] Add file upload capability for license, insurance, ID, resume, headshot
@@ -605,6 +668,7 @@ Before approving instructor, verify ALL requirements met:
 - [ ] Update user record `isInstructor` field on approval
 
 ### Phase 2: Automation
+
 - [ ] Integrate Stripe Identity for ID verification
 - [ ] Automate license verification via Nursys API (if available)
 - [ ] Add DocuSign/e-signature integration for contractor agreement
@@ -612,6 +676,7 @@ Before approving instructor, verify ALL requirements met:
 - [ ] Implement Nursys e-Notify for ongoing monitoring
 
 ### Phase 3: Enhanced Features
+
 - [ ] Build instructor dashboard showing verification status
 - [ ] Add progress indicators for application stages
 - [ ] Create comprehensive admin reporting
@@ -625,16 +690,19 @@ Before approving instructor, verify ALL requirements met:
 ### 7.1 Verification Tools
 
 **License Verification:**
+
 - [Nursys.com](https://www.nursys.com) (nurses)
 - [National Practitioner Data Bank](https://www.npdb.hrsa.gov) (physicians)
 - State licensing board websites (all professions)
 
 **Identity Verification:**
+
 - Stripe Identity (integrated with payments)
 - [Persona.com](https://www.persona.com)
 - [Truework.com](https://www.truework.com)
 
 **Insurance Verification:**
+
 - Review COI directly
 - Contact insurance agent (phone verification)
 - Insurance company confirmation letters
@@ -653,6 +721,7 @@ Before approving instructor, verify ALL requirements met:
 ### 8.1 Vetting Metrics to Track
 
 **Volume:**
+
 - Applications received (monthly)
 - Applications approved (monthly)
 - Applications rejected (monthly)
@@ -660,6 +729,7 @@ Before approving instructor, verify ALL requirements met:
 - Time to approval (average days)
 
 **Quality:**
+
 - License verification success rate
 - Insurance verification issues (%)
 - Scope of practice rejections (%)
@@ -667,6 +737,7 @@ Before approving instructor, verify ALL requirements met:
 - Student complaints per instructor
 
 **Operational:**
+
 - Average time per stage
 - Bottlenecks identified
 - Document collection completion rate
@@ -675,6 +746,7 @@ Before approving instructor, verify ALL requirements met:
 ### 8.2 Quarterly Review
 
 **Every 3 months:**
+
 1. Review rejection reasons (identify patterns)
 2. Analyze approval timeline (identify delays)
 3. Survey sample of approved instructors (satisfaction with process)
@@ -688,6 +760,7 @@ Before approving instructor, verify ALL requirements met:
 ### 9.1 Record Retention
 
 **Retention Requirements:**
+
 - Approved instructors: Duration of relationship + 7 years
 - Rejected applicants: 3 years (in case of disputes)
 - Verification documents: 7 years
@@ -697,6 +770,7 @@ Before approving instructor, verify ALL requirements met:
 ### 9.2 Privacy and Data Protection
 
 **PII Handling:**
+
 - All instructor documents contain PII (license numbers, SSN on some insurance docs)
 - Store securely (encrypted at rest)
 - Access restricted to vetting team only
@@ -706,6 +780,7 @@ Before approving instructor, verify ALL requirements met:
 ### 9.3 Anti-Discrimination Compliance
 
 **Fair Application Review:**
+
 - Decisions based solely on objective credentials (license, insurance, experience)
 - No discrimination based on race, gender, age, religion, disability, etc.
 - Document all rejection reasons clearly

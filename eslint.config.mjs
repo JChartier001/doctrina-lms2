@@ -4,20 +4,18 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import prettier from 'eslint-config-prettier/flat';
 import noOnlyTests from 'eslint-plugin-no-only-tests';
-import prettierPlugin from 'eslint-plugin-prettier';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 const eslintConfig = defineConfig([
 	// Extend Next.js Core Web Vitals and TypeScript configs
 	...nextVitals,
 	...nextTs,
-	...prettier,
+	prettier,
 	// Main configuration
 	{
 		plugins: {
 			'simple-import-sort': simpleImportSort,
 			'no-only-tests': noOnlyTests,
-			prettier: prettierPlugin,
 			convex: convexPlugin,
 		},
 
@@ -50,26 +48,7 @@ const eslintConfig = defineConfig([
 			// Test rules
 			'no-only-tests/no-only-tests': 'error',
 
-			// Prettier integration
-			'prettier/prettier': [
-				'error',
-				{
-					singleQuote: true,
-					trailingComma: 'all',
-					arrowParens: 'always',
-					printWidth: 120,
-					tabWidth: 2,
-					useTabs: false,
-					semi: true,
-					bracketSpacing: true,
-					bracketSameLine: false,
-					jsxBracketSameLine: false,
-					jsxSingleQuote: false,
-					plugins: ['prettier-plugin-nextjs'],
-					htmlWhitespaceSensitivity: 'ignore',
-					endofLine: 'crlf',
-				},
-			],
+			// Formatting handled by Prettier CLI; ESLint only handles code-quality rules
 		},
 	},
 

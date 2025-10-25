@@ -1,5 +1,6 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+
+import { mutation, query } from './_generated/server';
 
 /**
  * Create a new course module (section)
@@ -25,7 +26,7 @@ export const create = mutation({
 
 		const user = await ctx.db
 			.query('users')
-			.withIndex('by_externalId', (q) => q.eq('externalId', identity.subject))
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
 			.first();
 
 		if (!user?.isInstructor) {
@@ -54,7 +55,7 @@ export const list = query({
 	handler: async (ctx, { courseId }) => {
 		const modules = await ctx.db
 			.query('courseModules')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		// Sort by order field
@@ -91,12 +92,12 @@ export const update = mutation({
 		}
 
 		// Verify ownership
-		const module = await ctx.db.get(moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
@@ -122,12 +123,12 @@ export const remove = mutation({
 		}
 
 		// Verify ownership
-		const module = await ctx.db.get(moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
@@ -139,14 +140,14 @@ export const remove = mutation({
 		// Delete all lessons in module first (cascade delete)
 		const lessons = await ctx.db
 			.query('lessons')
-			.withIndex('by_module', (q) => q.eq('moduleId', moduleId))
+			.withIndex('by_module', q => q.eq('moduleId', moduleId))
 			.collect();
 
 		for (const lesson of lessons) {
 			// Delete lesson progress records
 			const progressRecords = await ctx.db
 				.query('lessonProgress')
-				.withIndex('by_lesson', (q) => q.eq('lessonId', lesson._id))
+				.withIndex('by_lesson', q => q.eq('lessonId', lesson._id))
 				.collect();
 
 			for (const progress of progressRecords) {

@@ -2,18 +2,12 @@ import type { WebhookEvent } from '@clerk/backend';
 import { httpRouter } from 'convex/server';
 import { Webhook } from 'svix';
 
-import { api, internal } from './_generated/api';
+import { internal } from './_generated/api';
 import { httpAction, MutationCtx } from './_generated/server';
-import dayjs from '../lib/dayjs';
 
 const http = httpRouter();
 
-const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
-
-export async function handleWebhook(
-	ctx: MutationCtx,
-	request: Request
-): Promise<Response> {
+export async function handleWebhook(ctx: MutationCtx, request: Request): Promise<Response> {
 	const event = await validateRequest(request);
 	if (!event) {
 		return new Response('Error occurred', { status: 400 });
@@ -49,16 +43,9 @@ http.route({
 	}),
 });
 
-export async function validateRequest(
-	req: Request
-): Promise<WebhookEvent | null> {
+export async function validateRequest(req: Request): Promise<WebhookEvent | null> {
 	const payloadString = await req.text();
-	console.log(
-		req.headers,
-		payloadString,
-		'headers and payload string',
-		process.env.CLERK_WEBHOOK_SECRET
-	);
+	console.log(req.headers, payloadString, 'headers and payload string', process.env.CLERK_WEBHOOK_SECRET);
 	const svixHeaders = {
 		'svix-id': req.headers.get('svix-id')!,
 		'svix-timestamp': req.headers.get('svix-timestamp')!,

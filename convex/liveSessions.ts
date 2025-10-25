@@ -1,6 +1,7 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import { literals } from 'convex-helpers/validators';
+
+import { mutation, query } from './_generated/server';
 
 const status = literals('scheduled', 'live', 'completed', 'cancelled');
 
@@ -144,9 +145,7 @@ export const end = mutation({
 		if (!session) throw new Error('Session not found');
 		await ctx.db.patch(id, {
 			status: 'completed',
-			recordingUrl: session.isRecorded
-				? `/recordings/session-${id}.mp4`
-				: undefined,
+			recordingUrl: session.isRecorded ? `/recordings/session-${id}.mp4` : undefined,
 		});
 		return id;
 	},

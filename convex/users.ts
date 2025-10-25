@@ -1,7 +1,8 @@
-import { internalMutation, mutation, query } from './_generated/server';
-import { v, Validator } from 'convex/values';
 import { UserJSON } from '@clerk/backend';
+import { v, Validator } from 'convex/values';
+
 import { now } from '../lib/dayjs';
+import { internalMutation, mutation, query } from './_generated/server';
 import { userSchema } from './schema';
 
 export const getByEmail = query({
@@ -31,22 +32,21 @@ export const getByExternalId = query({
 
 export const create = mutation({
 	args: userSchema,
-	handler: async (
-		ctx,
-		{ firstName, lastName, email, image, role, externalId }
-	) => {
+	handler: async (ctx, { firstName, lastName, email, image, externalId, isInstructor, isAdmin }) => {
 		const existing = await ctx.db
 			.query('users')
 			.withIndex('by_email', q => q.eq('email', email))
 			.first();
 		if (existing) return existing._id;
+		const now = new Date().toISOString();
 		return await ctx.db.insert('users', {
 			firstName,
 			lastName,
 			externalId,
 			email,
 			image,
-			role: role ?? 'student',
+			isInstructor: isInstructor ?? false,
+			isAdmin: isAdmin ?? false,
 			createdAt: now,
 		});
 	},
@@ -93,7 +93,8 @@ export const ensureCurrentUser = mutation({
 			lastName: 'User',
 			email: identity.email ?? `${identity.subject}@example.com`,
 			image: identity.pictureUrl ?? undefined,
-			role: 'student',
+			isInstructor: false,
+			isAdmin: false,
 			createdAt: now,
 			externalId: identity.subject,
 		});
@@ -110,7 +111,8 @@ export const upsertFromClerk = internalMutation({
 			email: data.email_addresses?.[0]?.email_address || '',
 			phone: data.phone_numbers?.[0]?.phone_number || '',
 			externalId: data.externalId,
-			role: 'student' as const,
+			isInstructor: false,
+			isAdmin: false,
 			lastLogin: now,
 			createdAt: now,
 			updatedAt: now,
@@ -140,9 +142,7 @@ export const deleteFromClerk = internalMutation({
 		if (user !== null) {
 			await ctx.db.delete(user._id);
 		} else {
-			console.warn(
-				`Can't delete user, there is none for Clerk user ID: ${externalId}`
-			);
+			console.warn(`Can't delete user, there is none for Clerk user ID: ${externalId}`);
 		}
 	},
 });

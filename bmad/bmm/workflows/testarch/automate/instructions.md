@@ -259,21 +259,21 @@ Expands test automation coverage by generating comprehensive test suites at appr
    import { createUser, deleteUser } from '../factories/user.factory';
 
    export const test = base.extend({
-     authenticatedUser: async ({ page }, use) => {
-       // Setup: Create and authenticate user
-       const user = await createUser();
-       await page.goto('/login');
-       await page.fill('[data-testid="email"]', user.email);
-       await page.fill('[data-testid="password"]', user.password);
-       await page.click('[data-testid="login-button"]');
-       await page.waitForURL('/dashboard');
+   	authenticatedUser: async ({ page }, use) => {
+   		// Setup: Create and authenticate user
+   		const user = await createUser();
+   		await page.goto('/login');
+   		await page.fill('[data-testid="email"]', user.email);
+   		await page.fill('[data-testid="password"]', user.password);
+   		await page.click('[data-testid="login-button"]');
+   		await page.waitForURL('/dashboard');
 
-       // Provide to test
-       await use(user);
+   		// Provide to test
+   		await use(user);
 
-       // Cleanup: Delete user automatically
-       await deleteUser(user.id);
-     },
+   		// Cleanup: Delete user automatically
+   		await deleteUser(user.id);
+   	},
    });
    ```
 
@@ -298,20 +298,20 @@ Expands test automation coverage by generating comprehensive test suites at appr
    import { faker } from '@faker-js/faker';
 
    export const createUser = (overrides = {}) => ({
-     id: faker.number.int(),
-     email: faker.internet.email(),
-     password: faker.internet.password(),
-     name: faker.person.fullName(),
-     role: 'user',
-     createdAt: faker.date.recent().toISOString(),
-     ...overrides,
+   	id: faker.number.int(),
+   	email: faker.internet.email(),
+   	password: faker.internet.password(),
+   	name: faker.person.fullName(),
+   	role: 'user',
+   	createdAt: faker.date.recent().toISOString(),
+   	...overrides,
    });
 
    export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());
 
    // API helper for cleanup
    export const deleteUser = async (userId: number) => {
-     await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+   	await fetch(`/api/users/${userId}`, { method: 'DELETE' });
    };
    ```
 
@@ -330,12 +330,12 @@ Expands test automation coverage by generating comprehensive test suites at appr
    ```typescript
    // tests/support/helpers/wait-for.ts
    export const waitFor = async (condition: () => Promise<boolean>, timeout = 5000, interval = 100): Promise<void> => {
-     const startTime = Date.now();
-     while (Date.now() - startTime < timeout) {
-       if (await condition()) return;
-       await new Promise((resolve) => setTimeout(resolve, interval));
-     }
-     throw new Error(`Condition not met within ${timeout}ms`);
+   	const startTime = Date.now();
+   	while (Date.now() - startTime < timeout) {
+   		if (await condition()) return;
+   		await new Promise(resolve => setTimeout(resolve, interval));
+   	}
+   	throw new Error(`Condition not met within ${timeout}ms`);
    };
    ```
 
@@ -371,32 +371,32 @@ Expands test automation coverage by generating comprehensive test suites at appr
    import { test, expect } from '@playwright/test';
 
    test.describe('User Authentication', () => {
-     test('[P0] should login with valid credentials and load dashboard', async ({ page }) => {
-       // GIVEN: User is on login page
-       await page.goto('/login');
+   	test('[P0] should login with valid credentials and load dashboard', async ({ page }) => {
+   		// GIVEN: User is on login page
+   		await page.goto('/login');
 
-       // WHEN: User submits valid credentials
-       await page.fill('[data-testid="email-input"]', 'user@example.com');
-       await page.fill('[data-testid="password-input"]', 'Password123!');
-       await page.click('[data-testid="login-button"]');
+   		// WHEN: User submits valid credentials
+   		await page.fill('[data-testid="email-input"]', 'user@example.com');
+   		await page.fill('[data-testid="password-input"]', 'Password123!');
+   		await page.click('[data-testid="login-button"]');
 
-       // THEN: User is redirected to dashboard
-       await expect(page).toHaveURL('/dashboard');
-       await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
-     });
+   		// THEN: User is redirected to dashboard
+   		await expect(page).toHaveURL('/dashboard');
+   		await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
+   	});
 
-     test('[P1] should display error for invalid credentials', async ({ page }) => {
-       // GIVEN: User is on login page
-       await page.goto('/login');
+   	test('[P1] should display error for invalid credentials', async ({ page }) => {
+   		// GIVEN: User is on login page
+   		await page.goto('/login');
 
-       // WHEN: User submits invalid credentials
-       await page.fill('[data-testid="email-input"]', 'invalid@example.com');
-       await page.fill('[data-testid="password-input"]', 'wrongpassword');
-       await page.click('[data-testid="login-button"]');
+   		// WHEN: User submits invalid credentials
+   		await page.fill('[data-testid="email-input"]', 'invalid@example.com');
+   		await page.fill('[data-testid="password-input"]', 'wrongpassword');
+   		await page.click('[data-testid="login-button"]');
 
-       // THEN: Error message is displayed
-       await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
-     });
+   		// THEN: Error message is displayed
+   		await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
+   	});
    });
    ```
 
@@ -414,44 +414,44 @@ Expands test automation coverage by generating comprehensive test suites at appr
    import { test, expect } from '@playwright/test';
 
    test.describe('User Authentication API', () => {
-     test('[P1] POST /api/auth/login - should return token for valid credentials', async ({ request }) => {
-       // GIVEN: Valid user credentials
-       const credentials = {
-         email: 'user@example.com',
-         password: 'Password123!',
-       };
+   	test('[P1] POST /api/auth/login - should return token for valid credentials', async ({ request }) => {
+   		// GIVEN: Valid user credentials
+   		const credentials = {
+   			email: 'user@example.com',
+   			password: 'Password123!',
+   		};
 
-       // WHEN: Logging in via API
-       const response = await request.post('/api/auth/login', {
-         data: credentials,
-       });
+   		// WHEN: Logging in via API
+   		const response = await request.post('/api/auth/login', {
+   			data: credentials,
+   		});
 
-       // THEN: Returns 200 and JWT token
-       expect(response.status()).toBe(200);
-       const body = await response.json();
-       expect(body).toHaveProperty('token');
-       expect(body.token).toMatch(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/); // JWT format
-     });
+   		// THEN: Returns 200 and JWT token
+   		expect(response.status()).toBe(200);
+   		const body = await response.json();
+   		expect(body).toHaveProperty('token');
+   		expect(body.token).toMatch(/^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/); // JWT format
+   	});
 
-     test('[P1] POST /api/auth/login - should return 401 for invalid credentials', async ({ request }) => {
-       // GIVEN: Invalid credentials
-       const credentials = {
-         email: 'invalid@example.com',
-         password: 'wrongpassword',
-       };
+   	test('[P1] POST /api/auth/login - should return 401 for invalid credentials', async ({ request }) => {
+   		// GIVEN: Invalid credentials
+   		const credentials = {
+   			email: 'invalid@example.com',
+   			password: 'wrongpassword',
+   		};
 
-       // WHEN: Attempting login
-       const response = await request.post('/api/auth/login', {
-         data: credentials,
-       });
+   		// WHEN: Attempting login
+   		const response = await request.post('/api/auth/login', {
+   			data: credentials,
+   		});
 
-       // THEN: Returns 401 with error
-       expect(response.status()).toBe(401);
-       const body = await response.json();
-       expect(body).toMatchObject({
-         error: 'Invalid credentials',
-       });
-     });
+   		// THEN: Returns 401 with error
+   		expect(response.status()).toBe(401);
+   		const body = await response.json();
+   		expect(body).toMatchObject({
+   			error: 'Invalid credentials',
+   		});
+   	});
    });
    ```
 
@@ -496,26 +496,26 @@ Expands test automation coverage by generating comprehensive test suites at appr
    import { validateEmail } from './validation';
 
    describe('Email Validation', () => {
-     test('[P2] should return true for valid email', () => {
-       // GIVEN: Valid email address
-       const email = 'user@example.com';
+   	test('[P2] should return true for valid email', () => {
+   		// GIVEN: Valid email address
+   		const email = 'user@example.com';
 
-       // WHEN: Validating email
-       const result = validateEmail(email);
+   		// WHEN: Validating email
+   		const result = validateEmail(email);
 
-       // THEN: Returns true
-       expect(result).toBe(true);
-     });
+   		// THEN: Returns true
+   		expect(result).toBe(true);
+   	});
 
-     test('[P2] should return false for malformed email', () => {
-       // GIVEN: Malformed email addresses
-       const invalidEmails = ['notanemail', '@example.com', 'user@', 'user @example.com'];
+   	test('[P2] should return false for malformed email', () => {
+   		// GIVEN: Malformed email addresses
+   		const invalidEmails = ['notanemail', '@example.com', 'user@', 'user @example.com'];
 
-       // WHEN/THEN: Each should fail validation
-       invalidEmails.forEach((email) => {
-         expect(validateEmail(email)).toBe(false);
-       });
-     });
+   		// WHEN/THEN: Each should fail validation
+   		invalidEmails.forEach(email => {
+   			expect(validateEmail(email)).toBe(false);
+   		});
+   	});
    });
    ```
 
@@ -527,18 +527,18 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```typescript
    test('should load user dashboard after login', async ({ page }) => {
-     // CRITICAL: Intercept routes BEFORE navigation
-     await page.route('**/api/user', (route) =>
-       route.fulfill({
-         status: 200,
-         body: JSON.stringify({ id: 1, name: 'Test User' }),
-       }),
-     );
+   	// CRITICAL: Intercept routes BEFORE navigation
+   	await page.route('**/api/user', route =>
+   		route.fulfill({
+   			status: 200,
+   			body: JSON.stringify({ id: 1, name: 'Test User' }),
+   		}),
+   	);
 
-     // NOW navigate
-     await page.goto('/dashboard');
+   	// NOW navigate
+   	await page.goto('/dashboard');
 
-     await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
+   	await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
    });
    ```
 
@@ -700,15 +700,15 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```typescript
    test.fixme('[P1] should handle complex interaction', async ({ page }) => {
-     // FIXME: Test healing failed after 3 attempts
-     // Failure: "Locator 'button[data-action="submit"]' resolved to 0 elements"
-     // Attempted fixes:
-     //   1. Replaced with page.getByTestId('submit-button') - still failing
-     //   2. Replaced with page.getByRole('button', { name: 'Submit' }) - still failing
-     //   3. Added waitForLoadState('networkidle') - still failing
-     // Manual investigation needed: Selector may require application code changes
-     // TODO: Review with team, may need data-testid added to button component
-     // Original test code...
+   	// FIXME: Test healing failed after 3 attempts
+   	// Failure: "Locator 'button[data-action="submit"]' resolved to 0 elements"
+   	// Attempted fixes:
+   	//   1. Replaced with page.getByTestId('submit-button') - still failing
+   	//   2. Replaced with page.getByRole('button', { name: 'Submit' }) - still failing
+   	//   3. Added waitForLoadState('networkidle') - still failing
+   	// Manual investigation needed: Selector may require application code changes
+   	// TODO: Review with team, may need data-testid added to button component
+   	// Original test code...
    });
    ```
 
@@ -823,14 +823,14 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
    ```json
    {
-     "scripts": {
-       "test:e2e": "playwright test",
-       "test:e2e:p0": "playwright test --grep '@P0'",
-       "test:e2e:p1": "playwright test --grep '@P1|@P0'",
-       "test:api": "playwright test tests/api",
-       "test:component": "playwright test tests/component",
-       "test:unit": "vitest"
-     }
+   	"scripts": {
+   		"test:e2e": "playwright test",
+   		"test:e2e:p0": "playwright test --grep '@P0'",
+   		"test:e2e:p1": "playwright test --grep '@P1|@P0'",
+   		"test:api": "playwright test tests/api",
+   		"test:component": "playwright test tests/component",
+   		"test:unit": "vitest"
+   	}
    }
    ```
 
@@ -1113,7 +1113,7 @@ await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
 
 // ❌ WRONG: Conditional flow
 if (await element.isVisible()) {
-  await element.click();
+	await element.click();
 }
 
 // ✅ CORRECT: Deterministic assertion
@@ -1122,9 +1122,9 @@ await element.click();
 
 // ❌ WRONG: Try-catch for test logic
 try {
-  await element.click();
+	await element.click();
 } catch (e) {
-  // Test shouldn't catch errors
+	// Test shouldn't catch errors
 }
 
 // ✅ CORRECT: Let test fail if element not found
@@ -1138,18 +1138,18 @@ await element.click();
 ```typescript
 // ✅ CORRECT: Fixture with auto-cleanup
 export const test = base.extend({
-  testUser: async ({ page }, use) => {
-    const user = await createUser();
-    await use(user);
-    await deleteUser(user.id); // Auto-cleanup
-  },
+	testUser: async ({ page }, use) => {
+		const user = await createUser();
+		await use(user);
+		await deleteUser(user.id); // Auto-cleanup
+	},
 });
 
 // ❌ WRONG: Manual cleanup (can be forgotten)
 test('should login', async ({ page }) => {
-  const user = await createUser();
-  // ... test logic ...
-  // Forgot to delete user!
+	const user = await createUser();
+	// ... test logic ...
+	// Forgot to delete user!
 });
 ```
 

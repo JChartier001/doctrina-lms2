@@ -1,10 +1,11 @@
 'use client';
 
+import { useClerk, useUser } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
 import type React from 'react';
 import { createContext, useContext, useMemo } from 'react';
-import { useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
-import { useUser, useClerk } from '@clerk/nextjs';
 
 type Role = 'admin' | 'instructor' | 'student';
 
@@ -21,12 +22,7 @@ type AuthContextType = {
 	role: Role | null;
 	isLoading: boolean;
 	login: (email: string, password: string) => Promise<boolean>;
-	signup: (
-		name: string,
-		email: string,
-		password: string,
-		role: Role | string
-	) => Promise<boolean>;
+	signup: (name: string, email: string, password: string, role: Role | string) => Promise<boolean>;
 	logout: () => void;
 };
 
@@ -38,9 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	const convexUser = useQuery(
 		api.users.getByExternalId,
-		isLoaded && isSignedIn && clerkUser?.id
-			? { externalId: clerkUser.id }
-			: 'skip'
+		isLoaded && isSignedIn && clerkUser?.id ? { externalId: clerkUser.id } : 'skip',
 	);
 
 	const user: User | null = useMemo(() => {

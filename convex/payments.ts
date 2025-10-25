@@ -1,6 +1,7 @@
-import { action } from './_generated/server';
 import { v } from 'convex/values';
+
 import { api } from './_generated/api';
+import { action } from './_generated/server';
 
 /**
  * Create a Stripe Checkout session for course purchase
@@ -9,7 +10,7 @@ import { api } from './_generated/api';
  */
 export const createCheckoutSession = action({
 	args: { courseId: v.id('courses') },
-	handler: async (ctx, { courseId }) => {
+	handler: async (ctx, { courseId }): Promise<string> => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			throw new Error('Must be logged in to purchase a course');
@@ -34,7 +35,7 @@ export const createCheckoutSession = action({
 		// Dynamically import Stripe (only needed in action context)
 		const Stripe = (await import('stripe')).default;
 		const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-			apiVersion: '2024-12-18.acacia',
+			apiVersion: '2025-09-30.clover',
 		});
 
 		// Create checkout session
@@ -63,6 +64,10 @@ export const createCheckoutSession = action({
 			customer_email: identity.email,
 		});
 
-		return { url: session.url };
+		if (!session.url) {
+			throw new Error('Failed to create checkout session');
+		}
+
+		return session.url;
 	},
 });

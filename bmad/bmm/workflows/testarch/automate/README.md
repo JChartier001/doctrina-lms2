@@ -308,15 +308,15 @@ await expect(page.getByText(/User \d+/)).toBeVisible();
 
 ```typescript
 test.fixme('[P1] should handle complex interaction', async ({ page }) => {
-  // FIXME: Test healing failed after 3 attempts
-  // Failure: "Locator 'button[data-action="submit"]' resolved to 0 elements"
-  // Attempted fixes:
-  //   1. Replaced with page.getByTestId('submit-button') - still failing
-  //   2. Replaced with page.getByRole('button', { name: 'Submit' }) - still failing
-  //   3. Added waitForLoadState('networkidle') - still failing
-  // Manual investigation needed: Selector may require application code changes
-  // TODO: Review with team, may need data-testid added to button component
-  // Original test code...
+	// FIXME: Test healing failed after 3 attempts
+	// Failure: "Locator 'button[data-action="submit"]' resolved to 0 elements"
+	// Attempted fixes:
+	//   1. Replaced with page.getByTestId('submit-button') - still failing
+	//   2. Replaced with page.getByRole('button', { name: 'Submit' }) - still failing
+	//   3. Added waitForLoadState('networkidle') - still failing
+	// Manual investigation needed: Selector may require application code changes
+	// TODO: Review with team, may need data-testid added to button component
+	// Original test code...
 });
 ```
 
@@ -504,17 +504,17 @@ All tests follow BDD format for clarity:
 
 ```typescript
 test('[P0] should login with valid credentials and load dashboard', async ({ page }) => {
-  // GIVEN: User is on login page
-  await page.goto('/login');
+	// GIVEN: User is on login page
+	await page.goto('/login');
 
-  // WHEN: User submits valid credentials
-  await page.fill('[data-testid="email-input"]', 'user@example.com');
-  await page.fill('[data-testid="password-input"]', 'Password123!');
-  await page.click('[data-testid="login-button"]');
+	// WHEN: User submits valid credentials
+	await page.fill('[data-testid="email-input"]', 'user@example.com');
+	await page.fill('[data-testid="password-input"]', 'Password123!');
+	await page.click('[data-testid="login-button"]');
 
-  // THEN: User is redirected to dashboard
-  await expect(page).toHaveURL('/dashboard');
-  await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
+	// THEN: User is redirected to dashboard
+	await expect(page).toHaveURL('/dashboard');
+	await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
 });
 ```
 
@@ -525,13 +525,13 @@ Each test verifies exactly one behavior:
 ```typescript
 // ✅ CORRECT: One assertion
 test('[P0] should display user name', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
+	await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
 });
 
 // ❌ WRONG: Multiple assertions (not atomic)
 test('[P0] should display user info', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
-  await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com');
+	await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
+	await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com');
 });
 ```
 
@@ -543,18 +543,18 @@ test('[P0] should display user info', async ({ page }) => {
 
 ```typescript
 test('should load user dashboard after login', async ({ page }) => {
-  // CRITICAL: Intercept routes BEFORE navigation
-  await page.route('**/api/user', (route) =>
-    route.fulfill({
-      status: 200,
-      body: JSON.stringify({ id: 1, name: 'Test User' }),
-    }),
-  );
+	// CRITICAL: Intercept routes BEFORE navigation
+	await page.route('**/api/user', route =>
+		route.fulfill({
+			status: 200,
+			body: JSON.stringify({ id: 1, name: 'Test User' }),
+		}),
+	);
 
-  // NOW navigate
-  await page.goto('/dashboard');
+	// NOW navigate
+	await page.goto('/dashboard');
 
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
+	await expect(page.locator('[data-testid="user-name"]')).toHaveText('Test User');
 });
 ```
 
@@ -570,21 +570,21 @@ import { test as base } from '@playwright/test';
 import { createUser, deleteUser } from '../factories/user.factory';
 
 export const test = base.extend({
-  authenticatedUser: async ({ page }, use) => {
-    // Setup: Create and authenticate user
-    const user = await createUser();
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', user.email);
-    await page.fill('[data-testid="password"]', user.password);
-    await page.click('[data-testid="login-button"]');
-    await page.waitForURL('/dashboard');
+	authenticatedUser: async ({ page }, use) => {
+		// Setup: Create and authenticate user
+		const user = await createUser();
+		await page.goto('/login');
+		await page.fill('[data-testid="email"]', user.email);
+		await page.fill('[data-testid="password"]', user.password);
+		await page.click('[data-testid="login-button"]');
+		await page.waitForURL('/dashboard');
 
-    // Provide to test
-    await use(user);
+		// Provide to test
+		await use(user);
 
-    // Cleanup: Delete user automatically
-    await deleteUser(user.id);
-  },
+		// Cleanup: Delete user automatically
+		await deleteUser(user.id);
+	},
 });
 ```
 
@@ -604,20 +604,20 @@ Use faker for all test data generation:
 import { faker } from '@faker-js/faker';
 
 export const createUser = (overrides = {}) => ({
-  id: faker.number.int(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  name: faker.person.fullName(),
-  role: 'user',
-  createdAt: faker.date.recent().toISOString(),
-  ...overrides,
+	id: faker.number.int(),
+	email: faker.internet.email(),
+	password: faker.internet.password(),
+	name: faker.person.fullName(),
+	role: 'user',
+	createdAt: faker.date.recent().toISOString(),
+	...overrides,
 });
 
 export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());
 
 // API helper for cleanup
 export const deleteUser = async (userId: number) => {
-  await fetch(`/api/users/${userId}`, { method: 'DELETE' });
+	await fetch(`/api/users/${userId}`, { method: 'DELETE' });
 };
 ```
 
@@ -663,7 +663,7 @@ await expect(page.locator('[data-testid="user-name"]')).toBeVisible();
 
 // ❌ WRONG: Conditional flow
 if (await element.isVisible()) {
-  await element.click();
+	await element.click();
 }
 
 // ✅ CORRECT: Deterministic assertion
@@ -672,9 +672,9 @@ await element.click();
 
 // ❌ WRONG: Try-catch for test logic
 try {
-  await element.click();
+	await element.click();
 } catch (e) {
-  // Test shouldn't catch errors
+	// Test shouldn't catch errors
 }
 
 // ✅ CORRECT: Let test fail if element not found

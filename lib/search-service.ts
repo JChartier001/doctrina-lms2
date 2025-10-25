@@ -2,8 +2,9 @@
 // This service handles search functionality across the platform using Convex
 
 import { useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
-import { debounce } from '@/lib/utils';
+// import { debounce } from '@/lib/utils';
 
 // Types for search results
 export type SearchResultType = 'course' | 'resource' | 'user';
@@ -15,7 +16,7 @@ export interface SearchResult {
 	type: SearchResultType;
 	url: string;
 	image?: string;
-	metadata?: Record<string, any>;
+	metadata?: Record<string, unknown>;
 }
 
 export interface SearchFilters {
@@ -36,11 +37,7 @@ export interface SearchFilters {
 }
 
 // Convex-based search hooks
-export function useUnifiedSearch(
-	query: string,
-	limit?: number,
-	entityTypes?: SearchResultType[]
-) {
+export function useUnifiedSearch(query: string, limit?: number, entityTypes?: SearchResultType[]) {
 	const convexSearch = useQuery(api.search.unifiedSearch, {
 		query,
 		limit,
@@ -54,12 +51,7 @@ export function useUnifiedSearch(
 	};
 }
 
-export function useAdvancedSearch(
-	query: string,
-	filters: SearchFilters,
-	limit?: number,
-	offset?: number
-) {
+export function useAdvancedSearch(query: string, filters: SearchFilters, limit?: number, offset?: number) {
 	const convexAdvancedSearch = useQuery(api.search.advancedSearch, {
 		query,
 		filters,
@@ -88,20 +80,13 @@ export function useSearchSuggestions(query: string, limit?: number) {
 }
 
 // Legacy functions for backward compatibility (deprecated)
-export async function searchAll(
-	query: string,
-	filters?: { types?: SearchResultType[] }
-): Promise<SearchResult[]> {
+export async function searchAll(_query: string, _filters?: { types?: SearchResultType[] }): Promise<SearchResult[]> {
 	console.warn('searchAll is deprecated. Use useUnifiedSearch hook instead.');
 	return [];
 }
 
-export async function getSearchSuggestions(
-	partialQuery: string
-): Promise<string[]> {
-	console.warn(
-		'getSearchSuggestions is deprecated. Use useSearchSuggestions hook instead.'
-	);
+export async function getSearchSuggestions(_partialQuery: string): Promise<string[]> {
+	console.warn('getSearchSuggestions is deprecated. Use useSearchSuggestions hook instead.');
 	return [];
 }
 
@@ -111,29 +96,23 @@ const popularSearches: Record<string, number> = {};
 export function trackSearch(query: string): void {
 	const normalizedQuery = query.toLowerCase().trim();
 	if (normalizedQuery) {
-		popularSearches[normalizedQuery] =
-			(popularSearches[normalizedQuery] || 0) + 1;
+		popularSearches[normalizedQuery] = (popularSearches[normalizedQuery] || 0) + 1;
 	}
 }
 
-export function getPopularSearches(
-	limit = 5
-): { query: string; count: number }[] {
+export function getPopularSearches(limit = 5): { query: string; count: number }[] {
 	return Object.entries(popularSearches)
 		.map(([query, count]) => ({ query, count }))
 		.sort((a, b) => b.count - a.count)
 		.slice(0, limit);
 }
 
-// Create a debounced version of the search suggestions hook
-export const debouncedSearchSuggestions = debounce(
-	(query: string, callback: (suggestions: string[]) => void) => {
-		// This would normally use the hook, but since it's a hook we can't call it directly
-		// The component should handle debouncing at the hook level
-		console.warn(
-			'debouncedSearchSuggestions is deprecated. Use useSearchSuggestions hook with debouncing in the component.'
-		);
-		callback([]);
-	},
-	300
-);
+// // Create a debounced version of the search suggestions hook
+// export const debouncedSearchSuggestions = debounce((_query: string, callback: (suggestions: string[]) => void) => {
+// 	// This would normally use the hook, but since it's a hook we can't call it directly
+// 	// The component should handle debouncing at the hook level
+// 	console.warn(
+// 		'debouncedSearchSuggestions is deprecated. Use useSearchSuggestions hook with debouncing in the component.',
+// 	);
+// 	callback([]);
+// }, 300);

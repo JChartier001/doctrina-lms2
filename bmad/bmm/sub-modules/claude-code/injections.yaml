@@ -13,9 +13,9 @@ injections:
   # ===== PRD WORKFLOW INJECTIONS =====
 
   # PRD Subagent Instructions
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "prd-subagent-instructions"
-    requires: "all-prd-subagents"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'prd-subagent-instructions'
+    requires: 'all-prd-subagents'
     content: |
 
       **Subagent Usage**: Throughout this workflow, leverage specialized subagents at critical decision points:
@@ -25,41 +25,41 @@ injections:
       - <CRITICAL>Use `bmm-technical-decisions-curator` to capture all technical mentions</CRITICAL>
 
   # PRD Requirements Analysis
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "prd-requirements-analysis"
-    requires: "requirements-analyst"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'prd-requirements-analysis'
+    requires: 'requirements-analyst'
     content: |
 
       **Subagent Hint**: Use `bmm-requirements-analyst` to validate requirements are testable and complete.
 
   # PRD User Journey Mapping
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "prd-user-journey"
-    requires: "user-journey-mapper"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'prd-user-journey'
+    requires: 'user-journey-mapper'
     content: |
 
       **Subagent Hint**: Use `bmm-user-journey-mapper` to map all user types and their value paths.
 
   # PRD Epic Optimization
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "prd-epic-optimization"
-    requires: "epic-optimizer"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'prd-epic-optimization'
+    requires: 'epic-optimizer'
     content: |
 
       **Subagent Hint**: Use `bmm-epic-optimizer` to validate epic boundaries deliver coherent value.
 
   # PRD Document Review
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "prd-checklist-review"
-    requires: "document-reviewer"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'prd-checklist-review'
+    requires: 'document-reviewer'
     content: |
 
       **Subagent Hint**: Use `bmm-document-reviewer` to validate PRD completeness before finalizing.
 
   # Technical Decisions Curator
-  - file: "bmad/bmm/workflows/prd/instructions.md"
-    point: "technical-decisions-curator"
-    requires: "technical-decisions-curator"
+  - file: 'bmad/bmm/workflows/prd/instructions.md'
+    point: 'technical-decisions-curator'
+    requires: 'technical-decisions-curator'
     content: |
 
       **Automatic Capture**: The `bmm-technical-decisions-curator` should be invoked whenever:
@@ -71,9 +71,9 @@ injections:
   # ===== MARKET RESEARCH TEMPLATE INJECTIONS =====
 
   # Market TAM/SAM/SOM Calculations
-  - file: "bmad/bmm/templates/market.md"
-    point: "market-tam-calculations"
-    requires: "data-analyst"
+  - file: 'bmad/bmm/templates/market.md'
+    point: 'market-tam-calculations'
+    requires: 'data-analyst'
     content: |
 
       <llm critical="true">
@@ -82,9 +82,9 @@ injections:
       </llm>
 
   # Market Trends Analysis
-  - file: "bmad/bmm/templates/market.md"
-    point: "market-trends-analysis"
-    requires: "trend-spotter"
+  - file: 'bmad/bmm/templates/market.md'
+    point: 'market-trends-analysis'
+    requires: 'trend-spotter'
     content: |
 
       <llm critical="true">
@@ -93,9 +93,9 @@ injections:
       </llm>
 
   # Market Customer Personas
-  - file: "bmad/bmm/templates/market.md"
-    point: "market-customer-segments"
-    requires: "user-researcher"
+  - file: 'bmad/bmm/templates/market.md'
+    point: 'market-customer-segments'
+    requires: 'user-researcher'
     content: |
 
       <llm critical="true">
@@ -104,9 +104,9 @@ injections:
       </llm>
 
   # Market Research Review
-  - file: "bmad/bmm/templates/market.md"
-    point: "market-executive-summary"
-    requires: "document-reviewer"
+  - file: 'bmad/bmm/templates/market.md'
+    point: 'market-executive-summary'
+    requires: 'document-reviewer'
     content: |
 
       <llm critical="true">
@@ -116,9 +116,9 @@ injections:
   # ===== COMPETITOR ANALYSIS TEMPLATE INJECTIONS =====
 
   # Competitor Intelligence Gathering
-  - file: "bmad/bmm/templates/competitor.md"
-    point: "competitor-intelligence"
-    requires: "market-researcher"
+  - file: 'bmad/bmm/templates/competitor.md'
+    point: 'competitor-intelligence'
+    requires: 'market-researcher'
     content: |
 
       <llm critical="true">
@@ -127,9 +127,9 @@ injections:
       </llm>
 
   # Competitor Technical Analysis
-  - file: "bmad/bmm/templates/competitor.md"
-    point: "competitor-tech-stack"
-    requires: "technical-evaluator"
+  - file: 'bmad/bmm/templates/competitor.md'
+    point: 'competitor-tech-stack'
+    requires: 'technical-evaluator'
     content: |
 
       <llm critical="true">
@@ -138,9 +138,9 @@ injections:
       </llm>
 
   # Competitor Metrics Analysis
-  - file: "bmad/bmm/templates/competitor.md"
-    point: "competitor-metrics"
-    requires: "data-analyst"
+  - file: 'bmad/bmm/templates/competitor.md'
+    point: 'competitor-metrics'
+    requires: 'data-analyst'
     content: |
 
       <llm critical="true">
@@ -148,9 +148,9 @@ injections:
       </llm>
 
   # Competitor Analysis Review
-  - file: "bmad/bmm/templates/competitor.md"
-    point: "competitor-executive-summary"
-    requires: "document-reviewer"
+  - file: 'bmad/bmm/templates/competitor.md'
+    point: 'competitor-executive-summary'
+    requires: 'document-reviewer'
     content: |
 
       <llm critical="true">
@@ -160,9 +160,9 @@ injections:
   # ===== PROJECT BRIEF TEMPLATE INJECTIONS =====
 
   # Brief Problem Validation
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-problem-validation"
-    requires: "market-researcher"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-problem-validation'
+    requires: 'market-researcher'
     content: |
 
       <llm critical="true">
@@ -170,9 +170,9 @@ injections:
       </llm>
 
   # Brief Target User Analysis
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-user-analysis"
-    requires: "user-researcher"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-user-analysis'
+    requires: 'user-researcher'
     content: |
 
       <llm critical="true">
@@ -180,9 +180,9 @@ injections:
       </llm>
 
   # Brief Success Metrics
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-success-metrics"
-    requires: "data-analyst"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-success-metrics'
+    requires: 'data-analyst'
     content: |
 
       <llm critical="true">
@@ -190,9 +190,9 @@ injections:
       </llm>
 
   # Brief Technical Feasibility
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-technical-feasibility"
-    requires: "technical-evaluator"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-technical-feasibility'
+    requires: 'technical-evaluator'
     content: |
 
       <llm critical="true">
@@ -200,9 +200,9 @@ injections:
       </llm>
 
   # Brief Requirements Extraction
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-requirements"
-    requires: "requirements-analyst"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-requirements'
+    requires: 'requirements-analyst'
     content: |
 
       <llm critical="true">
@@ -210,9 +210,9 @@ injections:
       </llm>
 
   # Brief Document Review
-  - file: "bmad/bmm/templates/brief.md"
-    point: "brief-final-review"
-    requires: "document-reviewer"
+  - file: 'bmad/bmm/templates/brief.md'
+    point: 'brief-final-review'
+    requires: 'document-reviewer'
     content: |
 
       <llm critical="true">
@@ -221,22 +221,22 @@ injections:
 
 # Subagents to copy
 subagents:
-  source: "sub-agents"
-  target: ".claude/agents"
+  source: 'sub-agents'
+  target: '.claude/agents'
   files:
-    - "market-researcher.md"
-    - "requirements-analyst.md"
-    - "technical-evaluator.md"
-    - "epic-optimizer.md"
-    - "document-reviewer.md"
-    - "codebase-analyzer.md"
-    - "dependency-mapper.md"
-    - "pattern-detector.md"
-    - "tech-debt-auditor.md"
-    - "api-documenter.md"
-    - "test-coverage-analyzer.md"
-    - "user-researcher.md"
-    - "user-journey-mapper.md"
-    - "technical-decisions-curator.md"
-    - "data-analyst.md"
-    - "trend-spotter.md"
+    - 'market-researcher.md'
+    - 'requirements-analyst.md'
+    - 'technical-evaluator.md'
+    - 'epic-optimizer.md'
+    - 'document-reviewer.md'
+    - 'codebase-analyzer.md'
+    - 'dependency-mapper.md'
+    - 'pattern-detector.md'
+    - 'tech-debt-auditor.md'
+    - 'api-documenter.md'
+    - 'test-coverage-analyzer.md'
+    - 'user-researcher.md'
+    - 'user-journey-mapper.md'
+    - 'technical-decisions-curator.md'
+    - 'data-analyst.md'
+    - 'trend-spotter.md'

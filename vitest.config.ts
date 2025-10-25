@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	test: {
@@ -13,13 +13,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],
-			exclude: [
-				'node_modules/',
-				'test/',
-				'**/*.config.*',
-				'**/types/**',
-				'convex/_generated/**',
-			],
+			exclude: ['node_modules/', 'test/', '**/*.config.*', '**/types/**', 'convex/_generated/**'],
 			// Priority-based thresholds per TESTING-STRATEGY.md
 			thresholds: {
 				// Core features: 85%

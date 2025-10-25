@@ -1,20 +1,13 @@
 // Resource Library Service
 // This service handles the management of educational resources
 
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import { useMemo } from 'react';
+
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
-export type ResourceType =
-	| 'pdf'
-	| 'video'
-	| 'article'
-	| 'tool'
-	| 'template'
-	| 'guide'
-	| 'research'
-	| 'case-study';
+export type ResourceType = 'pdf' | 'video' | 'article' | 'tool' | 'template' | 'guide' | 'research' | 'case-study';
 
 export type ResourceCategory =
 	| 'facial-anatomy'
@@ -75,10 +68,7 @@ export function useFeaturedResources(limit?: number) {
 }
 
 export function useSearchResources(query: string, limit?: number) {
-	const convexSearch = useQuery(
-		api.resources.search,
-		query ? { query, limit } : 'skip'
-	);
+	const convexSearch = useQuery(api.resources.search, query ? { query, limit } : 'skip');
 
 	if (query) {
 		return {
@@ -116,18 +106,12 @@ export function useUserFavorites(userId: Id<'users'>) {
 	};
 }
 
-export function useIsFavorited(
-	userId: Id<'users'>,
-	resourceId: Id<'resources'>
-) {
-	const convexIsFavorited = useQuery(api.favorites.isFavorited, {
-		userId,
-		resourceId,
-	});
+export function useIsFavorited(userId: Id<'users'> | undefined, resourceId: Id<'resources'>) {
+	const convexIsFavorited = useQuery(api.favorites.isFavorited, userId ? { userId, resourceId } : 'skip');
 
 	return {
 		data: convexIsFavorited || false,
-		isLoading: convexIsFavorited === undefined,
+		isLoading: convexIsFavorited === undefined && !!userId,
 		error: null,
 	};
 }
@@ -210,8 +194,8 @@ export function getResourceTypeIcon(type: ResourceType): string {
 	return icons[type] || 'FileText';
 }
 
-export function getResourceCategory() {
-	const resources = useQuery(api.resources.list, {} as any);
+export function useResourceCategory() {
+	const resources = useQuery(api.resources.list, {});
 	return {
 		categories: resources?.map(r => r.categories).flat(),
 		count: resources?.length || 0,
@@ -220,12 +204,11 @@ export function getResourceCategory() {
 
 // Returns category counts for available resources
 export function useResourceCategories() {
-	const resources = useQuery(api.resources.list, {} as any);
+	const resources = useQuery(api.resources.list, {});
 	console.log(resources, 'resources');
 
 	const data = useMemo(() => {
-		if (!resources)
-			return [] as { category: ResourceCategory; count: number }[];
+		if (!resources) return [] as { category: ResourceCategory; count: number }[];
 		const counts = new Map<ResourceCategory, number>();
 		for (const res of resources) {
 			for (const cat of res.categories as ResourceCategory[]) {
@@ -247,7 +230,7 @@ export function useResourceCategories() {
 
 // Returns type counts for available resources
 export function useResourceTypes() {
-	const resources = useQuery(api.resources.list, {} as any);
+	const resources = useQuery(api.resources.list, {});
 
 	const data = useMemo(() => {
 		if (!resources) return [] as { type: ResourceType; count: number }[];

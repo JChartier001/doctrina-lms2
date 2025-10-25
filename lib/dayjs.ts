@@ -15,11 +15,11 @@ dayjs.tz.setDefault('America/New_York');
 export default dayjs;
 
 export const isDateBetween = (date: string, start: string, end: string) => {
-  const startDate = dayjs(start);
-  const endDate = dayjs(end);
-  const dateToCheck = dayjs(date);
+	const startDate = dayjs(start);
+	const endDate = dayjs(end);
+	const dateToCheck = dayjs(date);
 
-  return dateToCheck.isAfter(startDate) && dateToCheck.isBefore(endDate);
+	return dateToCheck.isAfter(startDate) && dateToCheck.isBefore(endDate);
 };
 
-export const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
+export const now = dayjs().format('YYYY-MM-DD HH:mm:ss');

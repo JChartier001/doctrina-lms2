@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useAuth } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Award } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useGenerateCertificate } from '@/lib/certificate-service';
+
+import { Button } from '@/components/ui/button';
 import { Id } from '@/convex/_generated/dataModel';
+import { useAuth } from '@/lib/auth';
+import { useGenerateCertificate } from '@/lib/certificate-service';
 
 interface GenerateCertificateButtonProps {
 	courseId: string;
@@ -52,9 +53,7 @@ export function GenerateCertificateButton({
 				templateId: 'template-1', // Default template
 			});
 
-			toast.success(
-				'Certificate Generated. Your certificate has been generated successfully.'
-			);
+			toast.success('Certificate Generated. Your certificate has been generated successfully.');
 
 			// Navigate to certificate view
 			router.push(`/profile/certificates?certId=${certificateId}`);
@@ -64,21 +63,15 @@ export function GenerateCertificateButton({
 			}
 		} catch (error) {
 			console.error('Error generating certificate:', error);
-			toast.error(
-				'There was an error generating your certificate. Please try again.'
-			);
+			toast.error('There was an error generating your certificate. Please try again.');
 		} finally {
 			setIsGenerating(false);
 		}
 	};
 
 	return (
-		<Button
-			onClick={handleGenerateCertificate}
-			disabled={disabled || isGenerating}
-			className='flex items-center'
-		>
-			<Award className='mr-2 h-4 w-4' />
+		<Button onClick={handleGenerateCertificate} disabled={disabled || isGenerating} className="flex items-center">
+			<Award className="mr-2 h-4 w-4" />
 			{isGenerating ? 'Generating Certificate...' : 'Generate Certificate'}
 		</Button>
 	);

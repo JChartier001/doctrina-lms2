@@ -356,150 +356,150 @@ console.log('━'.repeat(50));
 
 // Ensure results directory exists
 if (!fs.existsSync(RESULTS_DIR)) {
-  fs.mkdirSync(RESULTS_DIR, { recursive: true });
+	fs.mkdirSync(RESULTS_DIR, { recursive: true });
 }
 
 /**
  * Run a single shard
  */
 function runShard(shardIndex) {
-  return new Promise((resolve, reject) => {
-    const shardId = `${shardIndex}/${SHARD_COUNT}`;
-    console.log(`\n📦 Starting shard ${shardId}...`);
+	return new Promise((resolve, reject) => {
+		const shardId = `${shardIndex}/${SHARD_COUNT}`;
+		console.log(`\n📦 Starting shard ${shardId}...`);
 
-    const child = spawn('npx', ['playwright', 'test', `--shard=${shardId}`, '--reporter=json'], {
-      env: { ...process.env, TEST_ENV, SHARD_INDEX: shardIndex },
-      stdio: 'pipe',
-    });
+		const child = spawn('npx', ['playwright', 'test', `--shard=${shardId}`, '--reporter=json'], {
+			env: { ...process.env, TEST_ENV, SHARD_INDEX: shardIndex },
+			stdio: 'pipe',
+		});
 
-    let stdout = '';
-    let stderr = '';
+		let stdout = '';
+		let stderr = '';
 
-    child.stdout.on('data', (data) => {
-      stdout += data.toString();
-      process.stdout.write(data);
-    });
+		child.stdout.on('data', data => {
+			stdout += data.toString();
+			process.stdout.write(data);
+		});
 
-    child.stderr.on('data', (data) => {
-      stderr += data.toString();
-      process.stderr.write(data);
-    });
+		child.stderr.on('data', data => {
+			stderr += data.toString();
+			process.stderr.write(data);
+		});
 
-    child.on('close', (code) => {
-      // Save shard results
-      const resultFile = path.join(RESULTS_DIR, `shard-${shardIndex}.json`);
-      try {
-        const result = JSON.parse(stdout);
-        fs.writeFileSync(resultFile, JSON.stringify(result, null, 2));
-        console.log(`✅ Shard ${shardId} completed (exit code: ${code})`);
-        resolve({ shardIndex, code, result });
-      } catch (error) {
-        console.error(`❌ Shard ${shardId} failed to parse results:`, error.message);
-        reject({ shardIndex, code, error });
-      }
-    });
+		child.on('close', code => {
+			// Save shard results
+			const resultFile = path.join(RESULTS_DIR, `shard-${shardIndex}.json`);
+			try {
+				const result = JSON.parse(stdout);
+				fs.writeFileSync(resultFile, JSON.stringify(result, null, 2));
+				console.log(`✅ Shard ${shardId} completed (exit code: ${code})`);
+				resolve({ shardIndex, code, result });
+			} catch (error) {
+				console.error(`❌ Shard ${shardId} failed to parse results:`, error.message);
+				reject({ shardIndex, code, error });
+			}
+		});
 
-    child.on('error', (error) => {
-      console.error(`❌ Shard ${shardId} process error:`, error.message);
-      reject({ shardIndex, error });
-    });
-  });
+		child.on('error', error => {
+			console.error(`❌ Shard ${shardId} process error:`, error.message);
+			reject({ shardIndex, error });
+		});
+	});
 }
 
 /**
  * Aggregate results from all shards
  */
 function aggregateResults() {
-  console.log('\n📊 Aggregating results from all shards...');
+	console.log('\n📊 Aggregating results from all shards...');
 
-  const shardResults = [];
-  let totalTests = 0;
-  let totalPassed = 0;
-  let totalFailed = 0;
-  let totalSkipped = 0;
-  let totalFlaky = 0;
+	const shardResults = [];
+	let totalTests = 0;
+	let totalPassed = 0;
+	let totalFailed = 0;
+	let totalSkipped = 0;
+	let totalFlaky = 0;
 
-  for (let i = 1; i <= SHARD_COUNT; i++) {
-    const resultFile = path.join(RESULTS_DIR, `shard-${i}.json`);
-    if (fs.existsSync(resultFile)) {
-      const result = JSON.parse(fs.readFileSync(resultFile, 'utf8'));
-      shardResults.push(result);
+	for (let i = 1; i <= SHARD_COUNT; i++) {
+		const resultFile = path.join(RESULTS_DIR, `shard-${i}.json`);
+		if (fs.existsSync(resultFile)) {
+			const result = JSON.parse(fs.readFileSync(resultFile, 'utf8'));
+			shardResults.push(result);
 
-      // Aggregate stats
-      totalTests += result.stats?.expected || 0;
-      totalPassed += result.stats?.expected || 0;
-      totalFailed += result.stats?.unexpected || 0;
-      totalSkipped += result.stats?.skipped || 0;
-      totalFlaky += result.stats?.flaky || 0;
-    }
-  }
+			// Aggregate stats
+			totalTests += result.stats?.expected || 0;
+			totalPassed += result.stats?.expected || 0;
+			totalFailed += result.stats?.unexpected || 0;
+			totalSkipped += result.stats?.skipped || 0;
+			totalFlaky += result.stats?.flaky || 0;
+		}
+	}
 
-  const summary = {
-    totalShards: SHARD_COUNT,
-    environment: TEST_ENV,
-    totalTests,
-    passed: totalPassed,
-    failed: totalFailed,
-    skipped: totalSkipped,
-    flaky: totalFlaky,
-    duration: shardResults.reduce((acc, r) => acc + (r.duration || 0), 0),
-    timestamp: new Date().toISOString(),
-  };
+	const summary = {
+		totalShards: SHARD_COUNT,
+		environment: TEST_ENV,
+		totalTests,
+		passed: totalPassed,
+		failed: totalFailed,
+		skipped: totalSkipped,
+		flaky: totalFlaky,
+		duration: shardResults.reduce((acc, r) => acc + (r.duration || 0), 0),
+		timestamp: new Date().toISOString(),
+	};
 
-  // Save aggregated summary
-  fs.writeFileSync(path.join(RESULTS_DIR, 'summary.json'), JSON.stringify(summary, null, 2));
+	// Save aggregated summary
+	fs.writeFileSync(path.join(RESULTS_DIR, 'summary.json'), JSON.stringify(summary, null, 2));
 
-  console.log('\n━'.repeat(50));
-  console.log('📈 Test Results Summary');
-  console.log('━'.repeat(50));
-  console.log(`Total tests:    ${totalTests}`);
-  console.log(`✅ Passed:      ${totalPassed}`);
-  console.log(`❌ Failed:      ${totalFailed}`);
-  console.log(`⏭️  Skipped:     ${totalSkipped}`);
-  console.log(`⚠️  Flaky:       ${totalFlaky}`);
-  console.log(`⏱️  Duration:    ${(summary.duration / 1000).toFixed(2)}s`);
-  console.log('━'.repeat(50));
+	console.log('\n━'.repeat(50));
+	console.log('📈 Test Results Summary');
+	console.log('━'.repeat(50));
+	console.log(`Total tests:    ${totalTests}`);
+	console.log(`✅ Passed:      ${totalPassed}`);
+	console.log(`❌ Failed:      ${totalFailed}`);
+	console.log(`⏭️  Skipped:     ${totalSkipped}`);
+	console.log(`⚠️  Flaky:       ${totalFlaky}`);
+	console.log(`⏱️  Duration:    ${(summary.duration / 1000).toFixed(2)}s`);
+	console.log('━'.repeat(50));
 
-  return summary;
+	return summary;
 }
 
 /**
  * Main execution
  */
 async function main() {
-  const startTime = Date.now();
-  const shardPromises = [];
+	const startTime = Date.now();
+	const shardPromises = [];
 
-  // Run all shards in parallel
-  for (let i = 1; i <= SHARD_COUNT; i++) {
-    shardPromises.push(runShard(i));
-  }
+	// Run all shards in parallel
+	for (let i = 1; i <= SHARD_COUNT; i++) {
+		shardPromises.push(runShard(i));
+	}
 
-  try {
-    await Promise.allSettled(shardPromises);
-  } catch (error) {
-    console.error('❌ One or more shards failed:', error);
-  }
+	try {
+		await Promise.allSettled(shardPromises);
+	} catch (error) {
+		console.error('❌ One or more shards failed:', error);
+	}
 
-  // Aggregate results
-  const summary = aggregateResults();
+	// Aggregate results
+	const summary = aggregateResults();
 
-  const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
-  console.log(`\n⏱️  Total execution time: ${totalTime}s`);
+	const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+	console.log(`\n⏱️  Total execution time: ${totalTime}s`);
 
-  // Exit with failure if any tests failed
-  if (summary.failed > 0) {
-    console.error('\n❌ Test suite failed');
-    process.exit(1);
-  }
+	// Exit with failure if any tests failed
+	if (summary.failed > 0) {
+		console.error('\n❌ Test suite failed');
+		process.exit(1);
+	}
 
-  console.log('\n✅ All tests passed');
-  process.exit(0);
+	console.log('\n✅ All tests passed');
+	process.exit(0);
 }
 
-main().catch((error) => {
-  console.error('Fatal error:', error);
-  process.exit(1);
+main().catch(error => {
+	console.error('Fatal error:', error);
+	process.exit(1);
 });
 ```
 
@@ -507,10 +507,10 @@ main().catch((error) => {
 
 ```json
 {
-  "scripts": {
-    "test:sharded": "node scripts/run-sharded-tests.js",
-    "test:sharded:ci": "SHARD_COUNT=8 TEST_ENV=staging node scripts/run-sharded-tests.js"
-  }
+	"scripts": {
+		"test:sharded": "node scripts/run-sharded-tests.js",
+		"test:sharded:ci": "SHARD_COUNT=8 TEST_ENV=staging node scripts/run-sharded-tests.js"
+	}
 }
 ```
 

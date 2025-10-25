@@ -1,15 +1,14 @@
 import { useMutation } from 'convex/react';
+import { Loader2, Upload, X } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-import { api } from '@/convex/_generated/api';
-import { convex } from '@/lib/convexClient';
-
-import { FormLabel } from '@/components/ui/form';
-import { Id } from '@/convex/_generated/dataModel';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Loader2 } from 'lucide-react';
+import { FormLabel } from '@/components/ui/form';
+import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
+import { convex } from '@/lib/convexClient';
 
 interface UploadProgress {
 	id: string;
@@ -45,35 +44,35 @@ const ImagePreview = ({ imageId, onRemove }: ImagePreviewProps) => {
 	}, [imageId]);
 
 	return (
-		<div className='relative group'>
-			<div className='aspect-square bg-gray-100 rounded-lg overflow-hidden border'>
+		<div className="relative group">
+			<div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border">
 				{loading ? (
-					<div className='w-full h-full flex items-center justify-center'>
-						<Loader2 className='w-6 h-6 animate-spin text-gray-400' />
+					<div className="w-full h-full flex items-center justify-center">
+						<Loader2 className="w-6 h-6 animate-spin text-gray-400" />
 					</div>
 				) : error ? (
-					<div className='w-full h-full flex items-center justify-center bg-gray-100'>
-						<div className='text-center'>
-							<div className='text-2xl text-gray-400 mb-1'>⚠️</div>
-							<div className='text-xs text-gray-500'>Failed to load</div>
+					<div className="w-full h-full flex items-center justify-center bg-gray-100">
+						<div className="text-center">
+							<div className="text-2xl text-gray-400 mb-1">⚠️</div>
+							<div className="text-xs text-gray-500">Failed to load</div>
 						</div>
 					</div>
 				) : (
 					<img
 						src={imageUrl!}
-						alt='Uploaded image'
-						className='w-full h-full object-cover'
+						alt="Uploaded image"
+						className="w-full h-full object-cover"
 						onError={() => setError(true)}
 					/>
 				)}
 			</div>
 			<Button
 				onClick={onRemove}
-				variant='destructive'
-				size='sm'
-				className='absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity'
+				variant="destructive"
+				size="sm"
+				className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
 			>
-				<X className='w-3 h-3' />
+				<X className="w-3 h-3" />
 			</Button>
 		</div>
 	);
@@ -108,7 +107,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 			acceptedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
 			maxFileSize = 5,
 		},
-		ref
+		ref,
 	) => {
 		const [uploading, setUploading] = useState(false);
 		const [dragOver, setDragOver] = useState(false);
@@ -135,18 +134,11 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 			return null;
 		};
 
-		const uploadFile = async (
-			file: File,
-			progressId: string
-		): Promise<Id<'_storage'> | null> => {
+		const uploadFile = async (file: File, progressId: string): Promise<Id<'_storage'> | null> => {
 			try {
 				const validationError = validateFile(file);
 				if (validationError) {
-					setUploadProgress(prev =>
-						prev.map(p =>
-							p.id === progressId ? { ...p, status: 'error' as const } : p
-						)
-					);
+					setUploadProgress(prev => prev.map(p => (p.id === progressId ? { ...p, status: 'error' as const } : p)));
 					toast.error(validationError);
 					return null;
 				}
@@ -168,21 +160,13 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 				const { storageId } = await result.json();
 
 				setUploadProgress(prev =>
-					prev.map(p =>
-						p.id === progressId
-							? { ...p, status: 'complete' as const, progress: 100 }
-							: p
-					)
+					prev.map(p => (p.id === progressId ? { ...p, status: 'complete' as const, progress: 100 } : p)),
 				);
 
 				return storageId;
 			} catch (error) {
 				console.error(`Upload failed for ${file.name}:`, error);
-				setUploadProgress(prev =>
-					prev.map(p =>
-						p.id === progressId ? { ...p, status: 'error' as const } : p
-					)
-				);
+				setUploadProgress(prev => prev.map(p => (p.id === progressId ? { ...p, status: 'error' as const } : p)));
 				toast.error(`Failed to upload ${file.name}`);
 				return null;
 			}
@@ -194,9 +178,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
 				const availableSlots = maxImages - uploadedImages.length;
 				if (files.length > availableSlots) {
-					toast.error(
-						`Maximum ${maxImages} images allowed. You can upload ${availableSlots} more.`
-					);
+					toast.error(`Maximum ${maxImages} images allowed. You can upload ${availableSlots} more.`);
 					files = files.slice(0, availableSlots);
 				}
 
@@ -212,14 +194,10 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
 				try {
 					// Upload files concurrently
-					const uploadPromises = files.map((file, index) =>
-						uploadFile(file, progressItems[index].id)
-					);
+					const uploadPromises = files.map((file, index) => uploadFile(file, progressItems[index].id));
 
 					const results = await Promise.all(uploadPromises);
-					const successfulUploads = results.filter(
-						(id): id is Id<'_storage'> => id !== null
-					);
+					const successfulUploads = results.filter((id): id is Id<'_storage'> => id !== null);
 
 					if (successfulUploads.length > 0) {
 						const allImageIds = [...uploadedImages, ...successfulUploads];
@@ -232,9 +210,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 							});
 						}
 						onImagesUploaded?.(allImageIds);
-						toast.success(
-							`${successfulUploads.length} image(s) uploaded successfully`
-						);
+						toast.success(`${successfulUploads.length} image(s) uploaded successfully`);
 					}
 				} finally {
 					setUploading(false);
@@ -254,7 +230,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 				generateUploadUrl,
 				acceptedTypes,
 				maxFileSize,
-			]
+			],
 		);
 
 		const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,12 +267,10 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 				e.preventDefault();
 				setDragOver(false);
 
-				const files = Array.from(e.dataTransfer.files).filter(file =>
-					file.type.startsWith('image/')
-				);
+				const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
 				handleFiles(files);
 			},
-			[handleFiles]
+			[handleFiles],
 		);
 
 		const triggerFileSelect = () => {
@@ -304,9 +278,9 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 		};
 
 		return (
-			<div className='space-y-4'>
+			<div className="space-y-4">
 				{label && (
-					<FormLabel className='block text-sm font-medium mb-2'>
+					<FormLabel className="block text-sm font-medium mb-2">
 						{label} ({uploadedImages.length}/{maxImages})
 					</FormLabel>
 				)}
@@ -318,11 +292,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 					onDrop={handleDrop}
 					className={`
 						border-2 border-dashed rounded-lg p-6 text-center transition-colors
-						${
-							dragOver
-								? 'border-blue-400 bg-blue-50'
-								: 'border-gray-300 hover:border-gray-400'
-						}
+						${dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
 						${disabled || uploadedImages.length >= maxImages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
 					`}
 					onClick={triggerFileSelect}
@@ -331,54 +301,42 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 						ref={el => {
 							fileInputRef.current = el;
 							if (typeof ref === 'function') ref(el);
-							else if (ref)
-								(
-									ref as React.MutableRefObject<HTMLInputElement | null>
-								).current = el;
+							else if (ref) (ref as React.MutableRefObject<HTMLInputElement | null>).current = el;
 						}}
-						type='file'
+						type="file"
 						accept={acceptedTypes.join(',')}
 						multiple
 						onChange={handleFileSelect}
 						onBlur={onBlur}
-						disabled={
-							disabled || uploading || uploadedImages.length >= maxImages
-						}
-						className='hidden'
-						aria-label='Select images'
+						disabled={disabled || uploading || uploadedImages.length >= maxImages}
+						className="hidden"
+						aria-label="Select images"
 					/>
 
-					<div className='flex flex-col items-center space-y-2'>
-						<Upload
-							className={`w-8 h-8 ${dragOver ? 'text-blue-500' : 'text-gray-400'}`}
-						/>
+					<div className="flex flex-col items-center space-y-2">
+						<Upload className={`w-8 h-8 ${dragOver ? 'text-blue-500' : 'text-gray-400'}`} />
 						<div>
-							<p className='text-sm font-medium text-gray-900'>
-								{dragOver
-									? 'Drop images here'
-									: 'Drag & drop images here, or click to browse'}
+							<p className="text-sm font-medium text-gray-900">
+								{dragOver ? 'Drop images here' : 'Drag & drop images here, or click to browse'}
 							</p>
-							<p className='text-xs text-gray-500'>
-								{acceptedTypes.join(', ')} • Max {maxFileSize}MB each • Up to{' '}
-								{maxImages} images
+							<p className="text-xs text-gray-500">
+								{acceptedTypes.join(', ')} • Max {maxFileSize}MB each • Up to {maxImages} images
 							</p>
 						</div>
 						<Button
-							type='button'
-							variant='outline'
-							size='sm'
-							disabled={
-								disabled || uploading || uploadedImages.length >= maxImages
-							}
+							type="button"
+							variant="outline"
+							size="sm"
+							disabled={disabled || uploading || uploadedImages.length >= maxImages}
 						>
 							{uploading ? (
 								<>
-									<Loader2 className='w-4 h-4 mr-2 animate-spin' />
+									<Loader2 className="w-4 h-4 mr-2 animate-spin" />
 									Uploading...
 								</>
 							) : (
 								<>
-									<Upload className='w-4 h-4 mr-2' />
+									<Upload className="w-4 h-4 mr-2" />
 									Choose Files
 								</>
 							)}
@@ -388,14 +346,12 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
 				{/* Upload Progress */}
 				{uploadProgress.length > 0 && (
-					<div className='space-y-2'>
-						<h4 className='text-sm font-medium text-gray-900'>
-							Upload Progress
-						</h4>
-						<div className='space-y-1'>
+					<div className="space-y-2">
+						<h4 className="text-sm font-medium text-gray-900">Upload Progress</h4>
+						<div className="space-y-1">
 							{uploadProgress.map(progress => (
-								<div key={progress.id} className='flex items-center space-x-2'>
-									<div className='flex-1 bg-gray-200 rounded-full h-2'>
+								<div key={progress.id} className="flex items-center space-x-2">
+									<div className="flex-1 bg-gray-200 rounded-full h-2">
 										<div
 											className={`h-2 rounded-full transition-all duration-300 ${
 												progress.status === 'error'
@@ -407,15 +363,9 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 											style={{ width: `${progress.progress}%` }}
 										/>
 									</div>
-									{progress.status === 'uploading' && (
-										<Loader2 className='w-4 h-4 animate-spin text-blue-500' />
-									)}
-									{progress.status === 'complete' && (
-										<div className='w-4 h-4 text-green-500'>✓</div>
-									)}
-									{progress.status === 'error' && (
-										<div className='w-4 h-4 text-red-500'>✕</div>
-									)}
+									{progress.status === 'uploading' && <Loader2 className="w-4 h-4 animate-spin text-blue-500" />}
+									{progress.status === 'complete' && <div className="w-4 h-4 text-green-500">✓</div>}
+									{progress.status === 'error' && <div className="w-4 h-4 text-red-500">✕</div>}
 								</div>
 							))}
 						</div>
@@ -425,23 +375,19 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 				{/* Uploaded Images */}
 				{uploadedImages.length > 0 && (
 					<div>
-						<h4 className='text-sm font-medium text-gray-900 mb-2'>
-							Uploaded Images
-						</h4>
-						<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+						<h4 className="text-sm font-medium text-gray-900 mb-2">Uploaded Images</h4>
+						<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 							{uploadedImages.map((imageId, index) => (
-								<ImagePreview
-									key={imageId}
-									imageId={imageId}
-									onRemove={() => removeImage(index)}
-								/>
+								<ImagePreview key={imageId} imageId={imageId} onRemove={() => removeImage(index)} />
 							))}
 						</div>
 					</div>
 				)}
 			</div>
 		);
-	}
+	},
 );
+
+ImageUpload.displayName = 'ImageUpload';
 
 export default ImageUpload;

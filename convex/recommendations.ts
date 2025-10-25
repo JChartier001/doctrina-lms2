@@ -1,6 +1,7 @@
-import { query } from './_generated/server';
 import { v } from 'convex/values';
+
 import { Id } from './_generated/dataModel';
+import { query } from './_generated/server';
 
 // Get personalized course recommendations for a user
 export const getCourseRecommendations = query({
@@ -16,17 +17,13 @@ export const getCourseRecommendations = query({
 			.collect();
 
 		// Get user's enrolled courses (through purchases)
-		const purchasedCourseIds = purchases
-			.filter(p => p.status === 'complete')
-			.map(p => p.courseId);
+		const purchasedCourseIds = purchases.filter(p => p.status === 'complete').map(p => p.courseId);
 
 		// Get all courses
 		const allCourses = await ctx.db.query('courses').collect();
 
 		// Filter out already purchased courses
-		const availableCourses = allCourses.filter(
-			course => !purchasedCourseIds.includes(course._id)
-		);
+		const availableCourses = allCourses.filter(course => !purchasedCourseIds.includes(course._id));
 
 		// Simple recommendation logic:
 		// 1. Prioritize courses with high ratings
@@ -40,7 +37,7 @@ export const getCourseRecommendations = query({
 					const course = allCourses.find(c => c._id === p.courseId);
 					return course?.instructorId;
 				})
-				.filter(Boolean)
+				.filter(Boolean),
 		);
 
 		const recommendations = availableCourses
@@ -53,8 +50,7 @@ export const getCourseRecommendations = query({
 				}
 
 				// Boost newer courses slightly
-				const daysSinceCreated =
-					(Date.now() - course.createdAt) / (1000 * 60 * 60 * 24);
+				const daysSinceCreated = (Date.now() - course.createdAt) / (1000 * 60 * 60 * 24);
 				if (daysSinceCreated < 30) {
 					score += 0.5;
 				}
@@ -78,10 +74,7 @@ export const getCourseRecommendations = query({
 				duration: course.duration,
 				price: course.price,
 				relevanceScore: score,
-				relevanceReason:
-					score > (course.rating || 0)
-						? 'Based on your previous purchases'
-						: 'Highly rated course',
+				relevanceReason: score > (course.rating || 0) ? 'Based on your previous purchases' : 'Highly rated course',
 			}));
 
 		return recommendations;
@@ -116,19 +109,14 @@ export const getResourceRecommendations = query({
 		const allResources = await ctx.db.query('resources').collect();
 
 		// Filter out already favorited resources
-		const availableResources = allResources.filter(
-			resource => !favoriteResourceIds.includes(resource._id)
-		);
+		const availableResources = allResources.filter(resource => !favoriteResourceIds.includes(resource._id));
 
 		const recommendations = availableResources
 			.map(resource => {
 				let score = resource.rating || 0;
 
 				// Boost resources from purchased courses
-				if (
-					resource.courseId &&
-					purchasedCourseIds.includes(resource.courseId)
-				) {
+				if (resource.courseId && purchasedCourseIds.includes(resource.courseId)) {
 					score += 3;
 				}
 
@@ -153,10 +141,7 @@ export const getResourceRecommendations = query({
 				type: resource.type,
 				thumbnailUrl: resource.thumbnailUrl,
 				relevanceScore: score,
-				relevanceReason:
-					score > (resource.rating || 0) + 1
-						? 'Recommended for your courses'
-						: 'Popular resource',
+				relevanceReason: score > (resource.rating || 0) + 1 ? 'Recommended for your courses' : 'Popular resource',
 				resource,
 			}));
 
@@ -185,8 +170,7 @@ export const getPathwayRecommendations = query({
 			{
 				id: 'beginner-foundation',
 				title: 'Medical Aesthetics Foundation',
-				description:
-					'Start your journey in medical aesthetics with essential knowledge and skills.',
+				description: 'Start your journey in medical aesthetics with essential knowledge and skills.',
 				courseCount: 3,
 				estimatedDuration: '3 months',
 				thumbnailUrl: '/placeholder.svg?height=200&width=300',
@@ -197,8 +181,7 @@ export const getPathwayRecommendations = query({
 			{
 				id: 'intermediate-specialization',
 				title: 'Advanced Injection Techniques',
-				description:
-					'Master advanced injection techniques and build specialized skills.',
+				description: 'Master advanced injection techniques and build specialized skills.',
 				courseCount: 4,
 				estimatedDuration: '4 months',
 				thumbnailUrl: '/placeholder.svg?height=200&width=300',
@@ -209,8 +192,7 @@ export const getPathwayRecommendations = query({
 			{
 				id: 'advanced-mastery',
 				title: 'Clinical Excellence Program',
-				description:
-					'Achieve mastery in medical aesthetics with comprehensive clinical training.',
+				description: 'Achieve mastery in medical aesthetics with comprehensive clinical training.',
 				courseCount: 5,
 				estimatedDuration: '6 months',
 				thumbnailUrl: '/placeholder.svg?height=200&width=300',
@@ -223,18 +205,12 @@ export const getPathwayRecommendations = query({
 		// Filter pathways based on user's progress
 		const relevantPathways = pathways
 			.filter(
-				pathway =>
-					completedCourses >= pathway.minCompletedCourses &&
-					completedCourses <= pathway.maxCompletedCourses
+				pathway => completedCourses >= pathway.minCompletedCourses && completedCourses <= pathway.maxCompletedCourses,
 			)
 			.map(pathway => ({
 				...pathway,
-				relevanceScore:
-					10 - Math.abs(completedCourses - pathway.minCompletedCourses),
-				relevanceReason:
-					completedCourses === 0
-						? 'Perfect starting point'
-						: 'Next step in your learning journey',
+				relevanceScore: 10 - Math.abs(completedCourses - pathway.minCompletedCourses),
+				relevanceReason: completedCourses === 0 ? 'Perfect starting point' : 'Next step in your learning journey',
 			}))
 			.slice(0, limit);
 
@@ -267,10 +243,7 @@ export const getTrendingContent = query({
 
 		recentFavorites.forEach(favorite => {
 			const resourceId = favorite.resourceId;
-			resourcePopularity.set(
-				resourceId,
-				(resourcePopularity.get(resourceId) || 0) + 1
-			);
+			resourcePopularity.set(resourceId, (resourcePopularity.get(resourceId) || 0) + 1);
 		});
 
 		// Get top trending courses
@@ -286,16 +259,16 @@ export const getTrendingContent = query({
 					return course
 						? {
 								id: course._id,
-								title: (course as any).title,
+								title: course.title,
 								type: 'course' as const,
-								thumbnailUrl: (course as any).thumbnailUrl,
+								thumbnailUrl: course.thumbnailUrl,
 								popularity: coursePopularity.get(courseId) || 0,
 							}
 						: null;
 				} catch {
 					return null;
 				}
-			})
+			}),
 		);
 
 		// Get top trending resources
@@ -311,20 +284,18 @@ export const getTrendingContent = query({
 					return resource
 						? {
 								id: resource._id,
-								title: (resource as any).title,
+								title: resource.title,
 								type: 'resource' as const,
-								thumbnailUrl: (resource as any).thumbnailUrl,
+								thumbnailUrl: resource.thumbnailUrl,
 								popularity: resourcePopularity.get(resourceId) || 0,
 							}
 						: null;
 				} catch {
 					return null;
 				}
-			})
+			}),
 		);
 
-		return [...trendingCourses, ...trendingResources]
-			.filter(Boolean)
-			.slice(0, limit);
+		return [...trendingCourses, ...trendingResources].filter(Boolean).slice(0, limit);
 	},
 });

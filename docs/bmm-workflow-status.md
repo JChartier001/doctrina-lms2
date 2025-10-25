@@ -30,19 +30,23 @@ NEXT_AGENT: sm
 CURRENT_SPRINT: Sprint 2 (Weeks 3-4)
 SPRINT_GOAL: Complete learning experience with progress tracking and quiz system
 SPRINT_STORY_POINTS: 23 points
+
 - EPIC-101: Lesson Progress Tracking (13 pts) - NOT STARTED
 - EPIC-102: Quiz System - Creation (10 pts) - NOT STARTED
 
 ## Epic Status
 
 COMPLETED_EPICS:
+
 - Sprint 1: Course Structure, Enrollments, Stripe Integration ✅
 
 IN_PROGRESS_EPICS:
+
 - EPIC-101: Lesson Progress Tracking System (P0 - Critical) - 13 story points
 - EPIC-102: Quiz Submission & Grading System (P0 - Critical) - 21 story points
 
 BACKLOG_EPICS:
+
 - EPIC-103: Course Reviews & Ratings (P0 - Critical) - 8 story points
 - EPIC-104: Instructor Verification Workflow (P1 - High) - 21 story points
 - EPIC-105: Instructor Payouts (P1 - High) - 21 story points

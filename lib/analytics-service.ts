@@ -2,16 +2,14 @@
 // This service handles analytics data using Convex
 
 import { useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
 export type TimeRange = '7d' | '30d' | '90d' | '1y';
 
 // Instructor analytics hooks
-export function useInstructorAnalytics(
-	instructorId: Id<'users'>,
-	timeRange?: TimeRange
-) {
+export function useInstructorAnalytics(instructorId: Id<'users'>, timeRange?: TimeRange) {
 	const convexAnalytics = useQuery(api.analytics.getInstructorAnalytics, {
 		instructorId,
 		timeRange,

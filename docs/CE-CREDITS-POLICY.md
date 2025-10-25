@@ -14,12 +14,14 @@
 This is an important distinction that affects how CE credits work on our platform:
 
 ✅ **What We DO:**
+
 - Connect you with professional instructors who may offer CE-accredited courses
 - Display CE credit information provided by instructors
 - Help you filter courses by CE credit availability
 - Facilitate certificate generation for CE courses
 
 ❌ **What We DON'T Do:**
+
 - Accredit courses or issue CE credits ourselves
 - Guarantee CE credit acceptance by any licensing board
 - Verify that CE credits will satisfy your specific license requirements
@@ -32,6 +34,7 @@ This is an important distinction that affects how CE credits work on our platfor
 #### Step 1: Instructor Obtains CE Accreditation
 
 Individual instructors who want to offer CE credits must:
+
 1. Apply for CE provider approval from an accrediting body:
    - **ANCC** (American Nurses Credentialing Center) - for nurses
    - **ACCME** (Accreditation Council for CME) - for physicians
@@ -49,6 +52,7 @@ Individual instructors who want to offer CE credits must:
 #### Step 2: Doctrina Displays CE Information
 
 When an instructor provides proof of CE accreditation, we:
+
 - Display a "CE Credits Available" badge on the course
 - Show the number of CE credits offered
 - List the accrediting body (e.g., "ANCC-approved")
@@ -56,6 +60,7 @@ When an instructor provides proof of CE accreditation, we:
 - Show approval expiration date (if applicable)
 
 **Example Course Listing:**
+
 ```
 Advanced Botox & Dermal Fillers Certification
 By Dr. Sarah Johnson, MD
@@ -70,6 +75,7 @@ By Dr. Sarah Johnson, MD
 **CRITICAL:** Before enrolling in any course for CE credits, YOU must verify:
 
 **Check with YOUR licensing board:**
+
 1. Go to your state licensing board website (e.g., California Board of Registered Nursing, Texas State Board of Medical Examiners)
 2. Review CE requirements for YOUR license renewal
 3. Verify they accept CE from the accrediting body listed on the course
@@ -77,6 +83,7 @@ By Dr. Sarah Johnson, MD
 5. Check if there are any restrictions or limits
 
 **Important Questions to Ask:**
+
 - Does my state accept ANCC-approved CE credits?
 - Is there a limit on online CE hours?
 - Does this course topic count toward my specialty requirements?
@@ -93,6 +100,7 @@ Every state has different requirements. What counts for license renewal in Calif
 #### Q: If a course on Doctrina LMS offers CE credits, can I use them for my professional license?
 
 **A:** It depends. Check three things:
+
 1. **Does your state accept CE from this accrediting body?** (Most states accept ANCC for nurses, ACCME for physicians, but verify)
 2. **Does the course topic qualify?** (E.g., some states require certain percentages in specific topics)
 3. **Are there limits on online CE?** (Some states cap online hours)
@@ -100,6 +108,7 @@ Every state has different requirements. What counts for license renewal in Calif
 **You must verify with YOUR state board before enrolling.**
 
 **Examples by Profession:**
+
 - **Registered Nurses (RN):** Check your state Board of Nursing for CE requirements
 - **Nurse Practitioners (NP):** May have additional CE requirements beyond RN license
 - **Physician Assistants (PA):** Check NCCPA and state medical board requirements
@@ -115,6 +124,7 @@ Some courses may be accepted in certain states but not others. Always verify fir
 #### Q: How do I get my CE certificate after completing a course?
 
 **A:** Instructors who offer CE credits will provide a CE certificate upon course completion. This is separate from the Doctrina LMS course completion certificate. The CE certificate will include:
+
 - Your name
 - Course title
 - CE credit hours earned
@@ -133,6 +143,7 @@ You can filter courses to show only those offering CE credits if that's importan
 #### Q: Can I take courses that don't offer CE credits?
 
 **A:** Absolutely! Many healthcare and aesthetics professionals take courses for skill development, practice expansion, or learning new procedures - not just for CE compliance. For example:
+
 - Learning advanced injection techniques to add to your practice
 - Business training for opening a medical spa or aesthetics clinic
 - Marketing strategies for growing your practice
@@ -142,6 +153,7 @@ You can filter courses to show only those offering CE credits if that's importan
 #### Q: I'm a licensed esthetician. Can I take courses for CE credits?
 
 **A:** Yes! Many states require CE for esthetician license renewal. Check your state's Board of Cosmetology or Esthetics Board for:
+
 - How many CE hours required (typically 4-16 hours per renewal period)
 - What topics qualify (health and safety, sanitation, new techniques, etc.)
 - Online vs. in-person requirements
@@ -154,6 +166,7 @@ Some instructors on Doctrina LMS may have state esthetics board approval for the
 **A:** Contact your state licensing board directly. They are the authoritative source for YOUR license requirements. Doctrina LMS and course instructors cannot provide legal guidance on state licensing requirements.
 
 **Find your state board:**
+
 - **Nurses:** Search "[Your State] Board of Nursing"
 - **Physicians:** Search "[Your State] Medical Board"
 - **Physician Assistants:** Search "[Your State] Medical Board" or "[Your State] PA Licensing"
@@ -189,6 +202,7 @@ When enrolling in courses offering CE credits, you acknowledge and agree to:
 You must independently obtain approval from a CE accrediting organization:
 
 **For Nursing Courses (RN, NP, APRN):**
+
 - **ANCC** (American Nurses Credentialing Center): https://www.nursingworld.org/ancc/
   - Apply for "Approved Provider" status
   - Process takes 3-6 months
@@ -201,17 +215,20 @@ You must independently obtain approval from a CE accrediting organization:
   - May only be valid in that state
 
 **For Physician Courses (MD, DO):**
+
 - **ACCME** (Accreditation Council for CME): https://www.accme.org/
   - Rigorous application process
   - Requires significant infrastructure
   - Or partner with an ACCME-accredited organization
 
 **For Physician Assistant Courses (PA):**
+
 - **AAPA** (American Academy of Physician Assistants): Category 1 CME
 - Many PAs accept ACCME-approved CME as well
 - State medical boards may have specific requirements
 
 **For Esthetician Courses:**
+
 - **State Cosmetology or Esthetics Boards**: Apply for CE provider approval
   - Requirements vary significantly by state
   - Some states require in-person courses only (check regulations)
@@ -219,6 +236,7 @@ You must independently obtain approval from a CE accrediting organization:
   - May need to offer state-specific content (law, sanitation)
 
 **For Other Professions:**
+
 - Research CE requirements for your target profession
 - Identify appropriate accrediting bodies
 - Apply for provider status
@@ -226,6 +244,7 @@ You must independently obtain approval from a CE accrediting organization:
 #### Step 2: Get Your Specific Courses Approved
 
 Even if you're an approved provider, each COURSE must typically be approved:
+
 1. Submit course outline and learning objectives
 2. Demonstrate qualified faculty (you)
 3. Show how learning will be assessed
@@ -235,6 +254,7 @@ Even if you're an approved provider, each COURSE must typically be approved:
 #### Step 3: Submit Proof to Doctrina LMS
 
 Once you have CE approval, submit to Doctrina LMS:
+
 - **CE Provider Number** (from accrediting body)
 - **Accrediting Organization** (ANCC, ACCME, state board, etc.)
 - **Approved Course Title** (must match your Doctrina LMS course)
@@ -243,6 +263,7 @@ Once you have CE approval, submit to Doctrina LMS:
 - **Expiration Date** (if applicable - many approvals expire annually)
 
 **Submission Method:**
+
 - Upload via Instructor Dashboard → Course Settings → CE Accreditation
 - Our team verifies the approval number with the accrediting body
 - Once verified, "CE Credits Available" badge appears on your course
@@ -250,6 +271,7 @@ Once you have CE approval, submit to Doctrina LMS:
 #### Step 4: Maintain Compliance
 
 **Your Ongoing Responsibilities:**
+
 - **Renew CE approval** annually or as required
 - **Report CE participants** to accrediting body if required
 - **Issue CE certificates** to students who complete course
@@ -271,6 +293,7 @@ If you offer CE credits, you MUST:
 
 **Instructor Certification:**
 By submitting CE information for your course, you certify that:
+
 - You hold valid CE provider approval from the stated accrediting body
 - Your course has been approved to offer the stated CE credit hours
 - All information provided is accurate and current
@@ -284,18 +307,21 @@ By submitting CE information for your course, you certify that:
 Courses offering CE credits must meet certain standards:
 
 **Content Quality:**
+
 - Clear learning objectives
 - Evidence-based content
 - Appropriate depth for CE credit hours claimed
 - Assessment of learning (quiz, exam, or practical demonstration)
 
 **Documentation:**
+
 - Course outline submitted to accrediting body
 - Faculty qualifications documented
 - Conflict of interest disclosures (if required)
 - Commercial support disclosures (if applicable)
 
 **Student Records:**
+
 - Track course completions
 - Issue CE certificates within 30 days of completion
 - Maintain records per accrediting body requirements
@@ -308,6 +334,7 @@ Courses offering CE credits must meet certain standards:
 Certificates you issue to students must include:
 
 **Required Elements:**
+
 1. Student's full name
 2. Course title (as approved by accrediting body)
 3. CE credit hours earned
@@ -318,6 +345,7 @@ Certificates you issue to students must include:
 8. Statement: "This educational activity was approved by [Accrediting Body]"
 
 **Optional But Recommended:**
+
 - Your signature or digital signature
 - Course objectives
 - Expiration date (if applicable - some CE has expiration)
@@ -331,6 +359,7 @@ Doctrina LMS provides a CE certificate template generator in your Instructor Das
 ### Financial Considerations
 
 **Costs to Become CE Provider:**
+
 - **ANCC (Nurses):** $1,500-$3,000 application + $500-$1,000 annual
 - **ACCME (Physicians):** $2,000-$5,000 application + $1,000-$2,000 annual
 - **State Nursing Boards:** $100-$500 application + $50-$200 annual
@@ -339,12 +368,14 @@ Doctrina LMS provides a CE certificate template generator in your Instructor Das
 - **Ongoing:** Record-keeping, reporting, renewals
 
 **Revenue Potential:**
+
 - Courses offering CE credits typically command 20-40% premium pricing
 - Example: Non-CE course $1,500 vs. CE course $2,000
 - Extra $500 x 20 students = $10,000 additional revenue
 - **ROI:** CE accreditation investment pays for itself quickly
 
 **Pricing Examples for Medical Aesthetics Courses:**
+
 - **Advanced Botox Certification (Non-CE):** $1,800
 - **Advanced Botox Certification (with 8 CE credits):** $2,400
 - **Premium:** $600 per student x 30 students = $18,000 additional annual revenue
@@ -356,6 +387,7 @@ Doctrina LMS provides a CE certificate template generator in your Instructor Das
 #### Q: Is it hard to become a CE provider?
 
 **A:** It depends on the accrediting body:
+
 - **State boards:** Often easier, faster, and cheaper (weeks, $100-300)
 - **National accreditation (ANCC, ACCME):** More rigorous, slower, more expensive (months, $1,500-$5,000)
 
@@ -372,6 +404,7 @@ Start with state board approval for your primary state. Expand to national accre
 #### Q: Can I partner with a CE provider instead of getting my own approval?
 
 **A:** Yes! Many instructors partner with existing accredited CE providers:
+
 - Hospital or university CE departments
 - Medical spa chains with CE approval
 - Medical associations with CE approval
@@ -384,6 +417,7 @@ The CE provider approves your course and issues certificates. You split CE fees 
 **A:** No! Many successful instructors on Doctrina LMS do NOT offer CE credits. Students take courses for skill development, practice expansion, and income potential - not just CE compliance. CE credits are a nice bonus but not required to teach excellent courses.
 
 **Popular Non-CE Courses:**
+
 - Business and marketing for medical aesthetics
 - Social media strategies for practitioners
 - Practice management and client retention
@@ -397,6 +431,7 @@ The CE provider approves your course and issues certificates. You split CE fees 
 ### Verification Process
 
 When you submit CE accreditation for a course, Doctrina LMS will:
+
 1. Review your submitted documentation
 2. Verify CE provider number with accrediting body (when possible)
 3. Check course title matches approval documentation
@@ -404,6 +439,7 @@ When you submit CE accreditation for a course, Doctrina LMS will:
 5. Approve or request corrections within 5-7 business days
 
 **If Verification Fails:**
+
 - We'll email you with specific issues
 - You'll have 14 days to provide corrected documentation
 - Course remains published but without CE credit badge until resolved
@@ -411,11 +447,13 @@ When you submit CE accreditation for a course, Doctrina LMS will:
 ### Annual Re-Verification
 
 CE approvals often expire annually. We will:
+
 - Email you 60 days before your CE approval expiration date
 - Request updated approval documentation
 - Remove CE badge if not renewed within 30 days of expiration
 
 **Your Responsibility:**
+
 - Renew your CE approval with the accrediting body
 - Submit updated documentation to Doctrina LMS promptly
 - Notify students if CE approval expires
@@ -423,6 +461,7 @@ CE approvals often expire annually. We will:
 ### Prohibited Actions
 
 Instructors may NOT:
+
 - Claim to offer CE credits without legitimate approval
 - Use expired or fake CE provider numbers
 - Misrepresent CE credit hours or accrediting body
@@ -430,6 +469,7 @@ Instructors may NOT:
 - Claim Doctrina LMS is the CE provider (it's YOU, not us)
 
 **Violation Consequences:**
+
 - Immediate removal of CE designation
 - Possible account suspension
 - Report to accrediting body and licensing board
@@ -468,11 +508,13 @@ Doctrina LMS reserves the right to modify this CE Credits Policy at any time. Ma
 ## Contact Information
 
 **For Students:**
+
 - CE credit verification questions: Contact your state licensing board directly
 - Course CE information questions: Contact course instructor via platform messaging
 - Platform questions: support@doctrina-lms.com
 
 **For Instructors:**
+
 - CE accreditation submission: ce-credits@doctrina-lms.com
 - Policy questions: instructors@doctrina-lms.com
 - Technical issues: support@doctrina-lms.com
@@ -484,6 +526,7 @@ Doctrina LMS reserves the right to modify this CE Credits Policy at any time. Ma
 ### For Students
 
 **Find Your State Licensing Board:**
+
 - **Nurses:** National Council of State Boards of Nursing - https://www.ncsbn.org/contactbon.htm
 - **Physicians:** Federation of State Medical Boards - https://www.fsmb.org/contact-a-state-medical-board/
 - **Physician Assistants:** National Commission on Certification of PAs - https://www.nccpa.net/
@@ -491,12 +534,14 @@ Doctrina LMS reserves the right to modify this CE Credits Policy at any time. Ma
 - **Other Professions:** Search "[Your Profession] [Your State] licensing board"
 
 **CE Requirements by State:**
+
 - **Nursys CE Requirements:** https://www.nursys.com
 - **State-specific CE requirements:** Contact your licensing board directly
 
 ### For Instructors
 
 **Accrediting Bodies:**
+
 - **ANCC (Nurses):** https://www.nursingworld.org/ancc/accreditation/
 - **ACCME (Physicians):** https://www.accme.org/
 - **AAPA (Physician Assistants):** https://www.aapa.org/cme/
@@ -506,6 +551,7 @@ Doctrina LMS reserves the right to modify this CE Credits Policy at any time. Ma
 - **State Cosmetology/Esthetics Boards:** Search by state
 
 **CE Provider Resources:**
+
 - **Joint Accreditation:** https://www.jointaccreditation.org/
 - **CE Broker:** https://www.cebroker.com/ (compliance management for students)
 

@@ -14,6 +14,7 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 ## Objectives and Scope
 
 **In Scope:**
+
 - Implement `lessonProgress.markComplete()` mutation for marking individual lessons as complete
 - Implement `lessonProgress.recalculateProgress()` mutation to update enrollment progress percentage
 - Implement `lessonProgress.getUserProgress()` query to retrieve progress data for UI display
@@ -23,6 +24,7 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 - Progress persistence across sessions with enrollment-level progress percentage caching
 
 **Out of Scope:**
+
 - Video watch-time tracking (progress is based on lesson completion only)
 - Quiz completion requirements (handled separately in EPIC-102)
 - Assignment submissions (not part of MVP)
@@ -33,6 +35,7 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 ## System Architecture Alignment
 
 **Architecture Components Referenced:**
+
 - **Backend:** Convex serverless functions (mutations and queries)
 - **Database:** Convex real-time database with `lessonProgress` and `enrollments` tables
 - **Authentication:** Clerk JWT tokens via Convex `ctx.auth.getUserIdentity()`
@@ -40,6 +43,7 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 - **State Management:** Convex `useQuery` and `useMutation` hooks with optimistic updates
 
 **Architectural Constraints:**
+
 - Must use Convex's row-level security pattern (filter by `userId` from authenticated context)
 - Must maintain real-time reactivity (no polling or manual refresh required)
 - Must follow existing patterns in `convex/enrollments.ts` and `convex/courses.ts`
@@ -47,6 +51,7 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 - All timestamps stored as Unix epoch milliseconds (`Date.now()`)
 
 **Data Flow:**
+
 1. Student clicks "Mark as Complete" → Frontend calls `lessonProgress.markComplete()`
 2. Backend verifies enrollment → Creates progress record → Triggers recalculation
 3. Recalculation counts completed lessons → Updates `enrollments.progressPercent`
@@ -59,15 +64,15 @@ The Lesson Progress Tracking System enables students to mark lessons as complete
 
 ### Services and Modules
 
-| Module/Service | Responsibility | Inputs | Outputs | Owner |
-|---|---|---|---|---|
-| **convex/lessonProgress.ts** | Core progress tracking logic | Lesson IDs, user identity from auth | Progress records, completion status | Backend |
-| **lessonProgress.markComplete** | Mark a single lesson complete | `lessonId: Id<"lessons">` | `progressId: Id<"lessonProgress">` | Backend Mutation |
-| **lessonProgress.recalculateProgress** | Recalculate course-level progress | `enrollmentId: Id<"enrollments">` | `{ progressPercent: number, completedAt?: number }` | Backend Mutation |
-| **lessonProgress.getUserProgress** | Get progress summary for a course | `courseId: Id<"courses">` | Progress object with completed lesson IDs | Backend Query |
-| **lessonProgress.getNextIncompleteLesson** | Find next lesson to watch | `courseId: Id<"courses">` | `lessonId: Id<"lessons"> \| null` | Backend Query |
-| **app/courses/[id]/learn** | Learning interface UI | Course ID from route params | Interactive lesson player with progress | Frontend Page |
-| **components/lesson-sidebar** | Progress visualization | Course modules and lessons | Collapsible sidebar with checkmarks | Frontend Component |
+| Module/Service                             | Responsibility                    | Inputs                              | Outputs                                             | Owner              |
+| ------------------------------------------ | --------------------------------- | ----------------------------------- | --------------------------------------------------- | ------------------ |
+| **convex/lessonProgress.ts**               | Core progress tracking logic      | Lesson IDs, user identity from auth | Progress records, completion status                 | Backend            |
+| **lessonProgress.markComplete**            | Mark a single lesson complete     | `lessonId: Id<"lessons">`           | `progressId: Id<"lessonProgress">`                  | Backend Mutation   |
+| **lessonProgress.recalculateProgress**     | Recalculate course-level progress | `enrollmentId: Id<"enrollments">`   | `{ progressPercent: number, completedAt?: number }` | Backend Mutation   |
+| **lessonProgress.getUserProgress**         | Get progress summary for a course | `courseId: Id<"courses">`           | Progress object with completed lesson IDs           | Backend Query      |
+| **lessonProgress.getNextIncompleteLesson** | Find next lesson to watch         | `courseId: Id<"courses">`           | `lessonId: Id<"lessons"> \| null`                   | Backend Query      |
+| **app/courses/[id]/learn**                 | Learning interface UI             | Course ID from route params         | Interactive lesson player with progress             | Frontend Page      |
+| **components/lesson-sidebar**              | Progress visualization            | Course modules and lessons          | Collapsible sidebar with checkmarks                 | Frontend Component |
 
 ---
 
@@ -98,6 +103,7 @@ enrollments: defineTable({
 ```
 
 **Data Integrity Rules:**
+
 - Each `(userId, lessonId)` pair appears at most once in `lessonProgress` (enforced by index)
 - `progressPercent` is always 0-100 (calculated as `completedCount / totalLessons * 100`)
 - `completedAt` is set when `progressPercent` reaches 100 (immutable once set)
@@ -256,6 +262,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 - **Optimistic UI Updates:** Frontend should show checkmark immediately, rollback on error
 
 **Performance Optimizations:**
+
 - Use indexed queries (`by_user_lesson`, `by_user_course`) to avoid table scans
 - Cache module/lesson counts at course level (future optimization if needed)
 - Batch progress queries using single `by_user` index lookup
@@ -302,12 +309,14 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 ## Dependencies and Integrations
 
 **Core Dependencies (from package.json):**
+
 - **convex:** ^1.28.0 - Real-time database and serverless functions
 - **next:** 16.0.0 - Frontend framework
 - **react:** ^19.2.0 - UI library
 - **@clerk/nextjs:** ^6.34.0 - Authentication integration
 
 **Convex Schema Dependencies:**
+
 - `lessons` table - Source of lesson data
 - `courseModules` table - Source of module structure and ordering
 - `courses` table - Course metadata
@@ -315,6 +324,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 - `certificates` table - Certificate generation (triggered by this epic)
 
 **Integration Points:**
+
 1. **Certificate Generation Service:**
    - Triggered via: `ctx.scheduler.runAfter(0, api.certificates.generate, { userId, courseId })`
    - Dependency: `convex/certificates.ts` must have `generate` action implemented
@@ -329,6 +339,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
    - Provide data for instructor course improvement insights
 
 **External Service Dependencies:**
+
 - None (all operations contained within Convex backend)
 
 ---
@@ -343,7 +354,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 2. **AC-101.2:** Progress percentage updates in real-time after marking lesson complete
    - **Given:** Course has 10 lessons and student has completed 4
    - **When:** Student completes lesson 5
-   - **Then:** Progress bar shows 50% (calculated as 5/10 * 100)
+   - **Then:** Progress bar shows 50% (calculated as 5/10 \* 100)
 
 3. **AC-101.3:** Progress persists across sessions
    - **Given:** Student marks 5 lessons complete
@@ -373,28 +384,29 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 8. **AC-101.8:** Progress recalculation is accurate for courses with multiple modules
    - **Given:** Course has 3 modules (Module 1: 3 lessons, Module 2: 5 lessons, Module 3: 2 lessons)
    - **When:** Student completes 5 lessons total
-   - **Then:** Progress shows 50% (5/10 * 100)
+   - **Then:** Progress shows 50% (5/10 \* 100)
 
 ---
 
 ## Traceability Mapping
 
-| Acceptance Criteria | Spec Section | Component/API | Test Idea |
-|---------------------|--------------|---------------|-----------|
-| AC-101.1 | APIs - markComplete | `lessonProgress.markComplete()` | Unit test: Call mutation, verify record created |
-| AC-101.2 | Workflows - Mark Complete | `recalculateProgress()` | Integration test: Mark lesson complete, verify progress updates |
-| AC-101.3 | Data Models | `lessonProgress` table | E2E test: Complete lesson, logout, login, verify checkmark persists |
-| AC-101.4 | Workflows - Certificate Trigger | `recalculateProgress()`, scheduler | Integration test: Complete final lesson, verify scheduler called |
-| AC-101.5 | APIs - getNextIncompleteLesson | `getNextIncompleteLesson()` | Unit test: Mock progress data, verify correct lesson returned |
-| AC-101.6 | Data Models - Unique Index | `by_user_lesson` index | Unit test: Call markComplete twice, verify no duplicate |
-| AC-101.7 | Security - Authorization | `markComplete()` enrollment check | Unit test: Call mutation without enrollment, verify error |
-| AC-101.8 | Workflows - Recalculation | Multi-module progress calculation | Integration test: Course with 3 modules, verify accurate percentage |
+| Acceptance Criteria | Spec Section                    | Component/API                      | Test Idea                                                           |
+| ------------------- | ------------------------------- | ---------------------------------- | ------------------------------------------------------------------- |
+| AC-101.1            | APIs - markComplete             | `lessonProgress.markComplete()`    | Unit test: Call mutation, verify record created                     |
+| AC-101.2            | Workflows - Mark Complete       | `recalculateProgress()`            | Integration test: Mark lesson complete, verify progress updates     |
+| AC-101.3            | Data Models                     | `lessonProgress` table             | E2E test: Complete lesson, logout, login, verify checkmark persists |
+| AC-101.4            | Workflows - Certificate Trigger | `recalculateProgress()`, scheduler | Integration test: Complete final lesson, verify scheduler called    |
+| AC-101.5            | APIs - getNextIncompleteLesson  | `getNextIncompleteLesson()`        | Unit test: Mock progress data, verify correct lesson returned       |
+| AC-101.6            | Data Models - Unique Index      | `by_user_lesson` index             | Unit test: Call markComplete twice, verify no duplicate             |
+| AC-101.7            | Security - Authorization        | `markComplete()` enrollment check  | Unit test: Call mutation without enrollment, verify error           |
+| AC-101.8            | Workflows - Recalculation       | Multi-module progress calculation  | Integration test: Course with 3 modules, verify accurate percentage |
 
 ---
 
 ## Risks, Assumptions, Open Questions
 
 **Risks:**
+
 1. **Risk:** Large courses (100+ lessons) may cause slow progress recalculation
    - **Likelihood:** Medium
    - **Impact:** High (poor UX, timeout errors)
@@ -411,6 +423,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
    - **Mitigation:** Implement retry logic in certificate service; add manual re-trigger button in admin panel
 
 **Assumptions:**
+
 1. **Assumption:** Students will not need to "un-complete" lessons (no undo functionality)
    - **Validation:** Confirm with Product team
    - **Impact if wrong:** Would require additional mutation and UI work
@@ -424,6 +437,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
    - **Impact if wrong:** Would require admin-level mutation and permission system
 
 **Open Questions:**
+
 1. **Question:** Should quiz lessons be marked complete automatically when quiz is passed?
    - **Decision needed from:** Product Manager
    - **Impact:** Changes integration between EPIC-101 and EPIC-102
@@ -441,6 +455,7 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 ## Test Strategy Summary
 
 **Unit Tests (Convex Functions):**
+
 - Test `markComplete()` with valid enrollment → verify progress record created
 - Test `markComplete()` without enrollment → verify error thrown
 - Test `markComplete()` idempotency → verify no duplicate records
@@ -449,22 +464,26 @@ Id<"lessons"> | null  // Next incomplete lesson, or null if all complete
 - Test `getNextIncompleteLesson()` returns correct lesson (first incomplete)
 
 **Integration Tests:**
+
 - Test full flow: mark lesson complete → verify progress updates → verify UI updates
 - Test certificate trigger: complete all lessons → verify scheduler called
 - Test multi-module course: verify progress calculated across all modules
 - Test race condition: mark two lessons complete simultaneously → verify both counted
 
 **End-to-End Tests (Playwright):**
+
 - Test student journey: enroll → watch lessons → mark complete → verify progress bar
 - Test "Continue Learning" button navigates to correct lesson
 - Test completion celebration: complete final lesson → verify certificate notification
 
 **Performance Tests:**
+
 - Benchmark `recalculateProgress()` with courses of varying sizes (10, 50, 100, 200 lessons)
 - Load test: 100 concurrent students marking lessons complete
 - Verify optimistic UI updates (checkmark appears < 100ms)
 
 **Manual Testing Checklist:**
+
 - [ ] Mark lesson complete → verify checkmark appears immediately
 - [ ] Refresh page → verify progress persists
 - [ ] Complete all lessons → verify certificate generated

@@ -18,7 +18,7 @@ so that **I can resume my learning progress across sessions and see accurate cou
 2. **AC-101.2:** Progress percentage updates automatically after marking lesson complete
    - **Given:** Course has 10 lessons and student has completed 4
    - **When:** Student completes lesson 5
-   - **Then:** `enrollments.progressPercent` updates to 50% (5/10 * 100)
+   - **Then:** `enrollments.progressPercent` updates to 50% (5/10 \* 100)
 
 3. **AC-101.3:** Progress persists across sessions and is loaded correctly
    - **Given:** Student has completed 5 lessons
@@ -48,7 +48,7 @@ so that **I can resume my learning progress across sessions and see accurate cou
 8. **AC-101.8:** Progress recalculation is accurate for multi-module courses
    - **Given:** Course has 3 modules (3 lessons, 5 lessons, 2 lessons respectively = 10 total)
    - **When:** Student completes 5 lessons across different modules
-   - **Then:** Progress shows exactly 50% (5/10 * 100)
+   - **Then:** Progress shows exactly 50% (5/10 \* 100)
 
 ## Tasks / Subtasks
 
@@ -143,18 +143,21 @@ so that **I can resume my learning progress across sessions and see accurate cou
 ### Architecture Patterns and Constraints
 
 **Convex Real-Time Backend** [Source: docs/ARCHITECTURE.md#backend-layer]
+
 - Use Convex mutations for write operations (`markComplete`, `recalculateProgress`)
 - Use Convex queries for read operations (`getUserProgress`, `getNextIncompleteLesson`)
 - Leverage Convex automatic reactivity - frontend subscriptions will update in real-time
 - All mutations must be ACID-compliant transactions (guaranteed by Convex)
 
 **Authentication & Authorization** [Source: docs/tech-spec-epic-101.md#security]
+
 - ALL functions must verify `ctx.auth.getUserIdentity()` is non-null
 - Apply row-level security: filter by `userId` from authenticated context
 - Verify enrollment before allowing progress updates
 - Never expose sensitive data (e.g., other students' progress)
 
 **Performance Requirements** [Source: docs/tech-spec-epic-101.md#performance]
+
 - Lesson completion response time: < 500ms (p95)
   - Mutation execution: < 200ms
   - Progress recalculation: < 200ms (even for 100+ lesson courses)
@@ -165,14 +168,16 @@ so that **I can resume my learning progress across sessions and see accurate cou
   - `by_module` for lesson lookups
 
 **Error Handling** [Source: docs/ARCHITECTURE.md#data-flow]
+
 - Throw descriptive errors: "Not authenticated", "Not enrolled in this course"
 - Certificate generation failure should NOT block progress completion
 - Log all errors but continue gracefully where possible
 
 **Certificate Integration** [Source: docs/tech-spec-epic-101.md#workflows-and-sequencing]
+
 - Use Convex scheduler for async certificate generation:
   ```typescript
-  ctx.scheduler.runAfter(0, api.certificates.generate, { userId, courseId })
+  ctx.scheduler.runAfter(0, api.certificates.generate, { userId, courseId });
   ```
 - Dependency: `convex/certificates.ts` must have `generate` action implemented
 - Side effect: Notification should be sent when certificate ready
@@ -180,11 +185,13 @@ so that **I can resume my learning progress across sessions and see accurate cou
 ### Project Structure Notes
 
 **File Locations:**
+
 - New file: `convex/lessonProgress.ts` (create)
 - Existing schema: `convex/schema.ts` (verify only, no changes needed)
 - Test file: `convex/lessonProgress.test.ts` (create)
 
 **Module Dependencies:**
+
 - `convex/lessons.ts` - Source of lesson data
 - `convex/courseModules.ts` - Source of module structure
 - `convex/courses.ts` - Course metadata
@@ -192,6 +199,7 @@ so that **I can resume my learning progress across sessions and see accurate cou
 - `convex/certificates.ts` - Certificate generation (triggered by this story)
 
 **Naming Conventions** [Source: docs/ARCHITECTURE.md#data-models-and-contracts]
+
 - Use `lessonProgress` (camelCase) for table name
 - Use `markComplete`, `getUserProgress` (camelCase) for function names
 - Use `userId`, `lessonId`, `courseId` (camelCase) for field names
@@ -212,6 +220,7 @@ so that **I can resume my learning progress across sessions and see accurate cou
 **None detected** - All required schema tables exist and match specifications.
 
 **Design Decisions:**
+
 1. **Idempotency Strategy:** Use unique index `by_user_lesson` to prevent duplicates naturally. Return existing ID instead of error on duplicate.
 2. **Progress Calculation:** Real-time recalculation on every lesson completion. Future optimization: cache lesson counts at course level if performance degrades.
 3. **Certificate Timing:** Trigger immediately at 100% (not delayed). Certificate service handles async generation.
@@ -237,14 +246,17 @@ Claude Sonnet 4.5 (1M context) - Model ID: claude-sonnet-4-5-20250929
 ### File List
 
 **Files to Create:**
+
 - `convex/lessonProgress.ts` - Core implementation
 - `convex/lessonProgress.test.ts` - Unit tests
 
 **Files to Verify (no changes):**
+
 - `convex/schema.ts` - Verify schema tables exist
 - `convex/_generated/api.d.ts` - Auto-generated types
 
 **Files to Read/Reference:**
+
 - `convex/enrollments.ts` - For enrollment verification pattern
 - `convex/courses.ts` - For course query pattern
 - `convex/courseModules.ts` - For module querying

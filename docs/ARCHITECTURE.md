@@ -60,6 +60,7 @@ Doctrina LMS is built as a modern, serverless web application using Next.js for 
 #### Next.js 15 (App Router)
 
 **Why Next.js?**
+
 - Server-Side Rendering (SSR) for SEO and performance
 - App Router provides modern React patterns (Server Components, Streaming)
 - Built-in API routes for webhooks and server actions
@@ -67,6 +68,7 @@ Doctrina LMS is built as a modern, serverless web application using Next.js for 
 - Large ecosystem and community support
 
 **Key Features Used:**
+
 - **App Router** - File-based routing with layout composition
 - **Server Components** - Reduce client bundle, fetch data closer to source
 - **Client Components** - Interactive UI with "use client" directive
@@ -74,6 +76,7 @@ Doctrina LMS is built as a modern, serverless web application using Next.js for 
 - **Streaming** - Progressive page rendering with Suspense
 
 **Directory Structure:**
+
 ```
 app/
 ├── layout.tsx          # Root layout (providers, global styles)
@@ -93,6 +96,7 @@ app/
 #### React 19
 
 **New Features Leveraged:**
+
 - Enhanced Server Components
 - Improved hydration
 - Better error boundaries
@@ -101,11 +105,13 @@ app/
 #### TypeScript
 
 **Configuration:**
+
 - Strict mode enabled
 - Path aliases (`@/` → root)
 - Convex type generation integration
 
 **Type Safety:**
+
 ```typescript
 // End-to-end type safety example
 // Database schema → Generated types → Component props
@@ -132,6 +138,7 @@ function CourseCard({ course }: { course: Course }) {
 - **Dark mode** - Built-in theme switching
 
 **Component Architecture:**
+
 ```
 components/
 ├── ui/                 # Base components (Button, Input, etc.)
@@ -154,6 +161,7 @@ components/
 #### Convex
 
 **Why Convex?**
+
 - Real-time reactivity without manual WebSocket management
 - Automatic API generation from TypeScript functions
 - ACID transactions with optimistic updates
@@ -161,6 +169,7 @@ components/
 - Serverless scaling with no infrastructure management
 
 **Architecture:**
+
 ```
 convex/
 ├── schema.ts           # Database schema (type-safe)
@@ -177,13 +186,14 @@ convex/
 **Function Types:**
 
 **Queries** - Read data, automatically reactive
+
 ```typescript
 // convex/courses.ts
 export const list = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query('courses').collect();
-  },
+	args: {},
+	handler: async ctx => {
+		return await ctx.db.query('courses').collect();
+	},
 });
 
 // Component auto-updates when data changes
@@ -191,39 +201,42 @@ const courses = useQuery(api.courses.list);
 ```
 
 **Mutations** - Write data, transactional
+
 ```typescript
 // convex/courses.ts
 export const enroll = mutation({
-  args: { courseId: v.id('courses') },
-  handler: async (ctx, { courseId }) => {
-    const user = await ctx.auth.getUserIdentity();
-    if (!user) throw new Error('Unauthorized');
+	args: { courseId: v.id('courses') },
+	handler: async (ctx, { courseId }) => {
+		const user = await ctx.auth.getUserIdentity();
+		if (!user) throw new Error('Unauthorized');
 
-    await ctx.db.insert('enrollments', {
-      userId: user.subject,
-      courseId,
-      enrolledAt: Date.now(),
-    });
-  },
+		await ctx.db.insert('enrollments', {
+			userId: user.subject,
+			courseId,
+			enrolledAt: Date.now(),
+		});
+	},
 });
 ```
 
 **Actions** - Call external APIs
+
 ```typescript
 // convex/ai.ts
 export const generateQuiz = action({
-  args: { courseContent: v.string() },
-  handler: async (ctx, { courseContent }) => {
-    // Call OpenAI, send emails, etc.
-    const response = await fetch('https://api.openai.com/...');
-    return response.json();
-  },
+	args: { courseContent: v.string() },
+	handler: async (ctx, { courseContent }) => {
+		// Call OpenAI, send emails, etc.
+		const response = await fetch('https://api.openai.com/...');
+		return response.json();
+	},
 });
 ```
 
 #### Clerk Authentication
 
 **Integration Flow:**
+
 ```
 1. User signs in via Clerk → Clerk issues JWT
 2. JWT includes custom claims for Convex
@@ -232,36 +245,38 @@ export const generateQuiz = action({
 ```
 
 **User Syncing:**
+
 ```typescript
 // convex/users.ts
 export const ensureCurrentUser = mutation({
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
+	handler: async ctx => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) return null;
 
-    const existing = await ctx.db
-      .query('users')
-      .withIndex('by_externalId', q => q.eq('externalId', identity.subject))
-      .first();
+		const existing = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
+			.first();
 
-    if (existing) return existing;
+		if (existing) return existing;
 
-    // Create user on first login
-    return await ctx.db.insert('users', {
-      externalId: identity.subject,
-      email: identity.email,
-      firstName: identity.firstName,
-      lastName: identity.lastName,
-      role: 'student',
-      createdAt: new Date().toISOString(),
-    });
-  },
+		// Create user on first login
+		return await ctx.db.insert('users', {
+			externalId: identity.subject,
+			email: identity.email,
+			firstName: identity.firstName,
+			lastName: identity.lastName,
+			role: 'student',
+			createdAt: new Date().toISOString(),
+		});
+	},
 });
 ```
 
 #### Stripe Payments
 
 **Payment Flow:**
+
 ```
 1. User clicks "Enroll" → Frontend creates checkout session
 2. Stripe Checkout modal opens
@@ -272,23 +287,24 @@ export const ensureCurrentUser = mutation({
 ```
 
 **Webhook Handler:**
+
 ```typescript
 // app/api/webhooks/stripe/route.ts
 export async function POST(req: Request) {
-  const signature = req.headers.get('stripe-signature');
-  const event = stripe.webhooks.constructEvent(body, signature, secret);
+	const signature = req.headers.get('stripe-signature');
+	const event = stripe.webhooks.constructEvent(body, signature, secret);
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    // Record purchase in Convex
-    await convex.mutation(api.purchases.create, {
-      userId: session.metadata.userId,
-      courseId: session.metadata.courseId,
-      amount: session.amount_total,
-    });
-  }
+	if (event.type === 'checkout.session.completed') {
+		const session = event.data.object;
+		// Record purchase in Convex
+		await convex.mutation(api.purchases.create, {
+			userId: session.metadata.userId,
+			courseId: session.metadata.courseId,
+			amount: session.amount_total,
+		});
+	}
 
-  return Response.json({ received: true });
+	return Response.json({ received: true });
 }
 ```
 
@@ -378,29 +394,32 @@ Services support both **mocked** (development) and **real** (production) modes:
 ```typescript
 // lib/course-service.ts
 export function useCourses() {
-  // Feature flag determines mock vs real
-  if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-    return useMockCourses();
-  }
-  return useQuery(api.courses.list);
+	// Feature flag determines mock vs real
+	if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
+		return useMockCourses();
+	}
+	return useQuery(api.courses.list);
 }
 ```
 
 ### Service Categories
 
 **Data Services** (Read-heavy)
+
 - Course browsing
 - Resource library
 - User profiles
 - Notification feed
 
 **Action Services** (Write-heavy)
+
 - Course enrollment
 - Purchase processing
 - Certificate generation
 - Favorite management
 
 **External Services**
+
 - AI quiz generation (OpenAI)
 - Email notifications (Resend/SendGrid)
 - File uploads (Convex storage / S3)
@@ -456,11 +475,11 @@ Convex automatically caches queries - components sharing the same query share da
 ```typescript
 // Both components share the same cached result
 function ComponentA() {
-  const courses = useQuery(api.courses.list);
+	const courses = useQuery(api.courses.list);
 }
 
 function ComponentB() {
-  const courses = useQuery(api.courses.list); // No duplicate fetch
+	const courses = useQuery(api.courses.list); // No duplicate fetch
 }
 ```
 
@@ -481,54 +500,57 @@ function ComponentB() {
 ### Authorization Patterns
 
 **Row-Level Security:**
+
 ```typescript
 // Only return courses user has purchased
 export const myCourses = query({
-  handler: async (ctx) => {
-    const user = await ctx.auth.getUserIdentity();
-    if (!user) return [];
+	handler: async ctx => {
+		const user = await ctx.auth.getUserIdentity();
+		if (!user) return [];
 
-    const purchases = await ctx.db
-      .query('purchases')
-      .withIndex('by_user', q => q.eq('userId', user.subject))
-      .collect();
+		const purchases = await ctx.db
+			.query('purchases')
+			.withIndex('by_user', q => q.eq('userId', user.subject))
+			.collect();
 
-    const courseIds = purchases.map(p => p.courseId);
-    return await Promise.all(
-      courseIds.map(id => ctx.db.get(id))
-    );
-  },
+		const courseIds = purchases.map(p => p.courseId);
+		return await Promise.all(courseIds.map(id => ctx.db.get(id)));
+	},
 });
 ```
 
 **Role-Based Access:**
+
 ```typescript
 // Only instructors can create courses
 export const createCourse = mutation({
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
 
-    const user = await ctx.db.query('users')
-      .withIndex('by_externalId', q => q.eq('externalId', identity.subject))
-      .first();
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
+			.first();
 
-    if (user?.role !== 'instructor') {
-      throw new Error('Forbidden: Instructor role required');
-    }
+		if (user?.role !== 'instructor') {
+			throw new Error('Forbidden: Instructor role required');
+		}
 
-    return await ctx.db.insert('courses', args);
-  },
+		return await ctx.db.insert('courses', args);
+	},
 });
 ```
 
 ### Environment Variables
 
 **Public vs Private:**
+
 - `NEXT_PUBLIC_*` - Exposed to browser
 - No prefix - Server-only (secrets)
 
 **Never expose:**
+
 - Database credentials
 - API secret keys
 - Webhook secrets
@@ -541,19 +563,23 @@ export const createCourse = mutation({
 ### Database Scaling
 
 **Convex Advantages:**
+
 - Auto-scales with usage
 - No connection pool management
 - Global edge distribution
 - Built-in caching
 
 **Index Strategy:**
+
 ```typescript
 // Define indexes for common queries
-schema.table('courses', {
-  // ... fields
-}).index('by_instructor', ['instructorId'])
-  .index('by_category', ['category'])
-  .index('by_published', ['published', 'createdAt']);
+schema
+	.table('courses', {
+		// ... fields
+	})
+	.index('by_instructor', ['instructorId'])
+	.index('by_category', ['category'])
+	.index('by_published', ['published', 'createdAt']);
 ```
 
 ### CDN & Edge Distribution
@@ -565,6 +591,7 @@ schema.table('courses', {
 ### Monitoring & Observability
 
 **Recommended Stack:**
+
 - **Errors:** Sentry
 - **Analytics:** PostHog or Mixpanel
 - **Logs:** Convex dashboard + DataDog
@@ -575,23 +602,27 @@ schema.table('courses', {
 ## Future Architecture Evolution
 
 ### Phase 1: Current (MVP)
+
 - Monolithic Next.js app
 - Convex backend
 - Mocked services for rapid development
 
 ### Phase 2: Real-Time Features
+
 - Live classroom (WebRTC)
 - Real-time collaboration
 - Chat and messaging
 - Notification subscriptions
 
 ### Phase 3: Advanced Services
+
 - AI-powered recommendations
 - Video transcoding pipeline
 - Advanced analytics
 - Multi-tenant architecture
 
 ### Phase 4: Microservices (If Needed)
+
 - Separate video processing service
 - Dedicated AI service
 - Analytics data warehouse
@@ -614,36 +645,39 @@ yarn dev
 ### Testing Strategy
 
 **Unit Tests** - Service logic
+
 ```typescript
 // lib/__tests__/course-service.test.ts
 import { calculateProgress } from '@/lib/course-service';
 
 test('calculates progress correctly', () => {
-  expect(calculateProgress(5, 10)).toBe(50);
+	expect(calculateProgress(5, 10)).toBe(50);
 });
 ```
 
 **Integration Tests** - Convex functions
+
 ```typescript
 // convex/courses.test.ts
 import { ConvexTestingHelper } from 'convex/testing';
 
 test('creates course successfully', async () => {
-  const t = new ConvexTestingHelper();
-  const courseId = await t.mutation(api.courses.create, {
-    title: 'Test Course',
-  });
-  expect(courseId).toBeDefined();
+	const t = new ConvexTestingHelper();
+	const courseId = await t.mutation(api.courses.create, {
+		title: 'Test Course',
+	});
+	expect(courseId).toBeDefined();
 });
 ```
 
 **E2E Tests** - Playwright
+
 ```typescript
 // tests/e2e/enrollment.spec.ts
 test('user can enroll in course', async ({ page }) => {
-  await page.goto('/courses/123');
-  await page.click('button:has-text("Enroll")');
-  await expect(page).toHaveURL('/courses/123/learn');
+	await page.goto('/courses/123');
+	await page.click('button:has-text("Enroll")');
+	await expect(page).toHaveURL('/courses/123/learn');
 });
 ```
 
@@ -652,6 +686,7 @@ test('user can enroll in course', async ({ page }) => {
 ## Conclusion
 
 This architecture balances:
+
 - **Developer Experience** - Fast iteration, type safety
 - **Performance** - SSR, edge distribution, real-time updates
 - **Scalability** - Serverless auto-scaling

@@ -1,6 +1,7 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+
 import { api } from './_generated/api';
+import { mutation, query } from './_generated/server';
 
 /**
  * Mark a lesson as complete for the authenticated user
@@ -28,19 +29,17 @@ export const markComplete = mutation({
 			throw new Error('Lesson not found');
 		}
 
-		const module = await ctx.db.get(lesson.moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(lesson.moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const courseId = module.courseId;
+		const courseId = courseModule.courseId;
 
 		// Verify enrollment exists (Constraint #2 - row-level security, AC-101.6)
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', identity.subject).eq('courseId', courseId)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
 			.first();
 
 		if (!enrollment) {
@@ -50,9 +49,7 @@ export const markComplete = mutation({
 		// Check for existing progress record (Constraint #8 - idempotency, AC-101.5)
 		const existing = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user_lesson', (q) =>
-				q.eq('userId', identity.subject).eq('lessonId', lessonId)
-			)
+			.withIndex('by_user_lesson', q => q.eq('userId', identity.subject).eq('lessonId', lessonId))
 			.first();
 
 		if (existing) {
@@ -99,7 +96,7 @@ export const recalculateProgress = mutation({
 		// Query all modules for course, ordered (Constraint #3 - indexed queries)
 		const modules = await ctx.db
 			.query('courseModules')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		const sortedModules = modules.sort((a, b) => a.order - b.order);
@@ -108,42 +105,39 @@ export const recalculateProgress = mutation({
 		let totalLessons = 0;
 		const allLessonIds: string[] = [];
 
-		for (const module of sortedModules) {
+		for (const courseModule of sortedModules) {
 			const lessons = await ctx.db
 				.query('lessons')
-				.withIndex('by_module', (q) => q.eq('moduleId', module._id))
+				.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
 				.collect();
 
 			totalLessons += lessons.length;
-			allLessonIds.push(...lessons.map((l) => l._id));
+			allLessonIds.push(...lessons.map(l => l._id));
 		}
 
 		// Query progress records for this user (Constraint #3 - indexed query)
 		const progressRecords = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user', (q) => q.eq('userId', enrollment.userId))
+			.withIndex('by_user', q => q.eq('userId', enrollment.userId))
 			.collect();
 
 		// Filter to only lessons in this course
 		const completedLessonIds = new Set(
-			progressRecords
-				.filter((p) => allLessonIds.includes(p.lessonId))
-				.map((p) => p.lessonId)
+			progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId),
 		);
 
 		const completedCount = completedLessonIds.size;
 
 		// Calculate progress percentage (AC-101.2, AC-101.8)
-		const progressPercent =
-			totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+		const progressPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
 		// Determine completion timestamp (AC-101.4)
-		const completedAt = progressPercent === 100 ? Date.now() : null;
+		const completedAt = progressPercent === 100 ? Date.now() : undefined;
 
 		// Update enrollment record
 		await ctx.db.patch(enrollmentId, {
 			progressPercent,
-			completedAt,
+			...(completedAt !== undefined && { completedAt }),
 		});
 
 		// Trigger certificate generation if 100% complete (Constraint #9, AC-101.4)
@@ -152,15 +146,13 @@ export const recalculateProgress = mutation({
 			const course = await ctx.db.get(courseId);
 			const user = await ctx.db
 				.query('users')
-				.withIndex('by_externalId', (q) => q.eq('externalId', enrollment.userId))
+				.withIndex('by_externalId', q => q.eq('externalId', enrollment.userId))
 				.first();
 
 			const instructor = course
 				? await ctx.db
 						.query('users')
-						.withIndex('by_externalId', (q) =>
-							q.eq('externalId', course.instructorId)
-						)
+						.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
 						.first()
 				: null;
 
@@ -177,7 +169,7 @@ export const recalculateProgress = mutation({
 			}
 		}
 
-		return { progressPercent, completedAt };
+		return { progressPercent, completedAt: completedAt ?? null };
 	},
 });
 
@@ -200,9 +192,7 @@ export const getUserProgress = query({
 		// Find enrollment (AC-101.3)
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', identity.subject).eq('courseId', courseId)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
 			.first();
 
 		if (!enrollment) {
@@ -212,32 +202,30 @@ export const getUserProgress = query({
 		// Get all modules and lessons for course
 		const modules = await ctx.db
 			.query('courseModules')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		let totalLessons = 0;
 		const allLessonIds: string[] = [];
 
-		for (const module of modules) {
+		for (const courseModule of modules) {
 			const lessons = await ctx.db
 				.query('lessons')
-				.withIndex('by_module', (q) => q.eq('moduleId', module._id))
+				.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
 				.collect();
 
 			totalLessons += lessons.length;
-			allLessonIds.push(...lessons.map((l) => l._id));
+			allLessonIds.push(...lessons.map(l => l._id));
 		}
 
 		// Query progress records for user (Constraint #2 - row-level security)
 		const progressRecords = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user', (q) => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', identity.subject))
 			.collect();
 
 		// Filter to lessons in this course
-		const completedLessonIds = progressRecords
-			.filter((p) => allLessonIds.includes(p.lessonId))
-			.map((p) => p.lessonId);
+		const completedLessonIds = progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId);
 
 		return {
 			enrollmentId: enrollment._id,
@@ -268,16 +256,16 @@ export const getNextIncompleteLesson = query({
 		// Get all modules and lessons in order (AC-101.7)
 		const modules = await ctx.db
 			.query('courseModules')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		const sortedModules = modules.sort((a, b) => a.order - b.order);
 
 		// Iterate through modules and lessons sequentially
-		for (const module of sortedModules) {
+		for (const courseModule of sortedModules) {
 			const lessons = await ctx.db
 				.query('lessons')
-				.withIndex('by_module', (q) => q.eq('moduleId', module._id))
+				.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
 				.collect();
 
 			const sortedLessons = lessons.sort((a, b) => a.order - b.order);
@@ -286,9 +274,7 @@ export const getNextIncompleteLesson = query({
 				// Check if lesson is complete
 				const progress = await ctx.db
 					.query('lessonProgress')
-					.withIndex('by_user_lesson', (q) =>
-						q.eq('userId', identity.subject).eq('lessonId', lesson._id)
-					)
+					.withIndex('by_user_lesson', q => q.eq('userId', identity.subject).eq('lessonId', lesson._id))
 					.first();
 
 				if (!progress) {
@@ -303,12 +289,10 @@ export const getNextIncompleteLesson = query({
 			const firstModule = sortedModules[0];
 			const firstModuleLessons = await ctx.db
 				.query('lessons')
-				.withIndex('by_module', (q) => q.eq('moduleId', firstModule._id))
+				.withIndex('by_module', q => q.eq('moduleId', firstModule._id))
 				.collect();
 
-			const sortedFirstLessons = firstModuleLessons.sort(
-				(a, b) => a.order - b.order
-			);
+			const sortedFirstLessons = firstModuleLessons.sort((a, b) => a.order - b.order);
 
 			if (sortedFirstLessons.length > 0) {
 				return sortedFirstLessons[0]._id;

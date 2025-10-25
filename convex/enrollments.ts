@@ -1,6 +1,7 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+
 import { api } from './_generated/api';
+import { mutation, query } from './_generated/server';
 
 /**
  * Create a course enrollment (called after successful payment)
@@ -16,9 +17,7 @@ export const create = mutation({
 		// Check if already enrolled (idempotent for webhook retries)
 		const existing = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', args.userId).eq('courseId', args.courseId)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', args.userId).eq('courseId', args.courseId))
 			.first();
 
 		if (existing) {
@@ -35,9 +34,14 @@ export const create = mutation({
 
 		// Create welcome notification
 		const course = await ctx.db.get(args.courseId);
-		if (course) {
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', args.userId))
+			.first();
+
+		if (course && user) {
 			await ctx.db.insert('notifications', {
-				userId: args.userId,
+				userId: user._id,
 				title: 'Course enrolled!',
 				description: `You've successfully enrolled in "${course.title}". Start learning now!`,
 				type: 'course_update',
@@ -62,9 +66,7 @@ export const isEnrolled = query({
 	handler: async (ctx, { userId, courseId }) => {
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', userId).eq('courseId', courseId)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', userId).eq('courseId', courseId))
 			.first();
 
 		return !!enrollment;
@@ -84,9 +86,7 @@ export const getCurrentUserEnrollment = query({
 
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', identity.subject).eq('courseId', courseId)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
 			.first();
 
 		return enrollment;
@@ -101,19 +101,19 @@ export const getUserEnrollments = query({
 	handler: async (ctx, { userId }) => {
 		const enrollments = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user', (q) => q.eq('userId', userId))
+			.withIndex('by_user', q => q.eq('userId', userId))
 			.order('desc')
 			.collect();
 
 		// Populate course details for each enrollment
 		return await Promise.all(
-			enrollments.map(async (enrollment) => {
+			enrollments.map(async enrollment => {
 				const course = await ctx.db.get(enrollment.courseId);
 				return {
 					...enrollment,
 					course,
 				};
-			})
+			}),
 		);
 	},
 });
@@ -123,7 +123,7 @@ export const getUserEnrollments = query({
  */
 export const getMyEnrollments = query({
 	args: {},
-	handler: async (ctx) => {
+	handler: async ctx => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			return [];
@@ -131,19 +131,19 @@ export const getMyEnrollments = query({
 
 		const enrollments = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user', (q) => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', identity.subject))
 			.order('desc')
 			.collect();
 
 		// Populate course details
 		return await Promise.all(
-			enrollments.map(async (enrollment) => {
+			enrollments.map(async enrollment => {
 				const course = await ctx.db.get(enrollment.courseId);
 				return {
 					...enrollment,
 					course,
 				};
-			})
+			}),
 		);
 	},
 });
@@ -156,7 +156,7 @@ export const getCourseEnrollmentCount = query({
 	handler: async (ctx, { courseId }) => {
 		const enrollments = await ctx.db
 			.query('enrollments')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		return enrollments.length;
@@ -187,16 +187,14 @@ export const getCourseStudents = query({
 
 		const enrollments = await ctx.db
 			.query('enrollments')
-			.withIndex('by_course', (q) => q.eq('courseId', courseId))
+			.withIndex('by_course', q => q.eq('courseId', courseId))
 			.collect();
 
 		// Return aggregate data only (privacy protection)
 		return {
 			total: enrollments.length,
-			completed: enrollments.filter((e) => e.completedAt).length,
-			averageProgress:
-				enrollments.reduce((sum, e) => sum + e.progressPercent, 0) /
-					enrollments.length || 0,
+			completed: enrollments.filter(e => e.completedAt).length,
+			averageProgress: enrollments.reduce((sum, e) => sum + e.progressPercent, 0) / enrollments.length || 0,
 		};
 	},
 });
@@ -219,10 +217,31 @@ export const updateProgress = mutation({
 		if (updates.completedAt) {
 			const enrollment = await ctx.db.get(enrollmentId);
 			if (enrollment) {
-				await ctx.scheduler.runAfter(0, api.certificates.generate, {
-					userId: enrollment.userId,
-					courseId: enrollment.courseId,
-				});
+				// Get user, course, and instructor for certificate generation
+				const user = await ctx.db
+					.query('users')
+					.withIndex('by_externalId', q => q.eq('externalId', enrollment.userId))
+					.first();
+
+				const course = await ctx.db.get(enrollment.courseId);
+				const instructor = course
+					? await ctx.db
+							.query('users')
+							.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
+							.first()
+					: null;
+
+				if (user && course && instructor) {
+					await ctx.scheduler.runAfter(0, api.certificates.generate, {
+						userId: user._id,
+						userName: `${user.firstName} ${user.lastName}`,
+						courseId: course._id,
+						courseName: course.title,
+						instructorId: instructor._id,
+						instructorName: `${instructor.firstName} ${instructor.lastName}`,
+						templateId: 'default',
+					});
+				}
 			}
 		}
 	},

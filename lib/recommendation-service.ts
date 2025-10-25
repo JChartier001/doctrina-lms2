@@ -2,8 +2,11 @@
 // This service generates personalized content recommendations for users using Convex
 
 import { useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+
+import { Resource } from './resource-library-service';
 
 // Types for recommendations
 export interface CourseRecommendation {
@@ -28,7 +31,7 @@ export interface ResourceRecommendation {
 	thumbnailUrl?: string;
 	relevanceScore: number;
 	relevanceReason: string;
-	resource: any; // Using any for now to avoid import issues
+	resource: Resource;
 }
 
 export interface PathwayRecommendation {
@@ -42,12 +45,7 @@ export interface PathwayRecommendation {
 	relevanceReason: string;
 }
 
-export type RecommendationType =
-	| 'course'
-	| 'resource'
-	| 'pathway'
-	| 'instructor'
-	| 'community';
+export type RecommendationType = 'course' | 'resource' | 'pathway' | 'instructor' | 'community';
 
 export interface UserInterest {
 	topic: string;
@@ -56,13 +54,10 @@ export interface UserInterest {
 
 // Convex-based recommendation hooks
 export function useCourseRecommendations(userId: Id<'users'>, limit?: number) {
-	const convexRecommendations = useQuery(
-		api.recommendations.getCourseRecommendations,
-		{
-			userId,
-			limit,
-		}
-	);
+	const convexRecommendations = useQuery(api.recommendations.getCourseRecommendations, {
+		userId,
+		limit,
+	});
 
 	return {
 		data: convexRecommendations || [],
@@ -71,17 +66,11 @@ export function useCourseRecommendations(userId: Id<'users'>, limit?: number) {
 	};
 }
 
-export function useResourceRecommendations(
-	userId: Id<'users'>,
-	limit?: number
-) {
-	const convexRecommendations = useQuery(
-		api.recommendations.getResourceRecommendations,
-		{
-			userId,
-			limit,
-		}
-	);
+export function useResourceRecommendations(userId: Id<'users'>, limit?: number) {
+	const convexRecommendations = useQuery(api.recommendations.getResourceRecommendations, {
+		userId,
+		limit,
+	});
 
 	return {
 		data: convexRecommendations || [],
@@ -91,13 +80,10 @@ export function useResourceRecommendations(
 }
 
 export function usePathwayRecommendations(userId: Id<'users'>, limit?: number) {
-	const convexRecommendations = useQuery(
-		api.recommendations.getPathwayRecommendations,
-		{
-			userId,
-			limit,
-		}
-	);
+	const convexRecommendations = useQuery(api.recommendations.getPathwayRecommendations, {
+		userId,
+		limit,
+	});
 
 	return {
 		data: convexRecommendations || [],

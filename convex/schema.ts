@@ -19,21 +19,13 @@ export const userSchema = {
 };
 
 export default defineSchema({
-	users: defineTable(userSchema)
-		.index('by_email', ['email'])
-		.index('by_externalId', ['externalId']),
+	users: defineTable(userSchema).index('by_email', ['email']).index('by_externalId', ['externalId']),
 
 	courses: defineTable({
 		title: v.string(),
 		description: v.string(),
 		instructorId: v.id('users'),
-		level: v.optional(
-			v.union(
-				v.literal('beginner'),
-				v.literal('intermediate'),
-				v.literal('advanced')
-			)
-		),
+		level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
 		duration: v.optional(v.string()),
 		price: v.optional(v.number()),
 		thumbnailUrl: v.optional(v.string()),
@@ -58,11 +50,7 @@ export default defineSchema({
 		favoriteCount: v.number(),
 		rating: v.number(),
 		reviewCount: v.number(),
-		difficulty: v.union(
-			v.literal('beginner'),
-			v.literal('intermediate'),
-			v.literal('advanced')
-		),
+		difficulty: v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced')),
 		duration: v.optional(v.string()),
 		fileSize: v.optional(v.string()),
 		courseId: v.optional(v.id('courses')),
@@ -86,7 +74,7 @@ export default defineSchema({
 			v.literal('community'),
 			v.literal('live_session'),
 			v.literal('certificate'),
-			v.literal('milestone')
+			v.literal('milestone'),
 		),
 		read: v.boolean(),
 		createdAt: v.number(),
@@ -102,12 +90,7 @@ export default defineSchema({
 		duration: v.number(),
 		isRecorded: v.boolean(),
 		maxParticipants: v.number(),
-		status: v.union(
-			v.literal('scheduled'),
-			v.literal('live'),
-			v.literal('completed'),
-			v.literal('cancelled')
-		),
+		status: v.union(v.literal('scheduled'), v.literal('live'), v.literal('completed'), v.literal('cancelled')),
 		recordingUrl: v.optional(v.string()),
 	})
 		.index('by_status', ['status'])
@@ -142,11 +125,7 @@ export default defineSchema({
 		amount: v.number(),
 		stripeSessionId: v.optional(v.string()),
 		currency: v.optional(v.string()),
-		status: v.union(
-			v.literal('open'),
-			v.literal('complete'),
-			v.literal('expired')
-		),
+		status: v.union(v.literal('open'), v.literal('complete'), v.literal('expired')),
 		createdAt: v.number(),
 	})
 		.index('by_user', ['userId'])
@@ -167,11 +146,7 @@ export default defineSchema({
 		moduleId: v.id('courseModules'),
 		title: v.string(),
 		description: v.optional(v.string()),
-		type: v.union(
-			v.literal('video'),
-			v.literal('quiz'),
-			v.literal('assignment')
-		),
+		type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
 		duration: v.optional(v.string()), // e.g., "15:30"
 		videoUrl: v.optional(v.string()),
 		videoId: v.optional(v.string()), // Vimeo/Cloudflare video ID

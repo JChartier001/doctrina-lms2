@@ -1,24 +1,19 @@
 'use client';
 
-import { useAuth } from '@/lib/auth';
+import { Check, Clock, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
 import { toast } from 'react-toastify';
-import { Check, Clock, Users } from 'lucide-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/lib/auth';
 
 // Mock data for the program
 const programData = {
@@ -196,8 +191,7 @@ The curriculum is structured to provide a systematic progression from basic prin
 	],
 	faqs: [
 		{
-			question:
-				'Is this program fully online or are there in-person components?',
+			question: 'Is this program fully online or are there in-person components?',
 			answer:
 				'The program is primarily online, with video lessons, interactive assignments, and live virtual sessions. There are optional in-person workshops offered quarterly in major cities, but these are not required to complete the program.',
 		},
@@ -224,11 +218,7 @@ The curriculum is structured to provide a systematic progression from basic prin
 	],
 };
 
-export default function ProgramDetailPage({
-	params,
-}: {
-	params: { id: string };
-}) {
+export default function ProgramDetailPage({ params }: { params: { id: string } }) {
 	const [selectedPricing, setSelectedPricing] = useState('monthly');
 	const { user } = useAuth();
 	const router = useRouter();
@@ -239,164 +229,123 @@ export default function ProgramDetailPage({
 			return;
 		}
 
-		toast.success(
-			'Enrollment successful. You have been enrolled in the program.'
-		);
+		toast.success('Enrollment successful. You have been enrolled in the program.');
 	};
 
 	return (
-		<div className='container py-10'>
-			<div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10'>
-				<div className='lg:col-span-2'>
-					<div className='space-y-4'>
-						<div className='flex flex-wrap gap-2'>
+		<div className="container py-10">
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+				<div className="lg:col-span-2">
+					<div className="space-y-4">
+						<div className="flex flex-wrap gap-2">
 							{programData.tags.map(tag => (
-								<Badge key={tag} variant='secondary'>
+								<Badge key={tag} variant="secondary">
 									{tag}
 								</Badge>
 							))}
 						</div>
 
-						<h1 className='text-3xl font-bold'>{programData.title}</h1>
-						<p className='text-xl text-muted-foreground'>
-							{programData.description}
-						</p>
+						<h1 className="text-3xl font-bold">{programData.title}</h1>
+						<p className="text-xl text-muted-foreground">{programData.description}</p>
 
-						<div className='grid grid-cols-3 gap-4 mt-6'>
-							<div className='flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground'>
-								<Clock className='h-5 w-5 mb-1' />
-								<span className='text-sm font-medium'>
-									{programData.duration}
-								</span>
-								<span className='text-xs text-accent-foreground/80'>
-									Duration
-								</span>
+						<div className="grid grid-cols-3 gap-4 mt-6">
+							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground">
+								<Clock className="h-5 w-5 mb-1" />
+								<span className="text-sm font-medium">{programData.duration}</span>
+								<span className="text-xs text-accent-foreground/80">Duration</span>
 							</div>
-							<div className='flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground'>
-								<Check className='h-5 w-5 mb-1' />
-								<span className='text-sm font-medium'>
-									{programData.courses} Courses
-								</span>
-								<span className='text-xs text-accent-foreground/80'>
-									Included
-								</span>
+							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground">
+								<Check className="h-5 w-5 mb-1" />
+								<span className="text-sm font-medium">{programData.courses} Courses</span>
+								<span className="text-xs text-accent-foreground/80">Included</span>
 							</div>
-							<div className='flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground'>
-								<Users className='h-5 w-5 mb-1' />
-								<span className='text-sm font-medium'>
-									{programData.students}+ Students
-								</span>
-								<span className='text-xs text-accent-foreground/80'>
-									Enrolled
-								</span>
+							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent text-accent-foreground">
+								<Users className="h-5 w-5 mb-1" />
+								<span className="text-sm font-medium">{programData.students}+ Students</span>
+								<span className="text-xs text-accent-foreground/80">Enrolled</span>
 							</div>
 						</div>
 
 						<img
 							src={programData.image || '/placeholder.svg'}
 							alt={programData.title}
-							className='w-full rounded-lg object-cover aspect-video mt-6'
+							className="w-full rounded-lg object-cover aspect-video mt-6"
 						/>
 					</div>
 				</div>
 
 				<div>
-					<Card className='sticky top-20'>
+					<Card className="sticky top-20">
 						<CardHeader>
 							<CardTitle>Program Enrollment</CardTitle>
-							<CardDescription>
-								Choose your preferred subscription plan
-							</CardDescription>
+							<CardDescription>Choose your preferred subscription plan</CardDescription>
 						</CardHeader>
-						<CardContent className='space-y-4'>
-							<RadioGroup
-								value={selectedPricing}
-								onValueChange={setSelectedPricing}
-								className='space-y-3 group'
-							>
-								<div className='flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent group-hover:text-accent-foreground'>
-									<RadioGroupItem value='monthly' id='monthly' />
-									<Label
-										htmlFor='monthly'
-										className='flex flex-1 justify-between cursor-pointer'
-									>
+						<CardContent className="space-y-4">
+							<RadioGroup value={selectedPricing} onValueChange={setSelectedPricing} className="space-y-3 group">
+								<div className="flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent group-hover:text-accent-foreground">
+									<RadioGroupItem value="monthly" id="monthly" />
+									<Label htmlFor="monthly" className="flex flex-1 justify-between cursor-pointer">
 										<span>Monthly</span>
-										<span className='font-bold'>
-											${programData.pricing.monthly}/mo
-										</span>
+										<span className="font-bold">${programData.pricing.monthly}/mo</span>
 									</Label>
 								</div>
-								<div className='flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent group-hover:text-accent-foreground relative overflow-hidden'>
-									<RadioGroupItem value='yearly' id='yearly' />
-									<Label
-										htmlFor='yearly'
-										className='flex flex-1 items-center justify-between cursor-pointer'
-									>
+								<div className="flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent group-hover:text-accent-foreground relative overflow-hidden">
+									<RadioGroupItem value="yearly" id="yearly" />
+									<Label htmlFor="yearly" className="flex flex-1 items-center justify-between cursor-pointer">
 										<span>Annual</span>
 										<div>
-											<span className='font-bold'>
-												${programData.pricing.yearly}/yr
-											</span>
-											<span className='block text-xs text-green-600'>
-												Save $
-												{programData.pricing.monthly * 12 -
-													programData.pricing.yearly}
+											<span className="font-bold">${programData.pricing.yearly}/yr</span>
+											<span className="block text-xs text-green-600">
+												Save ${programData.pricing.monthly * 12 - programData.pricing.yearly}
 											</span>
 										</div>
 									</Label>
-									<div className='absolute -right-8 top-0 bg-green-600 text-white text-xs font-bold py-1 px-6 rotate-45 translate-y-2'>
+									<div className="absolute -right-8 top-0 bg-green-600 text-white text-xs font-bold py-1 px-6 rotate-45 translate-y-2">
 										Best Value
 									</div>
 								</div>
-								<div className='flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent hover:text-accent-foreground'>
-									<RadioGroupItem value='lifetime' id='lifetime' />
-									<Label
-										htmlFor='lifetime'
-										className='flex flex-1 justify-between cursor-pointer'
-									>
+								<div className="flex items-center space-x-2 rounded-md border p-3 cursor-pointer hover:bg-accent hover:text-accent-foreground">
+									<RadioGroupItem value="lifetime" id="lifetime" />
+									<Label htmlFor="lifetime" className="flex flex-1 justify-between cursor-pointer">
 										<span>Lifetime Access</span>
-										<span className='font-bold'>
-											${programData.pricing.lifetime}
-										</span>
+										<span className="font-bold">${programData.pricing.lifetime}</span>
 									</Label>
 								</div>
 							</RadioGroup>
 
-							<Button className='w-full' size='lg' onClick={handleEnroll}>
+							<Button className="w-full" size="lg" onClick={handleEnroll}>
 								Enroll Now
 							</Button>
 
-							<p className='text-xs text-center text-muted-foreground'>
-								14-day money-back guarantee. Cancel anytime.
-							</p>
+							<p className="text-xs text-center text-muted-foreground">14-day money-back guarantee. Cancel anytime.</p>
 
 							<Separator />
 
-							<div className='space-y-2'>
-								<h3 className='font-medium'>This program includes:</h3>
-								<ul className='space-y-2'>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+							<div className="space-y-2">
+								<h3 className="font-medium">This program includes:</h3>
+								<ul className="space-y-2">
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										{programData.courses} comprehensive courses
 									</li>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										40+ hours of video content
 									</li>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										Live Q&A sessions with instructors
 									</li>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										Downloadable resources and templates
 									</li>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										Certificate of completion
 									</li>
-									<li className='flex items-center text-sm'>
-										<Check className='h-4 w-4 mr-2 text-green-600' />
+									<li className="flex items-center text-sm">
+										<Check className="h-4 w-4 mr-2 text-green-600" />
 										Access to exclusive community
 									</li>
 								</ul>
@@ -406,19 +355,19 @@ export default function ProgramDetailPage({
 				</div>
 			</div>
 
-			<Tabs defaultValue='overview' className='w-full'>
-				<TabsList className='mb-6 w-full justify-start'>
-					<TabsTrigger value='overview'>Overview</TabsTrigger>
-					<TabsTrigger value='curriculum'>Curriculum</TabsTrigger>
-					<TabsTrigger value='instructors'>Instructors</TabsTrigger>
-					<TabsTrigger value='reviews'>Reviews</TabsTrigger>
-					<TabsTrigger value='faqs'>FAQs</TabsTrigger>
+			<Tabs defaultValue="overview" className="w-full">
+				<TabsList className="mb-6 w-full justify-start">
+					<TabsTrigger value="overview">Overview</TabsTrigger>
+					<TabsTrigger value="curriculum">Curriculum</TabsTrigger>
+					<TabsTrigger value="instructors">Instructors</TabsTrigger>
+					<TabsTrigger value="reviews">Reviews</TabsTrigger>
+					<TabsTrigger value="faqs">FAQs</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value='overview' className='space-y-6'>
-					<div className='prose max-w-none'>
+				<TabsContent value="overview" className="space-y-6">
+					<div className="prose max-w-none">
 						<h2>About This Program</h2>
-						<p className='whitespace-pre-line'>{programData.longDescription}</p>
+						<p className="whitespace-pre-line">{programData.longDescription}</p>
 
 						<h2>What You Will Learn</h2>
 						<ul>
@@ -436,10 +385,10 @@ export default function ProgramDetailPage({
 					</div>
 				</TabsContent>
 
-				<TabsContent value='curriculum' className='space-y-6'>
-					<h2 className='text-2xl font-bold mb-4'>Program Curriculum</h2>
+				<TabsContent value="curriculum" className="space-y-6">
+					<h2 className="text-2xl font-bold mb-4">Program Curriculum</h2>
 
-					<div className='space-y-4'>
+					<div className="space-y-4">
 						{programData.curriculum.map((section, index) => (
 							<Card key={index}>
 								<CardHeader>
@@ -450,103 +399,100 @@ export default function ProgramDetailPage({
 											const time = lesson.duration.split(' ');
 											let minutes = 0;
 											if (time[1] === 'min') minutes = Number.parseInt(time[0]);
-											if (time[1] === 'hrs' || time[1] === 'hr')
-												minutes = Number.parseInt(time[0]) * 60;
+											if (time[1] === 'hrs' || time[1] === 'hr') minutes = Number.parseInt(time[0]) * 60;
 											return total + minutes;
 										}, 0) / 60}{' '}
 										hours total
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
-									<div className='space-y-2'>
+									<div className="space-y-2">
 										{section.lessons.map((lesson, lessonIndex) => (
 											<div
 												key={lessonIndex}
-												className='flex justify-between items-center p-3 rounded-lg group hover:bg-accent hover:text-accent-foreground'
+												className="flex justify-between items-center p-3 rounded-lg group hover:bg-accent hover:text-accent-foreground"
 											>
-												<div className='flex items-center'>
+												<div className="flex items-center">
 													{lesson.type === 'video' && (
 														<svg
-															xmlns='http://www.w3.org/2000/svg'
-															width='24'
-															height='24'
-															viewBox='0 0 24 24'
-															fill='none'
-															stroke='currentColor'
-															strokeWidth='2'
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															className='h-4 w-4 mr-3 text-primary'
+															xmlns="http://www.w3.org/2000/svg"
+															width="24"
+															height="24"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															className="h-4 w-4 mr-3 text-primary"
 														>
-															<polygon points='5 3 19 12 5 21 5 3' />
+															<polygon points="5 3 19 12 5 21 5 3" />
 														</svg>
 													)}
 													{lesson.type === 'quiz' && (
 														<svg
-															xmlns='http://www.w3.org/2000/svg'
-															width='24'
-															height='24'
-															viewBox='0 0 24 24'
-															fill='none'
-															stroke='currentColor'
-															strokeWidth='2'
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															className='h-4 w-4 mr-3 text-primary'
+															xmlns="http://www.w3.org/2000/svg"
+															width="24"
+															height="24"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															className="h-4 w-4 mr-3 text-primary"
 														>
-															<circle cx='12' cy='12' r='10' />
-															<path d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3' />
-															<path d='M12 17h.01' />
+															<circle cx="12" cy="12" r="10" />
+															<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+															<path d="M12 17h.01" />
 														</svg>
 													)}
 													{lesson.type === 'assignment' && (
 														<svg
-															xmlns='http://www.w3.org/2000/svg'
-															width='24'
-															height='24'
-															viewBox='0 0 24 24'
-															fill='none'
-															stroke='currentColor'
-															strokeWidth='2'
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															className='h-4 w-4 mr-3 text-primary'
+															xmlns="http://www.w3.org/2000/svg"
+															width="24"
+															height="24"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															className="h-4 w-4 mr-3 text-primary"
 														>
-															<path d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z' />
-															<polyline points='14 2 14 8 20 8' />
+															<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+															<polyline points="14 2 14 8 20 8" />
 														</svg>
 													)}
 													{lesson.type === 'workshop' && (
 														<svg
-															xmlns='http://www.w3.org/2000/svg'
-															width='24'
-															height='24'
-															viewBox='0 0 24 24'
-															fill='none'
-															stroke='currentColor'
-															strokeWidth='2'
-															strokeLinecap='round'
-															strokeLinejoin='round'
-															className='h-4 w-4 mr-3 text-primary'
+															xmlns="http://www.w3.org/2000/svg"
+															width="24"
+															height="24"
+															viewBox="0 0 24 24"
+															fill="none"
+															stroke="currentColor"
+															strokeWidth="2"
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															className="h-4 w-4 mr-3 text-primary"
 														>
-															<path d='m15 15 6 6m-6-6v4.8m0-4.8h4.8' />
-															<path d='M9 19.8V15m0 0H4.2M9 15l-6 6' />
-															<path d='M15 4.2V9m0 0h4.8M15 9l6-6' />
-															<path d='M9 4.2V9m0 0H4.2M9 9 3 3' />
+															<path d="m15 15 6 6m-6-6v4.8m0-4.8h4.8" />
+															<path d="M9 19.8V15m0 0H4.2M9 15l-6 6" />
+															<path d="M15 4.2V9m0 0h4.8M15 9l6-6" />
+															<path d="M9 4.2V9m0 0H4.2M9 9 3 3" />
 														</svg>
 													)}
 													<span>{lesson.title}</span>
 												</div>
-												<div className='flex items-center '>
+												<div className="flex items-center ">
 													<Badge
-														variant='outline'
-														className='border-current group-hover:text-accent-foreground group-hover:border-accent-foreground'
+														variant="outline"
+														className="border-current group-hover:text-accent-foreground group-hover:border-accent-foreground"
 													>
 														{lesson.type}
 													</Badge>
-													<span className='ml-4 text-sm text-muted-foreground'>
-														{lesson.duration}
-													</span>
+													<span className="ml-4 text-sm text-muted-foreground">{lesson.duration}</span>
 												</div>
 											</div>
 										))}
@@ -557,28 +503,21 @@ export default function ProgramDetailPage({
 					</div>
 				</TabsContent>
 
-				<TabsContent value='instructors' className='space-y-6'>
-					<h2 className='text-2xl font-bold mb-4'>Meet Your Instructors</h2>
+				<TabsContent value="instructors" className="space-y-6">
+					<h2 className="text-2xl font-bold mb-4">Meet Your Instructors</h2>
 
-					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{programData.instructors.map(instructor => (
 							<Card key={instructor.id}>
-								<CardContent className='pt-6'>
-									<div className='flex flex-col items-center text-center'>
-										<Avatar className='h-24 w-24 mb-4'>
-											<AvatarImage
-												src={instructor.image || '/placeholder.svg'}
-												alt={instructor.name}
-											/>
-											<AvatarFallback>
-												{instructor.name.charAt(0)}
-											</AvatarFallback>
+								<CardContent className="pt-6">
+									<div className="flex flex-col items-center text-center">
+										<Avatar className="h-24 w-24 mb-4">
+											<AvatarImage src={instructor.image || '/placeholder.svg'} alt={instructor.name} />
+											<AvatarFallback>{instructor.name.charAt(0)}</AvatarFallback>
 										</Avatar>
-										<h3 className='text-xl font-bold'>{instructor.name}</h3>
-										<p className='text-sm text-muted-foreground mb-4'>
-											{instructor.title}
-										</p>
-										<p className='text-sm'>{instructor.bio}</p>
+										<h3 className="text-xl font-bold">{instructor.name}</h3>
+										<p className="text-sm text-muted-foreground mb-4">{instructor.title}</p>
+										<p className="text-sm">{instructor.bio}</p>
 									</div>
 								</CardContent>
 							</Card>
@@ -586,92 +525,81 @@ export default function ProgramDetailPage({
 					</div>
 				</TabsContent>
 
-				<TabsContent value='reviews' className='space-y-6'>
-					<div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6'>
-						<h2 className='text-2xl font-bold'>Student Reviews</h2>
-						<div className='flex items-center gap-2'>
-							<div className='flex'>
+				<TabsContent value="reviews" className="space-y-6">
+					<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+						<h2 className="text-2xl font-bold">Student Reviews</h2>
+						<div className="flex items-center gap-2">
+							<div className="flex">
 								{[1, 2, 3, 4, 5].map(star => (
 									<svg
 										key={star}
-										xmlns='http://www.w3.org/2000/svg'
-										width='24'
-										height='24'
-										viewBox='0 0 24 24'
-										fill='currentColor'
-										className='h-5 w-5 text-yellow-500'
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										fill="currentColor"
+										className="h-5 w-5 text-yellow-500"
 									>
-										<polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
+										<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
 									</svg>
 								))}
 							</div>
-							<span className='font-medium'>4.8 out of 5</span>
-							<span className='text-muted-foreground'>
-								({programData.reviews.length} reviews)
-							</span>
+							<span className="font-medium">4.8 out of 5</span>
+							<span className="text-muted-foreground">({programData.reviews.length} reviews)</span>
 						</div>
 					</div>
 
-					<div className='space-y-6'>
+					<div className="space-y-6">
 						{programData.reviews.map(review => (
 							<Card key={review.id}>
-								<CardContent className='p-6'>
-									<div className='flex justify-between items-start'>
-										<div className='flex items-center gap-3'>
+								<CardContent className="p-6">
+									<div className="flex justify-between items-start">
+										<div className="flex items-center gap-3">
 											<Avatar>
-												<AvatarImage
-													src={review.user.image || '/placeholder.svg'}
-													alt={review.user.name}
-												/>
-												<AvatarFallback>
-													{review.user.name.charAt(0)}
-												</AvatarFallback>
+												<AvatarImage src={review.user.image || '/placeholder.svg'} alt={review.user.name} />
+												<AvatarFallback>{review.user.name.charAt(0)}</AvatarFallback>
 											</Avatar>
 											<div>
-												<p className='font-medium'>{review.user.name}</p>
-												<p className='text-sm text-muted-foreground'>
-													{new Date(review.date).toLocaleDateString()}
-												</p>
+												<p className="font-medium">{review.user.name}</p>
+												<p className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString()}</p>
 											</div>
 										</div>
-										<div className='flex'>
+										<div className="flex">
 											{[1, 2, 3, 4, 5].map(star => (
 												<svg
 													key={star}
-													xmlns='http://www.w3.org/2000/svg'
-													width='24'
-													height='24'
-													viewBox='0 0 24 24'
+													xmlns="http://www.w3.org/2000/svg"
+													width="24"
+													height="24"
+													viewBox="0 0 24 24"
 													fill={star <= review.rating ? 'currentColor' : 'none'}
-													stroke='currentColor'
-													strokeWidth='2'
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													className='h-4 w-4 text-yellow-500'
+													stroke="currentColor"
+													strokeWidth="2"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													className="h-4 w-4 text-yellow-500"
 												>
-													<polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
+													<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
 												</svg>
 											))}
 										</div>
 									</div>
 
-									<p className='mt-4'>{review.content}</p>
+									<p className="mt-4">{review.content}</p>
 								</CardContent>
 							</Card>
 						))}
 					</div>
 				</TabsContent>
 
-				<TabsContent value='faqs' className='space-y-6'>
-					<h2 className='text-2xl font-bold mb-4'>
-						Frequently Asked Questions
-					</h2>
+				<TabsContent value="faqs" className="space-y-6">
+					<h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
 
-					<div className='space-y-4'>
+					<div className="space-y-4">
 						{programData.faqs.map((faq, index) => (
 							<Card key={index}>
 								<CardHeader>
-									<CardTitle className='text-lg'>{faq.question}</CardTitle>
+									<CardTitle className="text-lg">{faq.question}</CardTitle>
 								</CardHeader>
 								<CardContent>
 									<p>{faq.answer}</p>

@@ -1,5 +1,6 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+
+import { mutation, query } from './_generated/server';
 
 /**
  * Create a new lesson in a module
@@ -9,11 +10,7 @@ export const create = mutation({
 		moduleId: v.id('courseModules'),
 		title: v.string(),
 		description: v.optional(v.string()),
-		type: v.union(
-			v.literal('video'),
-			v.literal('quiz'),
-			v.literal('assignment')
-		),
+		type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
 		duration: v.optional(v.string()),
 		videoUrl: v.optional(v.string()),
 		videoId: v.optional(v.string()),
@@ -28,19 +25,19 @@ export const create = mutation({
 		}
 
 		// Verify instructor owns course
-		const module = await ctx.db.get(args.moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(args.moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
 
 		const user = await ctx.db
 			.query('users')
-			.withIndex('by_externalId', (q) => q.eq('externalId', identity.subject))
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
 			.first();
 
 		if (!user?.isInstructor) {
@@ -70,7 +67,7 @@ export const list = query({
 	handler: async (ctx, { moduleId }) => {
 		const lessons = await ctx.db
 			.query('lessons')
-			.withIndex('by_module', (q) => q.eq('moduleId', moduleId))
+			.withIndex('by_module', q => q.eq('moduleId', moduleId))
 			.collect();
 
 		// Sort by order field
@@ -103,12 +100,12 @@ export const get = query({
 		}
 
 		// Get course via module
-		const module = await ctx.db.get(lesson.moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(lesson.moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
@@ -121,9 +118,7 @@ export const get = query({
 		// Check if user is enrolled in the course
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', (q) =>
-				q.eq('userId', identity.subject).eq('courseId', course._id)
-			)
+			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', course._id))
 			.first();
 
 		if (!enrollment) {
@@ -163,12 +158,12 @@ export const update = mutation({
 			throw new Error('Lesson not found');
 		}
 
-		const module = await ctx.db.get(lesson.moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(lesson.moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
@@ -199,12 +194,12 @@ export const remove = mutation({
 			throw new Error('Lesson not found');
 		}
 
-		const module = await ctx.db.get(lesson.moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(lesson.moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}
@@ -216,7 +211,7 @@ export const remove = mutation({
 		// Delete lesson progress records for this lesson
 		const progressRecords = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_lesson', (q) => q.eq('lessonId', lessonId))
+			.withIndex('by_lesson', q => q.eq('lessonId', lessonId))
 			.collect();
 
 		for (const progress of progressRecords) {
@@ -243,12 +238,12 @@ export const reorder = mutation({
 		}
 
 		// Verify ownership
-		const module = await ctx.db.get(moduleId);
-		if (!module) {
+		const courseModule = await ctx.db.get(moduleId);
+		if (!courseModule) {
 			throw new Error('Module not found');
 		}
 
-		const course = await ctx.db.get(module.courseId);
+		const course = await ctx.db.get(courseModule.courseId);
 		if (!course) {
 			throw new Error('Course not found');
 		}

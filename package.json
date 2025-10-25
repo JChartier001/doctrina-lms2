@@ -20,7 +20,7 @@
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage",
-		"verify": "yarn postinstall && yarn formatting:fix && yarn lint:fix && yarn typescript"
+		"verify": "yarn formatting:fix && yarn lint:fix && yarn typescript && yarn test:coverage"
 	},
 	"dependencies": {
 		"@clerk/backend": "^2.19.0",

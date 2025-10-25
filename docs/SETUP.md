@@ -88,6 +88,7 @@ npx convex dev
 ```
 
 This command will:
+
 1. Prompt you to log in to Convex (creates account if needed)
 2. Create or link a Convex project
 3. Generate TypeScript types in `convex/_generated/`
@@ -98,6 +99,7 @@ This command will:
 ### 3. Verify Convex Setup
 
 After initialization, you should see:
+
 - `convex/_generated/` directory with TypeScript types
 - A `.env.local` file (if not present, create it)
 - Console output showing Convex deployment URL
@@ -170,12 +172,12 @@ Update `convex/auth.config.ts`:
 
 ```typescript
 export default {
-  providers: [
-    {
-      domain: process.env.CLERK_DOMAIN || "clerk.your-domain.com",
-      applicationID: "convex", // Must match JWT template name
-    },
-  ],
+	providers: [
+		{
+			domain: process.env.CLERK_DOMAIN || 'clerk.your-domain.com',
+			applicationID: 'convex', // Must match JWT template name
+		},
+	],
 };
 ```
 
@@ -272,16 +274,19 @@ The application currently uses mocked services in `lib/*-service.ts`. These need
 ### Migration Strategy
 
 **Phase 1: Read-Only Data** (Start Here)
+
 1. Courses listing → `convex/courses.ts` queries
 2. Resource library → `convex/resources.ts` queries
 3. User profiles → `convex/users.ts` queries
 
 **Phase 2: User Actions**
+
 1. Course enrollment → `convex/purchases.ts` mutations
 2. Favorites → `convex/favorites.ts` mutations
 3. Notifications → `convex/notifications.ts` queries/mutations
 
 **Phase 3: Advanced Features**
+
 1. Live sessions → `convex/liveSessions.ts`
 2. Certificates → `convex/certificates.ts`
 3. Payment processing → Stripe + Convex integration
@@ -293,8 +298,8 @@ The application currently uses mocked services in `lib/*-service.ts`. These need
 ```typescript
 // lib/course-service.ts
 export async function getCourses() {
-  await delay(500);
-  return mockCourses;
+	await delay(500);
+	return mockCourses;
 }
 ```
 
@@ -306,7 +311,7 @@ import { api } from '@/convex/_generated/api';
 import { useQuery } from 'convex/react';
 
 export function useCourses() {
-  return useQuery(api.courses.list);
+	return useQuery(api.courses.list);
 }
 ```
 
@@ -354,6 +359,7 @@ export function CourseList() {
 ### 2. Get API Keys
 
 From Stripe Dashboard → Developers → API Keys:
+
 - Copy **Publishable key** (starts with `pk_test_`)
 - Copy **Secret key** (starts with `sk_test_`)
 
@@ -452,6 +458,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 **Problem:** "Cannot connect to Convex"
 
 **Solutions:**
+
 1. Verify `NEXT_PUBLIC_CONVEX_URL` is set correctly
 2. Ensure `npx convex dev` is running
 3. Check network/firewall settings
@@ -462,6 +469,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 **Problem:** Users can't sign in
 
 **Solutions:**
+
 1. Verify JWT template is named exactly `convex`
 2. Check Clerk environment variables are correct
 3. Ensure ClerkProvider wraps ConvexProviderWithClerk
@@ -472,6 +480,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 **Problem:** TypeScript errors in `convex/_generated`
 
 **Solutions:**
+
 1. Stop `npx convex dev`
 2. Delete `convex/_generated` directory
 3. Run `npx convex dev` again
@@ -482,6 +491,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 **Problem:** Changes to Convex don't reflect in UI
 
 **Solutions:**
+
 1. Ensure you've replaced mock service with real Convex calls
 2. Check if feature flag is disabling real backend
 3. Verify component is using the updated service
@@ -492,6 +502,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 **Problem:** Production build fails
 
 **Solutions:**
+
 1. Run `yarn type-check` locally first
 2. Fix all TypeScript errors
 3. Ensure all environment variables are set

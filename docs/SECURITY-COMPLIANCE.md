@@ -9,6 +9,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 2.1 Data Categories
 
 **Tier 1: Highly Sensitive (PII/Financial)**
+
 - Instructor professional license numbers and expiration dates
 - State licensing board information
 - Payment information (handled by Stripe, not stored directly)
@@ -18,6 +19,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Refund and chargeback data
 
 **Tier 2: Sensitive Personal Data**
+
 - Email addresses and names
 - Profile photos and biographical information
 - Instructor application materials (resume, references, credentials)
@@ -28,6 +30,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Certificate records
 
 **Tier 3: Platform Operational Data**
+
 - Analytics and aggregated metrics
 - System logs and error reports
 - Course catalog and public content
@@ -37,6 +40,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 2.2 Data Storage Strategy
 
 **Convex Database:**
+
 - All Tier 1 and Tier 2 data stored in Convex
 - Encrypted at rest using AES-256
 - Encrypted in transit using TLS 1.3
@@ -44,6 +48,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Row-level security enforced via Convex authorization
 
 **File Storage:**
+
 - Course videos: Vimeo Business or Cloudflare Stream (encrypted, DRM-protected)
 - Course documents: Convex file storage (encrypted at rest)
 - Profile photos: Convex file storage with access controls
@@ -53,6 +58,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 2.3 Marketplace-Specific Data Protection
 
 **Course Content Intellectual Property:**
+
 - Video watermarking with student email/ID
 - DRM protection for video streaming
 - PDF watermarking for downloadable materials
@@ -60,12 +66,14 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Download limits and forensic tracking
 
 **Student Learning Data:**
+
 - Quiz answers stored separately from question bank
 - Progress tracking isolated per student
 - Certificate verification via cryptographic signatures
 - Anonymized data for course analytics
 
 **Instructor Payout Data:**
+
 - Earnings calculations auditable and logged
 - Payout history retained for 7 years (IRS requirement)
 - Bank account information tokenized by Stripe
@@ -76,6 +84,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 3.1 Payment Card Industry (PCI DSS)
 
 **PCI Compliance Strategy:**
+
 - Use Stripe for all payment processing (PCI Level 1 compliant)
 - No credit card data stored on platform servers
 - Stripe hosted payment forms for card collection
@@ -83,12 +92,14 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Annual PCI DSS self-assessment questionnaire (SAQ A)
 
 **Student Payment Security:**
+
 - Checkout sessions expire after 24 hours
 - Payment intent confirmation required
 - Failed payment retry logic (max 3 attempts)
 - Chargeback monitoring and fraud detection
 
 **Instructor Payout Security:**
+
 - Stripe Connect Express accounts for instructors
 - Identity verification required before first payout
 - Minimum payout threshold ($50) to reduce transaction costs
@@ -98,12 +109,14 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 3.2 Instructor Licensing Compliance
 
 **License Verification:**
+
 - Primary source verification during application
 - Cross-reference with state licensing board databases (Nursys, state portals)
 - Annual re-verification for active instructors
 - Immediate course suspension upon license expiration or revocation
 
 **Credential Retention:**
+
 - Verification records retained for 7 years
 - Audit trail of all verification checks
 - Secure storage of license copies and verification confirmations
@@ -111,6 +124,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 3.3 Privacy Regulations
 
 **GDPR Compliance (EU users if applicable):**
+
 - Right to access: User data export feature
 - Right to erasure: Account deletion with data removal
 - Right to rectification: Profile editing capabilities
@@ -119,6 +133,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Cookie consent banner for EU visitors
 
 **CCPA Compliance (California):**
+
 - Privacy policy disclosure of data collection
 - Opt-out mechanism for data sales (we don't sell data)
 - Right to deletion within 45 days
@@ -126,6 +141,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Annual privacy disclosures
 
 **DMCA Compliance:**
+
 - Copyright infringement reporting mechanism
 - DMCA agent designated and registered
 - Takedown procedure within 24 hours
@@ -135,6 +151,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 3.4 Educational Platform Compliance
 
 **Accessibility (WCAG 2.1 AA):**
+
 - Course content accessibility requirements for instructors
 - Video captions mandatory for all courses
 - Screen reader compatibility
@@ -142,6 +159,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Color contrast standards
 
 **Consumer Protection:**
+
 - Clear refund policy (30-day money-back guarantee)
 - Course preview/free trial requirements
 - Accurate course descriptions enforced
@@ -153,18 +171,21 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 4.1 Data at Rest
 
 **Database Encryption:**
+
 - Convex provides AES-256 encryption at rest
 - Encryption keys managed by Convex (AWS KMS)
 - Database backups also encrypted
 - Future: Customer-managed encryption keys (CMK) for enterprise
 
 **File Storage Encryption:**
+
 - Convex file storage: AES-256 encryption
 - Video platform encryption: Provider-managed
 - Document files: Encrypted before upload
 - Certificates: Encrypted PDFs with digital signatures
 
 **Application-Level Encryption (Future Enhancement):**
+
 - Instructor tax ID numbers: Additional encryption layer
 - Student payment tokens: Encrypted references to Stripe tokens
 - Sensitive instructor verification documents: Field-level encryption
@@ -172,12 +193,14 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 4.2 Data in Transit
 
 **Transport Layer Security:**
+
 - TLS 1.3 for all HTTPS connections
 - HSTS headers to enforce HTTPS
 - Certificate pinning for mobile apps (future)
 - No support for TLS 1.0 or 1.1 (deprecated)
 
 **API Communication:**
+
 - All Convex API calls over HTTPS
 - Stripe API calls using latest TLS
 - Clerk authentication over secure channels
@@ -186,12 +209,14 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 4.3 Content Protection
 
 **Video DRM:**
+
 - Encrypted video streams (HLS-AES or MPEG-DASH)
 - License server for key distribution
 - Per-user playback tokens (expires after 24 hours)
 - Screen capture prevention (mobile apps)
 
 **Document Watermarking:**
+
 - Dynamic watermarks with student email + timestamp
 - PDF encryption with user-specific passwords
 - Download tracking and forensic identifiers
@@ -202,6 +227,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 ### 5.1 Authentication
 
 **User Authentication (Clerk):**
+
 - Email/password with minimum requirements:
   - Minimum 8 characters
   - At least 1 uppercase letter
@@ -213,6 +239,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Magic link authentication option
 
 **Admin Authentication:**
+
 - Admin users identified via `isAdmin: true` boolean field
 - Invitation-only admin access
 - Multi-factor authentication required for all admin accounts
@@ -220,6 +247,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - IP whitelist for admin panel access (optional)
 
 **Instructor Authentication:**
+
 - Standard user authentication
 - Additional verification required for instructor role (`isInstructor: true`)
 - Stripe Connect account linked before course creation
@@ -230,6 +258,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 **Role-Based Access Control (RBAC):**
 
 **Student Role (Default):**
+
 - Browse and preview courses
 - Enroll in courses (free or paid)
 - Access purchased course content
@@ -238,6 +267,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Participate in community forums
 
 **Instructor Role (`isInstructor: true`):**
+
 - All student permissions
 - Create and manage courses
 - View enrolled student progress (aggregate only)
@@ -246,6 +276,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - View course analytics and reviews
 
 **Admin Role (`isAdmin: true`):**
+
 - All platform access and user management
 - Review and approve instructor applications
 - Moderate course content and reviews
@@ -254,6 +285,7 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Configure system settings
 
 **Row-Level Security:**
+
 - Students can only access courses they've purchased
 - Instructors can only view their own course data
 - Students can only see their own progress and certificates
@@ -261,39 +293,41 @@ Doctrina LMS handles sensitive personal information (PII), professional licensin
 - Convex `ctx.auth.getUserIdentity()` enforces all queries
 
 **Content Access Control:**
+
 ```typescript
 // Example: Lesson access control
 export const getLesson = query({
-  args: { lessonId: v.id('lessons') },
-  handler: async (ctx, { lessonId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
+	args: { lessonId: v.id('lessons') },
+	handler: async (ctx, { lessonId }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
 
-    const lesson = await ctx.db.get(lessonId);
-    if (!lesson) throw new Error('Lesson not found');
+		const lesson = await ctx.db.get(lessonId);
+		if (!lesson) throw new Error('Lesson not found');
 
-    const course = await ctx.db.get(lesson.courseId);
+		const course = await ctx.db.get(lesson.courseId);
 
-    // Check if user purchased the course
-    const purchase = await ctx.db
-      .query('purchases')
-      .withIndex('by_user', q => q.eq('userId', identity.subject))
-      .filter(q => q.eq(q.field('courseId'), course._id))
-      .filter(q => q.eq(q.field('status'), 'complete'))
-      .first();
+		// Check if user purchased the course
+		const purchase = await ctx.db
+			.query('purchases')
+			.withIndex('by_user', q => q.eq('userId', identity.subject))
+			.filter(q => q.eq(q.field('courseId'), course._id))
+			.filter(q => q.eq(q.field('status'), 'complete'))
+			.first();
 
-    if (!purchase && course.price > 0) {
-      throw new Error('Access denied: Course not purchased');
-    }
+		if (!purchase && course.price > 0) {
+			throw new Error('Access denied: Course not purchased');
+		}
 
-    return lesson;
-  },
+		return lesson;
+	},
 });
 ```
 
 ### 5.3 Session Management
 
 **Session Configuration:**
+
 - Clerk-managed sessions with JWT tokens
 - Token refresh on activity (extends session)
 - Automatic logout after 30 minutes inactivity
@@ -301,6 +335,7 @@ export const getLesson = query({
 - Concurrent session limit: 5 devices per user
 
 **Session Security:**
+
 - HttpOnly cookies prevent XSS attacks
 - Secure flag ensures HTTPS-only transmission
 - SameSite=Strict prevents CSRF attacks
@@ -308,6 +343,7 @@ export const getLesson = query({
 - Device fingerprinting for suspicious login detection
 
 **Course Access Tokens:**
+
 - Video playback tokens expire after 24 hours
 - Download tokens single-use or time-limited
 - API tokens for mobile apps (refresh tokens rotate)
@@ -317,6 +353,7 @@ export const getLesson = query({
 ### 6.1 Backup Strategy
 
 **Database Backups (Convex):**
+
 - Continuous backups (point-in-time recovery)
 - Backup retention: 30 days
 - Geographic redundancy: Multi-region replication
@@ -324,12 +361,14 @@ export const getLesson = query({
 - Weekly full backups retained for 90 days
 
 **File Storage Backups:**
+
 - Convex file storage includes automatic versioning
 - Course videos backed up by video platform provider
 - Instructor verification documents: 30-day retention after deletion
 - Certificate archives: Permanent retention
 
 **Critical Data Prioritization:**
+
 - Purchase records: Daily backups, 7-year retention
 - Course content: Weekly backups, permanent retention
 - Student progress: Daily backups, 3-year retention
@@ -338,10 +377,12 @@ export const getLesson = query({
 ### 6.2 Recovery Objectives
 
 **Recovery Point Objective (RPO):**
+
 - Maximum data loss: 1 hour
 - Continuous Convex backups enable point-in-time recovery
 
 **Recovery Time Objective (RTO):**
+
 - Platform restoration: 4 hours maximum
 - Critical services (authentication, course access): 1 hour
 - Payment processing: 30 minutes
@@ -350,18 +391,21 @@ export const getLesson = query({
 ### 6.3 Disaster Recovery Plan
 
 **Scenario 1: Database Failure**
+
 1. Convex automatically fails over to replica
 2. Verify data integrity after failover
 3. Notify users if service degradation occurs (status page)
 4. Post-incident review within 48 hours
 
 **Scenario 2: Application Infrastructure Failure**
+
 1. Vercel automatically routes to healthy regions
 2. Monitor error rates and latency
 3. Manual intervention if automatic recovery fails within 15 minutes
 4. Incident communication to users within 1 hour
 
 **Scenario 3: Payment System Compromise**
+
 1. Immediately disable payment processing
 2. Notify Stripe of suspected compromise
 3. Forensic analysis of transaction logs
@@ -369,6 +413,7 @@ export const getLesson = query({
 5. Payment processing restoration after security validation
 
 **Scenario 4: Data Breach**
+
 1. Immediate isolation of affected systems
 2. Forensic analysis to determine breach scope
 3. User notification within 72 hours (GDPR requirement)
@@ -377,6 +422,7 @@ export const getLesson = query({
 6. Regulatory reporting as required
 
 **Scenario 5: Content Piracy**
+
 1. Identify leaked content via watermark forensics
 2. Issue DMCA takedown to hosting platforms
 3. Suspend offending user account
@@ -390,6 +436,7 @@ export const getLesson = query({
 **Severity Levels:**
 
 **P0 - Critical:**
+
 - Data breach exposing PII or financial data
 - Complete platform outage (>90% users affected)
 - Payment system compromise or fraud
@@ -397,6 +444,7 @@ export const getLesson = query({
 - Instructor payout system breach
 
 **P1 - High:**
+
 - Partial data exposure (limited user set)
 - Authentication system failure
 - Payment processing disruption (>10% failures)
@@ -405,6 +453,7 @@ export const getLesson = query({
 - Mass course content piracy
 
 **P2 - Medium:**
+
 - Individual account compromise
 - Minor data leak (non-sensitive, <100 users)
 - Service degradation (>20% error rate)
@@ -413,6 +462,7 @@ export const getLesson = query({
 - Single course content leak
 
 **P3 - Low:**
+
 - Failed login attempts (brute force, not successful)
 - Minor vulnerabilities (non-exploitable)
 - Performance issues without data impact
@@ -421,6 +471,7 @@ export const getLesson = query({
 ### 7.2 Incident Response Workflow
 
 **Detection:**
+
 - Automated monitoring alerts (error rates, anomalies)
 - User reports via security@doctrina-lms.com
 - Regular security audits
@@ -477,6 +528,7 @@ export const getLesson = query({
 ### 7.3 Communication Templates
 
 **User Notification Template:**
+
 ```
 Subject: Security Notification - Action Required
 
@@ -508,6 +560,7 @@ The Doctrina LMS Security Team
 ```
 
 **Instructor Notification Template (Payout Issue):**
+
 ```
 Subject: Important: Instructor Payout Security Notice
 
@@ -537,6 +590,7 @@ The Doctrina LMS Team
 ### 8.1 Audit Logging
 
 **Events Logged:**
+
 - Authentication attempts (success and failure)
 - Password changes and resets
 - Profile data modifications
@@ -550,6 +604,7 @@ The Doctrina LMS Team
 - Review submissions and moderations
 
 **Log Storage:**
+
 - Convex database table: `auditLogs`
 - Retention period: 2 years for audit purposes
 - Critical financial logs: 7 years (IRS requirement)
@@ -557,6 +612,7 @@ The Doctrina LMS Team
 - Logs immutable (write-once, cannot be modified)
 
 **Log Format:**
+
 ```typescript
 {
   _id: Id<'auditLogs'>,
@@ -574,6 +630,7 @@ The Doctrina LMS Team
 ### 8.2 Monitoring & Alerting
 
 **Real-Time Monitoring:**
+
 - Failed login attempts (>5 in 10 minutes → alert)
 - Unusual data access patterns (student accessing 50+ courses in 1 hour)
 - Large data exports (>1000 records → review)
@@ -585,18 +642,21 @@ The Doctrina LMS Team
 - Multiple concurrent sessions (>5 devices → suspicious)
 
 **Financial Transaction Monitoring:**
+
 - Chargeback notifications (immediate alert)
 - Payout fraud indicators (new instructor, high payout, low sales history)
 - Unusual refund patterns (same user, multiple courses)
 - Price manipulation attempts (course price changes during checkout)
 
 **Content Security Monitoring:**
+
 - Course content upload size anomalies
 - Video playback token reuse attempts
 - PDF download velocity (>5 downloads/minute)
 - Watermark removal detection (future: ML-based)
 
 **Alerting Channels:**
+
 - PagerDuty for P0/P1 incidents (24/7 on-call)
 - Slack #security-alerts for P2/P3 incidents
 - Email for weekly security digests
@@ -605,6 +665,7 @@ The Doctrina LMS Team
 ### 8.3 Security Audits
 
 **Quarterly Internal Audits:**
+
 - Review access logs for anomalies
 - Verify user permissions accuracy (role assignments)
 - Check for unused/stale accounts (>6 months inactive)
@@ -614,6 +675,7 @@ The Doctrina LMS Team
 - Verify certificate issuance integrity
 
 **Annual External Audits:**
+
 - Third-party penetration testing
 - SOC 2 Type II audit (future goal)
 - PCI DSS compliance validation
@@ -625,6 +687,7 @@ The Doctrina LMS Team
 ### 9.1 Code Security
 
 **Development Standards:**
+
 - No hardcoded credentials or secrets
 - Environment variables for all sensitive config
 - Input validation on all user inputs (Zod schemas)
@@ -635,6 +698,7 @@ The Doctrina LMS Team
 - Rate limiting on payment endpoints (3 attempts/hour)
 
 **Next.js 15 Security:**
+
 - Server Components for sensitive data fetching
 - Client Components only when interactivity needed
 - API routes protected with authentication middleware
@@ -644,6 +708,7 @@ The Doctrina LMS Team
 - X-Content-Type-Options: nosniff
 
 **Code Review Requirements:**
+
 - All code reviewed before merge (no direct commits to main)
 - Security-focused review for authentication/authorization changes
 - Payment logic reviewed by two developers minimum
@@ -654,6 +719,7 @@ The Doctrina LMS Team
 ### 9.2 Secrets Management
 
 **Environment Variables:**
+
 - Stored in Vercel environment settings (production)
 - Stored in `.env.local` (development, never committed)
 - Separate values for dev/staging/production
@@ -661,6 +727,7 @@ The Doctrina LMS Team
 - Rotated quarterly (Stripe, Clerk, Convex keys)
 
 **Secret Rotation Schedule:**
+
 - Stripe API keys: Every 6 months
 - Clerk API keys: Every 6 months
 - Convex deployment keys: Annually
@@ -669,6 +736,7 @@ The Doctrina LMS Team
 - Emergency rotation: Immediately upon suspicion of compromise
 
 **API Key Security:**
+
 - Least-privilege access for service accounts
 - Separate keys for each environment
 - Keys rotated after employee departure (within 24 hours)
@@ -678,6 +746,7 @@ The Doctrina LMS Team
 ### 9.3 Third-Party Security
 
 **Vendor Assessment:**
+
 - All vendors must have SOC 2 Type II or equivalent
 - Annual security questionnaires
 - Vendor access logged and monitored
@@ -685,6 +754,7 @@ The Doctrina LMS Team
 - Vendor breach notification within 24 hours
 
 **Current Vendor Security Status:**
+
 - Convex: SOC 2 Type II compliant, AWS infrastructure
 - Clerk: SOC 2 Type II compliant, GDPR compliant
 - Stripe: PCI DSS Level 1, SOC 2, GDPR compliant
@@ -692,6 +762,7 @@ The Doctrina LMS Team
 - Vimeo Business/Cloudflare Stream: SOC 2 compliant, DRM support
 
 **Vendor Offboarding:**
+
 - Data deletion requests within 30 days
 - Access revocation immediately
 - Audit logs archived
@@ -702,6 +773,7 @@ The Doctrina LMS Team
 ### 10.1 Data Minimization
 
 **Collection Principles:**
+
 - Only collect data necessary for platform function
 - No social security numbers collected (instructors provide to Stripe directly)
 - Optional fields clearly marked
@@ -709,6 +781,7 @@ The Doctrina LMS Team
 - Anonymize data for non-critical analytics
 
 **Data Not Collected:**
+
 - Demographic data (race, ethnicity, religion)
 - Health information
 - Political affiliations
@@ -717,12 +790,14 @@ The Doctrina LMS Team
 ### 10.2 User Rights
 
 **Data Access:**
+
 - Users can view all their data via profile export
 - Export format: JSON with human-readable sections
 - Export available within 24 hours of request
 - Includes: profile, course progress, certificates, reviews, purchase history
 
 **Data Deletion:**
+
 - Account deletion request → 30-day grace period
 - Hard delete after 30 days (not recoverable)
 - Some data retained for legal/financial purposes:
@@ -733,6 +808,7 @@ The Doctrina LMS Team
 - Course reviews anonymized (name removed, kept as "Anonymous")
 
 **Data Portability:**
+
 - Download all profile data (JSON format)
 - Download course progress and certificates (PDF)
 - Download course content (if instructor or purchased)
@@ -742,6 +818,7 @@ The Doctrina LMS Team
 ### 10.3 Consent Management
 
 **Explicit Consent Required For:**
+
 - Email marketing communications
 - Instructor profile public display
 - Student testimonials and case studies
@@ -750,6 +827,7 @@ The Doctrina LMS Team
 - Instructor earnings displayed in platform testimonials
 
 **Consent Tracking:**
+
 - Timestamp and IP address recorded
 - Opt-out available at any time
 - Consent status visible in user profile
@@ -757,6 +835,7 @@ The Doctrina LMS Team
 - Cookie consent banner for all visitors
 
 **Marketing Communications:**
+
 - Unsubscribe link in all emails
 - Preference center for granular control
 - Suppression list honored permanently
@@ -767,12 +846,14 @@ The Doctrina LMS Team
 ### 11.1 Payment Fraud
 
 **Student Payment Fraud:**
+
 - Stolen credit card testing (carding)
 - Chargeback fraud (enroll, complete, request refund)
 - Coupon code abuse
 - Account sharing to bypass payment
 
 **Prevention Measures:**
+
 - Stripe Radar for fraud detection
 - Velocity checks (max 3 payment attempts per card per hour)
 - IP-based geolocation matching
@@ -781,11 +862,13 @@ The Doctrina LMS Team
 - Coupon code usage limits (1 per user, expiration dates)
 
 **Instructor Payout Fraud:**
+
 - Self-enrollment fraud (instructor enrolls fake students)
 - Review manipulation to boost sales
 - Refund collusion (refund after payout)
 
 **Prevention Measures:**
+
 - 30-day hold on payouts for new instructors
 - Review patterns analysis (velocity, IP clustering)
 - Self-enrollment detection (instructor IP matches student IP)
@@ -795,12 +878,14 @@ The Doctrina LMS Team
 ### 11.2 Content Piracy
 
 **Risks:**
+
 - Video downloading and redistribution
 - Screen recording and reposting
 - Course material sharing on file-sharing sites
 - Account credential sharing
 
 **Prevention Measures:**
+
 - DRM encryption for video streams
 - Dynamic watermarking (student email + ID on videos)
 - PDF watermarking on downloadable materials
@@ -809,12 +894,14 @@ The Doctrina LMS Team
 - Forensic watermarking for leak tracing
 
 **Detection:**
+
 - Google Alerts for course titles
 - DMCA monitoring services
 - User reports of piracy
 - Watermark analysis on leaked content
 
 **Response:**
+
 - DMCA takedown within 24 hours
 - Suspend offending user account
 - Notify affected instructor
@@ -823,12 +910,14 @@ The Doctrina LMS Team
 ### 11.3 Review and Rating Manipulation
 
 **Risks:**
+
 - Fake positive reviews (instructor incentivizes)
 - Competitor attacks (fake negative reviews)
 - Review farms (purchased reviews)
 - Quid pro quo reviews (instructor-to-instructor)
 
 **Prevention Measures:**
+
 - Verified purchase requirement for reviews
 - Minimum course completion requirement (>25% progress)
 - Review velocity limits (max 5 reviews per user per day)
@@ -837,6 +926,7 @@ The Doctrina LMS Team
 - Instructor cannot review own courses (obvious but enforced)
 
 **Detection Signals:**
+
 - Review timing clusters (10 reviews in 1 hour)
 - Similar language/phrases across reviews
 - Accounts created recently with only review activity
@@ -844,6 +934,7 @@ The Doctrina LMS Team
 - Unusual rating distributions (all 5-star or all 1-star)
 
 **Response:**
+
 - Flagged reviews hidden pending manual review
 - Repeat offenders account suspended
 - Instructor courses hidden if manipulation proven
@@ -852,12 +943,14 @@ The Doctrina LMS Team
 ### 11.4 Instructor Verification Bypass
 
 **Risks:**
+
 - Fake credentials submitted
 - Expired licenses not disclosed
 - Unlicensed individuals posing as instructors
 - Revoked licenses concealed
 
 **Prevention Measures:**
+
 - Primary source verification (Nursys, state boards)
 - Stripe Identity verification for identity proof
 - Annual license re-verification
@@ -865,11 +958,13 @@ The Doctrina LMS Team
 - Insurance verification ($1M/$3M minimum)
 
 **Monitoring:**
+
 - License expiration alerts (30 days before)
 - State board disciplinary action monitoring (quarterly)
 - Student complaints reviewed for credential concerns
 
 **Response:**
+
 - Immediate course suspension if license invalid
 - Refund to students if fraud proven
 - Legal action for credential fraud
@@ -878,12 +973,14 @@ The Doctrina LMS Team
 ### 11.5 Account Takeover
 
 **Risks:**
+
 - Credential stuffing (leaked passwords from other sites)
 - Phishing attacks
 - Session hijacking
 - Brute force attacks
 
 **Prevention Measures:**
+
 - Email verification required
 - Password strength enforcement
 - Rate limiting on login attempts (5 attempts per 10 minutes)
@@ -893,12 +990,14 @@ The Doctrina LMS Team
 - IP-based geolocation matching (alert on country change)
 
 **Detection:**
+
 - Unusual login patterns (new device, new location)
 - High-velocity course enrollments post-login
 - Password change followed by suspicious activity
 - Multiple failed 2FA attempts
 
 **Response:**
+
 - Automatic account lock after 5 failed attempts
 - Password reset required for unlock
 - Session termination on all devices
@@ -910,6 +1009,7 @@ The Doctrina LMS Team
 ### Pre-Launch Security Requirements
 
 **Infrastructure Security:**
+
 - [ ] SSL/TLS certificate installed and configured (Let's Encrypt or Vercel)
 - [ ] HTTPS enforced for all routes (HSTS headers)
 - [ ] Environment variables secured (no secrets in code, .env.local in .gitignore)
@@ -917,6 +1017,7 @@ The Doctrina LMS Team
 - [ ] CDN configured with DDoS protection (Vercel/Cloudflare)
 
 **Authentication & Authorization:**
+
 - [ ] User authentication flow tested (Clerk integration)
 - [ ] Password requirements enforced (8+ chars, complexity)
 - [ ] Email verification required before access
@@ -927,6 +1028,7 @@ The Doctrina LMS Team
 - [ ] Instructor access controls tested (isInstructor boolean)
 
 **Application Security:**
+
 - [ ] CORS policies implemented (whitelist known origins)
 - [ ] Rate limiting on auth endpoints (5 attempts/10 min)
 - [ ] Rate limiting on payment endpoints (3 attempts/hour)
@@ -937,6 +1039,7 @@ The Doctrina LMS Team
 - [ ] File upload validation (type, size limits)
 
 **Payment Security:**
+
 - [ ] Stripe integration tested (checkout flow)
 - [ ] Webhook signature verification implemented
 - [ ] PCI compliance validated (SAQ A completed)
@@ -945,6 +1048,7 @@ The Doctrina LMS Team
 - [ ] Fraud detection configured (Stripe Radar)
 
 **Monitoring & Logging:**
+
 - [ ] Audit logging operational (auditLogs table)
 - [ ] Error logging configured (Sentry or similar)
 - [ ] Monitoring and alerting configured (PagerDuty, Slack)
@@ -952,12 +1056,14 @@ The Doctrina LMS Team
 - [ ] Performance monitoring (Vercel Analytics)
 
 **Backup & Recovery:**
+
 - [ ] Backup strategy verified (Convex continuous backups)
 - [ ] Recovery procedure tested (restore from backup)
 - [ ] Disaster recovery plan documented
 - [ ] RTO/RPO objectives defined and tested
 
 **Compliance & Legal:**
+
 - [ ] Privacy policy published and linked
 - [ ] Terms of service published and linked
 - [ ] Cookie consent banner implemented (GDPR)
@@ -966,18 +1072,21 @@ The Doctrina LMS Team
 - [ ] Data processing agreements signed with vendors (Convex, Clerk, Stripe)
 
 **Content Security:**
+
 - [ ] Video DRM configured (if using Vimeo Business or Cloudflare Stream)
 - [ ] Watermarking implemented (video and PDF)
 - [ ] Download limits enforced
 - [ ] Course access control tested (purchased courses only)
 
 **Team Readiness:**
+
 - [ ] Security training completed by team
 - [ ] Incident response plan documented and reviewed
 - [ ] On-call rotation established (for P0/P1 incidents)
 - [ ] Security contacts designated (security@, privacy@)
 
 **Testing:**
+
 - [ ] Penetration testing completed (third-party)
 - [ ] Vulnerability scanning automated (Dependabot, Snyk)
 - [ ] Accessibility testing (WCAG 2.1 AA)
@@ -986,12 +1095,14 @@ The Doctrina LMS Team
 ## 13. Ongoing Security Maintenance
 
 ### Daily
+
 - Monitor security alerts and anomalies (dashboard check)
 - Review failed authentication attempts (>threshold)
 - Check system error rates (>5% investigate)
 - Review payment failures and chargebacks
 
 ### Weekly
+
 - Review admin activity logs
 - Verify backup completion (automated check)
 - Update security dashboard metrics
@@ -999,6 +1110,7 @@ The Doctrina LMS Team
 - Check for new CVEs in dependencies (Dependabot)
 
 ### Monthly
+
 - Review and update user permissions (remove stale accounts)
 - Check for dependency vulnerabilities (npm audit, Snyk)
 - Test disaster recovery procedures (sample restore)
@@ -1007,6 +1119,7 @@ The Doctrina LMS Team
 - Review refund requests for patterns
 
 ### Quarterly
+
 - Internal security audit (checklist-based)
 - Rotate API keys and secrets (Stripe, Clerk, etc.)
 - Review and update security policies
@@ -1016,6 +1129,7 @@ The Doctrina LMS Team
 - Penetration testing (if budget allows)
 
 ### Annually
+
 - External penetration testing (required)
 - SOC 2 audit preparation (future goal)
 - Employee security training refresh
@@ -1027,27 +1141,32 @@ The Doctrina LMS Team
 ## 14. Security Contacts
 
 **Security Team:**
+
 - Security Officer: [Designated role]
 - Email: security@doctrina-lms.com
 - Emergency Phone: [24/7 on-call via PagerDuty]
 
 **Vulnerability Reporting:**
+
 - Email: security@doctrina-lms.com
 - Response SLA: 24 hours for acknowledgment
 - Responsible disclosure program (reward minor bugs)
 - Bug bounty program (future)
 
 **Compliance Inquiries:**
+
 - Email: privacy@doctrina-lms.com
 - Response SLA: 5 business days
 - GDPR/CCPA requests handled within legal timelines
 
 **Instructor Support (Security Issues):**
+
 - Email: instructors@doctrina-lms.com
 - Response SLA: 24 hours
 - Payout security issues: escalated to P1
 
 **Copyright/DMCA:**
+
 - Email: dmca@doctrina-lms.com
 - DMCA Agent: [Registered with U.S. Copyright Office]
 - Response SLA: 24 hours for takedown

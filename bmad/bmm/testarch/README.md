@@ -251,16 +251,16 @@ MCP provides additional capabilities on top of TEA's default AI-based approach:
 
 ```json
 {
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    },
-    "playwright-test": {
-      "command": "npx",
-      "args": ["playwright", "run-test-mcp-server"]
-    }
-  }
+	"mcpServers": {
+		"playwright": {
+			"command": "npx",
+			"args": ["@playwright/mcp@latest"]
+		},
+		"playwright-test": {
+			"command": "npx",
+			"args": ["playwright", "run-test-mcp-server"]
+		}
+	}
 }
 ```
 

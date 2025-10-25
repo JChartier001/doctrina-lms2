@@ -1,4 +1,5 @@
 # Product Requirements Document (PRD)
+
 ## Doctrina LMS - Medical Aesthetics Learning Marketplace
 
 **Version:** 1.0
@@ -11,12 +12,15 @@
 ## 1. Executive Summary
 
 ### Vision
+
 Doctrina LMS is a specialized online learning marketplace connecting medical aesthetics professionals with expert instructors offering courses in injectables, lasers, medical spa operations, and advanced aesthetic procedures.
 
 ### Mission
+
 Empower medical aesthetics professionals to expand their skills, increase their income potential, and advance their careers through high-quality, credentialed education from verified practitioners.
 
 ### Strategic Goals
+
 1. **Launch MVP** with 50+ courses and 50+ verified instructors by Month 3
 2. **Establish Trust** through rigorous instructor vetting and CE credit offerings
 3. **Drive Engagement** with 70% course completion rate (vs. industry avg 15%)
@@ -30,6 +34,7 @@ Empower medical aesthetics professionals to expand their skills, increase their 
 ### Market Problem
 
 **For Students (Nurses, Estheticians, Physicians, PAs):**
+
 - **Skill Gap:** Medical aesthetics training is fragmented and expensive ($2,000-$10,000 per course)
 - **Credibility Issues:** Many online courses lack proper credentials or CE credits
 - **Access Barriers:** In-person training requires travel and time off work
@@ -37,6 +42,7 @@ Empower medical aesthetics professionals to expand their skills, increase their 
 - **Limited Selection:** Few platforms specialize in medical aesthetics
 
 **For Instructors (Experienced Practitioners):**
+
 - **High Platform Fees:** Udemy takes 50-63% commission, Teachable $0-$119/month + payment fees
 - **No Credibility Support:** Platforms don't verify credentials or help with CE accreditation
 - **Marketing Burden:** Instructors must drive all their own traffic
@@ -44,7 +50,9 @@ Empower medical aesthetics professionals to expand their skills, increase their 
 - **Limited Analytics:** Poor insights into student progress and engagement
 
 ### Solution
+
 A **specialized marketplace** that:
+
 - **Verifies all instructors** (license, insurance, credentials)
 - **Supports CE credits** (displays accreditation, helps with certificates)
 - **Provides better economics** (7-18% commission vs. 50%+)
@@ -60,6 +68,7 @@ A **specialized marketplace** that:
 #### Persona 1: Sarah - Career-Growth Nurse (Student)
 
 **Demographics:**
+
 - Age: 28-35
 - Profession: Registered Nurse (RN)
 - Location: Suburban/Urban US
@@ -67,6 +76,7 @@ A **specialized marketplace** that:
 - Experience: 3-7 years in nursing
 
 **Goals:**
+
 - Transition from hospital bedside nursing to medical aesthetics
 - Increase income to $80,000-$120,000/year
 - Work better hours (no nights/weekends)
@@ -74,6 +84,7 @@ A **specialized marketplace** that:
 - Get CE credits for license renewal
 
 **Pain Points:**
+
 - Hospital burnout (long hours, low pay, high stress)
 - Expensive in-person training ($3,000-$5,000 per course)
 - Unsure which courses are credible/worthwhile
@@ -81,6 +92,7 @@ A **specialized marketplace** that:
 - Limited time due to work schedule
 
 **Behaviors:**
+
 - Researches courses on evenings/weekends
 - Reads reviews extensively before purchasing
 - Price-sensitive but willing to pay for quality
@@ -88,6 +100,7 @@ A **specialized marketplace** that:
 - Prefers video lessons she can pause/rewind
 
 **Success Criteria:**
+
 - Completes course within 4-8 weeks
 - Receives CE certificate accepted by state board
 - Feels confident to perform procedures after course
@@ -96,6 +109,7 @@ A **specialized marketplace** that:
 #### Persona 2: Dr. Martinez - Expert Instructor (Instructor)
 
 **Demographics:**
+
 - Age: 38-55
 - Profession: Physician (MD), Nurse Practitioner (NP), or PA
 - Location: Major metro areas
@@ -103,6 +117,7 @@ A **specialized marketplace** that:
 - Experience: 10+ years, 5+ years in aesthetics
 
 **Goals:**
+
 - Build passive income stream ($30,000-$100,000/year from courses)
 - Establish thought leadership in aesthetics industry
 - Share knowledge and elevate profession
@@ -110,6 +125,7 @@ A **specialized marketplace** that:
 - Maximize revenue per student (keep more of course fees)
 
 **Pain Points:**
+
 - Existing platforms take 50%+ of revenue
 - Complex course setup and video hosting
 - No help with CE accreditation process
@@ -118,6 +134,7 @@ A **specialized marketplace** that:
 - Vetting process delays on other platforms
 
 **Behaviors:**
+
 - Already teaching (webinars, in-person workshops, or other platforms)
 - Has professional video setup or willing to invest
 - Active on Instagram/social media for marketing
@@ -125,6 +142,7 @@ A **specialized marketplace** that:
 - Wants to focus on content, not platform tech
 
 **Success Criteria:**
+
 - Earns $5,000+ per month from courses by Month 6
 - 80%+ of students complete courses (indicates quality)
 - 4.5+ star rating from students
@@ -134,6 +152,7 @@ A **specialized marketplace** that:
 #### Persona 3: Jessica - Licensed Esthetician (Student)
 
 **Demographics:**
+
 - Age: 24-40
 - Profession: Licensed Esthetician
 - Location: Various (suburban/urban)
@@ -141,6 +160,7 @@ A **specialized marketplace** that:
 - Experience: 1-10 years in esthetics
 
 **Goals:**
+
 - Learn advanced techniques (microneedling, chemical peels, lasers)
 - Increase service pricing and income
 - Work in medical spa vs. day spa (higher pay)
@@ -148,6 +168,7 @@ A **specialized marketplace** that:
 - Build own clientele or open business
 
 **Pain Points:**
+
 - Lower budget than nurses/physicians ($500-$1,500 per course)
 - State CE requirements vary (need clear guidance)
 - Some courses require medical supervision (can't perform solo)
@@ -155,6 +176,7 @@ A **specialized marketplace** that:
 - Intimidated by medical terminology
 
 **Behaviors:**
+
 - Bargain hunter, waits for sales/discounts
 - Very active on social media (Instagram, TikTok)
 - Learns best from step-by-step demonstrations
@@ -162,6 +184,7 @@ A **specialized marketplace** that:
 - Prefers shorter courses (2-4 hours vs. 10+ hours)
 
 **Success Criteria:**
+
 - Gets CE credits for license renewal
 - Learns technique she can offer clients immediately
 - Increases service menu and pricing
@@ -170,11 +193,13 @@ A **specialized marketplace** that:
 #### Persona 4: Admin Amy - Platform Administrator (Admin)
 
 **Demographics:**
+
 - Age: 30-45
 - Role: Platform operations manager
 - Technical Skill: Medium (can use dashboards, not a developer)
 
 **Goals:**
+
 - Approve/reject instructor applications efficiently
 - Monitor platform health (payments, compliance, quality)
 - Handle student/instructor support issues
@@ -182,6 +207,7 @@ A **specialized marketplace** that:
 - Maintain high course quality standards
 
 **Pain Points:**
+
 - Manual verification processes are time-consuming
 - Need to check multiple sources (state boards, insurance, etc.)
 - Balancing speed (instructor wants fast approval) vs. thoroughness
@@ -189,12 +215,14 @@ A **specialized marketplace** that:
 - Keeping up with changing state regulations
 
 **Behaviors:**
+
 - Works in admin dashboard daily
 - Needs clear workflows and checklists
 - Escalates complex legal/compliance issues
 - Monitors key metrics (approval time, refund rate, course quality)
 
 **Success Criteria:**
+
 - Instructor approval within 5-7 business days
 - <2% refund rate (indicates quality courses)
 - <5% support ticket escalation rate
@@ -272,6 +300,7 @@ A **specialized marketplace** that:
    - **Platform Action:** Easy certificate access, review incentive, upsell opportunities
 
 **Key Touchpoints:**
+
 - Landing page (homepage or course page from ad)
 - Course preview
 - Checkout flow
@@ -281,6 +310,7 @@ A **specialized marketplace** that:
 - Review request
 
 **Success Metrics:**
+
 - Time to first lesson: <10 minutes after signup
 - Course completion rate: >70%
 - Time to completion: 4-8 weeks (target)
@@ -396,6 +426,7 @@ A **specialized marketplace** that:
     - **Platform Action:** Analytics dashboard, discussion moderation, automated payouts
 
 **Key Touchpoints:**
+
 - Instructor landing page
 - Application form
 - Verification emails
@@ -405,6 +436,7 @@ A **specialized marketplace** that:
 - Payout system
 
 **Success Metrics:**
+
 - Application approval rate: >80% (high-quality applicants)
 - Time to approval: 5-7 business days
 - Time to first course published: <30 days after approval
@@ -480,6 +512,7 @@ A **specialized marketplace** that:
    - **Platform Action:** Rejection workflow, clear communication
 
 **Key Touchpoints:**
+
 - Email notifications
 - Admin dashboard
 - Application review interface
@@ -487,6 +520,7 @@ A **specialized marketplace** that:
 - Approval/rejection workflows
 
 **Success Metrics:**
+
 - Average review time: 5-7 days
 - Approval rate: 80-85%
 - Rejection appeal rate: <10%
@@ -503,11 +537,13 @@ A **specialized marketplace** that:
 **Description:** Secure user registration, login, and profile management
 
 **User Stories:**
+
 - As a **student**, I want to create an account so that I can enroll in courses
 - As an **instructor**, I want to create an account so that I can teach courses
 - As any **user**, I want to log in with Google so that I don't have to remember a password
 
 **Functional Requirements:**
+
 - Email/password registration with email verification
 - Google OAuth login
 - Password reset functionality
@@ -515,11 +551,13 @@ A **specialized marketplace** that:
 - Role-based access (student, instructor, admin)
 
 **Technical Implementation:**
+
 - Clerk for authentication
 - Convex for user data storage
 - `isInstructor` and `isAdmin` boolean fields (not role enum)
 
 **Acceptance Criteria:**
+
 - User can register with email/password
 - User receives verification email and can verify account
 - User can log in with verified email or Google account
@@ -537,11 +575,13 @@ A **specialized marketplace** that:
 **Description:** Browse, search, and filter courses
 
 **User Stories:**
+
 - As a **student**, I want to browse courses so that I can find relevant training
 - As a **student**, I want to filter courses by category and CE credits so that I find courses that meet my needs
 - As a **student**, I want to see instructor credentials so that I can trust the course quality
 
 **Functional Requirements:**
+
 - Homepage with featured courses
 - Course listing page with filtering:
   - Category (Injectables, Lasers, Business, etc.)
@@ -560,11 +600,13 @@ A **specialized marketplace** that:
   - Duration (total hours)
 
 **Technical Implementation:**
+
 - Next.js pages for catalog
 - Convex queries with filtering
 - Real-time updates when new courses added
 
 **Acceptance Criteria:**
+
 - Student can view course catalog
 - Filters work correctly and persist in URL
 - Search returns relevant results
@@ -582,10 +624,12 @@ A **specialized marketplace** that:
 **Description:** View course details and preview lessons before purchase
 
 **User Stories:**
+
 - As a **student**, I want to see complete course details so that I can decide if it's worth purchasing
 - As a **student**, I want to preview lessons so that I can see teaching style before buying
 
 **Functional Requirements:**
+
 - Course detail page showing:
   - Course title, description (short + long)
   - Instructor info (name, photo, bio, credentials)
@@ -598,11 +642,13 @@ A **specialized marketplace** that:
 - Video player for preview content
 
 **Technical Implementation:**
+
 - Next.js dynamic route `/courses/[id]`
 - Convex query to fetch course + instructor + reviews
 - Vimeo/Cloudflare video player embed
 
 **Acceptance Criteria:**
+
 - Course detail page displays all information
 - Preview lessons playable without enrollment
 - "Enroll Now" button works for logged-in users
@@ -620,10 +666,12 @@ A **specialized marketplace** that:
 **Description:** Purchase courses and enroll students
 
 **User Stories:**
+
 - As a **student**, I want to purchase a course with credit card so that I can access the content
 - As a **student**, I want to receive a receipt so that I have proof of purchase
 
 **Functional Requirements:**
+
 - "Enroll Now" button on course detail page
 - Stripe Checkout hosted payment page
 - Payment confirmation and redirect to course
@@ -632,6 +680,7 @@ A **specialized marketplace** that:
 - Refund policy clearly stated (30-day money-back guarantee)
 
 **Technical Implementation:**
+
 - Stripe Payment Intents API
 - Stripe Checkout Sessions
 - Convex mutations for enrollment + purchase records
@@ -639,6 +688,7 @@ A **specialized marketplace** that:
 - Resend for receipt emails
 
 **Acceptance Criteria:**
+
 - Student can click "Enroll Now" and reach Stripe checkout
 - Student can complete payment with credit card
 - After payment, student redirected to course learning page
@@ -656,11 +706,13 @@ A **specialized marketplace** that:
 **Description:** Video lessons, quizzes, progress tracking
 
 **User Stories:**
+
 - As a **student**, I want to watch video lessons so that I can learn course content
 - As a **student**, I want to track my progress so that I know how much I've completed
 - As a **student**, I want to take quizzes so that I can test my knowledge
 
 **Functional Requirements:**
+
 - Course learning page (`/courses/[id]/learn`)
 - Sidebar navigation showing:
   - Modules (collapsible)
@@ -682,12 +734,14 @@ A **specialized marketplace** that:
   - Resume where left off
 
 **Technical Implementation:**
+
 - Next.js protected route (must be enrolled)
 - Convex queries for course structure + progress
 - Real-time progress updates (optimistic UI)
 - Video player integration with completion tracking
 
 **Acceptance Criteria:**
+
 - Student can access learning interface only if enrolled
 - Video playback works smoothly
 - "Mark as Complete" updates progress in real-time
@@ -706,10 +760,12 @@ A **specialized marketplace** that:
 **Description:** Generate completion certificates and CE certificates
 
 **User Stories:**
+
 - As a **student**, I want to receive a completion certificate so that I can prove I finished the course
 - As a **student**, I want to receive a CE certificate so that I can use it for license renewal
 
 **Functional Requirements:**
+
 - Course completion detection (100% lessons + final exam passed)
 - PDF certificate generation:
   - **Completion Certificate:**
@@ -730,12 +786,14 @@ A **specialized marketplace** that:
 - Certificate storage in Convex file storage
 
 **Technical Implementation:**
+
 - PDF generation library (jsPDF or Puppeteer)
 - Certificate templates
 - Convex mutation triggered on course completion
 - File storage for PDFs
 
 **Acceptance Criteria:**
+
 - Certificate generated automatically when student completes course
 - Certificate includes all required information
 - Certificate downloadable as PDF
@@ -753,11 +811,13 @@ A **specialized marketplace** that:
 **Description:** Instructors apply, admins verify credentials
 
 **User Stories:**
+
 - As a **prospective instructor**, I want to apply to teach so that I can create courses
 - As an **admin**, I want to review applications so that I can verify instructor credentials
 - As an **instructor**, I want to know my application status so that I can plan course creation
 
 **Functional Requirements:**
+
 - Instructor application form:
   - Personal info (name, email, phone)
   - License info (type, number, state, expiration)
@@ -777,6 +837,7 @@ A **specialized marketplace** that:
   - Application rejected → reason + can reapply
 
 **Technical Implementation:**
+
 - Application form (multi-step wizard)
 - Convex file storage for documents
 - Admin dashboard page
@@ -784,6 +845,7 @@ A **specialized marketplace** that:
 - InstructorApplications table (see DB-SCHEMA.md)
 
 **Acceptance Criteria:**
+
 - Prospective instructor can submit application
 - Application confirmation email sent
 - Admin can view pending applications
@@ -803,11 +865,13 @@ A **specialized marketplace** that:
 **Description:** Step-by-step course creation for instructors
 
 **User Stories:**
+
 - As an **instructor**, I want to create a course easily so that I can start teaching
 - As an **instructor**, I want to upload video lessons so that students can watch them
 - As an **instructor**, I want to create quizzes so that students can test their knowledge
 
 **Functional Requirements:**
+
 - Course creation wizard (5 steps):
   - **Step 1: Basic Info**
     - Title, short description, long description
@@ -835,6 +899,7 @@ A **specialized marketplace** that:
 - Save as draft functionality (can resume later)
 
 **Technical Implementation:**
+
 - Multi-step form with state management
 - Convex file storage for videos (or direct upload to Vimeo/Cloudflare)
 - Video transcoding (if Cloudflare Stream)
@@ -842,6 +907,7 @@ A **specialized marketplace** that:
 - Thumbnail generation from video
 
 **Acceptance Criteria:**
+
 - Instructor can complete all 5 wizard steps
 - Video upload shows progress and completes successfully
 - Course saves as draft after each step
@@ -860,11 +926,13 @@ A **specialized marketplace** that:
 **Description:** Instructor views course performance and earnings
 
 **User Stories:**
+
 - As an **instructor**, I want to see how many students enrolled so that I know course popularity
 - As an **instructor**, I want to see my earnings so that I can track revenue
 - As an **instructor**, I want to see student progress so that I can improve my course
 
 **Functional Requirements:**
+
 - Instructor dashboard showing:
   - **Overview:**
     - Total students (all courses)
@@ -888,12 +956,14 @@ A **specialized marketplace** that:
     - Request payout button (if balance > $50)
 
 **Technical Implementation:**
+
 - Instructor dashboard pages
 - Convex queries with aggregations
 - Charts (Recharts or similar)
 - Real-time updates when students enroll
 
 **Acceptance Criteria:**
+
 - Instructor can view dashboard
 - Stats accurate and update in real-time
 - Charts render correctly
@@ -911,10 +981,12 @@ A **specialized marketplace** that:
 **Description:** Instructors receive earnings via Stripe Connect
 
 **User Stories:**
+
 - As an **instructor**, I want to get paid for course sales so that I can earn income
 - As an **instructor**, I want to control when I receive payouts so that I can manage cash flow
 
 **Functional Requirements:**
+
 - Stripe Connect onboarding:
   - Instructor completes Stripe Express account setup
   - Identity verification (Stripe Identity)
@@ -935,12 +1007,14 @@ A **specialized marketplace** that:
   - Refund protection
 
 **Technical Implementation:**
+
 - Stripe Connect Express accounts
 - Stripe transfers API
 - Convex mutations for payout tracking
 - Email notifications for payout status
 
 **Acceptance Criteria:**
+
 - Instructor can complete Stripe onboarding
 - Earnings calculated correctly
 - Instructor can request payout when balance > $50
@@ -959,11 +1033,13 @@ A **specialized marketplace** that:
 **Description:** Student views enrolled courses and progress
 
 **User Stories:**
+
 - As a **student**, I want to see all my courses in one place so that I can continue learning
 - As a **student**, I want to see my progress so that I know how much I've completed
 - As a **student**, I want to download my certificates so that I can use them for license renewal
 
 **Functional Requirements:**
+
 - Student dashboard showing:
   - **My Courses:**
     - List of enrolled courses
@@ -979,11 +1055,13 @@ A **specialized marketplace** that:
     - Pending reviews (courses completed but not reviewed)
 
 **Technical Implementation:**
+
 - Student dashboard page
 - Convex queries for enrollments + progress + certificates
 - PDF download links
 
 **Acceptance Criteria:**
+
 - Student can view all enrolled courses
 - Progress accurate for each course
 - "Continue Learning" navigates to correct lesson
@@ -1001,11 +1079,13 @@ A **specialized marketplace** that:
 **Description:** Students review courses after completion
 
 **User Stories:**
+
 - As a **student**, I want to leave a review so that I can help other students decide
 - As a **student**, I want to see reviews before purchasing so that I can assess course quality
 - As an **instructor**, I want to receive feedback so that I can improve my courses
 
 **Functional Requirements:**
+
 - Review submission:
   - Available after course completion (or 25% progress)
   - Star rating (1-5 stars)
@@ -1021,12 +1101,14 @@ A **specialized marketplace** that:
   - Flagging system (future)
 
 **Technical Implementation:**
+
 - Convex mutations for review submission
 - Reviews table linked to courses + users
 - Average rating calculation
 - Real-time updates when review submitted
 
 **Acceptance Criteria:**
+
 - Student can submit review after course completion
 - Review appears on course detail page
 - Average rating updates correctly
@@ -1044,6 +1126,7 @@ A **specialized marketplace** that:
 #### F13: Discussion Forums (per course)
 
 **User Stories:**
+
 - As a **student**, I want to ask questions about course content
 - As an **instructor**, I want to answer student questions
 
@@ -1055,6 +1138,7 @@ A **specialized marketplace** that:
 #### F14: CE Credit Management (Instructor)
 
 **User Stories:**
+
 - As an **instructor**, I want to submit my CE accreditation so that students can get CE credits
 - As an **admin**, I want to verify CE accreditation so that we display accurate information
 
@@ -1066,6 +1150,7 @@ A **specialized marketplace** that:
 #### F15: Refund Requests
 
 **User Stories:**
+
 - As a **student**, I want to request a refund within 30 days if unsatisfied
 - As an **admin**, I want to process refunds so that we maintain customer satisfaction
 
@@ -1077,6 +1162,7 @@ A **specialized marketplace** that:
 #### F16: Course Recommendations
 
 **User Stories:**
+
 - As a **student**, I want to see recommended courses based on my interests
 
 **Priority:** P1
@@ -1111,36 +1197,43 @@ A **specialized marketplace** that:
 ## 6. Success Metrics & KPIs
 
 ### North Star Metric
+
 **Student Course Completion Rate:** 70%+
 
-*Why:* Course completion indicates student satisfaction, course quality, and learning outcomes. Industry average is 10-15%. Our target of 70% demonstrates we're building a higher-quality marketplace.
+_Why:_ Course completion indicates student satisfaction, course quality, and learning outcomes. Industry average is 10-15%. Our target of 70% demonstrates we're building a higher-quality marketplace.
 
 ### Primary Metrics
 
 **Acquisition:**
+
 - Monthly Active Users (MAU): 500 (Month 3) → 10,000 (Year 1)
 - Instructor signups: 50 (Month 3) → 200 (Year 1)
 - Student signups: 450 (Month 3) → 9,800 (Year 1)
 
 **Activation:**
+
 - Student first course enrollment rate: 60% within 7 days of signup
 - Instructor first course published rate: 80% within 30 days of approval
 
 **Engagement:**
+
 - Course completion rate: 70%+
 - Average time to complete course: 4-8 weeks
 - Repeat purchase rate: 25% within 6 months
 
 **Revenue:**
+
 - Gross Merchandise Value (GMV): $50k (Month 3) → $1.25M (Year 1)
 - Platform revenue (after instructor payouts): $17k → $425k
 - Average order value: $200-$300
 
 **Retention:**
+
 - Instructor retention: 90% (instructors with >1 course published stay active)
 - Student retention: 40% (students enroll in 2nd course within 6 months)
 
 **Quality:**
+
 - Average course rating: 4.5+ stars
 - Refund rate: <2%
 - Instructor approval rate: 80-85% (high-quality applicants)
@@ -1148,16 +1241,19 @@ A **specialized marketplace** that:
 ### Secondary Metrics
 
 **Course Quality:**
+
 - Average quiz score: 85%+
 - Lesson drop-off rate: <20% per lesson
 - Student support tickets per course: <5
 
 **Platform Health:**
+
 - Uptime: 99.9%
 - Page load time: <2 seconds (95th percentile)
 - Payment success rate: >98%
 
 **Instructor Success:**
+
 - Instructors earning >$5k/month: 10% (Month 12)
 - Average instructor revenue: $1,500/month (Year 1)
 - Time to first sale: <60 days after course published
@@ -1167,6 +1263,7 @@ A **specialized marketplace** that:
 ## 7. Feature Prioritization (MoSCoW)
 
 ### Must Have (MVP - Launch by Month 3)
+
 - ✅ F1: User Authentication & Account Management
 - ✅ F2: Course Catalog & Discovery
 - ✅ F3: Course Detail & Preview
@@ -1181,18 +1278,21 @@ A **specialized marketplace** that:
 - ✅ F12: Course Reviews & Ratings
 
 ### Should Have (Post-MVP - Months 4-6)
+
 - F13: Discussion Forums
 - F14: CE Credit Management
 - F15: Refund Requests
 - F16: Course Recommendations
 
 ### Could Have (Months 7-12)
+
 - F17: Promo Codes & Discounts
 - F18: Subscription Plans
 - F19: Wishlist
 - Advanced Analytics (A/B testing, cohort analysis)
 
 ### Won't Have (Future/Backlog)
+
 - F20: Mobile Apps (iOS/Android)
 - Live video classes/webinars
 - Community features (networking, groups)
@@ -1205,13 +1305,16 @@ A **specialized marketplace** that:
 ### Direct Competitors
 
 #### Udemy (General LMS)
+
 **Strengths:**
+
 - Massive course catalog (200k+ courses)
 - Brand recognition
 - Low prices ($10-$200 per course)
 - Mobile apps
 
 **Weaknesses:**
+
 - High commission (50-63%)
 - No credential verification
 - General platform (not medical aesthetics focused)
@@ -1220,12 +1323,15 @@ A **specialized marketplace** that:
 **Differentiation:** We verify all instructors, focus on medical aesthetics, better instructor economics (7-18% vs. 50%+)
 
 #### Teachable (Course Creation Platform)
+
 **Strengths:**
+
 - Instructor owns student data
 - White-label branding
 - Good course creation tools
 
 **Weaknesses:**
+
 - Monthly fees ($0-$119/month) + payment processing fees
 - Instructor must drive all traffic (no marketplace)
 - No credential verification
@@ -1233,12 +1339,15 @@ A **specialized marketplace** that:
 **Differentiation:** We provide marketplace + traffic, verify credentials, no monthly fees
 
 #### National Laser Institute (Medical Aesthetics Training)
+
 **Strengths:**
+
 - Established brand in aesthetics
 - Hands-on training (in-person)
 - Industry connections
 
 **Weaknesses:**
+
 - Very expensive ($3,000-$10,000 per course)
 - Requires travel and time off work
 - Limited course selection (only their instructors)
@@ -1249,9 +1358,11 @@ A **specialized marketplace** that:
 ### Competitive Positioning
 
 **Doctrina LMS Positioning:**
+
 > "The verified medical aesthetics marketplace where credentialed instructors earn 82-93% of revenue while students access affordable, CE-accredited training from anywhere."
 
 **Key Differentiators:**
+
 1. **Credential Verification:** We verify all instructor licenses, insurance, and credentials
 2. **Instructor Economics:** Instructors keep 82-93% (vs. 37-50% on other platforms)
 3. **CE Credit Support:** We display CE accreditation and help with certificates
@@ -1263,6 +1374,7 @@ A **specialized marketplace** that:
 ## 9. Technical Constraints
 
 ### Technology Stack (Fixed)
+
 - **Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS
 - **Backend:** Convex (real-time database)
 - **Auth:** Clerk
@@ -1272,12 +1384,14 @@ A **specialized marketplace** that:
 - **Email:** Resend
 
 ### Performance Requirements
+
 - Page load: <2 seconds (95th percentile)
 - Video playback: <2 second initial buffering
 - API response: <500ms (95th percentile)
 - Uptime: 99.9%
 
 ### Security Requirements
+
 - SSL/TLS encryption (all traffic)
 - PCI compliance (Stripe handles)
 - User data encryption at rest
@@ -1285,6 +1399,7 @@ A **specialized marketplace** that:
 - Row-level security (users only access own data)
 
 ### Scalability Targets
+
 - MVP: 500 users, 50 courses, 1TB video storage
 - Year 1: 10,000 users, 500 courses, 10TB video storage
 - Concurrent users: 1,000 (MVP) → 10,000 (Year 1)
@@ -1300,6 +1415,7 @@ A **specialized marketplace** that:
 **Impact:** HIGH - Without courses, no students
 
 **Mitigation:**
+
 - Pre-launch outreach to 100+ aesthetic practitioners
 - Offer Early Adopter perks (featured placement, promotional support)
 - Lower commission for first 6 months (10% vs. 12-18%)
@@ -1316,6 +1432,7 @@ A **specialized marketplace** that:
 **Impact:** MEDIUM - Reduces student success and referrals
 
 **Mitigation:**
+
 - Email nudges for inactive students
 - Progress tracking and gamification (badges, streaks)
 - Instructor best practices guide (keep videos <15 min, add quizzes)
@@ -1332,6 +1449,7 @@ A **specialized marketplace** that:
 **Impact:** MEDIUM - Lost revenue, instructor payouts affected
 
 **Mitigation:**
+
 - Stripe Radar for fraud detection
 - 30-day hold on instructor payouts (new instructors)
 - Clear refund policy (30 days, must be <25% complete)
@@ -1348,6 +1466,7 @@ A **specialized marketplace** that:
 **Impact:** HIGH - Reputation damage, potential lawsuits
 
 **Mitigation:**
+
 - Clear disclaimers: Platform is marketplace, not CE provider
 - Instructors responsible for own CE accreditation
 - Students must verify CE acceptance with their state board
@@ -1365,6 +1484,7 @@ A **specialized marketplace** that:
 **Impact:** MEDIUM - Reduces profitability
 
 **Mitigation:**
+
 - Start with Vimeo Business (fixed $75/month)
 - Monitor bandwidth usage closely
 - Migrate to Cloudflare Stream if costs exceed $200/month
@@ -1382,6 +1502,7 @@ A **specialized marketplace** that:
 **Impact:** HIGH - Legal liability, reputation damage
 
 **Mitigation:**
+
 - Primary source verification (Nursys, state boards)
 - Insurance certificate verification (contact insurer if needed)
 - Annual re-verification of licenses
@@ -1397,11 +1518,13 @@ A **specialized marketplace** that:
 ### Pre-Launch (Months 1-2)
 
 **Goals:**
+
 - Build MVP features (F1-F12)
 - Recruit 20 instructors
 - Create 30 courses
 
 **Activities:**
+
 - Development sprints (see BACKLOG.md)
 - Instructor outreach (LinkedIn, conferences, aesthetics forums)
 - Legal setup (terms of service, privacy policy, instructor agreements)
@@ -1410,11 +1533,13 @@ A **specialized marketplace** that:
 ### Soft Launch (Month 3)
 
 **Goals:**
+
 - Test platform with limited audience
 - Get feedback and fix bugs
 - Achieve first 50 students and 10 course completions
 
 **Activities:**
+
 - Invite-only access (instructors' networks)
 - Beta testing program (50 students, incentivized with discounts)
 - Monitor metrics: signups, enrollments, completions, errors
@@ -1423,11 +1548,13 @@ A **specialized marketplace** that:
 ### Public Launch (Month 4)
 
 **Goals:**
+
 - Open to public
 - Marketing push for student acquisition
 - 500 students, 50 instructors, 50 courses
 
 **Activities:**
+
 - SEO optimization (course pages, blog content)
 - Paid ads (Google, Facebook, Instagram)
 - Content marketing (aesthetics blogs, YouTube)
@@ -1437,11 +1564,13 @@ A **specialized marketplace** that:
 ### Post-Launch (Months 5-12)
 
 **Goals:**
+
 - Scale to 10,000 students, 200 instructors
 - Add post-MVP features (F13-F16)
 - Achieve profitability
 
 **Activities:**
+
 - Continuous feature development
 - Instructor success program (help instructors market courses)
 - Student referral program (10% off for referrals)
@@ -1470,4 +1599,3 @@ A **specialized marketplace** that:
 
 **Document Status:** ✅ Complete - Ready for Epic and Backlog Creation
 **Next Steps:** Create EPICS.md and BACKLOG.md for sprint planning
-

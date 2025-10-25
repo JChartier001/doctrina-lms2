@@ -17,28 +17,18 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		setMounted(true);
+		const t = setTimeout(() => setMounted(true), 0);
+		return () => clearTimeout(t);
 	}, []);
 
 	return (
-		<NextThemesProvider
-			attribute='class'
-			defaultTheme='system'
-			enableSystem
-			{...props}
-		>
+		<NextThemesProvider attribute="class" defaultTheme="system" enableSystem {...props}>
 			<ThemeContextProvider mounted={mounted}>{children}</ThemeContextProvider>
 		</NextThemesProvider>
 	);
 }
 
-function ThemeContextProvider({
-	children,
-	mounted,
-}: {
-	children: React.ReactNode;
-	mounted: boolean;
-}) {
+function ThemeContextProvider({ children, mounted }: { children: React.ReactNode; mounted: boolean }) {
 	const { theme, setTheme } = useNextTheme();
 
 	// Prevent hydration mismatch by not rendering until mounted
@@ -51,9 +41,7 @@ function ThemeContextProvider({
 		setTheme: (theme: string) => setTheme(theme),
 	};
 
-	return (
-		<ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-	);
+	return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export const useTheme = () => {

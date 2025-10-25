@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
 	CommandDialog,
@@ -13,7 +13,8 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
-import { useSearchSuggestions, trackSearch } from '@/lib/search-service';
+import { Input } from '@/components/ui/input';
+import { trackSearch, useSearchSuggestions } from '@/lib/search-service';
 
 interface SearchBarProps {
 	placeholder?: string;
@@ -49,10 +50,7 @@ export function SearchBar({
 	}, []);
 
 	// Use Convex search suggestions hook
-	const suggestionsResult = useSearchSuggestions(
-		query.length > 1 ? query : '',
-		10
-	);
+	const suggestionsResult = useSearchSuggestions(query.length > 1 ? query : '', 10);
 	const { data: convexSuggestions } = suggestionsResult;
 
 	// Update suggestions only when the actual content changes (not just reference)
@@ -93,11 +91,11 @@ export function SearchBar({
 	return (
 		<>
 			<div className={`relative flex items-center ${className}`}>
-				<div className='relative w-full'>
-					<Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
+				<div className="relative w-full">
+					<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 					<Input
 						ref={inputRef}
-						type='search'
+						type="search"
 						placeholder={placeholder}
 						className={`w-full pl-9 ${showButton ? 'rounded-r-none' : ''}`}
 						value={query}
@@ -120,25 +118,17 @@ export function SearchBar({
 					/>
 				</div>
 				{showButton && (
-					<Button
-						type='submit'
-						className='rounded-l-none'
-						onClick={() => handleSearch(query)}
-					>
+					<Button type="submit" className="rounded-l-none" onClick={() => handleSearch(query)}>
 						Search
 					</Button>
 				)}
 			</div>
 
 			<CommandDialog open={open} onOpenChange={setOpen}>
-				<CommandInput
-					placeholder='Search...'
-					value={query}
-					onValueChange={setQuery}
-				/>
+				<CommandInput placeholder="Search..." value={query} onValueChange={setQuery} />
 				<CommandList>
 					<CommandEmpty>No results found.</CommandEmpty>
-					<CommandGroup heading='Suggestions'>
+					<CommandGroup heading="Suggestions">
 						{suggestions.map(suggestion => (
 							<CommandItem
 								key={suggestion}
@@ -147,7 +137,7 @@ export function SearchBar({
 									handleSearch(suggestion);
 								}}
 							>
-								<Search className='mr-2 h-4 w-4' />
+								<Search className="mr-2 h-4 w-4" />
 								{suggestion}
 							</CommandItem>
 						))}

@@ -286,16 +286,16 @@ All tests follow BDD format for clarity:
 
 ```typescript
 test('should display error for invalid credentials', async ({ page }) => {
-  // GIVEN: User is on login page
-  await page.goto('/login');
+	// GIVEN: User is on login page
+	await page.goto('/login');
 
-  // WHEN: User submits invalid credentials
-  await page.fill('[data-testid="email-input"]', 'invalid@example.com');
-  await page.fill('[data-testid="password-input"]', 'wrongpassword');
-  await page.click('[data-testid="login-button"]');
+	// WHEN: User submits invalid credentials
+	await page.fill('[data-testid="email-input"]', 'invalid@example.com');
+	await page.fill('[data-testid="password-input"]', 'wrongpassword');
+	await page.click('[data-testid="login-button"]');
 
-  // THEN: Error message is displayed
-  await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
+	// THEN: Error message is displayed
+	await expect(page.locator('[data-testid="error-message"]')).toHaveText('Invalid email or password');
 });
 ```
 
@@ -324,11 +324,11 @@ Use faker for all test data generation:
 import { faker } from '@faker-js/faker';
 
 export const createUser = (overrides = {}) => ({
-  id: faker.number.int(),
-  email: faker.internet.email(),
-  name: faker.person.fullName(),
-  createdAt: faker.date.recent().toISOString(),
-  ...overrides,
+	id: faker.number.int(),
+	email: faker.internet.email(),
+	name: faker.person.fullName(),
+	createdAt: faker.date.recent().toISOString(),
+	...overrides,
 });
 
 export const createUsers = (count: number) => Array.from({ length: count }, () => createUser());
@@ -350,21 +350,21 @@ Playwright fixtures with automatic data cleanup:
 import { test as base } from '@playwright/test';
 
 export const test = base.extend({
-  authenticatedUser: async ({ page }, use) => {
-    // Setup: Create and authenticate user
-    const user = await createUser();
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', user.email);
-    await page.fill('[data-testid="password"]', 'password123');
-    await page.click('[data-testid="login-button"]');
-    await page.waitForURL('/dashboard');
+	authenticatedUser: async ({ page }, use) => {
+		// Setup: Create and authenticate user
+		const user = await createUser();
+		await page.goto('/login');
+		await page.fill('[data-testid="email"]', user.email);
+		await page.fill('[data-testid="password"]', 'password123');
+		await page.click('[data-testid="login-button"]');
+		await page.waitForURL('/dashboard');
 
-    // Provide to test
-    await use(user);
+		// Provide to test
+		await use(user);
 
-    // Cleanup: Delete user (automatic)
-    await deleteUser(user.id);
-  },
+		// Cleanup: Delete user (automatic)
+		await deleteUser(user.id);
+	},
 });
 ```
 
@@ -382,13 +382,13 @@ Each test should verify exactly one behavior:
 ```typescript
 // ✅ CORRECT: One assertion
 test('should display user name', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
+	await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
 });
 
 // ❌ WRONG: Multiple assertions (not atomic)
 test('should display user info', async ({ page }) => {
-  await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
-  await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com');
+	await expect(page.locator('[data-testid="user-name"]')).toHaveText('John');
+	await expect(page.locator('[data-testid="user-email"]')).toHaveText('john@example.com');
 });
 ```
 

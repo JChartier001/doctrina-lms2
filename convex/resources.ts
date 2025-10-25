@@ -1,5 +1,6 @@
-import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+
+import { mutation, query } from './_generated/server';
 
 export const list = query({
 	args: {
@@ -7,7 +8,7 @@ export const list = query({
 		courseId: v.optional(v.id('courses')),
 	},
 	handler: async (ctx, { limit, courseId }) => {
-		let q = ctx.db
+		const q = ctx.db
 			.query('resources')
 			.withIndex('by_course', q => (courseId ? q.eq('courseId', courseId) : q))
 			.order('desc');
@@ -42,7 +43,7 @@ export const search = query({
 				r.title.toLowerCase().includes(q) ||
 				r.description.toLowerCase().includes(q) ||
 				r.tags.some(t => t.toLowerCase().includes(q)) ||
-				r.categories.some(c => c.toLowerCase().includes(q))
+				r.categories.some(c => c.toLowerCase().includes(q)),
 		);
 		return limit ? res.slice(0, limit) : res;
 	},
@@ -64,11 +65,7 @@ export const create = mutation({
 		favoriteCount: v.number(),
 		rating: v.number(),
 		reviewCount: v.number(),
-		difficulty: v.union(
-			v.literal('beginner'),
-			v.literal('intermediate'),
-			v.literal('advanced')
-		),
+		difficulty: v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced')),
 		duration: v.optional(v.string()),
 		fileSize: v.optional(v.string()),
 		courseId: v.optional(v.id('courses')),
@@ -94,13 +91,7 @@ export const update = mutation({
 		favoriteCount: v.optional(v.number()),
 		rating: v.optional(v.number()),
 		reviewCount: v.optional(v.number()),
-		difficulty: v.optional(
-			v.union(
-				v.literal('beginner'),
-				v.literal('intermediate'),
-				v.literal('advanced')
-			)
-		),
+		difficulty: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
 		duration: v.optional(v.string()),
 		fileSize: v.optional(v.string()),
 		courseId: v.optional(v.id('courses')),

@@ -1,4 +1,5 @@
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
@@ -30,7 +31,7 @@ export interface CertificateTemplate {
 }
 
 // Certificate templates (static UI data)
-const certificateTemplates: CertificateTemplate[] = [
+const _certificateTemplates: CertificateTemplate[] = [
 	{
 		id: 'template-1',
 		name: 'Standard Certificate',
@@ -84,86 +85,4 @@ export function useGenerateCertificate() {
 // Delete a certificate mutation
 export function useRemoveCertificate() {
 	return useMutation(api.certificates.remove);
-}
-
-// Legacy functions for backward compatibility (deprecated - use hooks instead)
-
-// Get all certificates for a user
-export function getUserCertificates(userId: string): Certificate[] {
-	// This function is deprecated - use useUserCertificates hook instead
-	console.warn(
-		'getUserCertificates is deprecated. Use useUserCertificates hook instead.'
-	);
-	return [];
-}
-
-// Get a specific certificate by ID
-export function getCertificateById(certId: string): Certificate | undefined {
-	// This function is deprecated - use useCertificate hook instead
-	console.warn(
-		'getCertificateById is deprecated. Use useCertificate hook instead.'
-	);
-	return undefined;
-}
-
-// Verify a certificate by verification code
-export function verifyCertificate(
-	verificationCode: string
-): Certificate | undefined {
-	// This function is deprecated - use useVerifyCertificate hook instead
-	console.warn(
-		'verifyCertificate is deprecated. Use useVerifyCertificate hook instead.'
-	);
-	return undefined;
-}
-
-// Generate a new certificate (deprecated - use mutation hook)
-export function generateCertificate(
-	userId: string,
-	userName: string,
-	courseId: string,
-	courseName: string,
-	instructorId: string,
-	instructorName: string,
-	templateId = 'template-1'
-): Certificate {
-	// This function is deprecated - use useGenerateCertificate mutation hook instead
-	console.warn(
-		'generateCertificate is deprecated. Use useGenerateCertificate mutation hook instead.'
-	);
-	throw new Error(
-		'This function is deprecated. Use the Convex mutation hook instead.'
-	);
-}
-
-// Get a certificate template
-export function getCertificateTemplate(
-	templateId: string
-): CertificateTemplate | undefined {
-	return certificateTemplates.find(template => template.id === templateId);
-}
-
-// Get all certificate templates
-export function getAllCertificateTemplates(): CertificateTemplate[] {
-	return certificateTemplates;
-}
-
-// Delete a certificate (deprecated - use mutation hook)
-export function deleteCertificate(certId: string): boolean {
-	// This function is deprecated - use useRemoveCertificate mutation hook instead
-	console.warn(
-		'deleteCertificate is deprecated. Use useRemoveCertificate mutation hook instead.'
-	);
-	throw new Error(
-		'This function is deprecated. Use the Convex mutation hook instead.'
-	);
-}
-
-// Check if a user has a certificate for a specific course (deprecated - use query)
-export function userHasCertificate(userId: string, courseId: string): boolean {
-	// This function is deprecated - check certificates from useUserCertificates hook instead
-	console.warn(
-		'userHasCertificate is deprecated. Check certificates from useUserCertificates hook instead.'
-	);
-	return false;
 }

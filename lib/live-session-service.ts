@@ -1,7 +1,8 @@
 // Live Session Service
 // This service handles live session management using Convex
 
-import { useQuery, useMutation } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
+
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
@@ -20,9 +21,7 @@ export type LiveSession = {
 };
 
 // Convex-based live session hooks
-export function useAllLiveSessions(
-	status?: 'scheduled' | 'live' | 'completed' | 'cancelled'
-) {
+export function useAllLiveSessions(status?: 'scheduled' | 'live' | 'completed' | 'cancelled') {
 	const convexSessions = useQuery(api.liveSessions.list, { status });
 
 	return {

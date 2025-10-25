@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+
 import { ResourceDetailPageClient } from './client';
 
 interface ResourceDetailPageProps {
@@ -7,9 +8,7 @@ interface ResourceDetailPageProps {
 	};
 }
 
-export async function generateMetadata({
-	params,
-}: ResourceDetailPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ResourceDetailPageProps): Promise<Metadata> {
 	// For now, return generic metadata since we can't use Convex hooks during SSR
 	return {
 		title: 'Resource | Doctrina Resource Library',
@@ -17,8 +16,6 @@ export async function generateMetadata({
 	};
 }
 
-export default function ResourceDetailPage({
-	params,
-}: ResourceDetailPageProps) {
+export default function ResourceDetailPage({ params }: ResourceDetailPageProps) {
 	return <ResourceDetailPageClient resourceId={params.id} />;
 }

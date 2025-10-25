@@ -11,6 +11,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 **In Development** - The frontend application is feature-complete with a fully functional UI and mocked services. The backend infrastructure (Convex + Clerk) is scaffolded and ready for integration.
 
 **What's Working:**
+
 - ✅ Complete UI/UX with responsive design
 - ✅ Course browsing and detail pages
 - ✅ Resource library with search and filtering
@@ -22,6 +23,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 - ✅ Admin dashboard and analytics
 
 **What Needs Setup:**
+
 - 🔧 Convex backend integration (schema ready, functions need wiring)
 - 🔧 Clerk authentication setup
 - 🔧 Real data persistence (currently using mocked services)
@@ -31,6 +33,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 ## Key Features
 
 ### For Students
+
 - **Course Marketplace** - Browse and enroll in courses taught by verified medical aesthetics professionals
 - **Resource Library** - Access supplementary materials, templates, and reference documents
 - **Live Sessions** - Join scheduled live training sessions with instructors
@@ -39,6 +42,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 - **Personalized Recommendations** - AI-powered course suggestions based on your interests and progress
 
 ### For Instructors
+
 - **Course Creation** - Build comprehensive courses with video lessons, quizzes, and resources
 - **Live Session Management** - Schedule and conduct live training sessions
 - **Student Analytics** - Track student engagement and performance
@@ -46,6 +50,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 - **Content Management** - Upload and organize course materials efficiently
 
 ### For Administrators
+
 - **Platform Analytics** - Comprehensive metrics on user engagement and platform growth
 - **Instructor Verification** - Manage instructor applications and credentials
 - **Content Moderation** - Review and approve courses before publication
@@ -55,6 +60,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 ## Tech Stack
 
 ### Frontend
+
 - **Framework:** Next.js 15 (App Router)
 - **Language:** TypeScript
 - **UI Library:** React 19
@@ -62,12 +68,14 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 - **State Management:** React hooks and context (lightweight)
 
 ### Backend (In Progress)
+
 - **Database:** Convex (real-time, serverless)
 - **Authentication:** Clerk (planned)
 - **Payments:** Stripe Connect (scaffolded)
 - **File Storage:** Convex file storage or AWS S3
 
 ### Development Tools
+
 - **Package Manager:** Yarn 1 (managed via Volta)
 - **Node Version:** 24 (managed via Volta)
 - **Linting:** ESLint
@@ -76,6 +84,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 24+ (recommended via Volta)
 - Yarn 1.x
 - A Convex account (free tier available)
@@ -84,17 +93,20 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd doctrina-lms2
    ```
 
 2. **Install dependencies**
+
    ```bash
    yarn install
    ```
 
 3. **Run the development server** (with mocked services)
+
    ```bash
    yarn dev
    ```
@@ -105,6 +117,7 @@ Doctrina LMS is a comprehensive educational marketplace platform designed specif
 ### Backend Setup (Coming Soon)
 
 Full setup instructions for Convex and Clerk integration are documented in:
+
 - `docs/SETUP.md` - Step-by-step backend configuration
 - `docs/CONVEX.md` - Convex-specific setup and usage
 - `docs/ARCHITECTURE.md` - System architecture overview
@@ -159,15 +172,16 @@ yarn type-check   # Run TypeScript compiler check
 
 - **[AGENTS.md](./AGENTS.md)** - AI agent guide for understanding the codebase
 - **[docs/CONVEX.md](./docs/CONVEX.md)** - Convex backend setup and usage
-- **docs/SETUP.md** *(coming soon)* - Complete setup instructions
-- **docs/ARCHITECTURE.md** *(coming soon)* - Technical architecture deep-dive
-- **docs/DB-SCHEMA.md** *(coming soon)* - Database schema documentation
+- **docs/SETUP.md** _(coming soon)_ - Complete setup instructions
+- **docs/ARCHITECTURE.md** _(coming soon)_ - Technical architecture deep-dive
+- **docs/DB-SCHEMA.md** _(coming soon)_ - Database schema documentation
 
 ## Current State: Mocked Services
 
 The application currently uses mocked services located in `lib/*-service.ts`. These provide realistic data and delays to simulate a working backend, allowing full frontend development and testing without a live database.
 
 **Mocked Services:**
+
 - `lib/auth.tsx` - Authentication (localStorage-based)
 - `lib/ai-service.ts` - AI features (placeholder)
 - `lib/notification-service.ts` - Notifications (in-memory)

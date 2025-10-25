@@ -1,35 +1,26 @@
 'use client';
 
-import { useAuth } from '@/lib/auth';
-import { useInstructorAnalytics } from '@/lib/analytics-service';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
-import {
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from '@/components/ui/chart';
 import type { DateRange } from 'react-day-picker';
 import {
-	BarChart,
+	Area,
+	AreaChart,
 	Bar,
+	BarChart,
+	CartesianGrid,
+	Cell,
+	Legend,
+	Pie,
+	PieChart,
+	ResponsiveContainer,
+	Tooltip,
 	XAxis,
 	YAxis,
-	CartesianGrid,
-	Tooltip,
-	Legend,
-	ResponsiveContainer,
-	AreaChart,
-	Area,
-	PieChart,
-	Pie,
-	Cell,
 } from 'recharts';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { useInstructorAnalytics } from '@/lib/analytics-service';
+import { useAuth } from '@/lib/auth';
 
 // Mock data for revenue analytics
 const monthlyRevenueData = [
@@ -66,50 +57,35 @@ interface RevenueAnalyticsProps {
 	courseId: string;
 }
 
-export function RevenueAnalytics({
-	dateRange,
-	courseId,
-}: RevenueAnalyticsProps) {
+export function RevenueAnalytics({ dateRange, courseId }: RevenueAnalyticsProps) {
 	return (
-		<div className='space-y-6'>
-			<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+		<div className="space-y-6">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<Card>
-					<CardHeader className='pb-2'>
-						<CardTitle className='text-sm font-medium text-muted-foreground'>
-							Total Revenue
-						</CardTitle>
+					<CardHeader className="pb-2">
+						<CardTitle className="text-sm font-medium text-muted-foreground">Total Revenue</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className='text-3xl font-bold'>$7,800</div>
-						<div className='text-xs text-green-500 flex items-center mt-1'>
-							+$1,200 from previous period
-						</div>
+						<div className="text-3xl font-bold">$7,800</div>
+						<div className="text-xs text-green-500 flex items-center mt-1">+$1,200 from previous period</div>
 					</CardContent>
 				</Card>
 				<Card>
-					<CardHeader className='pb-2'>
-						<CardTitle className='text-sm font-medium text-muted-foreground'>
-							Average Purchase Value
-						</CardTitle>
+					<CardHeader className="pb-2">
+						<CardTitle className="text-sm font-medium text-muted-foreground">Average Purchase Value</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className='text-3xl font-bold'>$99.50</div>
-						<div className='text-xs text-green-500 flex items-center mt-1'>
-							+$4.50 from previous period
-						</div>
+						<div className="text-3xl font-bold">$99.50</div>
+						<div className="text-xs text-green-500 flex items-center mt-1">+$4.50 from previous period</div>
 					</CardContent>
 				</Card>
 				<Card>
-					<CardHeader className='pb-2'>
-						<CardTitle className='text-sm font-medium text-muted-foreground'>
-							Refund Rate
-						</CardTitle>
+					<CardHeader className="pb-2">
+						<CardTitle className="text-sm font-medium text-muted-foreground">Refund Rate</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className='text-3xl font-bold'>2.3%</div>
-						<div className='text-xs text-green-500 flex items-center mt-1'>
-							-0.5% from previous period
-						</div>
+						<div className="text-3xl font-bold">2.3%</div>
+						<div className="text-xs text-green-500 flex items-center mt-1">-0.5% from previous period</div>
 					</CardContent>
 				</Card>
 			</div>
@@ -127,28 +103,21 @@ export function RevenueAnalytics({
 								color: 'hsl(var(--chart-1))',
 							},
 						}}
-						className='h-[400px]'
+						className="h-[400px]"
 					>
-						<ResponsiveContainer width='100%' height='100%'>
-							<AreaChart
-								data={monthlyRevenueData}
-								margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-							>
-								<CartesianGrid strokeDasharray='3 3' />
-								<XAxis dataKey='month' />
+						<ResponsiveContainer width="100%" height="100%">
+							<AreaChart data={monthlyRevenueData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+								<CartesianGrid strokeDasharray="3 3" />
+								<XAxis dataKey="month" />
 								<YAxis />
-								<ChartTooltip
-									content={
-										<ChartTooltipContent formatter={value => `$${value}`} />
-									}
-								/>
+								<ChartTooltip content={<ChartTooltipContent formatter={value => `$${value}`} />} />
 								<Area
-									type='monotone'
-									dataKey='revenue'
-									stroke='var(--color-revenue)'
-									fill='var(--color-revenue)'
+									type="monotone"
+									dataKey="revenue"
+									stroke="var(--color-revenue)"
+									fill="var(--color-revenue)"
 									fillOpacity={0.3}
-									name='Revenue ($)'
+									name="Revenue ($)"
 								/>
 							</AreaChart>
 						</ResponsiveContainer>
@@ -156,35 +125,28 @@ export function RevenueAnalytics({
 				</CardContent>
 			</Card>
 
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<Card>
 					<CardHeader>
 						<CardTitle>Payment Methods</CardTitle>
-						<CardDescription>
-							Distribution of payment methods used
-						</CardDescription>
+						<CardDescription>Distribution of payment methods used</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className='h-[300px] flex items-center justify-center'>
-							<ResponsiveContainer width='100%' height='100%'>
+						<div className="h-[300px] flex items-center justify-center">
+							<ResponsiveContainer width="100%" height="100%">
 								<PieChart>
 									<Pie
 										data={paymentMethodData}
-										cx='50%'
-										cy='50%'
+										cx="50%"
+										cy="50%"
 										labelLine={false}
 										outerRadius={100}
-										fill='#8884d8'
-										dataKey='value'
-										label={({ name, percent }) =>
-											`${name} ${(percent * 100).toFixed(0)}%`
-										}
+										fill="#8884d8"
+										dataKey="value"
+										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
 									>
 										{paymentMethodData.map((entry, index) => (
-											<Cell
-												key={`cell-${index}`}
-												fill={COLORS[index % COLORS.length]}
-											/>
+											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
 										))}
 									</Pie>
 									<Tooltip formatter={value => `${value}%`} />
@@ -211,39 +173,18 @@ export function RevenueAnalytics({
 									color: 'hsl(var(--chart-3))',
 								},
 							}}
-							className='h-[300px]'
+							className="h-[300px]"
 						>
-							<ResponsiveContainer width='100%' height='100%'>
-								<BarChart
-									data={pricingTierData}
-									margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-								>
-									<CartesianGrid strokeDasharray='3 3' />
-									<XAxis dataKey='name' />
-									<YAxis
-										yAxisId='left'
-										orientation='left'
-										stroke='var(--color-students)'
-									/>
-									<YAxis
-										yAxisId='right'
-										orientation='right'
-										stroke='var(--color-revenue)'
-									/>
+							<ResponsiveContainer width="100%" height="100%">
+								<BarChart data={pricingTierData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+									<CartesianGrid strokeDasharray="3 3" />
+									<XAxis dataKey="name" />
+									<YAxis yAxisId="left" orientation="left" stroke="var(--color-students)" />
+									<YAxis yAxisId="right" orientation="right" stroke="var(--color-revenue)" />
 									<ChartTooltip content={<ChartTooltipContent />} />
 									<Legend />
-									<Bar
-										yAxisId='left'
-										dataKey='students'
-										fill='var(--color-students)'
-										name='Students'
-									/>
-									<Bar
-										yAxisId='right'
-										dataKey='revenue'
-										fill='var(--color-revenue)'
-										name='Revenue ($)'
-									/>
+									<Bar yAxisId="left" dataKey="students" fill="var(--color-students)" name="Students" />
+									<Bar yAxisId="right" dataKey="revenue" fill="var(--color-revenue)" name="Revenue ($)" />
 								</BarChart>
 							</ResponsiveContainer>
 						</ChartContainer>

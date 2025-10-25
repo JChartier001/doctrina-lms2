@@ -1,208 +1,208 @@
-"use server"
+'use server';
 
-import type { QuizQuestion } from "@/app/instructor/courses/wizard/page"
+import type { QuizQuestion } from '@/app/instructor/courses/wizard/page';
 
 // This would connect to an actual AI service in production
 export async function generateQuizQuestions(content: string, count = 5): Promise<QuizQuestion[]> {
-  // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1500))
+	// Simulate API call delay
+	await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // In a real implementation, this would call an AI service like OpenAI
-  // For now, we'll generate some sample questions based on the content
+	// In a real implementation, this would call an AI service like OpenAI
+	// For now, we'll generate some sample questions based on the content
 
-  // Extract some keywords from the content to make questions seem relevant
-  const keywords = extractKeywords(content)
+	// Extract some keywords from the content to make questions seem relevant
+	const keywords = extractKeywords(content);
 
-  const questions: QuizQuestion[] = []
+	const questions: QuizQuestion[] = [];
 
-  for (let i = 0; i < count; i++) {
-    const keyword = keywords[i % keywords.length]
-    questions.push({
-      id: `ai-question-${Date.now()}-${i}`,
-      question: generateQuestionForKeyword(keyword, i),
-      options: generateOptionsForKeyword(keyword, i),
-      correctOption: Math.floor(Math.random() * 4), // Random correct answer
-    })
-  }
+	for (let i = 0; i < count; i++) {
+		const keyword = keywords[i % keywords.length];
+		questions.push({
+			id: `ai-question-${Date.now()}-${i}`,
+			question: generateQuestionForKeyword(keyword, i),
+			options: generateOptionsForKeyword(keyword, i),
+			correctOption: Math.floor(Math.random() * 4), // Random correct answer
+		});
+	}
 
-  return questions
+	return questions;
 }
 
 // Helper function to extract keywords from content
 function extractKeywords(content: string): string[] {
-  // In a real implementation, this would use NLP to extract key terms
-  // For now, we'll just split by spaces and filter for words longer than 5 characters
-  const words = content.split(/\s+/)
-  const keywords = words
-    .filter((word) => word.length > 5)
-    .filter((word) => !commonWords.includes(word.toLowerCase()))
-    .map((word) => word.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ""))
+	// In a real implementation, this would use NLP to extract key terms
+	// For now, we'll just split by spaces and filter for words longer than 5 characters
+	const words = content.split(/\s+/);
+	const keywords = words
+		.filter(word => word.length > 5)
+		.filter(word => !commonWords.includes(word.toLowerCase()))
+		.map(word => word.replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, ''));
 
-  // Deduplicate and take up to 10 keywords
-  return [...new Set(keywords)].slice(0, 10)
+	// Deduplicate and take up to 10 keywords
+	return [...new Set(keywords)].slice(0, 10);
 }
 
 // List of common words to filter out
 const commonWords = [
-  "about",
-  "above",
-  "after",
-  "again",
-  "against",
-  "all",
-  "and",
-  "any",
-  "are",
-  "because",
-  "been",
-  "before",
-  "being",
-  "below",
-  "between",
-  "both",
-  "but",
-  "by",
-  "could",
-  "did",
-  "does",
-  "doing",
-  "down",
-  "during",
-  "each",
-  "few",
-  "for",
-  "from",
-  "further",
-  "had",
-  "has",
-  "have",
-  "having",
-  "her",
-  "here",
-  "hers",
-  "herself",
-  "him",
-  "himself",
-  "his",
-  "how",
-  "into",
-  "its",
-  "itself",
-  "just",
-  "more",
-  "most",
-  "myself",
-  "nor",
-  "not",
-  "now",
-  "off",
-  "once",
-  "only",
-  "other",
-  "our",
-  "ours",
-  "ourselves",
-  "out",
-  "over",
-  "own",
-  "same",
-  "she",
-  "should",
-  "some",
-  "such",
-  "than",
-  "that",
-  "the",
-  "their",
-  "theirs",
-  "them",
-  "themselves",
-  "then",
-  "there",
-  "these",
-  "they",
-  "this",
-  "those",
-  "through",
-  "to",
-  "too",
-  "under",
-  "until",
-  "very",
-  "was",
-  "were",
-  "what",
-  "when",
-  "where",
-  "which",
-  "while",
-  "who",
-  "whom",
-  "why",
-  "with",
-  "would",
-  "you",
-  "your",
-  "yours",
-  "yourself",
-  "yourselves",
-]
+	'about',
+	'above',
+	'after',
+	'again',
+	'against',
+	'all',
+	'and',
+	'any',
+	'are',
+	'because',
+	'been',
+	'before',
+	'being',
+	'below',
+	'between',
+	'both',
+	'but',
+	'by',
+	'could',
+	'did',
+	'does',
+	'doing',
+	'down',
+	'during',
+	'each',
+	'few',
+	'for',
+	'from',
+	'further',
+	'had',
+	'has',
+	'have',
+	'having',
+	'her',
+	'here',
+	'hers',
+	'herself',
+	'him',
+	'himself',
+	'his',
+	'how',
+	'into',
+	'its',
+	'itself',
+	'just',
+	'more',
+	'most',
+	'myself',
+	'nor',
+	'not',
+	'now',
+	'off',
+	'once',
+	'only',
+	'other',
+	'our',
+	'ours',
+	'ourselves',
+	'out',
+	'over',
+	'own',
+	'same',
+	'she',
+	'should',
+	'some',
+	'such',
+	'than',
+	'that',
+	'the',
+	'their',
+	'theirs',
+	'them',
+	'themselves',
+	'then',
+	'there',
+	'these',
+	'they',
+	'this',
+	'those',
+	'through',
+	'to',
+	'too',
+	'under',
+	'until',
+	'very',
+	'was',
+	'were',
+	'what',
+	'when',
+	'where',
+	'which',
+	'while',
+	'who',
+	'whom',
+	'why',
+	'with',
+	'would',
+	'you',
+	'your',
+	'yours',
+	'yourself',
+	'yourselves',
+];
 
 // Generate a question based on a keyword
 function generateQuestionForKeyword(keyword: string, index: number): string {
-  const questionTemplates = [
-    `What is the primary purpose of ${keyword}?`,
-    `Which of the following best describes ${keyword}?`,
-    `How does ${keyword} relate to the overall topic?`,
-    `What is a key characteristic of ${keyword}?`,
-    `In what context would you typically use ${keyword}?`,
-    `What is the definition of ${keyword}?`,
-    `Which statement about ${keyword} is correct?`,
-    `What is the significance of ${keyword} in this field?`,
-    `How would you identify ${keyword} in practice?`,
-    `What distinguishes ${keyword} from related concepts?`,
-  ]
+	const questionTemplates = [
+		`What is the primary purpose of ${keyword}?`,
+		`Which of the following best describes ${keyword}?`,
+		`How does ${keyword} relate to the overall topic?`,
+		`What is a key characteristic of ${keyword}?`,
+		`In what context would you typically use ${keyword}?`,
+		`What is the definition of ${keyword}?`,
+		`Which statement about ${keyword} is correct?`,
+		`What is the significance of ${keyword} in this field?`,
+		`How would you identify ${keyword} in practice?`,
+		`What distinguishes ${keyword} from related concepts?`,
+	];
 
-  return questionTemplates[index % questionTemplates.length]
+	return questionTemplates[index % questionTemplates.length];
 }
 
 // Generate options for a question
 function generateOptionsForKeyword(keyword: string, index: number): string[] {
-  // In a real implementation, these would be generated by the AI
-  // For now, we'll use templates
+	// In a real implementation, these would be generated by the AI
+	// For now, we'll use templates
 
-  const optionSets = [
-    [
-      `It's the primary method for implementing ${keyword}`,
-      `It's a secondary aspect of ${keyword}`,
-      `It's unrelated to ${keyword}`,
-      `It's a prerequisite for understanding ${keyword}`,
-    ],
-    [
-      `A technique used in conjunction with ${keyword}`,
-      `A fundamental principle of ${keyword}`,
-      `An alternative to ${keyword}`,
-      `A historical precursor to ${keyword}`,
-    ],
-    [
-      `${keyword} is essential for proper technique`,
-      `${keyword} is optional in most cases`,
-      `${keyword} should be avoided in practice`,
-      `${keyword} is only used in specific situations`,
-    ],
-    [
-      `${keyword} refers to a specific procedure`,
-      `${keyword} is a general concept`,
-      `${keyword} is a tool used in the field`,
-      `${keyword} is a theoretical framework`,
-    ],
-    [
-      `Enhances the effectiveness of ${keyword}`,
-      `Reduces the need for ${keyword}`,
-      `Complements ${keyword} in practice`,
-      `Replaces traditional ${keyword} approaches`,
-    ],
-  ]
+	const optionSets = [
+		[
+			`It's the primary method for implementing ${keyword}`,
+			`It's a secondary aspect of ${keyword}`,
+			`It's unrelated to ${keyword}`,
+			`It's a prerequisite for understanding ${keyword}`,
+		],
+		[
+			`A technique used in conjunction with ${keyword}`,
+			`A fundamental principle of ${keyword}`,
+			`An alternative to ${keyword}`,
+			`A historical precursor to ${keyword}`,
+		],
+		[
+			`${keyword} is essential for proper technique`,
+			`${keyword} is optional in most cases`,
+			`${keyword} should be avoided in practice`,
+			`${keyword} is only used in specific situations`,
+		],
+		[
+			`${keyword} refers to a specific procedure`,
+			`${keyword} is a general concept`,
+			`${keyword} is a tool used in the field`,
+			`${keyword} is a theoretical framework`,
+		],
+		[
+			`Enhances the effectiveness of ${keyword}`,
+			`Reduces the need for ${keyword}`,
+			`Complements ${keyword} in practice`,
+			`Replaces traditional ${keyword} approaches`,
+		],
+	];
 
-  return optionSets[index % optionSets.length]
+	return optionSets[index % optionSets.length];
 }

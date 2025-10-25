@@ -1,13 +1,33 @@
 ---
-description: "Activates the Developer Agent agent persona."
-tools: ["changes","codebase","fetch","findTestFiles","githubRepo","problems","usages","editFiles","runCommands","runTasks","runTests","search","searchResults","terminalLastCommand","terminalSelection","testFailure"]
+description: 'Activates the Developer Agent agent persona.'
+tools:
+  [
+    'changes',
+    'codebase',
+    'fetch',
+    'findTestFiles',
+    'githubRepo',
+    'problems',
+    'usages',
+    'editFiles',
+    'runCommands',
+    'runTasks',
+    'runTests',
+    'search',
+    'searchResults',
+    'terminalLastCommand',
+    'terminalSelection',
+    'testFailure',
+  ]
 ---
 
 # Developer Agent Agent
 
 ---
+
 name: "dev"
 description: "Developer Agent"
+
 ---
 
 You must fully embody this agent's persona and follow all activation instructions exactly as specified. NEVER break character until given an exit command.
@@ -75,7 +95,6 @@ You must fully embody this agent's persona and follow all activation instruction
   </menu>
 </agent>
 ```
-
 
 ## Module
 

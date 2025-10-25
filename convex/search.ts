@@ -1,16 +1,13 @@
-import { query } from './_generated/server';
 import { v } from 'convex/values';
+
+import { query } from './_generated/server';
 
 // Unified search across courses and resources
 export const unifiedSearch = query({
 	args: {
 		query: v.string(),
 		limit: v.optional(v.number()),
-		entityTypes: v.optional(
-			v.array(
-				v.union(v.literal('course'), v.literal('resource'), v.literal('user'))
-			)
-		),
+		entityTypes: v.optional(v.array(v.union(v.literal('course'), v.literal('resource'), v.literal('user')))),
 	},
 	handler: async (ctx, { query: searchQuery, limit = 20, entityTypes }) => {
 		const normalizedQuery = searchQuery.toLowerCase().trim();
@@ -26,7 +23,7 @@ export const unifiedSearch = query({
 				.filter(
 					course =>
 						course.title.toLowerCase().includes(normalizedQuery) ||
-						course.description.toLowerCase().includes(normalizedQuery)
+						course.description.toLowerCase().includes(normalizedQuery),
 				)
 				.slice(0, Math.floor(limit / 3)) // Distribute limit across entity types
 				.map(course => ({
@@ -56,12 +53,8 @@ export const unifiedSearch = query({
 					resource =>
 						resource.title.toLowerCase().includes(normalizedQuery) ||
 						resource.description.toLowerCase().includes(normalizedQuery) ||
-						resource.tags.some(tag =>
-							tag.toLowerCase().includes(normalizedQuery)
-						) ||
-						resource.categories.some(cat =>
-							cat.toLowerCase().includes(normalizedQuery)
-						)
+						resource.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)) ||
+						resource.categories.some(cat => cat.toLowerCase().includes(normalizedQuery)),
 				)
 				.slice(0, Math.floor(limit / 3))
 				.map(resource => ({
@@ -91,7 +84,7 @@ export const unifiedSearch = query({
 					user =>
 						user.firstName?.toLowerCase().includes(normalizedQuery) ||
 						user.lastName?.toLowerCase().includes(normalizedQuery) ||
-						user.email?.toLowerCase().includes(normalizedQuery)
+						user.email?.toLowerCase().includes(normalizedQuery),
 				)
 				.slice(0, Math.floor(limit / 3))
 				.map(user => ({
@@ -102,7 +95,7 @@ export const unifiedSearch = query({
 					url: `/profile/${user._id}`,
 					image: user.image,
 					metadata: {
-						role: user.role,
+						role: user.isAdmin ? 'admin' : user.isInstructor ? 'instructor' : 'student',
 						email: user.email,
 					},
 				}));
@@ -128,59 +121,35 @@ export const advancedSearch = query({
 	args: {
 		query: v.string(),
 		filters: v.object({
-			entityTypes: v.optional(
-				v.array(
-					v.union(v.literal('course'), v.literal('resource'), v.literal('user'))
-				)
-			),
+			entityTypes: v.optional(v.array(v.union(v.literal('course'), v.literal('resource'), v.literal('user')))),
 			courseFilters: v.optional(
 				v.object({
-					level: v.optional(
-						v.union(
-							v.literal('beginner'),
-							v.literal('intermediate'),
-							v.literal('advanced')
-						)
-					),
+					level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
 					priceRange: v.optional(
 						v.object({
 							min: v.optional(v.number()),
 							max: v.optional(v.number()),
-						})
+						}),
 					),
-				})
+				}),
 			),
 			resourceFilters: v.optional(
 				v.object({
 					type: v.optional(v.string()),
-					difficulty: v.optional(
-						v.union(
-							v.literal('beginner'),
-							v.literal('intermediate'),
-							v.literal('advanced')
-						)
-					),
+					difficulty: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
 					categories: v.optional(v.array(v.string())),
-				})
+				}),
 			),
 			sortBy: v.optional(
-				v.union(
-					v.literal('relevance'),
-					v.literal('newest'),
-					v.literal('rating'),
-					v.literal('popular')
-				)
+				v.union(v.literal('relevance'), v.literal('newest'), v.literal('rating'), v.literal('popular')),
 			),
 		}),
 		limit: v.optional(v.number()),
 		offset: v.optional(v.number()),
 	},
-	handler: async (
-		ctx,
-		{ query: searchQuery, filters, limit = 20, offset = 0 }
-	) => {
+	handler: async (ctx, { query: searchQuery, filters, limit = 20, offset = 0 }) => {
 		const normalizedQuery = searchQuery.toLowerCase().trim();
-		let allResults = [];
+		const allResults = [];
 
 		// Search courses
 		if (!filters.entityTypes || filters.entityTypes.includes('course')) {
@@ -189,22 +158,18 @@ export const advancedSearch = query({
 			let courseResults = courses.filter(
 				course =>
 					course.title.toLowerCase().includes(normalizedQuery) ||
-					course.description.toLowerCase().includes(normalizedQuery)
+					course.description.toLowerCase().includes(normalizedQuery),
 			);
 
 			// Apply course filters
 			if (filters.courseFilters) {
 				if (filters.courseFilters.level) {
-					courseResults = courseResults.filter(
-						c => c.level === filters.courseFilters!.level
-					);
+					courseResults = courseResults.filter(c => c.level === filters.courseFilters!.level);
 				}
 				if (filters.courseFilters.priceRange) {
 					const { min, max } = filters.courseFilters.priceRange;
 					courseResults = courseResults.filter(
-						c =>
-							(!min || (c.price && c.price >= min)) &&
-							(!max || (c.price && c.price <= max))
+						c => (!min || (c.price && c.price >= min)) && (!max || (c.price && c.price <= max)),
 					);
 				}
 			}
@@ -236,34 +201,21 @@ export const advancedSearch = query({
 				resource =>
 					resource.title.toLowerCase().includes(normalizedQuery) ||
 					resource.description.toLowerCase().includes(normalizedQuery) ||
-					resource.tags.some(tag =>
-						tag.toLowerCase().includes(normalizedQuery)
-					) ||
-					resource.categories.some(cat =>
-						cat.toLowerCase().includes(normalizedQuery)
-					)
+					resource.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)) ||
+					resource.categories.some(cat => cat.toLowerCase().includes(normalizedQuery)),
 			);
 
 			// Apply resource filters
 			if (filters.resourceFilters) {
 				if (filters.resourceFilters.type) {
-					resourceResults = resourceResults.filter(
-						r => r.type === filters.resourceFilters!.type
-					);
+					resourceResults = resourceResults.filter(r => r.type === filters.resourceFilters!.type);
 				}
 				if (filters.resourceFilters.difficulty) {
-					resourceResults = resourceResults.filter(
-						r => r.difficulty === filters.resourceFilters!.difficulty
-					);
+					resourceResults = resourceResults.filter(r => r.difficulty === filters.resourceFilters!.difficulty);
 				}
-				if (
-					filters.resourceFilters.categories &&
-					filters.resourceFilters.categories.length > 0
-				) {
+				if (filters.resourceFilters.categories && filters.resourceFilters.categories.length > 0) {
 					resourceResults = resourceResults.filter(r =>
-						filters.resourceFilters!.categories!.some(cat =>
-							r.categories.includes(cat)
-						)
+						filters.resourceFilters!.categories!.some(cat => r.categories.includes(cat)),
 					);
 				}
 			}
@@ -290,26 +242,16 @@ export const advancedSearch = query({
 		// Sort results
 		switch (filters.sortBy) {
 			case 'newest':
-				allResults.sort(
-					(a, b) =>
-						(Number(b.metadata.createdAt) || 0) -
-						(Number(a.metadata.createdAt) || 0)
-				);
+				allResults.sort((a, b) => (Number(b.metadata.createdAt) || 0) - (Number(a.metadata.createdAt) || 0));
 				break;
 			case 'rating':
-				allResults.sort(
-					(a, b) => (b.metadata.rating || 0) - (a.metadata.rating || 0)
-				);
+				allResults.sort((a, b) => (b.metadata.rating || 0) - (a.metadata.rating || 0));
 				break;
 			case 'popular':
 				allResults.sort(
 					(a, b) =>
-						((b.metadata as any).downloadCount ||
-							(b.metadata as any).students ||
-							0) -
-						((a.metadata as any).downloadCount ||
-							(a.metadata as any).students ||
-							0)
+						(b.metadata.downloadCount || b.metadata.students || 0) -
+						(a.metadata.downloadCount || a.metadata.students || 0),
 				);
 				break;
 			case 'relevance':
