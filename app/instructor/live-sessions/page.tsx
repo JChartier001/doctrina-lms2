@@ -35,7 +35,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -54,7 +54,6 @@ export default function InstructorLiveSessionsPage() {
 	});
 	const { user } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	// Convex queries for live sessions
 	const upcomingSessions = useQuery(api.liveSessions.upcoming, {});
@@ -69,11 +68,7 @@ export default function InstructorLiveSessionsPage() {
 		if (!user) return;
 
 		if (!newSession.title || !newSession.description) {
-			toast({
-				title: 'Missing information',
-				description: 'Please fill in all required fields',
-				variant: 'destructive',
-			});
+			toast.error('Missing information. Please fill in all required fields');
 			return;
 		}
 
@@ -87,10 +82,7 @@ export default function InstructorLiveSessionsPage() {
 			maxParticipants: newSession.maxParticipants,
 		});
 
-		toast({
-			title: 'Session created',
-			description: 'Your live session has been scheduled',
-		});
+		toast.success('Session created. Your live session has been scheduled');
 
 		setIsCreateDialogOpen(false);
 		setNewSession({
@@ -110,10 +102,7 @@ export default function InstructorLiveSessionsPage() {
 
 	const handleCancelSession = (sessionId: string) => {
 		cancelSessionMutation({ id: sessionId as Id<'liveSessions'> });
-		toast({
-			title: 'Session cancelled',
-			description: 'The live session has been cancelled',
-		});
+		toast.success('Session cancelled. The live session has been cancelled');
 	};
 
 	if (!user) {

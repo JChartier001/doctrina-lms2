@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { Check, Clock, Users } from 'lucide-react';
 
 // Mock data for the program
@@ -232,7 +232,6 @@ export default function ProgramDetailPage({
 	const [selectedPricing, setSelectedPricing] = useState('monthly');
 	const { user } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	const handleEnroll = () => {
 		if (!user) {
@@ -240,10 +239,9 @@ export default function ProgramDetailPage({
 			return;
 		}
 
-		toast({
-			title: 'Enrollment successful',
-			description: 'You have been enrolled in the program.',
-		});
+		toast.success(
+			'Enrollment successful. You have been enrolled in the program.'
+		);
 	};
 
 	return (

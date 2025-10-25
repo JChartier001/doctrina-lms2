@@ -5,33 +5,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-	getResourceCategories,
-	type ResourceCategory,
+	useResourceCategories,
 	getCategoryDisplayName,
 } from '@/lib/resource-library-service';
 import { ArrowRight } from 'lucide-react';
 
 export function ResourceCategoryList() {
-	const [resourceCategories, setResourceCategories] = useState<
-		{ category: ResourceCategory; count: number }[]
-	>([]);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		const fetchResourceCategories = async () => {
-			setIsLoading(true);
-			try {
-				const categories = await getResourceCategories();
-				setResourceCategories(categories);
-			} catch (error) {
-				console.error('Error fetching resource categories:', error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchResourceCategories();
-	}, []);
+	const { data: resourceCategories, isLoading } = useResourceCategories();
+	console.log(resourceCategories, 'resourceCategories', isLoading);
 
 	if (isLoading) {
 		return (

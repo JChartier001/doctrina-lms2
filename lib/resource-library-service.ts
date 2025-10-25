@@ -2,6 +2,7 @@
 // This service handles the management of educational resources
 
 import { useQuery, useMutation } from 'convex/react';
+import { useMemo } from 'react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 
@@ -207,4 +208,63 @@ export function getResourceTypeIcon(type: ResourceType): string {
 	};
 
 	return icons[type] || 'FileText';
+}
+
+export function getResourceCategory() {
+	const resources = useQuery(api.resources.list, {} as any);
+	return {
+		categories: resources?.map(r => r.categories).flat(),
+		count: resources?.length || 0,
+	};
+}
+
+// Returns category counts for available resources
+export function useResourceCategories() {
+	const resources = useQuery(api.resources.list, {} as any);
+	console.log(resources, 'resources');
+
+	const data = useMemo(() => {
+		if (!resources)
+			return [] as { category: ResourceCategory; count: number }[];
+		const counts = new Map<ResourceCategory, number>();
+		for (const res of resources) {
+			for (const cat of res.categories as ResourceCategory[]) {
+				counts.set(cat, (counts.get(cat) || 0) + 1);
+			}
+		}
+		return Array.from(counts.entries()).map(([category, count]) => ({
+			category,
+			count,
+		}));
+	}, [resources]);
+
+	return {
+		data,
+		isLoading: resources === undefined,
+		error: null as null,
+	};
+}
+
+// Returns type counts for available resources
+export function useResourceTypes() {
+	const resources = useQuery(api.resources.list, {} as any);
+
+	const data = useMemo(() => {
+		if (!resources) return [] as { type: ResourceType; count: number }[];
+		const counts = new Map<ResourceType, number>();
+		for (const res of resources) {
+			const t = res.type as ResourceType;
+			counts.set(t, (counts.get(t) || 0) + 1);
+		}
+		return Array.from(counts.entries()).map(([type, count]) => ({
+			type,
+			count,
+		}));
+	}, [resources]);
+
+	return {
+		data,
+		isLoading: resources === undefined,
+		error: null as null,
+	};
 }

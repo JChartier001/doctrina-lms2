@@ -69,3 +69,95 @@ export const remove = mutation({
   },
 })
 
+/**
+ * Get course with full curriculum, instructor details, and enrollment count
+ * Used by course detail page (/courses/[id])
+ */
+export const getWithCurriculum = query({
+  args: { courseId: v.id("courses") },
+  handler: async (ctx, { courseId }) => {
+    const course = await ctx.db.get(courseId)
+    if (!course) {
+      return null
+    }
+
+    // Get all modules for this course
+    const modules = await ctx.db
+      .query("courseModules")
+      .withIndex("by_course", (q) => q.eq("courseId", courseId))
+      .collect()
+
+    const sortedModules = modules.sort((a, b) => a.order - b.order)
+
+    // Get lessons for each module
+    const curriculum = await Promise.all(
+      sortedModules.map(async (module) => {
+        const lessons = await ctx.db
+          .query("lessons")
+          .withIndex("by_module", (q) => q.eq("moduleId", module._id))
+          .collect()
+
+        const sortedLessons = lessons.sort((a, b) => a.order - b.order)
+
+        return {
+          id: module._id,
+          title: module.title,
+          description: module.description,
+          lessons: sortedLessons.map((l) => ({
+            id: l._id,
+            title: l.title,
+            type: l.type,
+            duration: l.duration || "0:00",
+            isPreview: l.isPreview,
+          })),
+        }
+      })
+    )
+
+    // Get instructor details
+    const instructor = await ctx.db
+      .query("users")
+      .withIndex("by_externalId", (q) => q.eq("externalId", course.instructorId))
+      .first()
+
+    // Get enrollment count
+    const enrollments = await ctx.db
+      .query("enrollments")
+      .withIndex("by_course", (q) => q.eq("courseId", courseId))
+      .collect()
+
+    // Get reviews
+    const reviews = await ctx.db
+      .query("courseReviews")
+      .withIndex("by_course", (q) => q.eq("courseId", courseId))
+      .filter((q) => q.eq(q.field("hidden"), false))
+      .collect()
+
+    // Calculate average rating
+    const avgRating =
+      reviews.length > 0
+        ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+        : null
+
+    // Total lesson count
+    const totalLessons = curriculum.reduce((sum, m) => sum + m.lessons.length, 0)
+
+    return {
+      ...course,
+      curriculum,
+      instructor: instructor
+        ? {
+            name: `${instructor.firstName} ${instructor.lastName}`,
+            title: instructor.title || "",
+            bio: instructor.bio || "",
+            image: instructor.profilePhotoUrl || instructor.image,
+          }
+        : null,
+      students: enrollments.length,
+      lessons: totalLessons,
+      rating: avgRating,
+      reviewCount: reviews.length,
+    }
+  },
+})
+

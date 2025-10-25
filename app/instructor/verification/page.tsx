@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 
@@ -22,7 +22,6 @@ export default function InstructorVerificationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
-  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,10 +29,7 @@ export default function InstructorVerificationPage() {
 
     // In a real app, this would upload the files and submit the verification request
     setTimeout(() => {
-      toast({
-        title: "Verification submitted",
-        description: "Your verification documents have been submitted for review.",
-      })
+        toast.success("Verification submitted. Your verification documents have been submitted for review.");
       router.push("/instructor/dashboard")
       setIsLoading(false)
     }, 2000)

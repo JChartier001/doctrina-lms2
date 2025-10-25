@@ -67,33 +67,6 @@ export interface QuizQuestion {
 	correctOption: number;
 }
 
-// Initial empty course data
-const initialCourseData: CourseData = {
-	title: '',
-	description: '',
-	category: '',
-	thumbnail: '',
-	price: '',
-	sections: [
-		{
-			id: 'section-1',
-			title: 'Introduction',
-			lessons: [
-				{
-					id: 'lesson-1',
-					title: 'Welcome to the Course',
-					type: 'video',
-					content: '',
-				},
-			],
-		},
-	],
-	visibility: 'public',
-	prerequisites: 'none',
-	certificateOption: 'auto',
-	discussionOption: 'enabled',
-};
-
 export default function CourseWizard() {
 	const form = useForm<CreateCourseWizardType>({
 		mode: 'onChange',

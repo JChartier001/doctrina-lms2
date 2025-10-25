@@ -1,0 +1,262 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>101</epicId>
+    <storyId>1</storyId>
+    <title>Implement Lesson Progress Tracking Backend</title>
+    <status>Draft</status>
+    <generatedAt>2025-10-25</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-101.1.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>my lesson completion to be tracked and persisted automatically</iWant>
+    <soThat>I can resume my learning progress across sessions and see accurate course completion percentages</soThat>
+    <tasks>
+      <task id="1">Create convex/lessonProgress.ts file with core mutations and queries (AC: #1, #2, #3, #5, #6, #7, #8)</task>
+      <task id="2">Write comprehensive unit tests for lessonProgress.ts (AC: All)</task>
+      <task id="3">Integration testing with existing Convex tables (AC: All)</task>
+      <task id="4">Update convex/schema.ts if needed (AC: N/A - schema already exists)</task>
+      <task id="5">Export API functions for frontend consumption (AC: All)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="101.1">Student can mark a lesson as complete by calling lessonProgress.markComplete() mutation. Progress record created in lessonProgress table with userId, lessonId, and completedAt timestamp.</ac>
+    <ac id="101.2">Progress percentage updates automatically after marking lesson complete. Course with 10 lessons, 5 complete → enrollments.progressPercent updates to 50%.</ac>
+    <ac id="101.3">Progress persists across sessions. getUserProgress({ courseId }) returns object with completed: 5, total: 10, percent: 50, completedLessonIds: [...]</ac>
+    <ac id="101.4">Certificate generation triggers when student reaches 100% completion. enrollments.completedAt is set AND certificates.generate() is scheduled via Convex scheduler.</ac>
+    <ac id="101.5">Marking the same lesson complete twice is idempotent (no duplicate records). Enforced by by_user_lesson unique index.</ac>
+    <ac id="101.6">Only enrolled students can mark lessons complete. Error thrown: "Not enrolled in this course"</ac>
+    <ac id="101.7">getNextIncompleteLesson() returns correct lesson for "Continue Learning". Student completed 1-5 → returns lesson 6.</ac>
+    <ac id="101.8">Progress recalculation accurate for multi-module courses. 3 modules (3+5+2 lessons = 10 total), 5 complete → 50% progress.</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/tech-spec-epic-101.md</path>
+        <title>Technical Specification: Lesson Progress Tracking System</title>
+        <section>APIs and Interfaces</section>
+        <snippet>Defines 4 core APIs: markComplete (mutation), recalculateProgress (mutation), getUserProgress (query), getNextIncompleteLesson (query). Performance target: &lt;500ms lesson completion with real-time updates.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements Document - Doctrina LMS</title>
+        <section>F5: Course Learning Interface</section>
+        <snippet>Core feature requirement: Track lesson completion, update progress percentage in real-time, trigger certificate generation at 100%. Target 70%+ course completion rate.</snippet>
+      </doc>
+      <doc>
+        <path>docs/ARCHITECTURE.md</path>
+        <title>Doctrina LMS - Technical Architecture</title>
+        <section>Backend Layer - Convex</section>
+        <snippet>Use Convex mutations for writes, queries for reads. Leverage automatic reactivity. All timestamps stored as Unix epoch milliseconds (Date.now()). Row-level security via ctx.auth.getUserIdentity().</snippet>
+      </doc>
+      <doc>
+        <path>docs/TESTING-STRATEGY.md</path>
+        <title>Testing Strategy - Doctrina LMS</title>
+        <section>4.1 Core Business Logic - 85% Coverage Target</section>
+        <snippet>Lesson progress tracking is Priority 2 (SHOULD TEST). Target 85% coverage. Test happy path + common errors. Skip extremely rare edge cases. Focus on enrollment verification, progress calculation accuracy, and idempotency.</snippet>
+      </doc>
+      <doc>
+        <path>docs/EPICS.md</path>
+        <title>Epic Planning Document</title>
+        <section>EPIC-101: Lesson Progress Tracking System</section>
+        <snippet>13 story points. Critical for MVP (P0). Backend implementation to support existing UI. Key tasks: Create lessonProgress.ts with 4 functions, achieve 85% test coverage.</snippet>
+      </doc>
+      <doc>
+        <path>convex/schema.ts</path>
+        <title>Convex Database Schema</title>
+        <section>Sprint 2: Progress Tracking</section>
+        <snippet>lessonProgress table exists with fields: userId (string), lessonId (Id&lt;lessons&gt;), completedAt (number). Indexes: by_user, by_lesson, by_user_lesson (unique constraint).</snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>convex/enrollments.ts</path>
+        <kind>convex-mutations-queries</kind>
+        <symbol>updateProgress</symbol>
+        <lines>207-229</lines>
+        <reason>CRITICAL REFERENCE: Shows existing pattern for updating enrollment progress. Includes certificate trigger logic using ctx.scheduler.runAfter(). This story will call this function after recalculating progress.</reason>
+      </artifact>
+      <artifact>
+        <path>convex/enrollments.ts</path>
+        <kind>convex-queries</kind>
+        <symbol>getCurrentUserEnrollment</symbol>
+        <lines>77-94</lines>
+        <reason>Shows authentication pattern using ctx.auth.getUserIdentity() and enrollment lookup by by_user_course index. Use similar pattern for enrollment verification in markComplete().</reason>
+      </artifact>
+      <artifact>
+        <path>convex/courseModules.ts</path>
+        <kind>convex-queries</kind>
+        <symbol>list</symbol>
+        <lines>52-63</lines>
+        <reason>Shows pattern for querying modules by course and sorting by order field. Use in recalculateProgress() to iterate modules in correct order.</reason>
+      </artifact>
+      <artifact>
+        <path>convex/lessons.ts</path>
+        <kind>convex-queries</kind>
+        <symbol>list</symbol>
+        <lines>68-79</lines>
+        <reason>Shows pattern for querying lessons by module and sorting by order field. Use in recalculateProgress() and getNextIncompleteLesson() to iterate lessons in correct order.</reason>
+      </artifact>
+      <artifact>
+        <path>convex/lessons.ts</path>
+        <kind>convex-queries</kind>
+        <symbol>get</symbol>
+        <lines>86-135</lines>
+        <reason>Shows enrollment verification pattern: query enrollments by by_user_course index, throw error if not enrolled. Use identical pattern in markComplete() for authorization.</reason>
+      </artifact>
+      <artifact>
+        <path>convex/certificates.ts</path>
+        <kind>convex-mutations</kind>
+        <symbol>generate</symbol>
+        <lines>29-54</lines>
+        <reason>Certificate generation function that will be triggered by scheduler at 100% completion. Note: expects userName, courseName, instructorId, instructorName, templateId args - must query these in recalculateProgress before scheduling.</reason>
+      </artifact>
+      <artifact>
+        <path>convex/courseModules.ts</path>
+        <kind>convex-mutations</kind>
+        <symbol>remove</symbol>
+        <lines>116-163</lines>
+        <reason>Shows cascade delete pattern for lessonProgress records when module/lesson deleted. Important for data integrity. New progress tracking must work with this existing deletion logic.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <node>
+        <package>convex</package>
+        <version>^1.28.0</version>
+        <usage>Real-time database, serverless functions (mutations, queries, actions), scheduler</usage>
+      </node>
+      <node>
+        <package>next</package>
+        <version>16.0.0</version>
+        <usage>Frontend framework (will consume lessonProgress APIs via useQuery/useMutation hooks)</usage>
+      </node>
+      <node>
+        <package>vitest</package>
+        <version>Latest (devDependency)</version>
+        <usage>Unit testing framework for testing lessonProgress functions</usage>
+      </node>
+      <node>
+        <package>@convex-dev/eslint-plugin</package>
+        <version>^1.0.0</version>
+        <usage>Convex-specific linting rules</usage>
+      </node>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint id="1">MANDATORY: All functions MUST verify ctx.auth.getUserIdentity() is non-null before processing. Throw error if unauthenticated.</constraint>
+    <constraint id="2">MANDATORY: Apply row-level security - filter all queries by userId from authenticated context. Never expose other students' progress data.</constraint>
+    <constraint id="3">MANDATORY: Use indexed queries to avoid table scans. Use by_user_lesson for duplicate checks, by_course for modules, by_module for lessons.</constraint>
+    <constraint id="4">MANDATORY: Timestamps must be Unix epoch milliseconds (Date.now()), not Date objects or ISO strings.</constraint>
+    <constraint id="5">MANDATORY: Follow existing error message patterns. Examples: "Not authenticated", "Not enrolled in this course", "Lesson not found".</constraint>
+    <constraint id="6">PERFORMANCE: Lesson completion response time MUST be &lt;500ms (p95). Mutation &lt;200ms, recalculation &lt;200ms, real-time propagation &lt;100ms.</constraint>
+    <constraint id="7">PERFORMANCE: Progress recalculation MUST handle courses with 100+ lessons efficiently. Test with 200-lesson course to verify.</constraint>
+    <constraint id="8">IDEMPOTENCY: markComplete() must be idempotent. Use by_user_lesson unique index to prevent duplicates. Return existing ID if already marked complete.</constraint>
+    <constraint id="9">INTEGRATION: Certificate generation MUST use Convex scheduler: ctx.scheduler.runAfter(0, api.certificates.generate, { userId, courseId }). DO NOT call directly.</constraint>
+    <constraint id="10">TESTING: MUST achieve minimum 85% code coverage per testing strategy (Priority 2: Core Business Logic). Write unit, integration, and performance tests.</constraint>
+    <constraint id="11">FILE STRUCTURE: Create new file convex/lessonProgress.ts. DO NOT modify schema.ts (tables already exist). Export all functions for API generation.</constraint>
+    <constraint id="12">NAMING: Use camelCase for all function and field names (markComplete, getUserProgress, lessonId). Match existing Convex conventions.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>lessonProgress.markComplete</name>
+      <kind>Convex Mutation</kind>
+      <signature>
+        export const markComplete = mutation({
+          args: { lessonId: v.id('lessons') },
+          handler: async (ctx, { lessonId }) => Id&lt;'lessonProgress'&gt;
+        });
+      </signature>
+      <path>convex/lessonProgress.ts (to be created)</path>
+      <notes>Returns progress record ID (existing or newly created). Triggers recalculateProgress() internally.</notes>
+    </interface>
+
+    <interface>
+      <name>lessonProgress.recalculateProgress</name>
+      <kind>Convex Mutation (Internal)</kind>
+      <signature>
+        export const recalculateProgress = mutation({
+          args: { enrollmentId: v.id('enrollments') },
+          handler: async (ctx, { enrollmentId }) => { progressPercent: number, completedAt: number | null }
+        });
+      </signature>
+      <path>convex/lessonProgress.ts (to be created)</path>
+      <notes>Internal mutation called by markComplete(). Schedules certificate generation if 100% complete.</notes>
+    </interface>
+
+    <interface>
+      <name>lessonProgress.getUserProgress</name>
+      <kind>Convex Query</kind>
+      <signature>
+        export const getUserProgress = query({
+          args: { courseId: v.id('courses') },
+          handler: async (ctx, { courseId }) => { enrollmentId, total, completed, percent, completedLessonIds } | null
+        });
+      </signature>
+      <path>convex/lessonProgress.ts (to be created)</path>
+      <notes>Returns null if user not enrolled. Used by frontend to display progress bars and checkmarks.</notes>
+    </interface>
+
+    <interface>
+      <name>lessonProgress.getNextIncompleteLesson</name>
+      <kind>Convex Query</kind>
+      <signature>
+        export const getNextIncompleteLesson = query({
+          args: { courseId: v.id('courses') },
+          handler: async (ctx, { courseId }) => Id&lt;'lessons'&gt; | null
+        });
+      </signature>
+      <path>convex/lessonProgress.ts (to be created)</path>
+      <notes>Returns first incomplete lesson in module/lesson order. Returns first lesson if all complete. Used for "Continue Learning" button.</notes>
+    </interface>
+
+    <interface>
+      <name>enrollments.updateProgress (Existing - DO NOT recreate)</name>
+      <kind>Convex Mutation</kind>
+      <signature>
+        export const updateProgress = mutation({
+          args: { enrollmentId, progressPercent, completedAt? },
+          handler: async (ctx, args) => void
+        });
+      </signature>
+      <path>convex/enrollments.ts (lines 207-229)</path>
+      <notes>CRITICAL: This function already exists. Call it from recalculateProgress() after calculating new progressPercent. It handles certificate scheduling.</notes>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Use Vitest for unit testing. ConvexTestingHelper for integration tests. Test file: convex/lessonProgress.test.ts. Follow priority-based testing: 85% coverage for core business logic (per TESTING-STRATEGY.md section 4.1). Test patterns: happy path + common errors, skip rare edge cases. Mock external dependencies. Use describe/it blocks. Assert on behavior, not implementation. Performance tests: verify recalculation &lt;200ms for 100-lesson course.
+    </standards>
+
+    <locations>
+      <location>convex/lessonProgress.test.ts</location>
+      <location>convex/**/*.test.ts (pattern for integration tests)</location>
+    </locations>
+
+    <ideas>
+      <test ac="101.1">markComplete success: enrolled user marks lesson complete → verify progress record created with correct userId, lessonId, completedAt</test>
+      <test ac="101.1">markComplete idempotency: mark same lesson twice → verify no duplicate, existing ID returned</test>
+      <test ac="101.6">markComplete authorization: unauthenticated user → verify error "Not authenticated"</test>
+      <test ac="101.6">markComplete authorization: not enrolled → verify error "Not enrolled in this course"</test>
+      <test ac="101.2">recalculateProgress accuracy: 10 lessons, 5 complete → verify exactly 50% progress</test>
+      <test ac="101.8">recalculateProgress multi-module: 3 modules (3+5+2 lessons), 5 complete → verify 50% progress</test>
+      <test ac="101.4">recalculateProgress certificate trigger: complete final lesson → verify scheduler called with correct args</test>
+      <test ac="101.4">recalculateProgress no trigger: 99% complete → verify scheduler NOT called, completedAt null</test>
+      <test ac="101.3">getUserProgress data accuracy: verify correct total, completed counts, completedLessonIds array</test>
+      <test ac="101.3">getUserProgress unenrolled: verify returns null for non-enrolled user</test>
+      <test ac="101.7">getNextIncompleteLesson ordering: lessons 1-5 complete → verify returns lesson 6 (respects order)</test>
+      <test ac="101.7">getNextIncompleteLesson all complete: verify returns first lesson for review</test>
+      <test performance="true">recalculateProgress performance: 100-lesson course → verify execution &lt;200ms</test>
+      <test integration="true">Full flow: enroll → mark 5 lessons complete → verify progress updates to 50%</test>
+      <test integration="true">Race condition: mark two lessons simultaneously → verify both counted accurately</test>
+    </ideas>
+  </tests>
+</story-context>

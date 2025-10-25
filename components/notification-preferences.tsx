@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/use-toast"
+import { toast } from "react-toastify"
 
 export function NotificationPreferences() {
   const [preferences, setPreferences] = useState({
@@ -30,10 +30,7 @@ export function NotificationPreferences() {
 
   const handleSave = () => {
     // In a real app, this would save to a database
-    toast({
-      title: "Preferences updated",
-      description: "Your notification preferences have been saved.",
-    })
+      toast.success("Preferences updated. Your notification preferences have been saved.");
   }
 
   return (

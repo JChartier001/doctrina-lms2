@@ -27,6 +27,7 @@ import Link from 'next/link';
 
 export default function DashboardPage() {
 	const { user, isLoading } = useAuth();
+	console.log(user, 'user');
 	const router = useRouter();
 
 	// Convex queries

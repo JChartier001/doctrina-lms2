@@ -44,7 +44,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { Eye, MoreHorizontal, Search, Trash } from 'lucide-react';
 
 // Mock function to get all certificates (admin only)
@@ -93,7 +93,6 @@ function getAllCertificates(): Certificate[] {
 export default function AdminCertificatesPage() {
 	const { user, role, isLoading } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	// Convex mutation for removing certificates
 	const removeCertificateMutation = useRemoveCertificate();
@@ -162,17 +161,10 @@ export default function AdminCertificatesPage() {
 				)
 			);
 
-			toast({
-				title: 'Certificate Deleted',
-				description: 'The certificate has been deleted successfully.',
-			});
-		} catch (error) {
+			toast.success('Certificate Deleted. The certificate has been deleted successfully.');
+			} catch (error) {
 			console.error('Failed to delete certificate:', error);
-			toast({
-				title: 'Error',
-				description: 'Failed to delete the certificate. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error('Failed to delete the certificate. Please try again.');
 		}
 	};
 

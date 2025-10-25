@@ -18,7 +18,7 @@ import {
 	useLeaveSession,
 } from '@/lib/live-session-service';
 import { CalendarClock, Clock, Users, Video } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 
 export default function LiveSessionPage({
 	params,
@@ -28,7 +28,6 @@ export default function LiveSessionPage({
 	const [hasJoined, setHasJoined] = useState(false);
 	const { user } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	// Use Convex hooks
 	const sessionResult = useLiveSession(params.id as any); // TODO: Fix type casting
@@ -49,10 +48,7 @@ export default function LiveSessionPage({
 		const success = await joinSessionFn(session._id, user.id as any); // TODO: Fix type casting
 		if (success) {
 			setHasJoined(true);
-			toast({
-				title: 'Joined session',
-				description: `You've joined "${session.title}"`,
-			});
+			toast.success(`Joined session. You've joined "${session.title}"`);
 		}
 	};
 
@@ -90,7 +86,7 @@ export default function LiveSessionPage({
 		<div className='container py-6'>
 			{hasJoined ? (
 				<VideoRoom
-					sessionId={session.id}
+					sessionId={session._id}
 					userId={user.id}
 					userName={user.name}
 					userImage={user.image}

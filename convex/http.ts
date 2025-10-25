@@ -14,12 +14,11 @@ export async function handleWebhook(
 	ctx: MutationCtx,
 	request: Request
 ): Promise<Response> {
-	console.log('webhook hit');
 	const event = await validateRequest(request);
 	if (!event) {
 		return new Response('Error occurred', { status: 400 });
 	}
-
+	console.log(event, 'webhook hit');
 	switch (event.type) {
 		case 'user.created': // intentional fallthrough
 		case 'user.updated':

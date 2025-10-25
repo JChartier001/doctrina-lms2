@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-	getResourceTypes,
 	type ResourceType,
+	useResourceTypes,
 	getResourceTypeDisplayName,
 } from '@/lib/resource-library-service';
 import {
@@ -20,26 +20,7 @@ import {
 } from 'lucide-react';
 
 export function ResourceTypeList() {
-	const [resourceTypes, setResourceTypes] = useState<
-		{ type: ResourceType; count: number }[]
-	>([]);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		const fetchResourceTypes = async () => {
-			setIsLoading(true);
-			try {
-				const types = await getResourceTypes();
-				setResourceTypes(types);
-			} catch (error) {
-				console.error('Error fetching resource types:', error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchResourceTypes();
-	}, []);
+	const { data: resourceTypes, isLoading } = useResourceTypes();
 
 	const getTypeIcon = (type: ResourceType) => {
 		switch (type) {

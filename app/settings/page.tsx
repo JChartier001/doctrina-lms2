@@ -12,13 +12,12 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function SettingsPage() {
   const { user, role } = useAuth()
   const router = useRouter()
-  const { toast } = useToast()
 
   // Form state
   const [emailNotifications, setEmailNotifications] = useState({
@@ -41,35 +40,22 @@ export default function SettingsPage() {
   }, [user, router])
 
   const handleSaveNotifications = () => {
-    toast({
-      title: "Notification settings updated",
-      description: "Your notification preferences have been saved.",
-    })
+    toast.success("Notification settings updated. Your notification preferences have been saved.");
   }
 
   const handleSavePreferences = () => {
-    toast({
-      title: "Preferences updated",
-      description: "Your account preferences have been saved.",
-    })
+    toast.success("Preferences updated. Your account preferences have been saved.");
   }
 
   const handleChangePassword = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "Passwords do not match",
-        description: "Please make sure your new password and confirmation match.",
-        variant: "destructive",
-      })
+      toast.error("Passwords do not match. Please make sure your new password and confirmation match.");
       return
     }
 
-    toast({
-      title: "Password updated",
-      description: "Your password has been changed successfully.",
-    })
+    toast.success("Password updated. Your password has been changed successfully.");
 
     setCurrentPassword("")
     setNewPassword("")

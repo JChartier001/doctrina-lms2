@@ -1,0 +1,85 @@
+# generated: 2025-10-25
+# project: doctrina-lms2
+# project_key: doctrina-lms2
+# tracking_system: file-system
+# story_location: {project-root}/docs/stories
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic exists in epic file but not contexted
+#   - contexted: Epic tech context created (required before drafting stories)
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - drafted: Story file created in stories folder
+#   - ready-for-dev: Draft approved and story context created
+#   - in-progress: Developer actively working on implementation
+#   - review: Under SM review (via review-story workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - completed: Retrospective has been done
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epics should be 'contexted' before stories can be 'drafted'
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically drafts next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', SM reviews, then Dev moves to 'done'
+
+generated: 2025-10-25
+project: doctrina-lms2
+project_key: doctrina-lms2
+tracking_system: file-system
+story_location: "{project-root}/docs/stories"
+
+development_status:
+  # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)
+  epic-109: backlog
+  109-1-quick-wins-mock-replacement: backlog
+  109-2-progress-integration-mock-replacement: backlog
+  109-3-post-mvp-mock-replacement: backlog
+  epic-109-retrospective: optional
+
+  # EPIC-101: Lesson Progress Tracking System (P0 - Critical, 13 pts)
+  epic-101: contexted
+  101-1-create-lesson-progress-tracking: in-progress
+  epic-101-retrospective: optional
+
+  # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
+  epic-102: backlog
+  102-1-create-quiz-system: backlog
+  epic-102-retrospective: optional
+
+  # EPIC-103: Course Reviews & Ratings (P0 - Critical, 8 pts)
+  epic-103: backlog
+  103-1-create-course-reviews: backlog
+  103-2-update-course-ratings: backlog
+  epic-103-retrospective: optional
+
+  # EPIC-104: Instructor Verification Workflow (P1 - High, 21 pts)
+  epic-104: backlog
+  104-1-instructor-verification-implementation: backlog
+  epic-104-retrospective: optional
+
+  # EPIC-105: Instructor Payouts (P1 - High, 21 pts)
+  epic-105: backlog
+  105-1-instructor-payouts-implementation: backlog
+  epic-105-retrospective: optional
+
+  # EPIC-106: Discussion Forums & Community (P2 - Medium, 21 pts)
+  epic-106: backlog
+  106-1-discussion-forums-implementation: backlog
+  epic-106-retrospective: optional
+
+  # EPIC-107: Enhanced Instructor Analytics (P2 - Medium, 13 pts)
+  epic-107: backlog
+  107-1-enhanced-analytics-implementation: backlog
+  epic-107-retrospective: optional
+
+  # EPIC-108: CE Credit Management (P2 - Medium, 13 pts)
+  epic-108: backlog
+  108-1-ce-credit-management-implementation: backlog
+  epic-108-retrospective: optional

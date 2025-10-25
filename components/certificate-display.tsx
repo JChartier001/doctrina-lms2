@@ -4,7 +4,7 @@ import { useState, useRef } from "react"
 import { type Certificate, getCertificateTemplate } from "@/lib/certificate-service"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "react-toastify"
 import { Download, Share2 } from "lucide-react"
 import { QRCodeCanvas } from "qrcode.react"
 import html2canvas from "html2canvas"
@@ -16,7 +16,6 @@ interface CertificateDisplayProps {
 }
 
 export function CertificateDisplay({ certificate, showControls = true }: CertificateDisplayProps) {
-  const { toast } = useToast()
   const certificateRef = useRef<HTMLDivElement>(null)
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
 
@@ -46,17 +45,10 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
       pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight)
       pdf.save(`${certificate.courseName.replace(/\s+/g, "_")}_Certificate.pdf`)
 
-      toast({
-        title: "Certificate downloaded",
-        description: "Your certificate has been downloaded successfully.",
-      })
+      toast.success("Certificate downloaded. Your certificate has been downloaded successfully.");
     } catch (error) {
       console.error("Error generating PDF:", error)
-      toast({
-        title: "Download failed",
-        description: "There was an error downloading your certificate. Please try again.",
-        variant: "destructive",
-      })
+      toast.error("Download failed. There was an error downloading your certificate. Please try again.");
     } finally {
       setIsGeneratingPDF(false)
     }
@@ -72,21 +64,15 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
           text: `Check out my certificate for completing ${certificate.courseName}`,
           url: verificationUrl,
         })
-        .then(() => {
-          toast({
-            title: "Certificate shared",
-            description: "Your certificate has been shared successfully.",
-          })
+        .then(() => { 
+          toast.success("Certificate shared. Your certificate has been shared successfully.");
         })
         .catch((error) => {
           console.error("Error sharing:", error)
         })
     } else {
       navigator.clipboard.writeText(verificationUrl).then(() => {
-        toast({
-          title: "Link copied",
-          description: "Verification link copied to clipboard.",
-        })
+        toast.success("Link copied. Verification link copied to clipboard.");
       })
     }
   }

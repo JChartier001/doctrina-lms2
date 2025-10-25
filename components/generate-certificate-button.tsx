@@ -5,7 +5,7 @@ import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Award } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { useGenerateCertificate } from '@/lib/certificate-service';
 import { Id } from '@/convex/_generated/dataModel';
 
@@ -28,7 +28,6 @@ export function GenerateCertificateButton({
 }: GenerateCertificateButtonProps) {
 	const { user } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 	const [isGenerating, setIsGenerating] = useState(false);
 
 	const generateCertificateMutation = useGenerateCertificate();
@@ -53,10 +52,9 @@ export function GenerateCertificateButton({
 				templateId: 'template-1', // Default template
 			});
 
-			toast({
-				title: 'Certificate Generated',
-				description: 'Your certificate has been generated successfully.',
-			});
+			toast.success(
+				'Certificate Generated. Your certificate has been generated successfully.'
+			);
 
 			// Navigate to certificate view
 			router.push(`/profile/certificates?certId=${certificateId}`);
@@ -66,12 +64,9 @@ export function GenerateCertificateButton({
 			}
 		} catch (error) {
 			console.error('Error generating certificate:', error);
-			toast({
-				title: 'Error',
-				description:
-					'There was an error generating your certificate. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error(
+				'There was an error generating your certificate. Please try again.'
+			);
 		} finally {
 			setIsGenerating(false);
 		}

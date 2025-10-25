@@ -2,7 +2,7 @@ import { mutation, query } from "./_generated/server"
 import { v } from "convex/values"
 
 export const listForUser = query({
-  args: { userId: v.id("users") },
+  args: { userId: v.string() },
   handler: async (ctx, { userId }) => {
     return await ctx.db
       .query("purchases")
@@ -12,11 +12,16 @@ export const listForUser = query({
 })
 
 export const create = mutation({
-  args: { userId: v.id("users"), courseId: v.id("courses"), amount: v.number(), currency: v.string() },
+  args: {
+    userId: v.string(), // Clerk external ID
+    courseId: v.id("courses"),
+    amount: v.number(),
+    stripeSessionId: v.optional(v.string()),
+    status: v.union(v.literal("open"), v.literal("complete"), v.literal("expired")),
+  },
   handler: async (ctx, args) => {
     return await ctx.db.insert("purchases", {
       ...args,
-      status: "open",
       createdAt: Date.now(),
     })
   },

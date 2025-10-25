@@ -6,13 +6,13 @@ export const userSchema = {
 	lastName: v.string(),
 	email: v.string(),
 	image: v.optional(v.string()),
-	role: v.union(
-		v.literal('admin'),
-		v.literal('instructor'),
-		v.literal('student')
-	),
+	profilePhotoUrl: v.optional(v.string()),
+	bio: v.optional(v.string()),
+	title: v.optional(v.string()), // Professional title (e.g., "MD, Board Certified Dermatologist")
+	isInstructor: v.boolean(), // Can create and teach courses
+	isAdmin: v.boolean(), // Platform administration access
 	phone: v.optional(v.string()),
-	externalId: v.optional(v.string()),
+	externalId: v.string(), // Clerk user ID
 	lastLogin: v.optional(v.string()),
 	createdAt: v.optional(v.string()),
 	updatedAt: v.optional(v.string()),
@@ -137,10 +137,11 @@ export default defineSchema({
 		.index('by_verification', ['verificationCode']),
 
 	purchases: defineTable({
-		userId: v.id('users'),
+		userId: v.string(), // Clerk external ID
 		courseId: v.id('courses'),
 		amount: v.number(),
-		currency: v.string(),
+		stripeSessionId: v.optional(v.string()),
+		currency: v.optional(v.string()),
 		status: v.union(
 			v.literal('open'),
 			v.literal('complete'),
@@ -150,4 +151,104 @@ export default defineSchema({
 	})
 		.index('by_user', ['userId'])
 		.index('by_course', ['courseId']),
+
+	// Sprint 1: Course Structure
+	courseModules: defineTable({
+		courseId: v.id('courses'),
+		title: v.string(),
+		description: v.optional(v.string()),
+		order: v.number(),
+		createdAt: v.number(),
+	})
+		.index('by_course', ['courseId'])
+		.index('by_course_order', ['courseId', 'order']),
+
+	lessons: defineTable({
+		moduleId: v.id('courseModules'),
+		title: v.string(),
+		description: v.optional(v.string()),
+		type: v.union(
+			v.literal('video'),
+			v.literal('quiz'),
+			v.literal('assignment')
+		),
+		duration: v.optional(v.string()), // e.g., "15:30"
+		videoUrl: v.optional(v.string()),
+		videoId: v.optional(v.string()), // Vimeo/Cloudflare video ID
+		content: v.optional(v.string()), // Rich text for non-video lessons
+		isPreview: v.boolean(),
+		order: v.number(),
+		createdAt: v.number(),
+	})
+		.index('by_module', ['moduleId'])
+		.index('by_module_order', ['moduleId', 'order']),
+
+	enrollments: defineTable({
+		userId: v.string(), // Clerk external ID
+		courseId: v.id('courses'),
+		purchaseId: v.id('purchases'),
+		enrolledAt: v.number(),
+		completedAt: v.optional(v.number()),
+		progressPercent: v.number(), // 0-100
+	})
+		.index('by_user', ['userId'])
+		.index('by_course', ['courseId'])
+		.index('by_user_course', ['userId', 'courseId']),
+
+	// Sprint 2: Progress Tracking
+	lessonProgress: defineTable({
+		userId: v.string(),
+		lessonId: v.id('lessons'),
+		completedAt: v.number(),
+	})
+		.index('by_user', ['userId'])
+		.index('by_lesson', ['lessonId'])
+		.index('by_user_lesson', ['userId', 'lessonId']),
+
+	// Sprint 2: Quiz System
+	quizzes: defineTable({
+		courseId: v.id('courses'),
+		moduleId: v.optional(v.id('courseModules')),
+		title: v.string(),
+		passingScore: v.number(), // 0-100
+		createdAt: v.number(),
+	})
+		.index('by_course', ['courseId'])
+		.index('by_module', ['moduleId']),
+
+	quizQuestions: defineTable({
+		quizId: v.id('quizzes'),
+		question: v.string(),
+		options: v.array(v.string()), // 4 options
+		correctAnswer: v.number(), // 0-3 (index of correct option)
+		explanation: v.optional(v.string()),
+		order: v.number(),
+	})
+		.index('by_quiz', ['quizId'])
+		.index('by_quiz_order', ['quizId', 'order']),
+
+	quizAttempts: defineTable({
+		userId: v.string(),
+		quizId: v.id('quizzes'),
+		answers: v.array(v.number()),
+		score: v.number(),
+		passed: v.boolean(),
+		submittedAt: v.number(),
+	})
+		.index('by_user', ['userId'])
+		.index('by_quiz', ['quizId'])
+		.index('by_user_quiz', ['userId', 'quizId']),
+
+	// Sprint 3: Reviews
+	courseReviews: defineTable({
+		userId: v.string(),
+		courseId: v.id('courses'),
+		rating: v.number(), // 1-5
+		content: v.string(),
+		createdAt: v.number(),
+		hidden: v.boolean(),
+	})
+		.index('by_course', ['courseId'])
+		.index('by_user', ['userId'])
+		.index('by_user_course', ['userId', 'courseId']),
 });

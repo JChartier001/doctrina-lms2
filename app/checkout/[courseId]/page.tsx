@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'react-toastify';
 import { ArrowLeft, CreditCard, Lock } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Id } from '@/convex/_generated/dataModel';
@@ -62,7 +62,6 @@ export default function CheckoutPage({
 	const { courseId } = params;
 	const { user, isLoading } = useAuth();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	// Convex mutations
 	const createPurchase = useCreatePurchase();
@@ -123,11 +122,9 @@ export default function CheckoutPage({
 			const courseData = coursesData[courseId as keyof typeof coursesData];
 
 			if (!courseData) {
-				toast({
-					title: 'Course not found',
-					description: 'The requested course could not be found.',
-					variant: 'destructive',
-				});
+				toast.error(
+					'Course not found. The requested course could not be found.'
+				);
 				router.push('/courses');
 				return;
 			}
@@ -146,11 +143,7 @@ export default function CheckoutPage({
 				});
 				setPurchaseId(purchaseId);
 			} catch (error) {
-				toast({
-					title: 'Error',
-					description: 'Failed to initialize checkout. Please try again.',
-					variant: 'destructive',
-				});
+				toast.error('Failed to initialize checkout. Please try again.');
 			}
 
 			setLoading(false);
@@ -179,18 +172,15 @@ export default function CheckoutPage({
 			}
 
 			// Complete the purchase using Convex
-			await completePurchase(purchaseId as Id<'purchases'>);
+			await completePurchase({ id: purchaseId as Id<'purchases'> });
 
 			// Redirect to success page
 			router.push(`/checkout/success?purchase=${purchaseId}`);
 		} catch (error: any) {
-			toast({
-				title: 'Payment Failed',
-				description:
-					error.message ||
-					'There was an error processing your payment. Please try again.',
-				variant: 'destructive',
-			});
+			toast.error(
+				error.message ||
+					'There was an error processing your payment. Please try again.'
+			);
 			setProcessing(false);
 		}
 	};
