@@ -261,15 +261,15 @@ const additionalStats = [
 ];
 
 export default function AdminDashboard() {
-	const { user, role, isLoading } = useAuth();
+	const { user, isLoading } = useAuth();
 	const router = useRouter();
 	const [timeRange, setTimeRange] = useState('year');
 
 	useEffect(() => {
-		if (!isLoading && (!user || role !== 'admin')) {
+		if (!isLoading && (!user || !user.isAdmin)) {
 			router.push('/login');
 		}
-	}, [user, role, router, isLoading]);
+	}, [user, router, isLoading]);
 
 	if (isLoading) {
 		return (
@@ -279,7 +279,7 @@ export default function AdminDashboard() {
 		);
 	}
 
-	if (!user || role !== 'admin') {
+	if (!user || !user.isAdmin) {
 		return null;
 	}
 
@@ -432,7 +432,7 @@ export default function AdminDashboard() {
 										outerRadius={80}
 										fill="#8884d8"
 										dataKey="value"
-										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+										label={({ name, percent }) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
 									>
 										{categoryDistributionData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
 										outerRadius={80}
 										fill="#8884d8"
 										dataKey="value"
-										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+										label={({ name, percent }) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
 									>
 										{deviceUsageData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={DEVICE_COLORS[index % DEVICE_COLORS.length]} />

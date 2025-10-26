@@ -16,18 +16,18 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 
 export default function InstructorDashboardPage() {
-	const { user, role } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 	// Convex query for instructor's courses
 	const instructorCourses = useQuery(api.courses.list, user ? { instructorId: user.id as Id<'users'> } : 'skip');
 
 	useEffect(() => {
-		if (!user || role !== 'instructor') {
+		if (!user || !user.isInstructor) {
 			router.push('/sign-in');
 		}
-	}, [user, role, router]);
+	}, [user, router]);
 
-	if (!user || role !== 'instructor') {
+	if (!user || !user.isInstructor) {
 		return null;
 	}
 
@@ -204,7 +204,7 @@ export default function InstructorDashboardPage() {
 											</div>
 											<p className="text-sm text-muted-foreground mb-4">{course.description}</p>
 											<div className="flex justify-between text-sm mb-4">
-												<span>{course.students || 0} students</span>
+												{/* <span>{course.enrollments || 0} enrollments</span> */}
 												<span>{course.rating?.toFixed(1) || 'N/A'} ★</span>
 											</div>
 											<div className="flex gap-2">

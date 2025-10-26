@@ -2,7 +2,7 @@ import { Book, File } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import type { SearchResult } from '@/lib/search-service';
@@ -84,75 +84,75 @@ export function SearchResultItem({ result }: SearchResultItemProps) {
 						{/* <div className="ml-auto font-bold">${result.metadata.price}</div> */}
 					</div>
 				);
-			case 'program':
-				return (
-					<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-						<div>
-							<span>{result.metadata.duration}</span>
-						</div>
-						<div>
-							<span>{result.metadata.courses} courses</span>
-						</div>
-						<div className="ml-auto font-bold">${result.metadata.price}</div>
-					</div>
-				);
-			case 'instructor':
-				return (
-					<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-						<div>
-							<span>{result.metadata.title}</span>
-						</div>
-						<div>
-							<span>{result.metadata.specialization}</span>
-						</div>
-						<div>
-							<span>{result.metadata.courses} courses</span>
-						</div>
-						<div>
-							<span>{result.metadata.students} students</span>
-						</div>
-					</div>
-				);
-			case 'community':
-				return (
-					<div className="mt-2">
-						<div className="flex items-center gap-2 text-sm text-muted-foreground">
-							<span>{result.metadata.author}</span>
-							<span>•</span>
-							<span>{new Date(result.metadata.date).toLocaleDateString()}</span>
-							<span>•</span>
-							<span>{result.metadata.replies} replies</span>
-							<span>•</span>
-							<span>{result.metadata.views} views</span>
-						</div>
-						<div className="flex flex-wrap gap-2 mt-2">
-							{result.metadata.tags.map((tag: string) => (
-								<Badge key={tag} variant="secondary" className="text-xs">
-									{tag}
-								</Badge>
-							))}
-						</div>
-					</div>
-				);
-			case 'lesson':
-				return (
-					<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-						<div>
-							<span>{result.metadata.duration}</span>
-						</div>
-						<div>
-							<Badge variant="outline" className="capitalize">
-								{result.metadata.type}
-							</Badge>
-						</div>
-					</div>
-				);
+			// case 'program':
+			// 	return (
+			// 		<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+			// 			<div>
+			// 				<span>{result.metadata.duration}</span>
+			// 			</div>
+			// 			<div>
+			// 				<span>{result.metadata.courses} courses</span>
+			// 			</div>
+			// 			<div className="ml-auto font-bold">${result.metadata.price}</div>
+			// 		</div>
+			// 	);
+			// case 'instructor':
+			// 	return (
+			// 		<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+			// 			<div>
+			// 				<span>{result.metadata.title}</span>
+			// 			</div>
+			// 			<div>
+			// 				<span>{result.metadata.specialization}</span>
+			// 			</div>
+			// 			<div>
+			// 				<span>{result.metadata.courses} courses</span>
+			// 			</div>
+			// 			<div>
+			// 				<span>{result.metadata.students} students</span>
+			// 			</div>
+			// 		</div>
+			// 	);
+			// case 'community':
+			// 	return (
+			// 		<div className="mt-2">
+			// 			<div className="flex items-center gap-2 text-sm text-muted-foreground">
+			// 				<span>{result.metadata.author}</span>
+			// 				<span>•</span>
+			// 				<span>{new Date(result.metadata.date).toLocaleDateString()}</span>
+			// 				<span>•</span>
+			// 				<span>{result.metadata.replies} replies</span>
+			// 				<span>•</span>
+			// 				<span>{result.metadata.views} views</span>
+			// 			</div>
+			// 			<div className="flex flex-wrap gap-2 mt-2">
+			// 				{result.metadata.tags.map((tag: string) => (
+			// 					<Badge key={tag} variant="secondary" className="text-xs">
+			// 						{tag}
+			// 					</Badge>
+			// 				))}
+			// 			</div>
+			// 		</div>
+			// 	);
+			// case 'lesson':
+			// 	return (
+			// 		<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+			// 			<div>
+			// 				<span>{result.metadata.duration}</span>
+			// 			</div>
+			// 			<div>
+			// 				<Badge variant="outline" className="capitalize">
+			// 					{result.metadata.type}
+			// 				</Badge>
+			// 			</div>
+			// 		</div>
+			// 	);
 			case 'resource':
 				return (
 					<div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
 						<div>
 							<Badge variant="outline" className="capitalize">
-								{result.metadata.type}
+								{/* {result.metadata.type} */}
 							</Badge>
 						</div>
 					</div>
@@ -173,12 +173,13 @@ export function SearchResultItem({ result }: SearchResultItemProps) {
 								alt={result.title}
 								className="w-[100px] h-[60px] object-cover rounded-md"
 							/>
-						) : result.type === 'instructor' ? (
-							<Avatar className="h-16 w-16">
-								<AvatarImage src="/placeholder.svg?height=100&width=100" alt={result.title} />
-								<AvatarFallback>{result.title.charAt(0)}</AvatarFallback>
-							</Avatar>
 						) : (
+							// : result.type === 'instructor' ? (
+							// <Avatar className="h-16 w-16">
+							// 	<AvatarImage src="/placeholder.svg?height=100&width=100" alt={result.title} />
+							// 	<AvatarFallback>{result.title.charAt(0)}</AvatarFallback>
+							// </Avatar>
+							// )
 							<div className="flex items-center justify-center w-[60px] h-[60px] bg-primary/10 rounded-md">
 								{getIcon()}
 							</div>

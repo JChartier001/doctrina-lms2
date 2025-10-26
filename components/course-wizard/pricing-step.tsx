@@ -1,6 +1,7 @@
 'use client';
 
 import { format } from 'date-fns';
+import dayjs from 'dayjs';
 import { CalendarIcon, RefreshCw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -205,10 +206,8 @@ export function PricingStep({ courseData, updateCourseData }: PricingStepProps) 
 											</PopoverTrigger>
 											<PopoverContent className="w-auto p-0">
 												<Calendar
-													mode="single"
-													selected={earlyBirdEndDate}
-													onSelect={setEarlyBirdEndDate}
-													initialFocus
+													selected={earlyBirdEndDate ? dayjs(earlyBirdEndDate) : undefined}
+													onSelect={date => setEarlyBirdEndDate(date ? date.toDate() : undefined)}
 												/>
 											</PopoverContent>
 										</Popover>

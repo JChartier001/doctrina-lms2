@@ -4,9 +4,10 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-	apiVersion: '2024-12-18.acacia',
+	apiVersion: '2025-09-30.clover',
 });
 
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -47,8 +48,8 @@ export async function POST(req: Request) {
 
 				// Create purchase record
 				const purchaseId = await convex.mutation(api.purchases.create, {
-					userId,
-					courseId,
+					userId: userId as Id<'users'>,
+					courseId: courseId as Id<'courses'>,
 					amount: (session.amount_total || 0) / 100,
 					stripeSessionId: session.id,
 					status: 'complete',
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
 				// Create enrollment
 				const enrollmentId = await convex.mutation(api.enrollments.create, {
 					userId,
-					courseId,
+					courseId: courseId as Id<'courses'>,
 					purchaseId,
 				});
 

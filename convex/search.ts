@@ -248,11 +248,21 @@ export const advancedSearch = query({
 				allResults.sort((a, b) => (b.metadata.rating || 0) - (a.metadata.rating || 0));
 				break;
 			case 'popular':
-				allResults.sort(
-					(a, b) =>
-						(b.metadata.downloadCount || b.metadata.students || 0) -
-						(a.metadata.downloadCount || a.metadata.students || 0),
-				);
+				allResults.sort((a, b) => {
+					const bPop: number =
+						'downloadCount' in b.metadata
+							? Number(b.metadata.downloadCount) || 0
+							: 'students' in b.metadata
+								? Number(b.metadata.students) || 0
+								: 0;
+					const aPop: number =
+						'downloadCount' in a.metadata
+							? Number(a.metadata.downloadCount) || 0
+							: 'students' in a.metadata
+								? Number(a.metadata.students) || 0
+								: 0;
+					return bPop - aPop;
+				});
 				break;
 			case 'relevance':
 			default:

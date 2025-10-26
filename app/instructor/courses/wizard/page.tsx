@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation } from 'convex/react';
+// import { useMutation } from 'convex/react';
 import { CheckCircle2, ChevronLeft, ChevronRight, Eye, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -16,14 +16,14 @@ import { StructureStep } from '@/components/course-wizard/structure-step';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { api } from '@/convex/_generated/api';
+// import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { CreateCourseDefaultValues, CreateCourseWizardType } from '@/schema/CourseWizardSchema';
 
 // Define the course data structure
 export interface CourseData {
-	id?: string;
+	id?: Id<'courses'>;
 	title: string;
 	description: string;
 	category: string;
@@ -68,12 +68,12 @@ export default function CourseWizard() {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
-	const { user, role } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 
 	// Convex mutations
-	const createCourse = useMutation(api.courses.create);
-	const updateCourse = useMutation(api.courses.update);
+	// const createCourse = useMutation(api.courses.create);
+	// const updateCourse = useMutation(api.courses.update);
 
 	// Define the steps
 	const steps = [
@@ -104,56 +104,32 @@ export default function CourseWizard() {
 	};
 
 	// Handle save draft
-	const handleSaveDraft = async () => {
+	const handleSaveDraft = async (data: CreateCourseWizardType) => {
 		setIsSaving(true);
 
 		try {
+			console.log(data);
 			// Use Convex to save/update course
-			const courseParams = {
-				title: courseData.title,
-				description: courseData.description,
-				instructorId: user!.id as Id<'users'>,
-				level: 'beginner' as const,
-				duration: '8 weeks', // Default duration
-				price: parseFloat(courseData.price) || 0,
-				thumbnailUrl: courseData.thumbnail || undefined,
-			};
+			//TODO: create course or update course
+			toast.success('Draft saved, Your course draft has been saved successfully.');
 
-			if (courseData.id) {
-				// Update existing course
-				await updateCourse({
-					id: courseData.id as Id<'courses'>,
-					...courseParams,
-				});
-			} else {
-				// Create new course
-				const courseId = await createCourse(courseParams);
-				setCourseData(prev => ({ ...prev, id: courseId }));
-			}
-
-			toast({
-				title: 'Draft saved',
-				description: 'Your course draft has been saved successfully.',
-			});
+			// if (data.id) {
+			// 	// Update existing course
+			// 	await updateCourse({
+			// 		id: data.id as Id<'courses'>,
+			// 		...data,
+			// 	});
 		} catch (error) {
 			console.error('Failed to save draft:', error);
-			toast({
-				title: 'Save failed',
-				description: 'Failed to save course draft. Please try again.',
-				variant: 'destructive',
-			});
-		} finally {
-			setIsSaving(false);
+			toast.error('Failed to save draft, Please try again.');
 		}
+		setIsSaving(false);
 	};
 
 	// Handle preview
 	const handlePreview = () => {
 		// Open preview in new tab or modal
-		toast({
-			title: 'Preview mode',
-			description: 'Course preview functionality will be available soon.',
-		});
+		toast.info('Preview mode, Course preview functionality will be available soon.');
 	};
 
 	// Handle publish
@@ -162,138 +138,120 @@ export default function CourseWizard() {
 
 		try {
 			// Use Convex to publish course
-			const courseParams = {
-				title: courseData.title,
-				description: courseData.description,
-				instructorId: user!.id as Id<'users'>,
-				level: 'beginner' as const,
-				duration: '8 weeks', // Default duration
-				price: parseFloat(courseData.price) || 0,
-				thumbnailUrl: courseData.thumbnail || undefined,
-			};
+			// const courseParams = {
+			// 	title: courseData.title,
+			// 	description: courseData.description,
+			// 	instructorId: user!.id as Id<'users'>,
+			// 	level: 'beginner' as const,
+			// 	duration: '8 weeks', // Default duration
+			// 	price: parseFloat(courseData.price) || 0,
+			// 	thumbnailUrl: courseData.thumbnail || undefined,
+			// };
 
-			if (courseData.id) {
-				// Update existing course
-				await updateCourse({
-					id: courseData.id as Id<'courses'>,
-					...courseParams,
-				});
-			} else {
-				// Create new course
-				const courseId = await createCourse(courseParams);
-				setCourseData(prev => ({ ...prev, id: courseId }));
-			}
+			// if (courseData.id) {
+			// 	// Update existing course
+			// 	await updateCourse({
+			// 		id: courseData.id as Id<'courses'>,
+			// 		...courseParams,
+			// 	});
+			// } else {
+			// 	// Create new course
+			// 	const courseId = await createCourse(courseParams);
+			// 	setCourseData(prev => ({ ...prev, id: courseId }));
+			// }
 
-			toast({
-				title: 'Course published',
-				description: 'Your course has been published successfully.',
-			});
+			toast.success('Course published, Your course has been published successfully.');
 			router.push('/instructor/dashboard');
 		} catch (error) {
 			console.error('Failed to publish course:', error);
-			toast({
-				title: 'Publish failed',
-				description: 'Failed to publish course. Please try again.',
-				variant: 'destructive',
-			});
-		} finally {
-			setIsLoading(false);
+			toast.error('Failed to publish course, Please try again.');
 		}
-	};
-
-	// Update course data
-	const _updateCourseData = (data: Partial<CourseData>) => {
-		setCourseData(prev => ({ ...prev, ...data }));
+		setIsLoading(false);
 	};
 
 	// Render current step component
 	const CurrentStepComponent = steps[currentStep].component;
 
 	// Redirect if not instructor
-	if (!user || role !== 'instructor') {
-		router.push('/sign-in');
+	if (!user || !Boolean(user.isInstructor)) {
 		return null;
 	}
-
 	return (
 		<div className="container py-10">
 			<div className="flex flex-col space-y-8">
-				<div className="flex flex-col space-y-2">
-					<h1 className="text-3xl font-bold">Create New Course</h1>
-					<p className="text-muted-foreground">Complete the steps below to create and publish your course.</p>
-				</div>
-
-				{/* Progress bar and steps */}
-				<div className="space-y-4">
-					<div className="flex justify-between">
-						{steps.map((step, index) => (
-							<button
-								key={index}
-								className={`flex flex-col items-center space-y-2 ${
-									index <= currentStep ? 'text-primary' : 'text-muted-foreground'
-								}`}
-								onClick={() => {
-									// Only allow navigation to completed steps or the current step
-									if (index <= currentStep) {
-										setCurrentStep(index);
-									}
-								}}
-							>
-								<div
-									className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
-										index < currentStep
-											? 'border-primary bg-primary text-primary-foreground'
-											: index === currentStep
-												? 'border-primary text-primary'
-												: 'border-muted-foreground text-muted-foreground'
-									}`}
-								>
-									{index < currentStep ? <CheckCircle2 className="h-5 w-5" /> : index + 1}
-								</div>
-								<span className="text-xs font-medium">{step.name}</span>
-							</button>
-						))}
-					</div>
-					<Progress value={progressPercentage} className="h-2" />
-				</div>
-
-				{/* Current step content */}
-				<Card className="p-6">
-					<FormProvider {...form}>
-						<CurrentStepComponent />
-					</FormProvider>
-				</Card>
-
-				{/* Navigation buttons */}
 				<div className="flex justify-between">
-					<div>
-						{currentStep > 0 && (
-							<Button variant="outline" onClick={handlePrevious} className="flex items-center gap-2">
-								<ChevronLeft className="h-4 w-4" />
-								Previous
-							</Button>
-						)}
-					</div>
-					<div className="flex space-x-2">
-						<Button variant="outline" onClick={handleSaveDraft} disabled={isSaving} className="flex items-center gap-2">
-							<Save className="h-4 w-4" />
-							{isSaving ? 'Saving...' : 'Save Draft'}
+					{steps.map((step, index) => (
+						<button
+							key={index}
+							className={`flex flex-col items-center space-y-2 ${
+								index <= currentStep ? 'text-primary' : 'text-muted-foreground'
+							}`}
+							onClick={() => {
+								// Only allow navigation to completed steps or the current step
+								if (index <= currentStep) {
+									setCurrentStep(index);
+								}
+							}}
+						>
+							<div
+								className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${
+									index < currentStep
+										? 'border-primary bg-primary text-primary-foreground'
+										: index === currentStep
+											? 'border-primary text-primary'
+											: 'border-muted-foreground text-muted-foreground'
+								}`}
+							>
+								{index < currentStep ? <CheckCircle2 className="h-5 w-5" /> : index + 1}
+							</div>
+							<span className="text-xs font-medium">{step.name}</span>
+						</button>
+					))}
+				</div>
+				<Progress value={progressPercentage} className="h-2" />
+			</div>
+
+			{/* Current step content */}
+			<Card className="p-6">
+				<FormProvider {...form}>
+					<CurrentStepComponent courseData={{} as CourseData} updateCourseData={() => {}} />
+				</FormProvider>
+			</Card>
+
+			{/* Navigation buttons */}
+			<div className="flex justify-between">
+				<div>
+					{currentStep > 0 && (
+						<Button variant="outline" onClick={handlePrevious} className="flex items-center gap-2">
+							<ChevronLeft className="h-4 w-4" />
+							Previous
 						</Button>
-						<Button variant="outline" onClick={handlePreview} className="flex items-center gap-2">
-							<Eye className="h-4 w-4" />
-							Preview
+					)}
+				</div>
+				<div className="flex space-x-2">
+					<Button
+						variant="outline"
+						onClick={() => handleSaveDraft(form.getValues())}
+						disabled={isSaving}
+						className="flex items-center gap-2"
+					>
+						<Save className="h-4 w-4" />
+						{isSaving ? 'Saving...' : 'Save Draft'}
+					</Button>
+					<Button variant="outline" onClick={() => handlePreview()} className="flex items-center gap-2">
+						<Eye className="h-4 w-4" />
+						Preview
+					</Button>
+					{currentStep < steps.length - 1 ? (
+						<Button onClick={handleNext} className="flex items-center gap-2">
+							Next
+							<ChevronRight className="h-4 w-4" />
 						</Button>
-						{currentStep < steps.length - 1 ? (
-							<Button onClick={handleNext} className="flex items-center gap-2">
-								Next
-								<ChevronRight className="h-4 w-4" />
-							</Button>
-						) : (
-							<Button onClick={handlePublish} disabled={isLoading} className="flex items-center gap-2">
-								{isLoading ? 'Publishing...' : 'Publish Course'}
-							</Button>
-						)}
-					</div>
+					) : (
+						<Button onClick={handlePublish} disabled={isLoading} className="flex items-center gap-2">
+							{isLoading ? 'Publishing...' : 'Publish Course'}
+						</Button>
+					)}
 				</div>
 			</div>
 		</div>

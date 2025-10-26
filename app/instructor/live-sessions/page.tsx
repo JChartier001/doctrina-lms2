@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery } from 'convex/react';
+import dayjs, { Dayjs } from 'dayjs';
 import { Clock, Users, Video, VideoOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -145,9 +146,8 @@ export default function InstructorLiveSessionsPage() {
 									<Label>Date & Time</Label>
 									<div className="flex flex-col space-y-2">
 										<Calendar
-											mode="single"
-											selected={newSession.scheduledFor}
-											onSelect={date => date && setNewSession({ ...newSession, scheduledFor: date })}
+											selected={dayjs(newSession.scheduledFor) as Dayjs}
+											onSelect={date => date && setNewSession({ ...newSession, scheduledFor: date.toDate() })}
 											className="rounded-md border"
 										/>
 										<div className="flex gap-2">
@@ -408,7 +408,11 @@ export default function InstructorLiveSessionsPage() {
 						<CardContent>
 							<div className="flex flex-col md:flex-row gap-6">
 								<div className="md:w-1/2">
-									<Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
+									<Calendar
+										selected={dayjs(date) as Dayjs}
+										onSelect={date => date && setDate(date.toDate())}
+										className="rounded-md border"
+									/>
 								</div>
 								<div className="md:w-1/2">
 									<h3 className="font-medium mb-4">

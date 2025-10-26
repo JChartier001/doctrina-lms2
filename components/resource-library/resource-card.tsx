@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,8 +35,8 @@ interface ResourceCardProps {
 
 export function ResourceCard({ resource }: ResourceCardProps) {
 	const { user } = useAuth();
-	const [favorited, setFavorited] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
+	const [favorited, setFavorited] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	console.log(user, 'user');
 
 	// Hooks must be called at the top level
@@ -136,7 +136,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
 					{favorited ? 'Saved' : 'Save'}
 				</Button>
 				<Button asChild size="sm">
-					<Link href={`/resources/${resource.id}`}>View Details</Link>
+					<Link href={`/resources/${resource._id}`}>View Details</Link>
 				</Button>
 			</CardFooter>
 		</Card>

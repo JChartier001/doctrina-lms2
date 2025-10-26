@@ -7,17 +7,17 @@ import { useAuth } from '@/lib/auth';
 
 export default function NewCoursePage() {
 	const router = useRouter();
-	const { user, role } = useAuth();
+	const { user } = useAuth();
 
 	useEffect(() => {
-		if (!user || role !== 'instructor') {
+		if (!user || !user.isInstructor) {
 			router.push('/sign-in');
 			return;
 		}
 
 		// Redirect to the new course wizard
 		router.push('/instructor/courses/wizard');
-	}, [user, role, router]);
+	}, [user, router]);
 
 	return (
 		<div className="container py-10">

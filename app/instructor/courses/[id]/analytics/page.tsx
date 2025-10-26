@@ -4,7 +4,7 @@ import { useQuery } from 'convex/react';
 import { addDays } from 'date-fns';
 import { ArrowLeft, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ContentPerformance } from '@/components/analytics/content-performance';
 import { EngagementMetrics } from '@/components/analytics/engagement-metrics';
@@ -22,7 +22,7 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 
 export default function CourseAnalyticsPage({ params }: { params: { id: string } }) {
-	const { user, role, isLoading } = useAuth();
+	const { user, isLoading } = useAuth();
 	const router = useRouter();
 	const [dateRange, setDateRange] = useState({
 		from: addDays(new Date(), -30),
@@ -39,10 +39,10 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 	);
 
 	useEffect(() => {
-		if (!isLoading && (!user || role !== 'instructor')) {
+		if (!isLoading && (!user || !user.isInstructor)) {
 			router.push('/sign-in');
 		}
-	}, [user, role, router, isLoading]);
+	}, [user, router, isLoading]);
 
 	// Show loading state
 	if (isLoading || course === undefined || instructorAnalytics === undefined) {
@@ -63,7 +63,7 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 		);
 	}
 
-	if (!user || role !== 'instructor') {
+	if (!user || !user.isInstructor) {
 		return null;
 	}
 
@@ -83,7 +83,7 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
 				<div className="flex flex-col sm:flex-row gap-4">
-					<DatePickerWithRange date={dateRange} setDate={setDateRange} />
+					<DatePickerWithRange date={dateRange} setDate={date => setDateRange(date as { from: Date; to: Date })} />
 					<Select defaultValue="all">
 						<SelectTrigger className="w-[180px]">
 							<SelectValue placeholder="Student segment" />

@@ -8,7 +8,7 @@ import { CertificateDisplay } from '@/components/certificate-display';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { type Certificate, verifyCertificate } from '@/lib/certificate-service';
+import { type Certificate } from '@/lib/certificate-service';
 
 export default function VerifyCertificatePage() {
 	const searchParams = useSearchParams();
@@ -27,7 +27,8 @@ export default function VerifyCertificatePage() {
 
 		// Simulate API call delay
 		setTimeout(() => {
-			const result = verifyCertificate(verificationCode);
+			const result = null;
+			// verifyCertificate(verificationCode as Id<'certificates'>);
 
 			if (result) {
 				setCertificate(result);
@@ -48,7 +49,8 @@ export default function VerifyCertificatePage() {
 		setIsVerifying(true);
 
 		setTimeout(() => {
-			const result = verifyCertificate(verificationCode);
+			const result = null;
+			// verifyCertificate(verificationCode);
 
 			if (result) {
 				setCertificate(result);

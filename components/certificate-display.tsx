@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { type Certificate, getCertificateTemplate } from '@/lib/certificate-service';
+import { type Certificate } from '@/lib/certificate-service';
 
 interface CertificateDisplayProps {
 	certificate: Certificate;
@@ -21,7 +21,15 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 	const certificateRef = useRef<HTMLDivElement>(null);
 	const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
-	const template = getCertificateTemplate(certificate.templateId);
+	// TODO: Get template from Convex
+	const template = {
+		id: certificate.templateId,
+		name: 'Standard Certificate',
+		description: 'Standard certificate for course completion',
+		imageUrl: '/placeholder.svg?height=600&width=800',
+		primaryColor: '#4f46e5',
+		secondaryColor: '#818cf8',
+	};
 
 	const downloadAsPDF = async () => {
 		if (!certificateRef.current) return;

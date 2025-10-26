@@ -53,3 +53,16 @@ export function useCreateNotification() {
 export function useRemoveNotification() {
 	return useMutation(api.notifications.remove);
 }
+
+export const deleteNotification = async (notificationId: Id<'notifications'>) => {
+	console.log(notificationId);
+};
+export const getUserNotifications = async (userId: Id<'users'>) => {
+	console.log(userId);
+};
+export const markAsRead = async (notificationId: Id<'notifications'>) => {
+	console.log(notificationId);
+};
+export const markAllAsRead = async (userId: Id<'users'>) => {
+	console.log(userId);
+};

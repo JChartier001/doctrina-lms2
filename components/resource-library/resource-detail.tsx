@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { ResourceCard } from '@/components/resource-library/resource-card';
 import { Badge } from '@/components/ui/badge';
@@ -25,8 +26,10 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { getCategoryDisplayName, getResourceTypeDisplayName } from '@/lib/resource-library-service';
+import { Resource } from '@/lib/resource-library-service';
 
 interface ResourceDetailProps {
 	resourceId: string;
@@ -36,11 +39,11 @@ export function ResourceDetail({ resourceId }: ResourceDetailProps) {
 	const { user } = useAuth();
 
 	// Use Convex hooks
-	const resource = useQuery(api.resources.get, { id: resourceId });
+	const resource = useQuery(api.resources.get, { id: resourceId as Id<'resources'> }) as Resource;
 	const relatedResources = useQuery(api.resources.list, { limit: 3 }) || [];
 	const isFavorited = useQuery(api.favorites.isFavorited, {
-		userId: user?.id,
-		resourceId: resourceId,
+		userId: user?.id as Id<'users'>,
+		resourceId: resourceId as Id<'resources'>,
 	});
 
 	const addToFavoritesMutation = useMutation(api.favorites.add);
@@ -48,7 +51,7 @@ export function ResourceDetail({ resourceId }: ResourceDetailProps) {
 
 	const isLoading = resource === undefined;
 
-	const [isActionLoading, setIsActionLoading] = useState(false);
+	const [isActionLoading, setIsActionLoading] = useState<boolean>(false);
 
 	const handleToggleFavorite = async () => {
 		if (!resource || !user) return;
@@ -284,7 +287,7 @@ export function ResourceDetail({ resourceId }: ResourceDetailProps) {
 							<h2 className="text-xl font-semibold mb-4">Related Resources</h2>
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 								{relatedResources.map(relatedResource => (
-									<ResourceCard key={relatedResource.id} resource={relatedResource} />
+									<ResourceCard key={relatedResource._id} resource={relatedResource as Resource} />
 								))}
 							</div>
 						</div>

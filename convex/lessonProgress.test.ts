@@ -1,12 +1,19 @@
+import type { GenericMutationCtx } from 'convex/server';
 import { convexTest } from 'convex-test';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { api } from './_generated/api';
-import type { Id } from './_generated/dataModel';
+import type { DataModel, Id } from './_generated/dataModel';
 import schema from './schema';
 
+type TestCtx = GenericMutationCtx<DataModel>;
+
 describe('Lesson Progress Tracking', () => {
-	let t: ReturnType<typeof convexTest>;
+	// Type is inferred from convexTest(schema).withIdentity()
+
+	let t: any;
+
+	let baseT: any; // Keep reference to base instance for creating other identities
 	let testUserId: string;
 	let testCourseId: Id<'courses'>;
 	let testModuleId: Id<'courseModules'>;
@@ -14,10 +21,10 @@ describe('Lesson Progress Tracking', () => {
 	let testEnrollmentId: Id<'enrollments'>;
 
 	beforeEach(async () => {
-		const baseT = convexTest(schema);
+		baseT = convexTest(schema);
 
 		// Set up test data
-		await baseT.run(async ctx => {
+		await baseT.run(async (ctx: TestCtx) => {
 			// Create test user
 			const _userId = await ctx.db.insert('users', {
 				firstName: 'Test',
@@ -90,7 +97,6 @@ describe('Lesson Progress Tracking', () => {
 			testModuleId = moduleId;
 			testLessonId = lessonId;
 			testEnrollmentId = enrollmentId;
-			testPurchaseId = purchaseId;
 		});
 
 		// Create authenticated test instance
@@ -107,7 +113,7 @@ describe('Lesson Progress Tracking', () => {
 			expect(progressId).toBeDefined();
 
 			// Verify progress record created with correct fields (AC-101.1)
-			const progress = await t.run(async ctx => {
+			const progress = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db.get(progressId);
 			});
 
@@ -132,7 +138,7 @@ describe('Lesson Progress Tracking', () => {
 			expect(firstId).toBe(secondId);
 
 			// Verify only one progress record exists
-			const allProgress = await t.run(async ctx => {
+			const allProgress = await t.run(async (ctx: TestCtx) => {
 				const all = await ctx.db.query('lessonProgress').collect();
 				return all.filter(p => p.userId === testUserId && p.lessonId === testLessonId);
 			});
@@ -153,13 +159,58 @@ describe('Lesson Progress Tracking', () => {
 		});
 
 		it('throws error when user is not enrolled in course', async () => {
-			// Create different user not enrolled
-			const otherUserId = 'other-user-id';
-			const otherT = convexTest(schema).withIdentity({ subject: otherUserId });
+			// Create different user not enrolled in the same test instance
+			const otherUserId = 'other-user-id-not-enrolled';
+
+			// Create a new lesson in a different course that the other user can attempt to access
+			const otherInstructorId = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('users', {
+					firstName: 'Other',
+					lastName: 'Instructor',
+					email: 'other@test.com',
+					externalId: 'other-instructor-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+			});
+
+			const otherCourseId = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('courses', {
+					title: 'Other Course',
+					description: 'Test',
+					instructorId: otherInstructorId,
+					price: 100,
+					createdAt: Date.now(),
+					updatedAt: Date.now(),
+				});
+			});
+
+			const otherModuleId = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('courseModules', {
+					courseId: otherCourseId,
+					title: 'Other Module',
+					order: 0,
+					createdAt: Date.now(),
+				});
+			});
+
+			const otherLessonId = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('lessons', {
+					moduleId: otherModuleId,
+					title: 'Other Lesson',
+					type: 'video',
+					isPreview: false,
+					order: 0,
+					createdAt: Date.now(),
+				});
+			});
+
+			// Use different identity from base test instance
+			const otherT = baseT.withIdentity({ subject: otherUserId });
 
 			await expect(
 				otherT.mutation(api.lessonProgress.markComplete, {
-					lessonId: testLessonId,
+					lessonId: otherLessonId,
 				}),
 			).rejects.toThrow('Not enrolled in this course');
 		});
@@ -179,14 +230,14 @@ describe('Lesson Progress Tracking', () => {
 		// Subtask 2.3: Test recalculateProgress() calculation accuracy
 		it('calculates 50% progress for course with 10 lessons, 5 complete', async () => {
 			// Delete the initial lesson from beforeEach to have clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create exactly 10 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 10; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -201,7 +252,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark first 5 complete
 			for (let i = 0; i < 5; i++) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId: lessonIds[i],
@@ -221,7 +272,7 @@ describe('Lesson Progress Tracking', () => {
 
 		it('calculates accurate percentage for multi-module course', async () => {
 			// Delete initial module and lesson from beforeEach
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 				await ctx.db.delete(testModuleId);
 			});
@@ -231,7 +282,7 @@ describe('Lesson Progress Tracking', () => {
 			const lessonCounts = [3, 5, 2];
 
 			for (let m = 0; m < 3; m++) {
-				const moduleId = await t.run(async ctx => {
+				const moduleId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('courseModules', {
 						courseId: testCourseId,
 						title: `Module ${m + 1}`,
@@ -243,7 +294,7 @@ describe('Lesson Progress Tracking', () => {
 
 				// Create lessons for this module
 				for (let l = 0; l < lessonCounts[m]; l++) {
-					await t.run(async ctx => {
+					await t.run(async (ctx: TestCtx) => {
 						await ctx.db.insert('lessons', {
 							moduleId,
 							title: `Module ${m + 1} Lesson ${l + 1}`,
@@ -257,7 +308,7 @@ describe('Lesson Progress Tracking', () => {
 			}
 
 			// Mark 5 lessons complete (across modules)
-			const allLessons = await t.run(async ctx => {
+			const allLessons = await t.run(async (ctx: TestCtx) => {
 				const allDbLessons = await ctx.db.query('lessons').collect();
 				const lessons = [];
 				for (const moduleId of modules) {
@@ -268,7 +319,7 @@ describe('Lesson Progress Tracking', () => {
 			});
 
 			for (let i = 0; i < 5; i++) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId: allLessons[i]._id,
@@ -287,14 +338,14 @@ describe('Lesson Progress Tracking', () => {
 
 		it('sets completedAt timestamp when progress reaches 100%', async () => {
 			// Delete initial lesson for clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create 5 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 5; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -309,7 +360,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark all 5 complete
 			for (const lessonId of lessonIds) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId,
@@ -330,14 +381,14 @@ describe('Lesson Progress Tracking', () => {
 
 		it('keeps completedAt null when progress is 99%', async () => {
 			// Delete initial lesson for clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create 10 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 10; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -352,7 +403,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark 9 of 10 complete (90%)
 			for (let i = 0; i < 9; i++) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId: lessonIds[i],
@@ -379,14 +430,14 @@ describe('Lesson Progress Tracking', () => {
 		// Subtask 2.5: Test getUserProgress() data accuracy
 		it('returns correct completed/total counts and completedLessonIds', async () => {
 			// Delete initial lesson for clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create 10 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 10; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -401,7 +452,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark 5 complete
 			for (let i = 0; i < 5; i++) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId: lessonIds[i],
@@ -411,7 +462,7 @@ describe('Lesson Progress Tracking', () => {
 			}
 
 			// Update enrollment progress
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.patch(testEnrollmentId, { progressPercent: 50 });
 			});
 
@@ -456,14 +507,14 @@ describe('Lesson Progress Tracking', () => {
 		// Subtask 2.6: Test getNextIncompleteLesson() logic
 		it('returns lesson 6 when lessons 1-5 are complete', async () => {
 			// Delete initial lesson for clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create 10 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 10; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -478,7 +529,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark lessons 0-4 complete (lessons 1-5)
 			for (let i = 0; i < 5; i++) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId: lessonIds[i],
@@ -497,14 +548,14 @@ describe('Lesson Progress Tracking', () => {
 
 		it('returns first lesson when all lessons are complete', async () => {
 			// Delete initial lesson for clean count
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 			});
 
 			// Create 5 lessons
 			const lessonIds: Id<'lessons'>[] = [];
 			for (let i = 0; i < 5; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: testModuleId,
 						title: `Lesson ${i + 1}`,
@@ -519,7 +570,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Mark all complete
 			for (const lessonId of lessonIds) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId,
@@ -538,13 +589,13 @@ describe('Lesson Progress Tracking', () => {
 
 		it('respects module and lesson order correctly', async () => {
 			// Delete initial module and lesson for clean test
-			await t.run(async ctx => {
+			await t.run(async (ctx: TestCtx) => {
 				await ctx.db.delete(testLessonId);
 				await ctx.db.delete(testModuleId);
 			});
 
 			// Create 2 modules
-			const module1 = await t.run(async ctx => {
+			const module1 = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db.insert('courseModules', {
 					courseId: testCourseId,
 					title: 'Module 1',
@@ -553,7 +604,7 @@ describe('Lesson Progress Tracking', () => {
 				});
 			});
 
-			const module2 = await t.run(async ctx => {
+			const module2 = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db.insert('courseModules', {
 					courseId: testCourseId,
 					title: 'Module 2',
@@ -565,7 +616,7 @@ describe('Lesson Progress Tracking', () => {
 			// Module 1: 3 lessons
 			const module1Lessons: Id<'lessons'>[] = [];
 			for (let i = 0; i < 3; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: module1,
 						title: `M1 Lesson ${i + 1}`,
@@ -581,7 +632,7 @@ describe('Lesson Progress Tracking', () => {
 			// Module 2: 3 lessons
 			const module2Lessons: Id<'lessons'>[] = [];
 			for (let i = 0; i < 3; i++) {
-				const lessonId = await t.run(async ctx => {
+				const lessonId = await t.run(async (ctx: TestCtx) => {
 					return await ctx.db.insert('lessons', {
 						moduleId: module2,
 						title: `M2 Lesson ${i + 1}`,
@@ -596,7 +647,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Complete all of Module 1
 			for (const lessonId of module1Lessons) {
-				await t.run(async ctx => {
+				await t.run(async (ctx: TestCtx) => {
 					await ctx.db.insert('lessonProgress', {
 						userId: testUserId,
 						lessonId,
@@ -617,7 +668,7 @@ describe('Lesson Progress Tracking', () => {
 			const unauthT = convexTest(schema);
 
 			// Set up test course data for unauthenticated test
-			await unauthT.run(async ctx => {
+			await unauthT.run(async (ctx: TestCtx) => {
 				await ctx.db.insert('courseModules', {
 					courseId: testCourseId,
 					title: 'Test Module',

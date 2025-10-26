@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/auth';
 
 export default function SettingsPage() {
-	const { user, role } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 
 	// Form state
@@ -113,9 +113,14 @@ export default function SettingsPage() {
 
 									<div className="space-y-2">
 										<Label htmlFor="role">Account Type</Label>
-										<Input id="role" value={role ? role.charAt(0).toUpperCase() + role.slice(1) : 'Student'} disabled />
+										<Input
+											id="role"
+											value={user.isInstructor ? 'Instructor' : user.isAdmin ? 'Admin' : 'Student'}
+											disabled
+											readOnly
+										/>
 										<p className="text-sm text-muted-foreground">
-											{role === 'student'
+											{!user.isInstructor
 												? "If you're a licensed medical professional and want to become an instructor, please contact support."
 												: 'You have instructor privileges on this platform.'}
 										</p>

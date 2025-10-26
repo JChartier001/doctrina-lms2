@@ -23,11 +23,11 @@ export function CourseRecommendationCard({ course, showReason = true }: CourseRe
 					alt={course.title}
 					className="object-cover w-full h-full"
 				/>
-				<Badge className={`absolute top-2 right-2 ${course.level === 'advanced' ? 'bg-primary' : ''}`}>
-					{course.level.charAt(0).toUpperCase() + course.level.slice(1)}
+				<Badge className={`capitalize absolute top-2 right-2 ${course.level === 'advanced' ? 'bg-primary' : ''}`}>
+					{course.level}
 				</Badge>
 			</div>
-			<CardContent className="p-4 flex-grow">
+			<CardContent className="p-4 grow">
 				<h3 className="font-semibold text-lg mb-1 line-clamp-2">{course.title}</h3>
 				<p className="text-sm text-muted-foreground mb-3 line-clamp-2">{course.description}</p>
 				<div className="flex items-center text-sm mb-2">

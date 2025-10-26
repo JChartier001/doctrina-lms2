@@ -31,55 +31,56 @@ import { useAuth } from '@/lib/auth';
 import {
 	type Certificate,
 	type CertificateTemplate,
-	getAllCertificateTemplates,
+	// getAllCertificateTemplates,
 	useRemoveCertificate,
 } from '@/lib/certificate-service';
 
 // Mock function to get all certificates (admin only)
 function getAllCertificates(): Certificate[] {
+	return [] as Certificate[];
 	// In a real app, this would fetch from an API
-	return [
-		{
-			id: 'cert-1',
-			userId: '3', // student user ID
-			userName: 'Michael Chen',
-			courseId: '1',
-			courseName: 'Advanced Botox Techniques',
-			instructorId: '2',
-			instructorName: 'Dr. Sarah Johnson',
-			issueDate: '2023-04-15',
-			verificationCode: 'DOCTRINA-ABC123',
-			templateId: 'template-1',
-		},
-		{
-			id: 'cert-2',
-			userId: '3', // student user ID
-			userName: 'Michael Chen',
-			courseId: '2',
-			courseName: 'Dermal Fillers Masterclass',
-			instructorId: '2',
-			instructorName: 'Dr. Sarah Johnson',
-			issueDate: '2023-05-20',
-			verificationCode: 'DOCTRINA-DEF456',
-			templateId: 'template-2',
-		},
-		{
-			id: 'cert-3',
-			userId: '4',
-			userName: 'Emily Rodriguez',
-			courseId: '1',
-			courseName: 'Advanced Botox Techniques',
-			instructorId: '2',
-			instructorName: 'Dr. Sarah Johnson',
-			issueDate: '2023-06-10',
-			verificationCode: 'DOCTRINA-GHI789',
-			templateId: 'template-1',
-		},
-	];
+	// return [
+	// 	{
+	// 		id: 'cert-1',
+	// 		userId: '3', // student user ID
+	// 		userName: 'Michael Chen',
+	// 		courseId: '1',
+	// 		courseName: 'Advanced Botox Techniques',
+	// 		instructorId: '2',
+	// 		instructorName: 'Dr. Sarah Johnson',
+	// 		issueDate: '2023-04-15',
+	// 		verificationCode: 'DOCTRINA-ABC123',
+	// 		templateId: 'template-1',
+	// 	},
+	// 	{
+	// 		id: 'cert-2',
+	// 		userId: '3', // student user ID
+	// 		userName: 'Michael Chen',
+	// 		courseId: '2',
+	// 		courseName: 'Dermal Fillers Masterclass',
+	// 		instructorId: '2',
+	// 		instructorName: 'Dr. Sarah Johnson',
+	// 		issueDate: '2023-05-20',
+	// 		verificationCode: 'DOCTRINA-DEF456',
+	// 		templateId: 'template-2',
+	// 	},
+	// 	{
+	// 		id: 'cert-3',
+	// 		userId: '4',
+	// 		userName: 'Emily Rodriguez',
+	// 		courseId: '1',
+	// 		courseName: 'Advanced Botox Techniques',
+	// 		instructorId: '2',
+	// 		instructorName: 'Dr. Sarah Johnson',
+	// 		issueDate: '2023-06-10',
+	// 		verificationCode: 'DOCTRINA-GHI789',
+	// 		templateId: 'template-1',
+	// 	},
+	// ];
 }
 
 export default function AdminCertificatesPage() {
-	const { user, role, isLoading } = useAuth();
+	const { user, isLoading } = useAuth();
 	const router = useRouter();
 
 	// Convex mutation for removing certificates
@@ -96,8 +97,9 @@ export default function AdminCertificatesPage() {
 		setCertificates(allCertificates);
 		setFilteredCertificates(allCertificates);
 
-		const allTemplates = getAllCertificateTemplates();
-		setTemplates(allTemplates);
+		const allTemplates = [] as CertificateTemplate[];
+		// getAllCertificateTemplates();
+		setTemplates(allTemplates as CertificateTemplate[]);
 	});
 
 	const performFilter = useEffectEvent(() => {
@@ -120,7 +122,7 @@ export default function AdminCertificatesPage() {
 	useEffect(() => {
 		if (isLoading) return;
 
-		if (!user || role !== 'admin') {
+		if (!user || !user.isAdmin) {
 			router.push('/sign-in');
 			return;
 		}
@@ -128,7 +130,7 @@ export default function AdminCertificatesPage() {
 		if (certificates.length === 0) {
 			loadData();
 		}
-	}, [user, role, isLoading, router, loadData]);
+	}, [user, isLoading, router, loadData]);
 
 	useEffect(() => {
 		performFilter();
@@ -157,7 +159,7 @@ export default function AdminCertificatesPage() {
 		}
 	};
 
-	if (isLoading || !user || role !== 'admin') {
+	if (isLoading || !user || !user.isAdmin) {
 		return null;
 	}
 

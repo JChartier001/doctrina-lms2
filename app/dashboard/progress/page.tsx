@@ -4,7 +4,7 @@ import { Award, BookOpen, Calendar, ChevronRight, Clock, Target, TrendingUp } fr
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { ActivityTimeline } from '@/components/activity-timeline';
+// import { ActivityTimeline } from '@/components/activity-timeline';
 import { CourseProgressCard } from '@/components/course-progress-card';
 import { LearningGoals } from '@/components/learning-goals';
 import { ProgressChart } from '@/components/progress-chart';
@@ -259,9 +259,7 @@ export default function StudentProgressDashboard() {
 								<CardTitle>Recent Activity</CardTitle>
 								<CardDescription>Your latest learning activities</CardDescription>
 							</CardHeader>
-							<CardContent>
-								<ActivityTimeline activities={mockData.recentActivity} />
-							</CardContent>
+							<CardContent>{/* <ActivityTimeline activities={mockData.recentActivity as Activity[]	} /> */}</CardContent>
 						</Card>
 					</div>
 

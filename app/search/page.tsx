@@ -28,10 +28,10 @@ export default function SearchPage() {
 	// Content type options for filtering
 	const contentTypeOptions: { value: SearchResultType; label: string }[] = [
 		{ value: 'course', label: 'Courses' },
-		{ value: 'program', label: 'Programs' },
-		{ value: 'instructor', label: 'Instructors' },
-		{ value: 'community', label: 'Community Posts' },
-		{ value: 'lesson', label: 'Lessons' },
+		// { value: 'program', label: 'Programs' },
+		// { value: 'instructor', label: 'Instructors' },
+		// { value: 'community', label: 'Community Posts' },
+		// { value: 'lesson', label: 'Lessons' },
 		{ value: 'resource', label: 'Resources' },
 	];
 
@@ -104,7 +104,6 @@ export default function SearchPage() {
 
 				<SearchBar
 					placeholder="Search for courses, programs, topics..."
-					value={searchQuery}
 					onSearch={handleSearch}
 					showButton
 					autoFocus

@@ -22,7 +22,7 @@ import {
 import { useAuth } from '@/lib/auth';
 
 export function UserNav() {
-	const { user, role, logout } = useAuth();
+	const { user, logout } = useAuth();
 	const router = useRouter();
 
 	if (!user) {
@@ -55,7 +55,9 @@ export function UserNav() {
 						<div className="flex flex-col space-y-1">
 							<p className="text-sm font-medium leading-none">{user.name}</p>
 							<p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-							<p className="text-xs leading-none text-muted-foreground capitalize">{role}</p>
+							<p className="text-xs leading-none text-muted-foreground capitalize">
+								{user.isInstructor ? 'Instructor' : user.isAdmin ? 'Admin' : 'Student'}
+							</p>
 						</div>
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
@@ -76,7 +78,7 @@ export function UserNav() {
 								<span>Purchase History</span>
 							</Link>
 						</DropdownMenuItem>
-						{role === 'instructor' && (
+						{user.isInstructor && (
 							<>
 								<DropdownMenuItem asChild>
 									<Link href="/instructor/live-sessions">
@@ -90,7 +92,7 @@ export function UserNav() {
 								</DropdownMenuItem>
 							</>
 						)}
-						{role === 'admin' && (
+						{user.isAdmin && (
 							<DropdownMenuItem onClick={() => router.push('/admin/dashboard')}>
 								Admin Dashboard
 								<DropdownMenuShortcut>⇧A</DropdownMenuShortcut>

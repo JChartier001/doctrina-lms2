@@ -38,7 +38,14 @@ export const getInstructorAnalytics = query({
 		const courseIds = courses.map(c => c._id);
 
 		// Get purchases for instructor's courses
-		const purchases = [];
+		const purchases: Array<{
+			_id: Id<'purchases'>;
+			userId: string;
+			courseId: Id<'courses'>;
+			amount: number;
+			status: 'open' | 'complete' | 'expired';
+			createdAt: number;
+		}> = [];
 		for (const courseId of courseIds) {
 			const coursePurchases = await ctx.db
 				.query('purchases')

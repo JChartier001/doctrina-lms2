@@ -6,8 +6,14 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
-import { useCourseRecommendations, usePathwayRecommendations, useTrendingContent } from '@/lib/recommendation-service';
+import {
+	CourseRecommendation,
+	useCourseRecommendations,
+	usePathwayRecommendations,
+	useTrendingContent,
+} from '@/lib/recommendation-service';
 
 import { RecommendationSlider } from './recommendation-slider';
 
@@ -15,8 +21,8 @@ export function DashboardRecommendations() {
 	const { user } = useAuth();
 
 	// Use Convex hooks for recommendations
-	const courseRecs = useCourseRecommendations(user?.id, 6);
-	const pathwayRecs = usePathwayRecommendations(user?.id, 4);
+	const courseRecs = useCourseRecommendations(user?.id as Id<'users'>, 6);
+	const pathwayRecs = usePathwayRecommendations(user?.id as Id<'users'>, 4);
 	const trendingRecs = useTrendingContent(6);
 
 	// Combine loading states
@@ -26,7 +32,7 @@ export function DashboardRecommendations() {
 	// Get the data
 	const recommendedCourses = courseRecs.data || [];
 	const recommendedPathways = pathwayRecs.data || [];
-	const trendingCourses = trendingRecs.data?.filter(item => item.type === 'course') || [];
+	const trendingCourses = trendingRecs.data?.filter(item => item?.type === 'course') || [];
 
 	// For now, skill-based recommendations are the same as regular recommendations
 	const skillBasedCourses = recommendedCourses;
@@ -98,7 +104,7 @@ export function DashboardRecommendations() {
 							<RecommendationSlider
 								title="Trending in Your Areas"
 								description="Popular courses in your areas of interest"
-								courses={trendingCourses}
+								courses={trendingCourses as unknown as CourseRecommendation[]}
 							/>
 						)}
 					</TabsContent>

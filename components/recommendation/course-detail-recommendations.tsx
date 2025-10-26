@@ -4,11 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-	type CourseRecommendation,
-	getRecommendationsBasedOnView,
-	getSimilarCourses,
-} from '@/lib/recommendation-service';
+import { type CourseRecommendation } from '@/lib/recommendation-service';
 
 import { RecommendationSlider } from './recommendation-slider';
 
@@ -25,9 +21,12 @@ export function CourseDetailRecommendations({ courseId }: CourseDetailRecommenda
 		async function loadRecommendations() {
 			try {
 				setLoading(true);
+				//TODO: Add similar and view based courses
 				const [similar, viewBased] = await Promise.all([
-					getSimilarCourses(courseId, 6),
-					getRecommendationsBasedOnView(courseId, 'course', 6),
+					[],
+					[],
+					// getSimilarCourses(courseId, 6),
+					// getRecommendationsBasedOnView(courseId, 'course', 6),
 				]);
 
 				setSimilarCourses(similar);

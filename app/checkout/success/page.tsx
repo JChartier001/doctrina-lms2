@@ -7,7 +7,8 @@ import { useEffect, useEffectEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { getStoredSessions } from '@/lib/payment-service';
+import { CheckoutSession } from '@/lib/payment-service';
+// import { getStoredSessions } from '@/lib/payment-service';
 
 export default function CheckoutSuccessPage() {
 	const router = useRouter();
@@ -17,7 +18,8 @@ export default function CheckoutSuccessPage() {
 	const [session, setSession] = useState<Record<string, unknown> | null>(null);
 
 	const loadSession = useEffectEvent(() => {
-		const sessions = getStoredSessions();
+		// const sessions = getStoredSessions();
+		const sessions = [] as CheckoutSession[];
 		const foundSession = sessions.find(s => s.id === sessionId);
 
 		if (foundSession) {
@@ -31,7 +33,7 @@ export default function CheckoutSuccessPage() {
 			return;
 		}
 
-		const sessions = getStoredSessions();
+		const sessions = [] as CheckoutSession[];
 		const foundSession = sessions.find(s => s.id === sessionId);
 
 		if (!foundSession) {
@@ -72,22 +74,22 @@ export default function CheckoutSuccessPage() {
 							<h3 className="font-medium mb-2">Order Details</h3>
 							<div className="grid grid-cols-2 gap-2 text-sm">
 								<div className="text-muted-foreground">Course:</div>
-								<div>{session.courseName}</div>
+								{/* <div>{session.courseName}</div> */}
 
 								<div className="text-muted-foreground">Order ID:</div>
-								<div className="font-mono text-xs">{session.id}</div>
+								{/* <div className="font-mono text-xs">{session._id}</div> */}
 
 								<div className="text-muted-foreground">Date:</div>
-								<div>{new Date(session.created).toLocaleDateString()}</div>
+								{/* <div>{new Date(session.created).toLocaleDateString()}</div> */}
 
 								<div className="text-muted-foreground">Amount:</div>
-								<div>${session.amount.toFixed(2)}</div>
+								{/* <div>${session.amount.toFixed(2)}</div> */}
 
 								<div className="text-muted-foreground">Payment Method:</div>
 								<div className="capitalize">
-									{session.paymentIntent?.paymentMethod?.type.replace('_', ' ')}
+									{/* {session.paymentIntent?.paymentMethod?.type.replace('_', ' ')}
 									{session.paymentIntent?.paymentMethod?.last4 &&
-										` (**** ${session.paymentIntent.paymentMethod.last4})`}
+										` (**** ${session.paymentIntent.paymentMethod.last4})`} */}
 								</div>
 							</div>
 						</div>
@@ -97,7 +99,7 @@ export default function CheckoutSuccessPage() {
 							<ul className="space-y-2 text-sm text-green-700">
 								<li className="flex items-start">
 									<span className="mr-2">•</span>
-									<span>You now have full access to "{session.courseName}"</span>
+									{/* <span>You now have full access to "{session.courseName}"</span> */}
 								</li>
 								<li className="flex items-start">
 									<span className="mr-2">•</span>
@@ -113,7 +115,7 @@ export default function CheckoutSuccessPage() {
 
 					<CardFooter className="flex justify-center gap-4">
 						<Button asChild>
-							<Link href={`/courses/${session.courseId}`}>
+							<Link href={`/courses/${session._id}`}>
 								Go to Course
 								<ArrowRight className="ml-2 h-4 w-4" />
 							</Link>

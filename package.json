@@ -96,6 +96,7 @@
 		"@types/node": "^24.9.1",
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
+		"@vitest/coverage-v8": "4.0.3",
 		"@vitest/ui": "^4.0.3",
 		"convex-test": "^0.0.38",
 		"eslint": "^9.38.0",

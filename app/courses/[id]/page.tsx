@@ -3,7 +3,6 @@
 import { Check, Clock, MessageSquare, ShoppingCart, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +18,6 @@ import { useUserPurchases } from '@/lib/payment-service';
 export default function CourseDetailPage() {
 	const { user, isLoading } = useAuth();
 	const router = useRouter();
-	const [hasPurchased, setHasPurchased] = useState(false);
 
 	const params = useParams();
 	const id = params.id;
@@ -33,10 +31,6 @@ export default function CourseDetailPage() {
 	// Check if user has already purchased this course (derived state)
 	const hasPurchased =
 		!isLoading && user && purchases ? purchases.some(p => p.courseId === params.id && p.status === 'complete') : false;
-
-	useEffect(() => {
-		setHasPurchased(hasPurchased);
-	}, [hasPurchased]);
 
 	// Handle loading and error states
 	if (courseLoading) {

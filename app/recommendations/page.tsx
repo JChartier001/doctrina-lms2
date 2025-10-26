@@ -7,6 +7,7 @@ import { RecommendationSlider } from '@/components/recommendation/recommendation
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import {
 	type CourseRecommendation,
@@ -20,8 +21,8 @@ export default function RecommendationsPage() {
 	const { user, isLoading } = useAuth();
 	const router = useRouter();
 	// Use Convex hooks for recommendations
-	const courseRecs = useCourseRecommendations(user?.id, 12);
-	const pathwayRecs = usePathwayRecommendations(user?.id, 6);
+	const courseRecs = useCourseRecommendations(user?.id as Id<'users'>, 12);
+	const pathwayRecs = usePathwayRecommendations(user?.id as Id<'users'>, 6);
 	const trendingRecs = useTrendingContent(12);
 
 	// Get the data
@@ -31,15 +32,15 @@ export default function RecommendationsPage() {
 
 	// Map trending content to CourseRecommendation format
 	const trendingCourses: CourseRecommendation[] = (trendingRecs.data || [])
-		.filter(item => item.type === 'course')
+		.filter(item => item?.type === 'course')
 		.map(item => ({
-			id: item.id,
-			title: item.title,
-			description: `Popular course with ${item.popularity || 0} engagements`,
+			id: item?.id,
+			title: item?.title,
+			description: `Popular course with ${item?.popularity || 0} engagements`,
 			instructor: 'Various Instructors', // TODO: Get from course data
-			thumbnailUrl: item.thumbnailUrl,
+			thumbnailUrl: item?.thumbnailUrl,
 			rating: 4.5, // TODO: Get from course data
-			reviewCount: item.popularity || 0,
+			reviewCount: item?.popularity || 0,
 			level: 'intermediate' as const, // TODO: Get from course data
 			duration: '8 weeks', // TODO: Get from course data
 			price: 99.99, // TODO: Get from course data

@@ -6,21 +6,27 @@ import type React from 'react';
 import { createContext, useContext, useMemo } from 'react';
 
 import { api } from '@/convex/_generated/api';
+import { Id } from '@/convex/_generated/dataModel';
 
 type Role = 'admin' | 'instructor' | 'student';
 
 type User = {
-	id: string;
+	id: Id<'users'>;
 	name: string;
 	email: string;
 	image?: string;
-	role: Role;
+	bio?: string;
+	isInstructor: boolean;
+	isAdmin: boolean;
+	isVerified: boolean;
 };
 
 type AuthContextType = {
 	user: User | null;
-	role: Role | null;
+	isInstructor: boolean;
+	isAdmin: boolean;
 	isLoading: boolean;
+
 	login: (email: string, password: string) => Promise<boolean>;
 	signup: (name: string, email: string, password: string, role: Role | string) => Promise<boolean>;
 	logout: () => void;
@@ -45,7 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				name: `${convexUser.firstName} ${convexUser.lastName}`,
 				email: convexUser.email,
 				image: convexUser.image,
-				role: convexUser.role as Role,
+				isInstructor: convexUser.isInstructor,
+				isAdmin: convexUser.isAdmin,
+				// TODO: Add verification status
+				isVerified: false,
 			};
 		}
 		return null;
@@ -71,7 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		<AuthContext.Provider
 			value={{
 				user,
-				role: user?.role ?? null,
+				isInstructor: user?.isInstructor ?? false,
+				isAdmin: user?.isAdmin ?? false,
 				isLoading,
 				login,
 				signup,

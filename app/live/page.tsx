@@ -1,9 +1,10 @@
 'use client';
 
+import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -23,7 +24,7 @@ export default function LiveSessionsPage() {
 
 	const upcomingSessions = upcomingSessionsResult.data || [];
 	const pastSessions = pastSessionsResult.data || [];
-	const _isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
+	// const _isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
 
 	useEffect(() => {
 		if (!user) {
@@ -48,7 +49,7 @@ export default function LiveSessionsPage() {
 
 				<TabsContent value="upcoming" className="space-y-6">
 					{upcomingSessions.map(session => (
-						<Card key={session.id}>
+						<Card key={session._id}>
 							<CardHeader>
 								<div className="flex items-center justify-between">
 									<div>
@@ -71,20 +72,20 @@ export default function LiveSessionsPage() {
 							</CardHeader>
 							<CardContent>
 								<div className="flex items-center gap-4 mb-4">
-									<Avatar className="h-10 w-10">
+									{/* <Avatar className="h-10 w-10">
 										<AvatarImage src={session.instructorImage || '/placeholder.svg'} alt={session.instructorName} />
 										<AvatarFallback>{session.instructorName.charAt(0)}</AvatarFallback>
 									</Avatar>
 									<div>
 										<p className="font-medium">{session.instructorName}</p>
-										<p className="text-sm text-muted-foreground">{session.participants.length} attendees registered</p>
-									</div>
+										<p className="text-sm text-muted-foreground">{session.participants.length} attendees registered</p> */}
+									{/* </div> */}
 								</div>
 
 								<p className="text-sm mb-4">{session.description}</p>
 
 								<div className="flex gap-2">
-									<Button className="flex-1" onClick={() => router.push(`/live/${session.id}`)}>
+									<Button className="flex-1" onClick={() => router.push(`/live/${session._id}`)}>
 										{session.status === 'live' ? 'Join Now' : 'View Details'}
 									</Button>
 									<Button variant="outline" className="flex-1">
@@ -98,7 +99,7 @@ export default function LiveSessionsPage() {
 
 				<TabsContent value="past" className="space-y-6">
 					{pastSessions.map(session => (
-						<Card key={session.id}>
+						<Card key={session._id}>
 							<CardHeader>
 								<div className="flex items-center justify-between">
 									<div>
@@ -121,7 +122,7 @@ export default function LiveSessionsPage() {
 							</CardHeader>
 							<CardContent>
 								<div className="flex items-center gap-4 mb-4">
-									<Avatar className="h-10 w-10">
+									{/* <Avatar className="h-10 w-10">
 										<AvatarImage src={session.instructorImage || '/placeholder.svg'} alt={session.instructorName} />
 										<AvatarFallback>{session.instructorName.charAt(0)}</AvatarFallback>
 									</Avatar>
@@ -130,7 +131,7 @@ export default function LiveSessionsPage() {
 										<p className="text-sm text-muted-foreground">
 											{session.participants.length} attendees participated
 										</p>
-									</div>
+									</div> */}
 								</div>
 
 								<p className="text-sm mb-4">{session.description}</p>
@@ -154,7 +155,11 @@ export default function LiveSessionsPage() {
 						<CardContent>
 							<div className="flex flex-col md:flex-row gap-6">
 								<div className="md:w-1/2">
-									<Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md border" />
+									<Calendar
+										selected={date ? dayjs(date) : undefined}
+										onSelect={date => setDate(date ? date.toDate() : undefined)}
+										className="rounded-md border"
+									/>
 								</div>
 								<div className="md:w-1/2">
 									<h3 className="font-medium mb-4">
@@ -172,7 +177,7 @@ export default function LiveSessionsPage() {
 										upcomingSessions
 											.filter(session => new Date(session.scheduledFor).toDateString() === date?.toDateString())
 											.map(session => (
-												<div key={session.id} className="mb-4 p-4 border rounded-lg">
+												<div key={session._id} className="mb-4 p-4 border rounded-lg">
 													<div className="flex justify-between items-center mb-2">
 														<h4 className="font-medium">{session.title}</h4>
 														<Badge variant="outline">
@@ -182,8 +187,8 @@ export default function LiveSessionsPage() {
 															})}
 														</Badge>
 													</div>
-													<p className="text-sm text-muted-foreground mb-2">Instructor: {session.instructorName}</p>
-													<Button size="sm" onClick={() => router.push(`/live/${session.id}`)}>
+													{/* <p className="text-sm text-muted-foreground mb-2">Instructor: {session.instructorId.name}</p> */}
+													<Button size="sm" onClick={() => router.push(`/live/${session._id}`)}>
 														{session.status === 'live' ? 'Join Now' : 'View Details'}
 													</Button>
 												</div>

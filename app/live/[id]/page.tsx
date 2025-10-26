@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { VideoRoom } from '@/components/video-room';
+import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { useJoinSession, useLeaveSession, useLiveSession } from '@/lib/live-session-service';
 
@@ -17,7 +18,7 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 	const router = useRouter();
 
 	// Use Convex hooks
-	const sessionResult = useLiveSession(params.id); // TODO: Fix type casting
+	const sessionResult = useLiveSession(params.id as Id<'liveSessions'>); // TODO: Fix type casting
 	const joinSessionFn = useJoinSession();
 	const leaveSessionFn = useLeaveSession();
 
@@ -82,7 +83,7 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 						<CardHeader>
 							<CardTitle className="text-2xl">{session.title}</CardTitle>
 							<CardDescription>
-								Hosted by {session.instructorName} • {session.status === 'live' ? 'Live now' : 'Starting soon'}
+								{/* Hosted by {session.instructorName} • {session.status === 'live' ? 'Live now' : 'Starting soon'} */}
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -108,7 +109,7 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 								</div>
 								<div className="flex items-center">
 									<Users className="mr-1 h-4 w-4" />
-									{session.participants.length} / {session.maxParticipants} participants
+									{/* {session.participants.length} / {session.maxParticipants} participants */}
 								</div>
 								{session.isRecorded && (
 									<div className="flex items-center">

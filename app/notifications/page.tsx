@@ -23,8 +23,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
-import { formatRelativeTime, type Notification } from '@/lib/notification-service';
+import dayjs from '@/lib/dayjs';
+import { type Notification } from '@/lib/notification-service';
 
 export default function NotificationsPage() {
 	const { user } = useAuth();
@@ -44,8 +46,8 @@ export default function NotificationsPage() {
 
 		setLoading(true);
 		try {
-			const userNotifications = await fetchUserNotifications(user.id);
-			setNotifications(userNotifications);
+			const userNotifications = await fetchUserNotifications(user.id as Id<'users'>);
+			setNotifications(userNotifications as unknown as Notification[]);
 		} catch (error) {
 			console.error('Failed to fetch notifications:', error);
 		} finally {
@@ -55,9 +57,9 @@ export default function NotificationsPage() {
 
 	const handleMarkAsRead = async (id: string) => {
 		try {
-			await markNotificationAsRead(id);
+			await markNotificationAsRead(id as Id<'notifications'>);
 			setNotifications(
-				notifications.map(notification => (notification.id === id ? { ...notification, read: true } : notification)),
+				notifications.map(notification => (notification._id === id ? { ...notification, read: true } : notification)),
 			);
 		} catch (error) {
 			console.error('Failed to mark notification as read:', error);
@@ -68,7 +70,7 @@ export default function NotificationsPage() {
 		if (!user) return;
 
 		try {
-			await markAllNotificationsAsRead(user.id);
+			await markAllNotificationsAsRead(user.id as Id<'users'>);
 			setNotifications(notifications.map(notification => ({ ...notification, read: true })));
 		} catch (error) {
 			console.error('Failed to mark all notifications as read:', error);
@@ -77,8 +79,8 @@ export default function NotificationsPage() {
 
 	const handleDeleteNotification = async (id: string) => {
 		try {
-			await deleteUserNotification(id);
-			setNotifications(notifications.filter(notification => notification.id !== id));
+			await deleteUserNotification(id as Id<'notifications'>);
+			setNotifications(notifications.filter(notification => notification._id !== id));
 		} catch (error) {
 			console.error('Failed to delete notification:', error);
 		}
@@ -86,7 +88,7 @@ export default function NotificationsPage() {
 
 	const handleNotificationClick = (notification: Notification) => {
 		if (!notification.read) {
-			handleMarkAsRead(notification.id);
+			handleMarkAsRead(notification._id);
 		}
 
 		if (notification.link) {
@@ -452,7 +454,7 @@ export default function NotificationsPage() {
 						<div className="divide-y">
 							{filteredNotifications.map(notification => (
 								<div
-									key={notification.id}
+									key={notification._id}
 									className={`flex items-start gap-4 p-4 ${!notification.read ? 'bg-muted/30' : ''}`}
 								>
 									{getIconForType(notification.type)}
@@ -461,7 +463,7 @@ export default function NotificationsPage() {
 											{notification.title}
 										</h3>
 										<p className="text-sm text-muted-foreground">{notification.description}</p>
-										<p className="mt-1 text-xs text-muted-foreground">{formatRelativeTime(notification.createdAt)}</p>
+										<p className="mt-1 text-xs text-muted-foreground">{dayjs(notification.createdAt).fromNow()}</p>
 									</div>
 									<div className="flex items-center gap-2">
 										{!notification.read && (
@@ -470,7 +472,7 @@ export default function NotificationsPage() {
 												size="icon"
 												onClick={e => {
 													e.stopPropagation();
-													handleMarkAsRead(notification.id);
+													handleMarkAsRead(notification._id);
 												}}
 											>
 												<CheckCircle className="h-4 w-4" />
@@ -482,7 +484,7 @@ export default function NotificationsPage() {
 											size="icon"
 											onClick={e => {
 												e.stopPropagation();
-												handleDeleteNotification(notification.id);
+												handleDeleteNotification(notification._id);
 											}}
 										>
 											<Trash2 className="h-4 w-4" />

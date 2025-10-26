@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/lib/auth';
 
 export default function ProfilePage() {
-	const { user, role } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 
 	// Form state
@@ -100,9 +100,10 @@ export default function ProfilePage() {
 	];
 
 	const initializeForm = useEffectEvent(() => {
-		setName(user.name || '');
+		setName(user?.name || '');
 		setBio(
-			'Board-certified dermatologist with 10+ years of experience in medical aesthetics, specializing in non-surgical facial rejuvenation techniques.',
+			user?.bio ||
+				'Board-certified dermatologist with 10+ years of experience in medical aesthetics, specializing in non-surgical facial rejuvenation techniques.',
 		);
 		setSpecialty('Dermatology');
 		setLocation('New York, NY');
@@ -137,18 +138,18 @@ export default function ProfilePage() {
 						<CardContent className="p-6">
 							<div className="flex flex-col items-center text-center">
 								<Avatar className="h-24 w-24 mb-4">
-									<AvatarImage src={user.image || '/placeholder.svg'} alt={user.name} />
+									<AvatarImage src={user?.image || '/placeholder.svg'} alt={user?.name || ''} />
 									<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
 								</Avatar>
 
-								<h1 className="text-2xl font-bold">{user.name}</h1>
-								<p className="text-muted-foreground capitalize">{role}</p>
+								<h1 className="text-2xl font-bold">{user?.name}</h1>
+								<p className="text-muted-foreground capitalize">{user.isInstructor ? 'Instructor' : 'Student'}</p>
 
-								{role === 'instructor' && user.isVerified && <Badge className="mt-2">Verified Instructor</Badge>}
+								{user.isInstructor && <Badge className="mt-2">Verified Instructor</Badge>}
 
 								{!isEditing ? (
 									<>
-										<p className="mt-4 text-sm">{bio}</p>
+										<p className="mt-4 text-sm">{user?.bio}</p>
 
 										<div className="w-full mt-4 space-y-2 text-sm">
 											<div className="flex items-center gap-2">
@@ -456,7 +457,7 @@ export default function ProfilePage() {
 											<TabsTrigger value="enrolled" className="flex-1">
 												Enrolled Courses
 											</TabsTrigger>
-											{role === 'instructor' && (
+											{user?.isInstructor && (
 												<TabsTrigger value="teaching" className="flex-1">
 													Teaching
 												</TabsTrigger>
@@ -466,7 +467,7 @@ export default function ProfilePage() {
 										<TabsContent value="enrolled" className="space-y-4">
 											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 												<div className="border rounded-lg p-4 flex gap-4">
-													<div className="flex-shrink-0">
+													<div className="shrink-0">
 														<Image
 															src="/placeholder.svg?height=80&width=140"
 															alt="Course thumbnail"
@@ -511,11 +512,11 @@ export default function ProfilePage() {
 											</Button>
 										</TabsContent>
 
-										{role === 'instructor' && (
+										{user?.isInstructor && (
 											<TabsContent value="teaching" className="space-y-4">
 												<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 													<div className="border rounded-lg p-4 flex gap-4">
-														<div className="flex-shrink-0">
+														<div className="shrink-0">
 															<Image
 																src="/placeholder.svg?height=80&width=140"
 																alt="Course thumbnail"

@@ -1,5 +1,6 @@
 'use client';
 
+import dayjs from 'dayjs';
 import { Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -274,9 +275,7 @@ export function NotificationCenter() {
 											{notification.title}
 										</h5>
 										<p className="text-xs text-muted-foreground">{notification.description}</p>
-										<p className="mt-1 text-xs text-muted-foreground">
-											{formatRelativeTimeFromTimestamp(notification.createdAt)}
-										</p>
+										<p className="mt-1 text-xs text-muted-foreground">{dayjs(notification.createdAt).fromNow()}</p>
 									</div>
 									{!notification.read && <div className="h-2 w-2 rounded-full bg-blue-500"></div>}
 								</div>

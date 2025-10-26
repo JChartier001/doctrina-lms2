@@ -123,8 +123,8 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 				const purchaseId = await createPurchase({
 					userId: user!.id as Id<'users'>,
 					courseId: courseData.id as Id<'courses'>,
-					amount: courseData.price,
-					currency: 'USD',
+					amount: courseData.price as number,
+					status: 'open',
 				});
 				setPurchaseId(purchaseId);
 			} catch (_error) {
@@ -278,7 +278,7 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 										</div>
 
 										<Button type="submit" className="w-full" size="lg" disabled={processing || !purchaseId}>
-											{processing ? 'Processing...' : `Pay $${course.price.toFixed(2)}`}
+											{processing ? 'Processing...' : `Pay $${(course.price as number).toFixed(2)}`}
 										</Button>
 									</form>
 								</TabsContent>
@@ -296,13 +296,13 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 						<CardContent className="space-y-4">
 							<div className="flex gap-4">
 								<Image
-									src={course.image || '/placeholder.svg'}
-									alt={course.title}
+									src={(course.image as string) || '/placeholder.svg'}
+									alt={course.title as string}
 									className="w-20 h-20 object-cover rounded-md"
 								/>
 								<div>
-									<h3 className="font-medium">{course.title}</h3>
-									<p className="text-sm text-muted-foreground">By {course.instructor}</p>
+									<h3 className="font-medium">{course.title as string}</h3>
+									<p className="text-sm text-muted-foreground">By {course.instructor as string}</p>
 								</div>
 							</div>
 
@@ -311,12 +311,12 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 							<div className="space-y-2">
 								<div className="flex justify-between">
 									<span>Course Price</span>
-									<span>${course.price.toFixed(2)}</span>
+									<span>${(course.price as number).toFixed(2)}</span>
 								</div>
 
 								<div className="flex justify-between font-medium">
 									<span>Total</span>
-									<span>${course.price.toFixed(2)}</span>
+									<span>${(course.price as number).toFixed(2)}</span>
 								</div>
 							</div>
 						</CardContent>

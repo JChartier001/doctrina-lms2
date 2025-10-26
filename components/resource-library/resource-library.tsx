@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
+	Resource,
 	type ResourceCategory,
 	type ResourceType,
 	useAllResources,
@@ -125,7 +126,7 @@ export function ResourceLibrary() {
 							<ResourceTypeList />
 							<ResourceCategoryList />
 							<ResourceGrid
-								resources={resources}
+								resources={resources as Resource[]}
 								isLoading={isLoading}
 								emptyMessage="No resources found. Try adjusting your search or filters."
 							/>
@@ -133,7 +134,7 @@ export function ResourceLibrary() {
 
 						<TabsContent value="featured" className="space-y-6">
 							<ResourceGrid
-								resources={resources.filter(r => r.featured)}
+								resources={resources.filter(r => r.featured) as Resource[]}
 								isLoading={isLoading}
 								emptyMessage="No featured resources found."
 							/>
@@ -141,9 +142,11 @@ export function ResourceLibrary() {
 
 						<TabsContent value="recent" className="space-y-6">
 							<ResourceGrid
-								resources={[...resources].sort(
-									(a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
-								)}
+								resources={
+									[...resources].sort(
+										(a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
+									) as Resource[]
+								}
 								isLoading={isLoading}
 								emptyMessage="No recent resources found."
 							/>
@@ -151,7 +154,7 @@ export function ResourceLibrary() {
 
 						<TabsContent value="popular" className="space-y-6">
 							<ResourceGrid
-								resources={[...resources].sort((a, b) => b.downloadCount - a.downloadCount)}
+								resources={[...resources].sort((a, b) => b.downloadCount - a.downloadCount) as Resource[]}
 								isLoading={isLoading}
 								emptyMessage="No popular resources found."
 							/>
