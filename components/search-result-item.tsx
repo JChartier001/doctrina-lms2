@@ -1,4 +1,5 @@
-import { Book, File, FileText, MessageSquare, User, Users } from 'lucide-react';
+import { Book, File } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -167,7 +168,7 @@ export function SearchResultItem({ result }: SearchResultItemProps) {
 				<CardContent className="p-4">
 					<div className="flex gap-4">
 						{result.image ? (
-							<img
+							<Image
 								src={result.image || '/placeholder.svg'}
 								alt={result.title}
 								className="w-[100px] h-[60px] object-cover rounded-md"

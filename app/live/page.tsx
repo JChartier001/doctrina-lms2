@@ -23,7 +23,7 @@ export default function LiveSessionsPage() {
 
 	const upcomingSessions = upcomingSessionsResult.data || [];
 	const pastSessions = pastSessionsResult.data || [];
-	const isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
+	const _isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
 
 	useEffect(() => {
 		if (!user) {

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -108,7 +109,7 @@ export default function CommunityPage() {
 		router.push('/community/new-topic');
 	};
 
-	const handleJoinGroup = (groupId: string) => {
+	const handleJoinGroup = (_groupId: string) => {
 		toast.success('Group joined. You have successfully joined this study group.');
 	};
 
@@ -353,7 +354,7 @@ export default function CommunityPage() {
 						<CardContent className="space-y-4">
 							{studyGroups.map(group => (
 								<div key={group.id} className="flex gap-3 items-start">
-									<img
+									<Image
 										src={group.image || '/placeholder.svg'}
 										alt={group.name}
 										className="w-12 h-12 rounded-md object-cover"

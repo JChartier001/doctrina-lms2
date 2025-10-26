@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuery } from 'convex/react';
-import { BookOpen, Clock, Filter, Search, Star, Users } from 'lucide-react';
+import { BookOpen, Clock, Search, Star } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -121,7 +122,7 @@ export default function CoursesPage() {
 								<CardContent className="p-0">
 									{/* Course Thumbnail */}
 									<div className="relative">
-										<img
+										<Image
 											src={course.thumbnailUrl || '/placeholder.svg?height=200&width=300'}
 											alt={course.title}
 											className="w-full h-48 object-cover"

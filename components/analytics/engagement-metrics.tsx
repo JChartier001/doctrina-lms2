@@ -61,7 +61,7 @@ interface EngagementMetricsProps {
 	courseId: string;
 }
 
-export function EngagementMetrics({ dateRange, courseId }: EngagementMetricsProps) {
+export function EngagementMetrics({ dateRange: _dateRange, courseId: _courseId }: EngagementMetricsProps) {
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">

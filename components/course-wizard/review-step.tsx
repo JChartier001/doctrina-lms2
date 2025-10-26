@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertCircle, Check, FileText, ListChecks, Video } from 'lucide-react';
+import Image from 'next/image';
 
 import type { CourseData } from '@/app/instructor/courses/wizard/page';
 import { Badge } from '@/components/ui/badge';
@@ -124,7 +125,7 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 							<div className="space-y-2">
 								<h3 className="font-medium">Thumbnail</h3>
 								{courseData.thumbnail ? (
-									<img
+									<Image
 										src={courseData.thumbnail || '/placeholder.svg'}
 										alt="Course thumbnail"
 										className="rounded-lg object-cover w-full max-h-[200px]"

@@ -3,7 +3,7 @@
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,16 @@ export default function CheckoutSuccessPage() {
 	const searchParams = useSearchParams();
 	const sessionId = searchParams.get('session');
 
-	const [session, setSession] = useState<any>(null);
+	const [session, setSession] = useState<Record<string, unknown> | null>(null);
+
+	const loadSession = useEffectEvent(() => {
+		const sessions = getStoredSessions();
+		const foundSession = sessions.find(s => s.id === sessionId);
+
+		if (foundSession) {
+			setSession(foundSession);
+		}
+	});
 
 	useEffect(() => {
 		if (!sessionId) {
@@ -30,8 +39,8 @@ export default function CheckoutSuccessPage() {
 			return;
 		}
 
-		setSession(foundSession);
-	}, [sessionId, router]);
+		loadSession();
+	}, [sessionId, router, loadSession]);
 
 	if (!session) {
 		return (

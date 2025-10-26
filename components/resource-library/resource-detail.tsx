@@ -15,6 +15,7 @@ import {
 	User,
 	Video,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { ResourceCard } from '@/components/resource-library/resource-card';
@@ -177,7 +178,7 @@ export function ResourceDetail({ resourceId }: ResourceDetailProps) {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				<div className="md:col-span-2 space-y-6">
 					<div className="relative rounded-lg overflow-hidden">
-						<img
+						<Image
 							src={resource.thumbnailUrl || '/placeholder.svg?height=400&width=800'}
 							alt={resource.title}
 							className="w-full object-cover aspect-video"

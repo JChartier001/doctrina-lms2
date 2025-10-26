@@ -14,21 +14,14 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-	getPopularSearches,
-	type SearchResult,
-	type SearchResultType,
-	trackSearch,
-	useUnifiedSearch,
-} from '@/lib/search-service';
+import { getPopularSearches, type SearchResultType, trackSearch, useUnifiedSearch } from '@/lib/search-service';
 
 export default function SearchPage() {
 	const searchParams = useSearchParams();
 	const initialQuery = searchParams.get('q') || '';
 	const [searchQuery, setSearchQuery] = useState(initialQuery);
-	const [results, setResults] = useState<SearchResult[]>([]);
 	const [activeTab, setActiveTab] = useState('all');
-	const [popularSearches, setPopularSearches] = useState<{ query: string; count: number }[]>([]);
+	const [popularSearches] = useState(() => getPopularSearches());
 	const [selectedTypes, setSelectedTypes] = useState<SearchResultType[]>([]);
 	const router = useRouter();
 
@@ -46,19 +39,8 @@ export default function SearchPage() {
 	const searchResult = useUnifiedSearch(searchQuery, 50, selectedTypes.length > 0 ? selectedTypes : undefined);
 	const { data: convexResults, isLoading: convexLoading } = searchResult;
 
-	// Update results when Convex data changes
-	useEffect(() => {
-		if (convexResults) {
-			setResults(convexResults);
-		} else if (!searchQuery) {
-			setResults([]);
-		}
-	}, [convexResults, searchQuery]);
-
-	// Get popular searches
-	useEffect(() => {
-		setPopularSearches(getPopularSearches());
-	}, []);
+	// Use Convex results directly (derived state, no effect needed)
+	const results = convexResults || [];
 
 	// Update URL when search query changes
 	useEffect(() => {

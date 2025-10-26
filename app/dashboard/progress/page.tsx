@@ -141,7 +141,7 @@ const mockData = {
 export default function StudentProgressDashboard() {
 	const { user, isLoading } = useAuth();
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState('overview');
+	const [_activeTab, setActiveTab] = useState('overview');
 
 	if (isLoading) {
 		return <div className="container py-10">Loading...</div>;

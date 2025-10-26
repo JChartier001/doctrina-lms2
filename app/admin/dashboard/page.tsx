@@ -434,7 +434,7 @@ export default function AdminDashboard() {
 										dataKey="value"
 										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
 									>
-										{categoryDistributionData.map((entry, index) => (
+										{categoryDistributionData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
 										))}
 									</Pie>
@@ -465,7 +465,7 @@ export default function AdminDashboard() {
 										dataKey="value"
 										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
 									>
-										{deviceUsageData.map((entry, index) => (
+										{deviceUsageData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={DEVICE_COLORS[index % DEVICE_COLORS.length]} />
 										))}
 									</Pie>

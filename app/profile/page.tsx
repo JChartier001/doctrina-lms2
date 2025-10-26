@@ -1,7 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -98,13 +99,7 @@ export default function ProfilePage() {
 		},
 	];
 
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
-
-		// Initialize form values
+	const initializeForm = useEffectEvent(() => {
 		setName(user.name || '');
 		setBio(
 			'Board-certified dermatologist with 10+ years of experience in medical aesthetics, specializing in non-surgical facial rejuvenation techniques.',
@@ -112,7 +107,18 @@ export default function ProfilePage() {
 		setSpecialty('Dermatology');
 		setLocation('New York, NY');
 		setWebsite('www.example.com');
-	}, [user, router]);
+	});
+
+	useEffect(() => {
+		if (!user) {
+			router.push('/sign-in');
+			return;
+		}
+
+		if (!name) {
+			initializeForm();
+		}
+	}, [user, router, name, initializeForm]);
 
 	const handleSaveProfile = () => {
 		toast.success('Profile updated. Your profile has been updated successfully.');
@@ -461,7 +467,7 @@ export default function ProfilePage() {
 											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 												<div className="border rounded-lg p-4 flex gap-4">
 													<div className="flex-shrink-0">
-														<img
+														<Image
 															src="/placeholder.svg?height=80&width=140"
 															alt="Course thumbnail"
 															className="w-[140px] h-20 object-cover rounded-md"
@@ -481,7 +487,7 @@ export default function ProfilePage() {
 
 												<div className="border rounded-lg p-4 flex gap-4">
 													<div className="flex-shrink-0">
-														<img
+														<Image
 															src="/placeholder.svg?height=80&width=140"
 															alt="Course thumbnail"
 															className="w-[140px] h-20 object-cover rounded-md"
@@ -510,7 +516,7 @@ export default function ProfilePage() {
 												<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 													<div className="border rounded-lg p-4 flex gap-4">
 														<div className="flex-shrink-0">
-															<img
+															<Image
 																src="/placeholder.svg?height=80&width=140"
 																alt="Course thumbnail"
 																className="w-[140px] h-20 object-cover rounded-md"
@@ -534,8 +540,8 @@ export default function ProfilePage() {
 													</div>
 
 													<div className="border rounded-lg p-4 flex gap-4">
-														<div className="flex-shrink-0">
-															<img
+														<div className="shrink-0">
+															<Image
 																src="/placeholder.svg?height=80&width=140"
 																alt="Course thumbnail"
 																className="w-[140px] h-20 object-cover rounded-md"

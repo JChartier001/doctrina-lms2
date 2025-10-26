@@ -96,7 +96,7 @@ Regarding volumes, I typically use 1.5-2x the amount I would use for female pati
 	],
 };
 
-export default function TopicPage({ params }: { params: { id: string } }) {
+export default function TopicPage({ params: _params }: { params: { id: string } }) {
 	const [replyContent, setReplyContent] = useState('');
 	const { user } = useAuth();
 	const router = useRouter();
@@ -116,11 +116,11 @@ export default function TopicPage({ params }: { params: { id: string } }) {
 		}
 	};
 
-	const handleLikeReply = (replyId: string) => {
+	const handleLikeReply = (_replyId: string) => {
 		toast.success("Reply liked. You've liked this reply.");
 	};
 
-	const handleMarkAsAnswer = (replyId: string) => {
+	const handleMarkAsAnswer = (_replyId: string) => {
 		toast.success('Answer marked. This reply has been marked as the answer.');
 	};
 

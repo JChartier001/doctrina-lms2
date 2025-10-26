@@ -17,8 +17,8 @@ export default function InstructorVerificationPage() {
 	const [licenseNumber, setLicenseNumber] = useState('');
 	const [licenseState, setLicenseState] = useState('');
 	const [licenseExpiry, setLicenseExpiry] = useState('');
-	const [licenseFile, setLicenseFile] = useState<File | null>(null);
-	const [idFile, setIdFile] = useState<File | null>(null);
+	const [_licenseFile, setLicenseFile] = useState<File | null>(null);
+	const [_idFile, setIdFile] = useState<File | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const { user } = useAuth();
 	const router = useRouter();

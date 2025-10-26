@@ -3,6 +3,7 @@
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { Download, Share2 } from 'lucide-react';
+import Image from 'next/image';
 import { QRCodeCanvas } from 'qrcode.react';
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -102,7 +103,7 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 					{/* Header */}
 					<div className="w-full">
 						<div className="flex justify-center mb-2">
-							<img src="/placeholder.svg?height=60&width=200" alt="Doctrina Logo" className="h-12" />
+							<Image src="/placeholder.svg?height=60&width=200" alt="Doctrina Logo" className="h-12" />
 						</div>
 						<h2 className="text-xl font-semibold text-gray-600">CERTIFICATE OF COMPLETION</h2>
 					</div>
@@ -129,7 +130,7 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 					<div className="w-full flex flex-col sm:flex-row justify-between items-center">
 						{/* Instructor Signature */}
 						<div className="text-center sm:text-left mb-4 sm:mb-0">
-							<img src="/placeholder.svg?height=40&width=150" alt="Instructor Signature" className="h-10 mb-1" />
+							<Image src="/placeholder.svg?height=40&width=150" alt="Instructor Signature" className="h-10 mb-1" />
 							<p className="text-sm font-medium">{certificate.instructorName}</p>
 							<p className="text-xs text-gray-500">Instructor</p>
 						</div>

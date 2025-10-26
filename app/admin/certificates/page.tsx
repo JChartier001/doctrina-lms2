@@ -2,7 +2,7 @@
 
 import { Eye, MoreHorizontal, Search, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { CertificateDisplay } from '@/components/certificate-display';
@@ -91,6 +91,32 @@ export default function AdminCertificatesPage() {
 	const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
 	const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
 
+	const loadData = useEffectEvent(() => {
+		const allCertificates = getAllCertificates();
+		setCertificates(allCertificates);
+		setFilteredCertificates(allCertificates);
+
+		const allTemplates = getAllCertificateTemplates();
+		setTemplates(allTemplates);
+	});
+
+	const performFilter = useEffectEvent(() => {
+		const query = searchQuery.trim().toLowerCase();
+
+		if (query === '') {
+			setFilteredCertificates(certificates);
+			return;
+		}
+
+		const filtered = certificates.filter(
+			cert =>
+				cert.userName.toLowerCase().includes(query) ||
+				cert.courseName.toLowerCase().includes(query) ||
+				cert.verificationCode.toLowerCase().includes(query),
+		);
+		setFilteredCertificates(filtered);
+	});
+
 	useEffect(() => {
 		if (isLoading) return;
 
@@ -99,32 +125,14 @@ export default function AdminCertificatesPage() {
 			return;
 		}
 
-		// Fetch all certificates
-		const allCertificates = getAllCertificates();
-		setCertificates(allCertificates);
-		setFilteredCertificates(allCertificates);
-
-		// Fetch certificate templates
-		const allTemplates = getAllCertificateTemplates();
-		setTemplates(allTemplates);
-	}, [user, role, isLoading, router]);
+		if (certificates.length === 0) {
+			loadData();
+		}
+	}, [user, role, isLoading, router, loadData]);
 
 	useEffect(() => {
-		if (searchQuery.trim() === '') {
-			setFilteredCertificates(certificates);
-			return;
-		}
-
-		const query = searchQuery.toLowerCase();
-		const filtered = certificates.filter(
-			cert =>
-				cert.userName.toLowerCase().includes(query) ||
-				cert.courseName.toLowerCase().includes(query) ||
-				cert.verificationCode.toLowerCase().includes(query),
-		);
-
-		setFilteredCertificates(filtered);
-	}, [searchQuery, certificates]);
+		performFilter();
+	}, [searchQuery, performFilter]);
 
 	const handleDeleteCertificate = async (certId: string) => {
 		try {

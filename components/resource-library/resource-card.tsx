@@ -11,6 +11,7 @@ import {
 	PenToolIcon as Tool,
 	Video,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -90,7 +91,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
 	return (
 		<Card className="overflow-hidden">
 			<div className="aspect-video relative">
-				<img
+				<Image
 					src={resource.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 					alt={resource.title}
 					className="object-cover w-full h-full"

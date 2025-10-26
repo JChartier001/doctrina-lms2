@@ -76,7 +76,7 @@ interface ContentPerformanceProps {
 	courseId: string;
 }
 
-export function ContentPerformance({ dateRange, courseId }: ContentPerformanceProps) {
+export function ContentPerformance({ dateRange: _dateRange, courseId: _courseId }: ContentPerformanceProps) {
 	return (
 		<div className="space-y-6">
 			<Card>

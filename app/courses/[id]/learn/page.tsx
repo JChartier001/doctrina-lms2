@@ -3,7 +3,7 @@
 import { RedirectToSignIn } from '@clerk/nextjs';
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import { GenerateCertificateButton } from '@/components/generate-certificate-button';
 import { Button } from '@/components/ui/button';
@@ -81,16 +81,20 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 	const router = useRouter();
 	const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 	const [isCourseCompleted, setIsCourseCompleted] = useState(false);
+
+	const checkCompletion = useEffectEvent(() => {
+		const completed = courseData.lessons.every(lesson => lesson.completed);
+		setIsCourseCompleted(completed);
+	});
+
+	useEffect(() => {
+		if (isLoading) return;
+		checkCompletion();
+	}, [isLoading, checkCompletion]);
+
 	if (!user) {
 		return <RedirectToSignIn />;
 	}
-	useEffect(() => {
-		if (isLoading) return;
-
-		// Check if course is completed
-		const completed = courseData.lessons.every(lesson => lesson.completed);
-		setIsCourseCompleted(completed);
-	}, [user, isLoading, router]);
 
 	const currentLesson = courseData.lessons[currentLessonIndex];
 

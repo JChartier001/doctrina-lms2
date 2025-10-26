@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Clock, Users } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -89,7 +90,7 @@ const programs = [
 export default function ProgramsPage() {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedLevel, setSelectedLevel] = useState('all');
-	const { user } = useAuth();
+	const { user: _user } = useAuth();
 	const router = useRouter();
 
 	const filteredPrograms = programs
@@ -143,7 +144,7 @@ export default function ProgramsPage() {
 								</div>
 							)}
 							<CardHeader className="p-0">
-								<img
+								<Image
 									src={program.image || '/placeholder.svg'}
 									alt={program.title}
 									className="w-full aspect-video object-cover"

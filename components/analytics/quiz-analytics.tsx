@@ -82,7 +82,7 @@ interface QuizAnalyticsProps {
 	courseId: string;
 }
 
-export function QuizAnalytics({ dateRange, courseId }: QuizAnalyticsProps) {
+export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: QuizAnalyticsProps) {
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -169,7 +169,7 @@ export function QuizAnalytics({ dateRange, courseId }: QuizAnalyticsProps) {
 										dataKey="value"
 										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
 									>
-										{questionDifficultyData.map((entry, index) => (
+										{questionDifficultyData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
 										))}
 									</Pie>

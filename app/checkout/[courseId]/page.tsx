@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeft, CreditCard, Lock } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -53,7 +54,7 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 	const createPurchase = useCreatePurchase();
 	const completePurchase = useCompletePurchase();
 
-	const [course, setCourse] = useState<any>(null);
+	const [course, setCourse] = useState<Record<string, unknown> | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [processing, setProcessing] = useState(false);
 	const [purchaseId, setPurchaseId] = useState<string | null>(null);
@@ -126,7 +127,7 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 					currency: 'USD',
 				});
 				setPurchaseId(purchaseId);
-			} catch (error) {
+			} catch (_error) {
 				toast.error('Failed to initialize checkout. Please try again.');
 			}
 
@@ -160,8 +161,8 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 
 			// Redirect to success page
 			router.push(`/checkout/success?purchase=${purchaseId}`);
-		} catch (error: any) {
-			toast.error(error.message || 'There was an error processing your payment. Please try again.');
+		} catch (error: unknown) {
+			toast.error((error as Error).message || 'There was an error processing your payment. Please try again.');
 			setProcessing(false);
 		}
 	};
@@ -294,7 +295,7 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 
 						<CardContent className="space-y-4">
 							<div className="flex gap-4">
-								<img
+								<Image
 									src={course.image || '/placeholder.svg'}
 									alt={course.title}
 									className="w-20 h-20 object-cover rounded-md"

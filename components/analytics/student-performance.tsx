@@ -116,7 +116,7 @@ interface StudentPerformanceProps {
 	courseId: string;
 }
 
-export function StudentPerformance({ dateRange, courseId }: StudentPerformanceProps) {
+export function StudentPerformance({ dateRange: _dateRange, courseId: _courseId }: StudentPerformanceProps) {
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">

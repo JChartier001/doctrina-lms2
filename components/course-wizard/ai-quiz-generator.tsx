@@ -38,7 +38,7 @@ export function AIQuizGenerator({ onAddQuestions, existingContent = '' }: AIQuiz
 			const questions = await generateQuizQuestions(content, questionCount);
 			setGeneratedQuestions(questions);
 			toast.success('Questions generated. Successfully generated ${questions.length} questions.');
-		} catch (error) {
+		} catch (_error) {
 			toast.error('Generation failed. Failed to generate questions. Please try again.');
 		} finally {
 			setIsGenerating(false);

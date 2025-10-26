@@ -1,5 +1,6 @@
 import { useMutation } from 'convex/react';
 import { Loader2, Upload, X } from 'lucide-react';
+import Image from 'next/image';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -58,7 +59,7 @@ const ImagePreview = ({ imageId, onRemove }: ImagePreviewProps) => {
 						</div>
 					</div>
 				) : (
-					<img
+					<Image
 						src={imageUrl!}
 						alt="Uploaded image"
 						className="w-full h-full object-cover"
@@ -185,7 +186,7 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 				setUploading(true);
 
 				// Initialize progress tracking
-				const progressItems: UploadProgress[] = files.map((file, index) => ({
+				const progressItems: UploadProgress[] = files.map((_file, index) => ({
 					id: `${Date.now()}-${index}`,
 					progress: 0,
 					status: 'uploading' as const,

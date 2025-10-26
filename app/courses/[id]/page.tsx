@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Clock, MessageSquare, ShoppingCart, Users } from 'lucide-react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -29,13 +30,13 @@ export default function CourseDetailPage() {
 	// Fetch user purchases using Convex query (always call the hook to maintain order)
 	const purchases = useUserPurchases(user?.id as Id<'users'>);
 
-	// Check if user has already purchased this course
-	useEffect(() => {
-		if (isLoading || !user || purchases === undefined) return;
+	// Check if user has already purchased this course (derived state)
+	const hasPurchased =
+		!isLoading && user && purchases ? purchases.some(p => p.courseId === params.id && p.status === 'complete') : false;
 
-		const purchased = purchases.some(p => p.courseId === params.id && p.status === 'complete');
-		setHasPurchased(purchased);
-	}, [user, isLoading, params.id, purchases]);
+	useEffect(() => {
+		setHasPurchased(hasPurchased);
+	}, [hasPurchased]);
 
 	// Handle loading and error states
 	if (courseLoading) {
@@ -114,7 +115,7 @@ export default function CourseDetailPage() {
 							</div>
 						</div>
 
-						<img
+						<Image
 							src={courseData.image || '/placeholder.svg'}
 							alt={courseData.title}
 							className="w-full rounded-lg object-cover aspect-video mt-6"

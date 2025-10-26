@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Clock, GraduationCap, Star } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +18,7 @@ export function CourseRecommendationCard({ course, showReason = true }: CourseRe
 	return (
 		<Card className="overflow-hidden h-full flex flex-col">
 			<div className="aspect-video relative">
-				<img
+				<Image
 					src={course.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 					alt={course.title}
 					className="object-cover w-full h-full"

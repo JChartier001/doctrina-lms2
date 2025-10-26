@@ -231,7 +231,7 @@ export function BasicInfoStep() {
 						</div>
 						<div className='flex items-center justify-center'>
 							<div className='relative'>
-								<img
+								<Image
 									src={thumbnailPreview || '/placeholder.svg'}
 									alt='Course thumbnail preview'
 									className='rounded-lg object-cover w-full max-h-[200px]'

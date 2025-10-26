@@ -202,7 +202,7 @@ export default function CourseWizard() {
 	};
 
 	// Update course data
-	const updateCourseData = (data: Partial<CourseData>) => {
+	const _updateCourseData = (data: Partial<CourseData>) => {
 		setCourseData(prev => ({ ...prev, ...data }));
 	};
 

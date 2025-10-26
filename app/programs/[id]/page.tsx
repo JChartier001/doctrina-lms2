@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Clock, Users } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -218,7 +219,7 @@ The curriculum is structured to provide a systematic progression from basic prin
 	],
 };
 
-export default function ProgramDetailPage({ params }: { params: { id: string } }) {
+export default function ProgramDetailPage({ params: _params }: { params: { id: string } }) {
 	const [selectedPricing, setSelectedPricing] = useState('monthly');
 	const { user } = useAuth();
 	const router = useRouter();
@@ -266,7 +267,7 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
 							</div>
 						</div>
 
-						<img
+						<Image
 							src={programData.image || '/placeholder.svg'}
 							alt={programData.title}
 							className="w-full rounded-lg object-cover aspect-video mt-6"

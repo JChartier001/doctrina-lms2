@@ -2,6 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { BarChart2, BookOpen, Clock, DollarSign, PlusCircle, Users } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -127,7 +128,7 @@ export default function InstructorDashboardPage() {
 							<CardContent>
 								<div className="space-y-4">
 									<div className="flex items-center gap-4">
-										<img
+										<Image
 											src="/placeholder.svg?height=100&width=100"
 											alt="Course thumbnail"
 											className="w-[100px] h-[60px] object-cover rounded-md"
@@ -191,7 +192,7 @@ export default function InstructorDashboardPage() {
 							instructorCourses.map(course => (
 								<Card key={course._id}>
 									<CardContent className="p-0">
-										<img
+										<Image
 											src={course.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 											alt="Course thumbnail"
 											className="w-full aspect-video object-cover"
@@ -230,7 +231,7 @@ export default function InstructorDashboardPage() {
 							<>
 								<Card>
 									<CardContent className="p-0">
-										<img
+										<Image
 											src="/placeholder.svg?height=200&width=400"
 											alt="Course thumbnail"
 											className="w-full aspect-video object-cover"
@@ -265,7 +266,7 @@ export default function InstructorDashboardPage() {
 
 								<Card>
 									<CardContent className="p-0">
-										<img
+										<Image
 											src="/placeholder.svg?height=200&width=400"
 											alt="Course thumbnail"
 											className="w-full aspect-video object-cover"
@@ -300,7 +301,7 @@ export default function InstructorDashboardPage() {
 
 								<Card>
 									<CardContent className="p-0">
-										<img
+										<Image
 											src="/placeholder.svg?height=200&width=400"
 											alt="Course thumbnail"
 											className="w-full aspect-video object-cover"

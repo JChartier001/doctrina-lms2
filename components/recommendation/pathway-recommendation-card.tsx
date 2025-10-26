@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,7 @@ export function PathwayRecommendationCard({ pathway, showReason = true }: Pathwa
 	return (
 		<Card className="overflow-hidden h-full flex flex-col">
 			<div className="aspect-video relative">
-				<img
+				<Image
 					src={pathway.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 					alt={pathway.title}
 					className="object-cover w-full h-full"

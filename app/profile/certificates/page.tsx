@@ -2,7 +2,7 @@
 
 import { Award, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import { CertificateDisplay } from '@/components/certificate-display';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,12 @@ export default function UserCertificatesPage() {
 	// Fetch user certificates using Convex query
 	const certificates = useUserCertificates(user?.id as Id<'users'>);
 
+	const selectFirstCertificate = useEffectEvent(() => {
+		if (certificates && certificates.length > 0) {
+			setSelectedCertificate(certificates[0]);
+		}
+	});
+
 	useEffect(() => {
 		if (isLoading) return;
 
@@ -28,11 +34,10 @@ export default function UserCertificatesPage() {
 			return;
 		}
 
-		// Select the first certificate by default if available
-		if (certificates && certificates.length > 0) {
-			setSelectedCertificate(certificates[0]);
+		if (!selectedCertificate) {
+			selectFirstCertificate();
 		}
-	}, [user, isLoading, router, certificates]);
+	}, [user, isLoading, router, selectedCertificate, selectFirstCertificate]);
 
 	if (isLoading || !user || certificates === undefined) {
 		return (

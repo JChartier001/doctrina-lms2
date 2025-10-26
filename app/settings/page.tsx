@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useEffect, useState } from 'react';
@@ -130,7 +131,7 @@ export default function SettingsPage() {
 											</Button>
 										</div>
 										<div className="flex items-center gap-4">
-											<img
+											<Image
 												src={user.image || '/placeholder.svg'}
 												alt={user.name}
 												className="h-20 w-20 rounded-full object-cover"

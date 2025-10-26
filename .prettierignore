@@ -1,0 +1,5 @@
+convex/_generated/**
+convex/generated
+bmad/**
+.claude/**
+.github/**

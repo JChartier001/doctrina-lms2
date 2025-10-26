@@ -2,7 +2,7 @@
 
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -53,22 +53,15 @@ export function SearchBar({
 	const suggestionsResult = useSearchSuggestions(query.length > 1 ? query : '', 10);
 	const { data: convexSuggestions } = suggestionsResult;
 
-	// Update suggestions only when the actual content changes (not just reference)
-	useEffect(() => {
+	const updateSuggestions = useEffectEvent(() => {
 		const newSuggestions = convexSuggestions || [];
-		setSuggestions(prevSuggestions => {
-			// Only update if the content actually changed
-			if (prevSuggestions.length !== newSuggestions.length) {
-				return newSuggestions;
-			}
-			for (let i = 0; i < newSuggestions.length; i++) {
-				if (prevSuggestions[i] !== newSuggestions[i]) {
-					return newSuggestions;
-				}
-			}
-			return prevSuggestions; // No change needed
-		});
-	}, [convexSuggestions]);
+		setSuggestions(newSuggestions);
+	});
+
+	// Update suggestions when Convex data changes
+	useEffect(() => {
+		updateSuggestions();
+	}, [convexSuggestions, updateSuggestions]);
 
 	const handleSearch = (searchQuery: string) => {
 		if (!searchQuery.trim()) return;

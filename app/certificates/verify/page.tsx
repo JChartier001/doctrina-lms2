@@ -2,7 +2,7 @@
 
 import { CheckCircle, Search, XCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 
 import { CertificateDisplay } from '@/components/certificate-display';
 import { Button } from '@/components/ui/button';
@@ -19,12 +19,7 @@ export default function VerifyCertificatePage() {
 	const [isVerified, setIsVerified] = useState<boolean | null>(null);
 	const [isVerifying, setIsVerifying] = useState(false);
 
-	useEffect(() => {
-		if (codeFromUrl) {
-			handleVerify();
-		}
-	}, [codeFromUrl]);
-
+	// Regular function for button onClick
 	const handleVerify = () => {
 		if (!verificationCode.trim()) return;
 
@@ -45,6 +40,33 @@ export default function VerifyCertificatePage() {
 			setIsVerifying(false);
 		}, 1000);
 	};
+
+	// Effect Event for auto-verification
+	const performAutoVerify = useEffectEvent(() => {
+		if (!verificationCode.trim()) return;
+
+		setIsVerifying(true);
+
+		setTimeout(() => {
+			const result = verifyCertificate(verificationCode);
+
+			if (result) {
+				setCertificate(result);
+				setIsVerified(true);
+			} else {
+				setCertificate(null);
+				setIsVerified(false);
+			}
+
+			setIsVerifying(false);
+		}, 1000);
+	});
+
+	useEffect(() => {
+		if (codeFromUrl) {
+			performAutoVerify();
+		}
+	}, [codeFromUrl, performAutoVerify]);
 
 	return (
 		<div className="container py-10">

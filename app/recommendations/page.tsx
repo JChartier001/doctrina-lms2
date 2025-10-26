@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/lib/auth';
 import {
 	type CourseRecommendation,
-	type PathwayRecommendation,
+	type PathwayRecommendation as _PathwayRecommendation,
 	useCourseRecommendations,
 	usePathwayRecommendations,
 	useTrendingContent,

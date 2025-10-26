@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Id } from '@/convex/_generated/dataModel';
+import { Id as _Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { useUserPurchases } from '@/lib/payment-service';
 

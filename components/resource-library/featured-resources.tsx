@@ -2,6 +2,7 @@
 
 import { useQuery } from 'convex/react';
 import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -53,7 +54,7 @@ export function FeaturedResources() {
 					<Link key={resource._id} href={`/resources/${resource._id}`}>
 						<Card className="h-full overflow-hidden hover:shadow-md transition-shadow">
 							<div className="aspect-video relative">
-								<img
+								<Image
 									src={resource.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 									alt={resource.title}
 									className="object-cover w-full h-full"

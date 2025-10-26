@@ -19,8 +19,6 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { useInstructorAnalytics } from '@/lib/analytics-service';
-import { useAuth } from '@/lib/auth';
 
 // Mock data for revenue analytics
 const monthlyRevenueData = [
@@ -57,7 +55,7 @@ interface RevenueAnalyticsProps {
 	courseId: string;
 }
 
-export function RevenueAnalytics({ dateRange, courseId }: RevenueAnalyticsProps) {
+export function RevenueAnalytics({ dateRange: _dateRange, courseId: _courseId }: RevenueAnalyticsProps) {
 	return (
 		<div className="space-y-6">
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -145,7 +143,7 @@ export function RevenueAnalytics({ dateRange, courseId }: RevenueAnalyticsProps)
 										dataKey="value"
 										label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
 									>
-										{paymentMethodData.map((entry, index) => (
+										{paymentMethodData.map((_entry, index) => (
 											<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
 										))}
 									</Pie>

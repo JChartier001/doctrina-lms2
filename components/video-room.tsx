@@ -1,6 +1,7 @@
 'use client';
 
 import { MessageSquare, Mic, MicOff, PhoneOff, ScreenShare, Users, Video, VideoOff } from 'lucide-react';
+import Image from 'next/image';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -236,7 +237,7 @@ export function VideoRoom({ userId, userName, userImage, isHost, onLeave }: Vide
 										</div>
 									) : (
 										<div className="w-full h-full">
-											<img
+											<Image
 												src={participant.image || '/placeholder.svg?height=100&width=150'}
 												alt={participant.name}
 												className="w-full h-full object-cover"

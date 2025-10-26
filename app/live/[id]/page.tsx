@@ -21,7 +21,7 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 	const joinSessionFn = useJoinSession();
 	const leaveSessionFn = useLeaveSession();
 
-	const { data: session, isLoading, error } = sessionResult;
+	const { data: session, isLoading: _isLoading, error: _error } = sessionResult;
 
 	useEffect(() => {
 		if (!user) {

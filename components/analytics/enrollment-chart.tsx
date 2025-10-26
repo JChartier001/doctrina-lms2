@@ -30,7 +30,7 @@ interface EnrollmentChartProps {
 	courseId: string;
 }
 
-export function EnrollmentChart({ dateRange, courseId }: EnrollmentChartProps) {
+export function EnrollmentChart({ dateRange: _dateRange, courseId: _courseId }: EnrollmentChartProps) {
 	// In a real app, you would filter data based on the date range
 	// For this example, we'll just use the mock data
 
