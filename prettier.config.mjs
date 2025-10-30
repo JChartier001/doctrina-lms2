@@ -12,7 +12,7 @@ const config = {
 	jsxSingleQuote: false,
 	arrowParens: 'avoid',
 	htmlWhitespaceSensitivity: 'ignore',
-	endOfLine: 'crlf',
+	endOfLine: 'lf',
 };
 
 export default config;
