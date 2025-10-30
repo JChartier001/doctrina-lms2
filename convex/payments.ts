@@ -34,9 +34,7 @@ export const createCheckoutSession = action({
 
 		// Dynamically import Stripe (only needed in action context)
 		const Stripe = (await import('stripe')).default;
-		const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-			apiVersion: '2025-09-30.clover',
-		});
+		const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 		// Create checkout session
 		const session = await stripe.checkout.sessions.create({
