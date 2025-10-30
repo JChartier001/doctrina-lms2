@@ -29,7 +29,4 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
-coverage/*
-coverage/**
-coverage/lessonProgress.ts.html
-coverage/schema.ts.html
+
