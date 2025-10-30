@@ -1,19 +1,16 @@
-name: Verify PR - Checking Code Typescript
+name: Verify PR - Code Linting
 on: [pull_request]
 
 jobs:
   formatting:
-    name: Checking Code Typescript
+    name: Code Linting
     runs-on: ubuntu-latest
     env:
       NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-      NODE_OPTIONS: '--max-old-space-size=4096'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          clean: true
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -26,5 +23,5 @@ jobs:
         env:
           NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
-      - name: Check Typescript
-        run: yarn typescript
+      - name: Check Formatting
+        run: yarn lint
