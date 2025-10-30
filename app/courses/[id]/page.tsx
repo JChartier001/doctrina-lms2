@@ -1,5 +1,6 @@
 'use client';
 
+import { useQuery } from 'convex/react';
 import { Check, Clock, MessageSquare, ShoppingCart, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,9 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
-import { useCourseData } from '@/lib/course-migration';
 import { useUserPurchases } from '@/lib/payment-service';
 
 export default function CourseDetailPage() {
@@ -20,10 +21,10 @@ export default function CourseDetailPage() {
 	const router = useRouter();
 
 	const params = useParams();
-	const id = params.id;
+	const id = params.id as Id<'courses'>;
 
-	// Fetch course data using migration hook
-	const { data: courseData, isLoading: courseLoading, error: courseError } = useCourseData(id as string);
+	// Fetch course data using real Convex query (AC-109.1.1)
+	const courseData = useQuery(api.courses.getWithCurriculum, { courseId: id });
 
 	// Fetch user purchases using Convex query (always call the hook to maintain order)
 	const purchases = useUserPurchases(user?.id as Id<'users'>);
@@ -32,8 +33,8 @@ export default function CourseDetailPage() {
 	const hasPurchased =
 		!isLoading && user && purchases ? purchases.some(p => p.courseId === params.id && p.status === 'complete') : false;
 
-	// Handle loading and error states
-	if (courseLoading) {
+	// Handle loading state - Convex query returns undefined while loading (AC-109.1.6)
+	if (courseData === undefined) {
 		return (
 			<div className="container py-10">
 				<div className="flex justify-center items-center min-h-[400px]">
@@ -46,13 +47,14 @@ export default function CourseDetailPage() {
 		);
 	}
 
-	if (courseError || !courseData) {
+	// Handle error state - Convex query returns null if not found (AC-109.1.7)
+	if (courseData === null) {
 		return (
 			<div className="container py-10">
 				<div className="flex justify-center items-center min-h-[400px]">
 					<div className="text-center">
-						<p className="text-red-500 mb-4">Failed to load course data</p>
-						<Button onClick={() => window.location.reload()}>Try Again</Button>
+						<p className="text-red-500 mb-4">Course not found</p>
+						<Button onClick={() => router.push('/courses')}>Browse Courses</Button>
 					</div>
 				</div>
 			</div>
@@ -80,13 +82,15 @@ export default function CourseDetailPage() {
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
 				<div className="lg:col-span-2">
 					<div className="space-y-4">
-						<div className="flex flex-wrap gap-2">
-							{courseData.tags.map(tag => (
-								<Badge key={tag} variant="secondary">
-									{tag}
-								</Badge>
-							))}
-						</div>
+						{courseData.tags && courseData.tags.length > 0 && (
+							<div className="flex flex-wrap gap-2">
+								{courseData.tags.map(tag => (
+									<Badge key={tag} variant="secondary">
+										{tag}
+									</Badge>
+								))}
+							</div>
+						)}
 
 						<h1 className="text-3xl font-bold">{courseData.title}</h1>
 						<p className="text-xl text-muted-foreground">{courseData.description}</p>
@@ -94,7 +98,7 @@ export default function CourseDetailPage() {
 						<div className="grid grid-cols-3 gap-4 mt-6">
 							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent">
 								<Clock className="h-5 w-5 mb-1 text-accent-foreground" />
-								<span className="text-sm font-medium text-accent-foreground">{courseData.duration}</span>
+								<span className="text-sm font-medium text-accent-foreground">{courseData.duration || 'N/A'}</span>
 								<span className="text-xs text-muted-foreground">Duration</span>
 							</div>
 							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent">
@@ -104,16 +108,20 @@ export default function CourseDetailPage() {
 							</div>
 							<div className="flex flex-col items-center text-center p-3 rounded-lg bg-accent">
 								<Users className="h-5 w-5 mb-1 text-accent-foreground" />
-								<span className="text-sm font-medium text-accent-foreground">{courseData.students}+ Students</span>
+								<span className="text-sm font-medium text-accent-foreground">{courseData.students} Students</span>
 								<span className="text-xs text-muted-foreground">Enrolled</span>
 							</div>
 						</div>
 
-						<Image
-							src={courseData.image || '/placeholder.svg'}
-							alt={courseData.title}
-							className="w-full rounded-lg object-cover aspect-video mt-6"
-						/>
+						{courseData.thumbnailUrl && (
+							<Image
+								src={courseData.thumbnailUrl}
+								alt={courseData.title}
+								width={800}
+								height={400}
+								className="w-full rounded-lg object-cover aspect-video mt-6"
+							/>
+						)}
 					</div>
 				</div>
 
@@ -125,7 +133,7 @@ export default function CourseDetailPage() {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center justify-center">
-								<span className="text-3xl font-bold">${courseData.pricing.oneTime}</span>
+								<span className="text-3xl font-bold">${courseData.price ? (courseData.price / 100).toFixed(2) : '0.00'}</span>
 							</div>
 
 							<Button className="w-full" size="lg" onClick={handleEnroll}>
@@ -189,21 +197,29 @@ export default function CourseDetailPage() {
 				<TabsContent value="overview" className="space-y-6">
 					<div className="prose max-w-none">
 						<h2>About This Course</h2>
-						<p className="whitespace-pre-line">{courseData.longDescription}</p>
+						<p className="whitespace-pre-line">{courseData.description}</p>
 
-						<h2>What You Will Learn</h2>
-						<ul>
-							{courseData.whatYouWillLearn.map((item, index) => (
-								<li key={index}>{item}</li>
-							))}
-						</ul>
+						{courseData.whatYouWillLearn && courseData.whatYouWillLearn.length > 0 && (
+							<>
+								<h2>What You Will Learn</h2>
+								<ul>
+									{courseData.whatYouWillLearn.map((item, index) => (
+										<li key={index}>{item}</li>
+									))}
+								</ul>
+							</>
+						)}
 
-						<h2>Requirements</h2>
-						<ul>
-							{courseData.requirements.map((item, index) => (
-								<li key={index}>{item}</li>
-							))}
-						</ul>
+						{courseData.requirements && courseData.requirements.length > 0 && (
+							<>
+								<h2>Requirements</h2>
+								<ul>
+									{courseData.requirements.map((item, index) => (
+										<li key={index}>{item}</li>
+									))}
+								</ul>
+							</>
+						)}
 					</div>
 				</TabsContent>
 
@@ -211,27 +227,20 @@ export default function CourseDetailPage() {
 					<h2 className="text-2xl font-bold mb-4">Course Curriculum</h2>
 
 					<div className="space-y-4">
-						{courseData.curriculum.map((section, index) => (
-							<Card key={index}>
+						{courseData.curriculum.map((module, index) => (
+							<Card key={module.id}>
 								<CardHeader>
-									<CardTitle>{section.title}</CardTitle>
+									<CardTitle>{module.title}</CardTitle>
 									<CardDescription>
-										{section.lessons.length} lessons •{' '}
-										{section.lessons.reduce((total, lesson) => {
-											const time = lesson.duration.split(' ');
-											let minutes = 0;
-											if (time[1] === 'min') minutes = Number.parseInt(time[0]);
-											if (time[1] === 'hrs' || time[1] === 'hr') minutes = Number.parseInt(time[0]) * 60;
-											return total + minutes;
-										}, 0) / 60}{' '}
-										hours total
+										{module.lessons.length} lessons
+										{module.description && ` • ${module.description}`}
 									</CardDescription>
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-2">
-										{section.lessons.map((lesson, lessonIndex) => (
+										{module.lessons.map((lesson) => (
 											<div
-												key={lessonIndex}
+												key={lesson.id}
 												className="flex justify-between items-center p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
 											>
 												<div className="flex items-center ">
@@ -304,91 +313,75 @@ export default function CourseDetailPage() {
 				<TabsContent value="instructor" className="space-y-6">
 					<h2 className="text-2xl font-bold mb-4">Meet Your Instructor</h2>
 
-					<Card>
-						<CardContent className="pt-6">
-							<div className="flex flex-col md:flex-row gap-6">
-								<Avatar className="h-24 w-24">
-									<AvatarImage
-										src={courseData.instructor.image || '/placeholder.svg'}
-										alt={courseData.instructor.name}
-									/>
-									<AvatarFallback>{courseData.instructor.name.charAt(0)}</AvatarFallback>
-								</Avatar>
-								<div>
-									<h3 className="text-xl font-bold">{courseData.instructor.name}</h3>
-									<p className="text-sm text-muted-foreground mb-4">{courseData.instructor.title}</p>
-									<p>{courseData.instructor.bio}</p>
+					{courseData.instructor ? (
+						<Card>
+							<CardContent className="pt-6">
+								<div className="flex flex-col md:flex-row gap-6">
+									<Avatar className="h-24 w-24">
+										<AvatarImage
+											src={courseData.instructor.image || '/placeholder.svg'}
+											alt={courseData.instructor.name}
+										/>
+										<AvatarFallback>{courseData.instructor.name.charAt(0)}</AvatarFallback>
+									</Avatar>
+									<div>
+										<h3 className="text-xl font-bold">{courseData.instructor.name}</h3>
+										{courseData.instructor.title && (
+											<p className="text-sm text-muted-foreground mb-4">{courseData.instructor.title}</p>
+										)}
+										{courseData.instructor.bio && <p>{courseData.instructor.bio}</p>}
+									</div>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
+							</CardContent>
+						</Card>
+					) : (
+						<Card>
+							<CardContent className="pt-6">
+								<p className="text-muted-foreground">Instructor information not available</p>
+							</CardContent>
+						</Card>
+					)}
 				</TabsContent>
 
 				<TabsContent value="reviews" className="space-y-6">
 					<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
 						<h2 className="text-2xl font-bold">Student Reviews</h2>
-						<div className="flex items-center gap-2">
-							<div className="flex">
-								{[1, 2, 3, 4, 5].map(star => (
-									<svg
-										key={star}
-										xmlns="http://www.w3.org/2000/svg"
-										width="24"
-										height="24"
-										viewBox="0 0 24 24"
-										fill="currentColor"
-										className="h-5 w-5 text-yellow-500"
-									>
-										<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-									</svg>
-								))}
+						{courseData.rating && courseData.reviewCount && courseData.reviewCount > 0 && (
+							<div className="flex items-center gap-2">
+								<div className="flex">
+									{[1, 2, 3, 4, 5].map(star => (
+										<svg
+											key={star}
+											xmlns="http://www.w3.org/2000/svg"
+											width="24"
+											height="24"
+											viewBox="0 0 24 24"
+											fill={star <= Math.round(courseData.rating!) ? 'currentColor' : 'none'}
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											className="h-5 w-5 text-yellow-500"
+										>
+											<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+										</svg>
+									))}
+								</div>
+								<span className="font-medium">{courseData.rating.toFixed(1)} out of 5</span>
+								<span className="text-muted-foreground">({courseData.reviewCount} reviews)</span>
 							</div>
-							<span className="font-medium">4.5 out of 5</span>
-							<span className="text-muted-foreground">({courseData.reviews.length} reviews)</span>
-						</div>
+						)}
 					</div>
 
-					<div className="space-y-6">
-						{courseData.reviews.map(review => (
-							<Card key={review.id}>
-								<CardContent className="p-6">
-									<div className="flex justify-between items-start">
-										<div className="flex items-center gap-3">
-											<Avatar>
-												<AvatarImage src={review.user.image || '/placeholder.svg'} alt={review.user.name} />
-												<AvatarFallback>{review.user.name.charAt(0)}</AvatarFallback>
-											</Avatar>
-											<div>
-												<p className="font-medium">{review.user.name}</p>
-												<p className="text-sm text-muted-foreground">{new Date(review.date).toLocaleDateString()}</p>
-											</div>
-										</div>
-										<div className="flex">
-											{[1, 2, 3, 4, 5].map(star => (
-												<svg
-													key={star}
-													xmlns="http://www.w3.org/2000/svg"
-													width="24"
-													height="24"
-													viewBox="0 0 24 24"
-													fill={star <= review.rating ? 'currentColor' : 'none'}
-													stroke="currentColor"
-													strokeWidth="2"
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													className="h-4 w-4 text-yellow-500"
-												>
-													<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-												</svg>
-											))}
-										</div>
-									</div>
-
-									<p className="mt-4">{review.content}</p>
-								</CardContent>
-							</Card>
-						))}
-					</div>
+					<Card>
+						<CardContent className="p-6">
+							<p className="text-center text-muted-foreground py-8">
+								{courseData.reviewCount === 0
+									? 'Be the first to review this course!'
+									: 'Reviews will be displayed here once the review system is implemented (EPIC-103)'}
+							</p>
+						</CardContent>
+					</Card>
 				</TabsContent>
 
 				<TabsContent value="discussions" className="space-y-6">

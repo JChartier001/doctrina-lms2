@@ -38,14 +38,14 @@ story_location: '{project-root}/docs/stories'
 development_status:
   # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)
   epic-109: backlog
-  109-1-quick-wins-mock-replacement: backlog
+  109-1-quick-wins-mock-replacement: ready-for-dev
   109-2-progress-integration-mock-replacement: backlog
   109-3-post-mvp-mock-replacement: backlog
   epic-109-retrospective: optional
 
   # EPIC-101: Lesson Progress Tracking System (P0 - Critical, 13 pts)
   epic-101: contexted
-  101-1-create-lesson-progress-tracking: review
+  101-1-create-lesson-progress-tracking: done
   epic-101-retrospective: optional
 
   # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
