@@ -2,7 +2,7 @@
 
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,7 +34,6 @@ export function SearchBar({
 	const router = useRouter();
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
-	const [suggestions, setSuggestions] = useState<string[]>([]);
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -49,19 +48,9 @@ export function SearchBar({
 		return () => document.removeEventListener('keydown', down);
 	}, []);
 
-	// Use Convex search suggestions hook
+	// Use Convex search suggestions hook - use data directly without local state
 	const suggestionsResult = useSearchSuggestions(query.length > 1 ? query : '', 10);
-	const { data: convexSuggestions } = suggestionsResult;
-
-	const updateSuggestions = useEffectEvent(() => {
-		const newSuggestions = convexSuggestions || [];
-		setSuggestions(newSuggestions);
-	});
-
-	// Update suggestions when Convex data changes
-	useEffect(() => {
-		updateSuggestions();
-	}, [convexSuggestions, updateSuggestions]);
+	const suggestions = suggestionsResult.data || [];
 
 	const handleSearch = (searchQuery: string) => {
 		if (!searchQuery.trim()) return;

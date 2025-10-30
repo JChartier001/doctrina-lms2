@@ -133,7 +133,7 @@ export default function CourseDetailPage() {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="flex items-center justify-center">
-								<span className="text-3xl font-bold">${courseData.price ? (courseData.price / 100).toFixed(2) : '0.00'}</span>
+								<span className="text-3xl font-bold">${courseData.price ? courseData.price.toFixed(2) : '0.00'}</span>
 							</div>
 
 							<Button className="w-full" size="lg" onClick={handleEnroll}>
@@ -227,7 +227,7 @@ export default function CourseDetailPage() {
 					<h2 className="text-2xl font-bold mb-4">Course Curriculum</h2>
 
 					<div className="space-y-4">
-						{courseData.curriculum.map((module, index) => (
+						{courseData.curriculum.map(module => (
 							<Card key={module.id}>
 								<CardHeader>
 									<CardTitle>{module.title}</CardTitle>
@@ -238,7 +238,7 @@ export default function CourseDetailPage() {
 								</CardHeader>
 								<CardContent>
 									<div className="space-y-2">
-										{module.lessons.map((lesson) => (
+										{module.lessons.map(lesson => (
 											<div
 												key={lesson.id}
 												className="flex justify-between items-center p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"

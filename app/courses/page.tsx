@@ -125,6 +125,8 @@ export default function CoursesPage() {
 										<Image
 											src={course.thumbnailUrl || '/placeholder.svg?height=200&width=300'}
 											alt={course.title}
+											width={300}
+											height={200}
 											className="w-full h-48 object-cover"
 										/>
 										{course.level && (

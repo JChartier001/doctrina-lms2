@@ -13,7 +13,15 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],
-			exclude: ['node_modules/', 'test/', '**/*.config.*', '**/types/**', 'convex/_generated/**'],
+			exclude: [
+				'node_modules/',
+				'test/',
+				'**/*.config.*',
+				'**/types/**',
+				'convex/_generated/**',
+				'convex/seedData.ts',
+				'convex/seedCurrentUser.ts',
+			],
 			// Priority-based thresholds per TESTING-STRATEGY.md
 			thresholds: {
 				// Core features: 85%

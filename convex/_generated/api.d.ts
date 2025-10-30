@@ -25,6 +25,8 @@ import type * as purchases from "../purchases.js";
 import type * as recommendations from "../recommendations.js";
 import type * as resources from "../resources.js";
 import type * as search from "../search.js";
+import type * as seedCurrentUser from "../seedCurrentUser.js";
+import type * as seedData from "../seedData.js";
 import type * as users from "../users.js";
 
 import type {
@@ -59,6 +61,8 @@ declare const fullApi: ApiFromModules<{
   recommendations: typeof recommendations;
   resources: typeof resources;
   search: typeof search;
+  seedCurrentUser: typeof seedCurrentUser;
+  seedData: typeof seedData;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

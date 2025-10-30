@@ -261,7 +261,7 @@ export default function ProfilePage() {
 							<div className="space-y-4">
 								{achievements.map(achievement => (
 									<div key={achievement.id} className="flex items-start gap-3">
-										<div className="flex-shrink-0 text-3xl">{achievement.icon}</div>
+										<div className="shrink-0 text-3xl">{achievement.icon}</div>
 										<div>
 											<h4 className="font-medium">{achievement.title}</h4>
 											<p className="text-sm text-muted-foreground">{achievement.description}</p>
@@ -472,6 +472,8 @@ export default function ProfilePage() {
 															src="/placeholder.svg?height=80&width=140"
 															alt="Course thumbnail"
 															className="w-[140px] h-20 object-cover rounded-md"
+															width={140}
+															height={80}
 														/>
 													</div>
 													<div className="flex-1">
@@ -487,10 +489,12 @@ export default function ProfilePage() {
 												</div>
 
 												<div className="border rounded-lg p-4 flex gap-4">
-													<div className="flex-shrink-0">
+													<div className="shrink-0">
 														<Image
 															src="/placeholder.svg?height=80&width=140"
 															alt="Course thumbnail"
+															width={140}
+															height={80}
 															className="w-[140px] h-20 object-cover rounded-md"
 														/>
 													</div>
@@ -520,6 +524,8 @@ export default function ProfilePage() {
 															<Image
 																src="/placeholder.svg?height=80&width=140"
 																alt="Course thumbnail"
+																width={140}
+																height={80}
 																className="w-[140px] h-20 object-cover rounded-md"
 															/>
 														</div>
@@ -546,6 +552,8 @@ export default function ProfilePage() {
 																src="/placeholder.svg?height=80&width=140"
 																alt="Course thumbnail"
 																className="w-[140px] h-20 object-cover rounded-md"
+																width={140}
+																height={80}
 															/>
 														</div>
 														<div className="flex-1">

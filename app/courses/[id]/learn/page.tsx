@@ -1,105 +1,112 @@
 'use client';
 
 import { RedirectToSignIn } from '@clerk/nextjs';
+import { useMutation, useQuery } from 'convex/react';
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { use, useState } from 'react';
 
 import { GenerateCertificateButton } from '@/components/generate-certificate-button';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 
-// Mock course data
-const courseData = {
-	id: '1',
-	title: 'Advanced Botox Techniques',
-	description: 'Master the art of Botox injections with advanced techniques for facial aesthetics.',
-	instructor: {
-		id: '2',
-		name: 'Dr. Sarah Johnson',
-		image: '/placeholder.svg?height=50&width=50',
-	},
-	progress: 100, // 100% completed for demonstration
-	lessons: [
-		{
-			id: '1',
-			title: 'Introduction to Advanced Botox',
-			duration: '15 min',
-			type: 'video',
-			completed: true,
-			content:
-				'This is the introduction to advanced Botox techniques. The content would typically be a video or interactive lesson.',
-		},
-		{
-			id: '2',
-			title: 'Facial Anatomy Review',
-			duration: '25 min',
-			type: 'video',
-			completed: true,
-			content: 'This lesson covers facial anatomy relevant to Botox injections.',
-		},
-		{
-			id: '3',
-			title: 'Injection Techniques',
-			duration: '45 min',
-			type: 'video',
-			completed: true,
-			content: 'Learn about different injection techniques for various facial areas.',
-		},
-		{
-			id: '4',
-			title: 'Case Studies',
-			duration: '30 min',
-			type: 'video',
-			completed: true,
-			content: 'Review real case studies and outcomes.',
-		},
-		{
-			id: '5',
-			title: 'Practical Assessment',
-			duration: '60 min',
-			type: 'assignment',
-			completed: true,
-			content: 'Complete a practical assessment to demonstrate your skills.',
-		},
-		{
-			id: '6',
-			title: 'Final Exam',
-			duration: '45 min',
-			type: 'quiz',
-			completed: true,
-			content: 'Take the final exam to test your knowledge.',
-		},
-	],
-};
-
-export default function CourseLearnPage({ params }: { params: { id: string } }) {
-	const { user, isLoading } = useAuth();
+export default function CourseLearnPage({ params }: { params: Promise<{ id: string }> }) {
+	const { id } = use(params);
+	const { user, isLoading: authLoading } = useAuth();
 	const router = useRouter();
 	const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
-	const [isCourseCompleted, setIsCourseCompleted] = useState(false);
 
-	const checkCompletion = useEffectEvent(() => {
-		const completed = courseData.lessons.every(lesson => lesson.completed);
-		setIsCourseCompleted(completed);
+	// Fetch course data with curriculum
+	const courseData = useQuery(api.courses.getWithCurriculum, {
+		courseId: id as Id<'courses'>,
 	});
 
-	useEffect(() => {
-		if (isLoading) return;
-		checkCompletion();
-	}, [isLoading, checkCompletion]);
+	// Fetch user progress for this course
+	const progressData = useQuery(api.lessonProgress.getUserProgress, {
+		courseId: id as Id<'courses'>,
+	});
 
-	if (!user) {
+	// Mark lesson complete mutation
+	const markComplete = useMutation(api.lessonProgress.markComplete);
+
+	// Debug logging
+	console.log('🔍 Learn Page Debug:', {
+		courseId: id,
+		userClerkId: user?.id,
+		authLoading,
+		courseDataStatus: courseData === undefined ? 'loading' : courseData === null ? 'null' : 'loaded',
+		progressDataStatus: progressData === undefined ? 'loading' : progressData === null ? 'null' : 'loaded',
+		progressData,
+	});
+
+	// Handle authentication redirect
+	if (!user && !authLoading) {
 		return <RedirectToSignIn />;
 	}
 
-	const currentLesson = courseData.lessons[currentLessonIndex];
+	// Loading state - show skeleton
+	if (authLoading || courseData === undefined || progressData === undefined) {
+		return (
+			<div className="container py-10">
+				<Skeleton className="h-10 w-40 mb-6" />
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					<div className="lg:col-span-2 space-y-6">
+						<Skeleton className="h-64 w-full" />
+						<Skeleton className="h-96 w-full" />
+					</div>
+					<div>
+						<Skeleton className="h-96 w-full" />
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	// Error state - course not found
+	if (courseData === null) {
+		router.push('/courses');
+		return null;
+	}
+
+	// Error state - not enrolled (no progress data)
+	if (progressData === null) {
+		return (
+			<div className="container py-10">
+				<Card>
+					<CardHeader>
+						<CardTitle>Enrollment Required</CardTitle>
+						<CardDescription>You need to enroll in this course to access the lessons.</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<Button onClick={() => router.push(`/courses/${id}`)}>Go to Course Details</Button>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
+
+	// Flatten lessons from all modules for navigation
+	const allLessons = courseData.curriculum.flatMap((module, modIndex) =>
+		module.lessons.map((lesson, lesIndex) => ({
+			...lesson,
+			moduleIndex: modIndex,
+			lessonIndex: lesIndex,
+			moduleTitle: module.title,
+			isCompleted: progressData.completedLessonIds.includes(lesson.id),
+		})),
+	);
+
+	const currentLesson = allLessons[currentLessonIndex];
+	const isCourseCompleted = progressData.completed === progressData.total;
 
 	const handleNextLesson = () => {
-		if (currentLessonIndex < courseData.lessons.length - 1) {
+		if (currentLessonIndex < allLessons.length - 1) {
 			setCurrentLessonIndex(currentLessonIndex + 1);
 		}
 	};
@@ -110,14 +117,19 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 		}
 	};
 
-	if (isLoading || !user) {
-		return null;
-	}
+	const handleMarkComplete = async () => {
+		if (!currentLesson) return;
+		try {
+			await markComplete({ lessonId: currentLesson.id as Id<'lessons'> });
+		} catch (error) {
+			console.error('Failed to mark lesson complete:', error);
+		}
+	};
 
 	return (
 		<div className="container py-10">
 			<div className="mb-6">
-				<Button variant="outline" onClick={() => router.push(`/courses/${params.id}`)}>
+				<Button variant="outline" onClick={() => router.push(`/courses/${id}`)}>
 					<ChevronLeft className="mr-2 h-4 w-4" />
 					Back to Course
 				</Button>
@@ -129,9 +141,9 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 						<h1 className="text-3xl font-bold mb-2">{courseData.title}</h1>
 						<div className="flex items-center justify-between mb-2">
 							<span className="text-sm font-medium">Course Progress</span>
-							<span className="text-sm font-medium">{courseData.progress}%</span>
+							<span className="text-sm font-medium">{Math.round(progressData.percent)}%</span>
 						</div>
-						<Progress value={courseData.progress} className="h-2 mb-4" />
+						<Progress value={progressData.percent} className="h-2 mb-4" />
 					</div>
 
 					<Tabs defaultValue="content" className="w-full">
@@ -144,11 +156,18 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 						<TabsContent value="content" className="space-y-4">
 							<Card>
 								<CardHeader>
-									<CardTitle>{currentLesson.title}</CardTitle>
-									<CardDescription>Duration: {currentLesson.duration}</CardDescription>
+									<div className="flex items-center justify-between">
+										<div>
+											<CardTitle>{currentLesson?.title}</CardTitle>
+											<CardDescription>
+												{currentLesson?.moduleTitle} • Duration: {currentLesson?.duration}
+											</CardDescription>
+										</div>
+										{currentLesson?.isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
+									</div>
 								</CardHeader>
 								<CardContent>
-									{currentLesson.type === 'video' && (
+									{currentLesson?.type === 'video' && (
 										<div className="bg-black aspect-video rounded-lg mb-6 flex items-center justify-center">
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +186,13 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 										</div>
 									)}
 
-									<p className="mb-4">{currentLesson.content}</p>
+									<p className="mb-4">Lesson content will be displayed here.</p>
+
+									{!currentLesson?.isCompleted && (
+										<Button onClick={handleMarkComplete} className="mb-4">
+											Mark as Complete
+										</Button>
+									)}
 
 									<div className="flex justify-between mt-6">
 										<Button variant="outline" onClick={handlePreviousLesson} disabled={currentLessonIndex === 0}>
@@ -175,7 +200,7 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 											Previous Lesson
 										</Button>
 
-										<Button onClick={handleNextLesson} disabled={currentLessonIndex === courseData.lessons.length - 1}>
+										<Button onClick={handleNextLesson} disabled={currentLessonIndex === allLessons.length - 1}>
 											Next Lesson
 											<ChevronRight className="ml-2 h-4 w-4" />
 										</Button>
@@ -196,10 +221,10 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 									</CardHeader>
 									<CardContent>
 										<GenerateCertificateButton
-											courseId={courseData.id}
+											courseId={id}
 											courseName={courseData.title}
-											instructorId={courseData.instructor.id}
-											instructorName={courseData.instructor.name}
+											instructorId={courseData.instructorId}
+											instructorName={courseData.instructor?.name || 'Instructor'}
 										/>
 									</CardContent>
 								</Card>
@@ -283,12 +308,12 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 						<CardHeader>
 							<CardTitle>Course Content</CardTitle>
 							<CardDescription>
-								{courseData.lessons.length} lessons • {courseData.lessons.filter(l => l.completed).length} completed
+								{allLessons.length} lessons • {progressData.completed} completed
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-2">
-								{courseData.lessons.map((lesson, index) => (
+								{allLessons.map((lesson, index) => (
 									<div
 										key={lesson.id}
 										className={`flex items-center p-3 rounded-lg cursor-pointer ${
@@ -296,8 +321,8 @@ export default function CourseLearnPage({ params }: { params: { id: string } }) 
 										}`}
 										onClick={() => setCurrentLessonIndex(index)}
 									>
-										<div className="flex-shrink-0 mr-3">
-											{lesson.completed ? (
+										<div className="shrink-0 mr-3">
+											{lesson.isCompleted ? (
 												<div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
 													<svg
 														xmlns="http://www.w3.org/2000/svg"

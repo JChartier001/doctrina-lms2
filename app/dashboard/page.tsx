@@ -21,6 +21,10 @@ export default function DashboardPage() {
 
 	// Convex queries
 	const enrolledCourses = useQuery(api.courses.list, user ? {} : 'skip');
+	const userCertificates = useQuery(
+		api.certificates.listForUser,
+		user?.id ? { userId: user.id as Id<'users'> } : 'skip',
+	);
 
 	// Student analytics for dashboard metrics
 	const studentAnalytics = useStudentAnalytics(user?.id as Id<'users'>);
@@ -351,19 +355,51 @@ export default function DashboardPage() {
 				<TabsContent value="certificates" className="space-y-4">
 					<h2 className="text-2xl font-bold">Your Certificates</h2>
 					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-						{['Basic Injection Techniques', 'Medical Aesthetics Fundamentals'].map((cert, i) => (
-							<Card key={i}>
-								<CardHeader>
-									<CardTitle>{cert}</CardTitle>
-									<CardDescription>Issued: {['Jan 15, 2023', 'Mar 22, 2023'][i]}</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<Button variant="outline" className="w-full">
-										View Certificate
+						{userCertificates === undefined ? (
+							// Loading state
+							<div className="col-span-full text-center py-8 text-muted-foreground">Loading certificates...</div>
+						) : userCertificates.length === 0 ? (
+							// Empty state
+							<Card className="col-span-full">
+								<CardContent className="p-12 text-center">
+									<GraduationCapIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+									<h3 className="text-lg font-medium mb-2">No certificates yet</h3>
+									<p className="text-muted-foreground mb-6">
+										Complete courses to earn certificates and showcase your achievements.
+									</p>
+									<Button onClick={() => router.push('/courses')}>
+										<BookOpenIcon className="h-4 w-4 mr-2" />
+										Browse Courses
 									</Button>
 								</CardContent>
 							</Card>
-						))}
+						) : (
+							// Display certificates
+							userCertificates.map(cert => (
+								<Card key={cert._id}>
+									<CardHeader>
+										<CardTitle>{cert.courseName}</CardTitle>
+										<CardDescription>
+											Issued:{' '}
+											{new Date(cert.issueDate).toLocaleDateString('en-US', {
+												month: 'short',
+												day: 'numeric',
+												year: 'numeric',
+											})}
+										</CardDescription>
+									</CardHeader>
+									<CardContent>
+										<Button
+											variant="outline"
+											className="w-full"
+											onClick={() => router.push(`/certificates/${cert._id}`)}
+										>
+											View Certificate
+										</Button>
+									</CardContent>
+								</Card>
+							))
+						)}
 					</div>
 				</TabsContent>
 			</Tabs>

@@ -21,6 +21,8 @@ export function CourseRecommendationCard({ course, showReason = true }: CourseRe
 				<Image
 					src={course.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 					alt={course.title}
+					width={400}
+					height={200}
 					className="object-cover w-full h-full"
 				/>
 				<Badge className={`capitalize absolute top-2 right-2 ${course.level === 'advanced' ? 'bg-primary' : ''}`}>

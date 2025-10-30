@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
@@ -131,6 +132,8 @@ export default function InstructorDashboardPage() {
 										<Image
 											src="/placeholder.svg?height=100&width=100"
 											alt="Course thumbnail"
+											width={100}
+											height={60}
 											className="w-[100px] h-[60px] object-cover rounded-md"
 										/>
 										<div>
@@ -188,13 +191,49 @@ export default function InstructorDashboardPage() {
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{instructorCourses ? (
+						{instructorCourses === undefined ? (
+							// Loading state
+							<>
+								{[1, 2, 3].map(i => (
+									<Card key={i}>
+										<CardContent className="p-0">
+											<Skeleton className="w-full aspect-video" />
+											<div className="p-6 space-y-3">
+												<Skeleton className="h-6 w-3/4" />
+												<Skeleton className="h-4 w-full" />
+												<Skeleton className="h-4 w-5/6" />
+												<div className="flex gap-2 pt-2">
+													<Skeleton className="h-10 flex-1" />
+													<Skeleton className="h-10 flex-1" />
+												</div>
+											</div>
+										</CardContent>
+									</Card>
+								))}
+							</>
+						) : instructorCourses.length === 0 ? (
+							// Empty state
+							<Card className="col-span-full">
+								<CardContent className="p-12 text-center">
+									<BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+									<h3 className="text-lg font-medium mb-2">No courses yet</h3>
+									<p className="text-muted-foreground mb-6">Create your first course to start teaching and earning.</p>
+									<Button onClick={() => router.push('/instructor/courses/wizard')}>
+										<PlusCircle className="h-4 w-4 mr-2" />
+										Create Your First Course
+									</Button>
+								</CardContent>
+							</Card>
+						) : (
+							// Display courses
 							instructorCourses.map(course => (
 								<Card key={course._id}>
 									<CardContent className="p-0">
 										<Image
 											src={course.thumbnailUrl || '/placeholder.svg?height=200&width=400'}
 											alt="Course thumbnail"
+											width={400}
+											height={200}
 											className="w-full aspect-video object-cover"
 										/>
 										<div className="p-6">
@@ -202,9 +241,9 @@ export default function InstructorDashboardPage() {
 												<h3 className="font-medium">{course.title}</h3>
 												<Badge>Published</Badge>
 											</div>
-											<p className="text-sm text-muted-foreground mb-4">{course.description}</p>
+											<p className="text-sm text-muted-foreground mb-4 line-clamp-2">{course.description}</p>
 											<div className="flex justify-between text-sm mb-4">
-												{/* <span>{course.enrollments || 0} enrollments</span> */}
+												<span>${course.price ?? 0}</span>
 												<span>{course.rating?.toFixed(1) || 'N/A'} ★</span>
 											</div>
 											<div className="flex gap-2">
@@ -226,114 +265,6 @@ export default function InstructorDashboardPage() {
 									</CardContent>
 								</Card>
 							))
-						) : (
-							// Fallback to mock data when Convex is disabled
-							<>
-								<Card>
-									<CardContent className="p-0">
-										<Image
-											src="/placeholder.svg?height=200&width=400"
-											alt="Course thumbnail"
-											className="w-full aspect-video object-cover"
-										/>
-										<div className="p-6">
-											<div className="flex justify-between items-start mb-2">
-												<h3 className="font-medium">Advanced Botox Techniques</h3>
-												<Badge>Published</Badge>
-											</div>
-											<p className="text-sm text-muted-foreground mb-4">
-												Master the art of Botox injections with advanced techniques for facial aesthetics.
-											</p>
-											<div className="flex justify-between text-sm mb-4">
-												<span>78 students</span>
-												<span>4.8 ★</span>
-											</div>
-											<div className="flex gap-2">
-												<Button
-													variant="outline"
-													className="flex-1"
-													onClick={() => router.push('/instructor/courses/1/edit')}
-												>
-													Edit
-												</Button>
-												<Button className="flex-1" onClick={() => router.push('/instructor/courses/1/analytics')}>
-													Analytics
-												</Button>
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-
-								<Card>
-									<CardContent className="p-0">
-										<Image
-											src="/placeholder.svg?height=200&width=400"
-											alt="Course thumbnail"
-											className="w-full aspect-video object-cover"
-										/>
-										<div className="p-6">
-											<div className="flex justify-between items-start mb-2">
-												<h3 className="font-medium">Dermal Fillers Masterclass</h3>
-												<Badge>Published</Badge>
-											</div>
-											<p className="text-sm text-muted-foreground mb-4">
-												Comprehensive training on dermal fillers for facial rejuvenation and contouring.
-											</p>
-											<div className="flex justify-between text-sm mb-4">
-												<span>42 students</span>
-												<span>4.6 ★</span>
-											</div>
-											<div className="flex gap-2">
-												<Button
-													variant="outline"
-													className="flex-1"
-													onClick={() => router.push('/instructor/courses/2/edit')}
-												>
-													Edit
-												</Button>
-												<Button className="flex-1" onClick={() => router.push('/instructor/courses/2/analytics')}>
-													Analytics
-												</Button>
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-
-								<Card>
-									<CardContent className="p-0">
-										<Image
-											src="/placeholder.svg?height=200&width=400"
-											alt="Course thumbnail"
-											className="w-full aspect-video object-cover"
-										/>
-										<div className="p-6">
-											<div className="flex justify-between items-start mb-2">
-												<h3 className="font-medium">Facial Anatomy for Aesthetics</h3>
-												<Badge variant="outline">Draft</Badge>
-											</div>
-											<p className="text-sm text-muted-foreground mb-4">
-												Essential facial anatomy knowledge for safe and effective aesthetic procedures.
-											</p>
-											<div className="flex justify-between text-sm mb-4">
-												<span>Not published</span>
-												<span>-</span>
-											</div>
-											<div className="flex gap-2">
-												<Button
-													variant="outline"
-													className="flex-1"
-													onClick={() => router.push('/instructor/courses/wizard')}
-												>
-													Continue Editing
-												</Button>
-												<Button className="flex-1" onClick={() => router.push('/instructor/courses/3/preview')}>
-													Preview
-												</Button>
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-							</>
 						)}
 					</div>
 				</TabsContent>

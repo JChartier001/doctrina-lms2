@@ -77,6 +77,8 @@ const eslintConfig = defineConfig([
 		'__mocks__/**',
 		'*.config.js',
 		'convex/_generated/**',
+		'convex/seedData.ts',
+		'convex/seedCurrentUser.ts',
 	]),
 ]);
 

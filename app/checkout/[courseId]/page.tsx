@@ -1,10 +1,11 @@
 'use client';
 
+import { useQuery } from 'convex/react';
 import { ArrowLeft, CreditCard, Lock } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -12,50 +13,25 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { useCompletePurchase, useCreatePurchase } from '@/lib/payment-service';
 
-// Mock course data - in a real app, this would be fetched from an API
-const coursesData = {
-	'1': {
-		id: '1',
-		title: 'Introduction to Medical Aesthetics',
-		description: 'Learn the fundamentals of medical aesthetics in this comprehensive course.',
-		price: 99.99,
-		image: '/placeholder.svg?height=200&width=300',
-		instructor: 'Dr. Sarah Johnson',
-	},
-	'2': {
-		id: '2',
-		title: 'Advanced Botox Techniques',
-		description: 'Master advanced Botox injection techniques with hands-on demonstrations.',
-		price: 149.99,
-		image: '/placeholder.svg?height=200&width=300',
-		instructor: 'Dr. Michael Chen',
-	},
-	'3': {
-		id: '3',
-		title: 'Dermal Fillers Masterclass',
-		description: 'Comprehensive training on dermal fillers application and techniques.',
-		price: 199.99,
-		image: '/placeholder.svg?height=200&width=300',
-		instructor: 'Dr. Emily Rodriguez',
-	},
-};
-
-export default function CheckoutPage({ params }: { params: { courseId: string } }) {
-	const { courseId } = params;
-	const { user, isLoading } = useAuth();
+export default function CheckoutPage({ params }: { params: Promise<{ courseId: string }> }) {
+	const { courseId } = use(params);
+	const { user, isLoading: authLoading } = useAuth();
 	const router = useRouter();
+
+	// Fetch course data from Convex
+	const courseData = useQuery(api.courses.get, { id: courseId as Id<'courses'> });
 
 	// Convex mutations
 	const createPurchase = useCreatePurchase();
 	const completePurchase = useCompletePurchase();
 
-	const [course, setCourse] = useState<Record<string, unknown> | null>(null);
-	const [loading, setLoading] = useState(true);
 	const [processing, setProcessing] = useState(false);
 	const [purchaseId, setPurchaseId] = useState<string | null>(null);
 
@@ -97,51 +73,49 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 
 	// Initialize checkout session
 	useEffect(() => {
-		if (isLoading) return;
+		if (authLoading || courseData === undefined) return;
 
 		if (!user) {
 			router.push(`/sign-in?redirect=/checkout/${courseId}`);
 			return;
 		}
 
-		const fetchCourse = async () => {
-			// In a real app, this would be an API call
-			const courseData = coursesData[courseId as keyof typeof coursesData];
+		// Handle course not found
+		if (courseData === null) {
+			toast.error('Course not found. The requested course could not be found.');
+			router.push('/courses');
+			return;
+		}
 
-			if (!courseData) {
-				toast.error('Course not found. The requested course could not be found.');
-				router.push('/courses');
-				return;
-			}
+		// Initialize form with user data
+		setEmail(user.email || '');
+		setName(user.name || '');
 
-			setCourse(courseData);
-			setEmail(user.email || '');
-			setName(user.name || '');
+		// Create purchase record
+		const initPurchase = async () => {
+			if (purchaseId) return; // Already initialized
 
 			try {
-				// Create purchase record using Convex
-				const purchaseId = await createPurchase({
+				const newPurchaseId = await createPurchase({
 					userId: user!.id as Id<'users'>,
-					courseId: courseData.id as Id<'courses'>,
-					amount: courseData.price as number,
+					courseId: courseData._id,
+					amount: courseData.price ?? 0,
 					status: 'open',
 				});
-				setPurchaseId(purchaseId);
+				setPurchaseId(newPurchaseId);
 			} catch (_error) {
 				toast.error('Failed to initialize checkout. Please try again.');
 			}
-
-			setLoading(false);
 		};
 
-		fetchCourse();
-	}, [courseId, user, isLoading, router, toast]);
+		initPurchase();
+	}, [courseId, user, authLoading, courseData, router, createPurchase, purchaseId]);
 
 	// Handle form submission
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		if (!purchaseId || !course) return;
+		if (!purchaseId || !courseData) return;
 
 		setProcessing(true);
 
@@ -167,17 +141,26 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 		}
 	};
 
-	if (loading || !course) {
+	// Loading state - show skeleton
+	if (authLoading || courseData === undefined) {
 		return (
 			<div className="container py-10">
-				<div className="flex justify-center items-center min-h-[50vh]">
-					<div className="animate-pulse space-y-4">
-						<div className="h-12 bg-muted rounded w-[300px]"></div>
-						<div className="h-64 bg-muted rounded w-[600px]"></div>
+				<Skeleton className="h-10 w-40 mb-6" />
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<div className="md:col-span-2">
+						<Skeleton className="h-96 w-full" />
+					</div>
+					<div>
+						<Skeleton className="h-64 w-full" />
 					</div>
 				</div>
 			</div>
 		);
+	}
+
+	// Error state - course not found
+	if (courseData === null) {
+		return null; // Will redirect via useEffect
 	}
 
 	return (
@@ -278,7 +261,7 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 										</div>
 
 										<Button type="submit" className="w-full" size="lg" disabled={processing || !purchaseId}>
-											{processing ? 'Processing...' : `Pay $${(course.price as number).toFixed(2)}`}
+											{processing ? 'Processing...' : `Pay $${(courseData.price ?? 0).toFixed(2)}`}
 										</Button>
 									</form>
 								</TabsContent>
@@ -296,13 +279,15 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 						<CardContent className="space-y-4">
 							<div className="flex gap-4">
 								<Image
-									src={(course.image as string) || '/placeholder.svg'}
-									alt={course.title as string}
+									src={courseData.thumbnailUrl || '/placeholder.svg'}
+									alt={courseData.title}
+									width={80}
+									height={80}
 									className="w-20 h-20 object-cover rounded-md"
 								/>
 								<div>
-									<h3 className="font-medium">{course.title as string}</h3>
-									<p className="text-sm text-muted-foreground">By {course.instructor as string}</p>
+									<h3 className="font-medium">{courseData.title}</h3>
+									<p className="text-sm text-muted-foreground">By Instructor</p>
 								</div>
 							</div>
 
@@ -311,12 +296,12 @@ export default function CheckoutPage({ params }: { params: { courseId: string } 
 							<div className="space-y-2">
 								<div className="flex justify-between">
 									<span>Course Price</span>
-									<span>${(course.price as number).toFixed(2)}</span>
+									<span>${(courseData.price ?? 0).toFixed(2)}</span>
 								</div>
 
 								<div className="flex justify-between font-medium">
 									<span>Total</span>
-									<span>${(course.price as number).toFixed(2)}</span>
+									<span>${(courseData.price ?? 0).toFixed(2)}</span>
 								</div>
 							</div>
 						</CardContent>
