@@ -18,6 +18,7 @@ import type * as http from "../http.js";
 import type * as image from "../image.js";
 import type * as lessonProgress from "../lessonProgress.js";
 import type * as lessons from "../lessons.js";
+import type * as lib_stripeClient from "../lib/stripeClient.js";
 import type * as liveSessions from "../liveSessions.js";
 import type * as notifications from "../notifications.js";
 import type * as payments from "../payments.js";
@@ -27,6 +28,7 @@ import type * as resources from "../resources.js";
 import type * as search from "../search.js";
 import type * as seedCurrentUser from "../seedCurrentUser.js";
 import type * as seedData from "../seedData.js";
+import type * as stripe from "../stripe.js";
 import type * as users from "../users.js";
 
 import type {
@@ -54,6 +56,7 @@ declare const fullApi: ApiFromModules<{
   image: typeof image;
   lessonProgress: typeof lessonProgress;
   lessons: typeof lessons;
+  "lib/stripeClient": typeof lib_stripeClient;
   liveSessions: typeof liveSessions;
   notifications: typeof notifications;
   payments: typeof payments;
@@ -63,6 +66,7 @@ declare const fullApi: ApiFromModules<{
   search: typeof search;
   seedCurrentUser: typeof seedCurrentUser;
   seedData: typeof seedData;
+  stripe: typeof stripe;
   users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

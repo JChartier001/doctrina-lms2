@@ -1,14 +1,48 @@
 import type { WebhookEvent } from '@clerk/backend';
 import { httpRouter } from 'convex/server';
+import { ConvexError } from 'convex/values';
+import type { Stripe } from 'stripe';
 import { Webhook } from 'svix';
 
 import { internal } from './_generated/api';
 import { httpAction, MutationCtx } from './_generated/server';
+import { stripe } from './lib/stripeClient';
+import { handleStripeWebhook } from './stripe';
 
 const http = httpRouter();
 
-export async function handleWebhook(ctx: MutationCtx, request: Request): Promise<Response> {
-	const event = await validateRequest(request);
+export async function validateRequest(
+	req: Request,
+	type: 'clerk' | 'stripe',
+): Promise<WebhookEvent | Stripe.Event | null> {
+	const payloadString = await req.text();
+	const svixHeaders = {
+		'svix-id': req.headers.get('svix-id')!,
+		'svix-timestamp': req.headers.get('svix-timestamp')!,
+		'svix-signature': req.headers.get('svix-signature')!,
+	};
+	try {
+		if (type === 'clerk') {
+			const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!);
+			return wh.verify(payloadString, svixHeaders) as unknown as WebhookEvent;
+		} else if (type === 'stripe') {
+			const signature = req.headers.get('stripe-signature') as string;
+			if (!signature) {
+				throw new ConvexError({ code: 'MISSING_STRIPE_SIGNATURE_HEADER' });
+			}
+
+			const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+			return stripe.webhooks.constructEvent(payloadString, signature, webhookSecret);
+		}
+		return null;
+	} catch (error) {
+		console.error('Error verifying webhook event', error);
+		return null;
+	}
+}
+
+export async function handleClerkWebhook(ctx: MutationCtx, request: Request): Promise<Response> {
+	const event = await validateRequest(request, 'clerk');
 	if (!event) {
 		return new Response('Error occurred', { status: 400 });
 	}
@@ -39,25 +73,16 @@ http.route({
 	path: '/clerk-users-webhook',
 	method: 'POST',
 	handler: httpAction(async (ctx, request) => {
-		return await handleWebhook(ctx as unknown as MutationCtx, request);
+		return await handleClerkWebhook(ctx as unknown as MutationCtx, request);
 	}),
 });
 
-export async function validateRequest(req: Request): Promise<WebhookEvent | null> {
-	const payloadString = await req.text();
-	console.log(req.headers, payloadString, 'headers and payload string', process.env.CLERK_WEBHOOK_SECRET);
-	const svixHeaders = {
-		'svix-id': req.headers.get('svix-id')!,
-		'svix-timestamp': req.headers.get('svix-timestamp')!,
-		'svix-signature': req.headers.get('svix-signature')!,
-	};
-	const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET!);
-	try {
-		return wh.verify(payloadString, svixHeaders) as unknown as WebhookEvent;
-	} catch (error) {
-		console.error('Error verifying webhook event', error);
-		return null;
-	}
-}
+http.route({
+	path: '/stripe-webhook',
+	method: 'POST',
+	handler: httpAction(async (ctx, request) => {
+		return await handleStripeWebhook(ctx as unknown as MutationCtx, request);
+	}),
+});
 
 export default http;
