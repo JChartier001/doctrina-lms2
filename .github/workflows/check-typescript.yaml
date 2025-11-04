@@ -1,25 +1,28 @@
-name: Verify PR - Code Typescripting
+name: Verify PR - Checking Code Typescript
 on: [pull_request]
 
 jobs:
   formatting:
-    name: Code Typescripting
+    name: Checking Code Typescript
     runs-on: ubuntu-latest
     env:
       NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+      NODE_OPTIONS: '--max-old-space-size=4096'
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          clean: true
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1'
+          node-version-file: 'package.json'
           cache: 'yarn'
 
       - name: Install Node Modules
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
         env:
           NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
 
