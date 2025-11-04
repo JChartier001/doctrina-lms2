@@ -1,7 +1,8 @@
 import { v } from 'convex/values';
 
+import { mutation } from './_customFunctions';
 import { api } from './_generated/api';
-import { mutation, query } from './_generated/server';
+import { query } from './_generated/server';
 
 /**
  * Mark a lesson as complete for the authenticated user
@@ -140,34 +141,8 @@ export const recalculateProgress = mutation({
 			...(completedAt !== undefined && { completedAt }),
 		});
 
-		// Trigger certificate generation if 100% complete (Constraint #9, AC-101.4)
-		if (completedAt) {
-			// Fetch required data for certificate generation
-			const course = await ctx.db.get(courseId);
-			const user = await ctx.db
-				.query('users')
-				.withIndex('by_externalId', q => q.eq('externalId', enrollment.userId))
-				.first();
-
-			const instructor = course
-				? await ctx.db
-						.query('users')
-						.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
-						.first()
-				: null;
-
-			if (course && user && instructor) {
-				await ctx.scheduler.runAfter(0, api.certificates.generate, {
-					userId: user._id,
-					userName: `${user.firstName} ${user.lastName}`,
-					courseId: course._id,
-					courseName: course.title,
-					instructorId: instructor._id,
-					instructorName: `${instructor.firstName} ${instructor.lastName}`,
-					templateId: 'default',
-				});
-			}
-		}
+		// Certificate generation now handled by enrollment trigger (see convex/triggers.ts)
+		// Trigger automatically fires when enrollment.completedAt is set via ctx.db.patch
 
 		return { progressPercent, completedAt: completedAt ?? null };
 	},

@@ -46,6 +46,7 @@ development_status:
   # EPIC-101: Lesson Progress Tracking System (P0 - Critical, 13 pts)
   epic-101: contexted
   101-1-create-lesson-progress-tracking: done
+  101-2-refactor-certificate-triggers: review
   epic-101-retrospective: optional
 
   # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
