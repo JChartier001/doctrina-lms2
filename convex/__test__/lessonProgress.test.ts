@@ -512,14 +512,31 @@ describe('Lesson Progress Tracking', () => {
 			expect(result.completedAt).toBeNull();
 		});
 
-		// Subtask 2.4: Test certificate trigger integration
-		// NOTE: We cannot fully test the scheduler.runAfter call due to convex-test limitations
-		// The test below covers line 160 but causes an async scheduler error after completion
-		// This is a known limitation - the test passes but leaves an unhandled rejection
-		it.skip('triggers certificate generation when all data is available at 100% completion', async () => {
-			// This test is skipped because convex-test doesn't support ctx.scheduler.runAfter
-			// Line 160 (certificate generation) cannot be tested without causing errors
-			// Manual testing or integration tests should verify certificate generation works
+		it('returns 0% progress when course has no lessons (totalLessons === 0)', async () => {
+			// Delete initial lesson and module for clean test
+			await t.run(async (ctx: TestCtx) => {
+				await ctx.db.delete(testLessonId);
+				await ctx.db.delete(testModuleId);
+			});
+
+			// Create a module with NO lessons
+			await t.run(async (ctx: TestCtx) => {
+				await ctx.db.insert('courseModules', {
+					courseId: testCourseId,
+					title: 'Empty Module',
+					order: 0,
+					createdAt: Date.now(),
+				});
+			});
+
+			// Recalculate progress (should handle division by zero)
+			const result = await t.mutation(api.lessonProgress.recalculateProgress, {
+				enrollmentId: testEnrollmentId,
+			});
+
+			// Edge case: totalLessons = 0, should return 0% not NaN or error
+			expect(result.progressPercent).toBe(0);
+			expect(result.completedAt).toBeNull();
 		});
 	});
 
@@ -819,6 +836,38 @@ describe('Lesson Progress Tracking', () => {
 				courseId: emptyCourseId,
 			});
 
+			expect(nextLessonId).toBeNull();
+		});
+
+		it('returns null when course has no modules (sortedModules.length === 0)', async () => {
+			// Create a course with NO modules at all
+			const emptyModulesCourseId = await t.run(async (ctx: TestCtx) => {
+				// Create instructor
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'No',
+					lastName: 'Modules',
+					email: 'nomodules@test.com',
+					externalId: 'no-modules-instructor-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				// Create course with NO modules
+				return await ctx.db.insert('courses', {
+					title: 'Course Without Modules',
+					description: 'Course with no modules',
+					instructorId,
+					price: 100,
+					createdAt: Date.now(),
+					updatedAt: Date.now(),
+				});
+			});
+
+			const nextLessonId = await t.query(api.lessonProgress.getNextIncompleteLesson, {
+				courseId: emptyModulesCourseId,
+			});
+
+			// Edge case: sortedModules.length === 0, should return null
 			expect(nextLessonId).toBeNull();
 		});
 	});

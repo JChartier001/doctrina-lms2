@@ -15,28 +15,34 @@ This file contains TypeScript-specific rules and best practices for the entire c
 ```typescript
 // ❌ WRONG - Never do this
 const data: any = fetchData();
-function process(obj: any) { /* ... */ }
-const handler = (event: any) => { /* ... */ };
+function process(obj: any) {
+	/* ... */
+}
+const handler = (event: any) => {
+	/* ... */
+};
 
 // ✅ CORRECT - Proper alternatives
 // 1. Define specific types
 interface UserData {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 }
 const data: UserData = fetchData();
 
 // 2. Use unknown for truly unknown values
 const unknownData: unknown = fetchData();
 if (isUserData(unknownData)) {
-  process(unknownData);
+	process(unknownData);
 }
 
 // 3. Use union types
 type ResponseData = UserData | ErrorData;
 
 // 4. Use generics
-function process<T extends BaseData>(obj: T): T { /* ... */ }
+function process<T extends BaseData>(obj: T): T {
+	/* ... */
+}
 
 // 5. Use Record for dynamic objects
 const dynamicObj: Record<string, unknown> = {};
@@ -46,11 +52,13 @@ const dynamicObj: Record<string, unknown> = {};
 
 ```typescript
 // ✅ OK in test files only (*.test.ts, *.test.tsx)
-describe("Component tests", () => {
-  it("handles mock data", () => {
-    const mockData: any = { /* test data */ };
-    // any is permitted here for testing flexibility
-  });
+describe('Component tests', () => {
+	it('handles mock data', () => {
+		const mockData: any = {
+			/* test data */
+		};
+		// any is permitted here for testing flexibility
+	});
 });
 ```
 
@@ -70,7 +78,7 @@ const calculateTotal = (items: Item[]): number => {
 };
 
 // For React components
-const MyComponent = (props: Props): JSX.Element => {
+const MyComponent = (props: Props): React.ReactElement => {
   return <div>{props.content}</div>;
 };
 
@@ -86,24 +94,24 @@ const fetchData = async (id: string): Promise<UserData> => {
 ```typescript
 // ✅ PREFER interfaces for object shapes
 interface User {
-  id: string;
-  name: string;
-  email: string;
+	id: string;
+	name: string;
+	email: string;
 }
 
 // Interfaces can be extended
 interface AdminUser extends User {
-  permissions: string[];
+	permissions: string[];
 }
 
 // ✅ USE type aliases for:
 // 1. Union types
-type Status = "pending" | "approved" | "rejected";
+type Status = 'pending' | 'approved' | 'rejected';
 
 // 2. Intersection types
 type UserWithTimestamps = User & {
-  createdAt: Date;
-  updatedAt: Date;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 // 3. Utility types
@@ -120,20 +128,20 @@ type ClickHandler = (event: MouseEvent) => void;
 
 ```json
 {
-  "compilerOptions": {
-    "strict": true,                    // Enable all strict checks
-    "noImplicitAny": true,            // Error on implicit any
-    "strictNullChecks": true,          // Enable strict null checks
-    "strictFunctionTypes": true,       // Strict function types
-    "strictBindCallApply": true,       // Strict bind/call/apply
-    "strictPropertyInitialization": true, // Class property initialization
-    "noImplicitThis": true,           // Error on implicit this
-    "alwaysStrict": true,             // Emit "use strict"
-    "noUnusedLocals": true,           // Error on unused locals
-    "noUnusedParameters": true,       // Error on unused parameters
-    "noImplicitReturns": true,        // Error when not all paths return
-    "noFallthroughCasesInSwitch": true // Error on fallthrough cases
-  }
+	"compilerOptions": {
+		"strict": true, // Enable all strict checks
+		"noImplicitAny": true, // Error on implicit any
+		"strictNullChecks": true, // Enable strict null checks
+		"strictFunctionTypes": true, // Strict function types
+		"strictBindCallApply": true, // Strict bind/call/apply
+		"strictPropertyInitialization": true, // Class property initialization
+		"noImplicitThis": true, // Error on implicit this
+		"alwaysStrict": true, // Emit "use strict"
+		"noUnusedLocals": true, // Error on unused locals
+		"noUnusedParameters": true, // Error on unused parameters
+		"noImplicitReturns": true, // Error when not all paths return
+		"noFallthroughCasesInSwitch": true // Error on fallthrough cases
+	}
 }
 ```
 
@@ -143,26 +151,30 @@ type ClickHandler = (event: MouseEvent) => void;
 
 ```typescript
 // ✅ Use discriminated unions for state management
-type LoadingState = {
-  status: "idle";
-} | {
-  status: "loading";
-} | {
-  status: "success";
-  data: UserData;
-} | {
-  status: "error";
-  error: Error;
-};
+type LoadingState =
+	| {
+			status: 'idle';
+	  }
+	| {
+			status: 'loading';
+	  }
+	| {
+			status: 'success';
+			data: UserData;
+	  }
+	| {
+			status: 'error';
+			error: Error;
+	  };
 
 // Using with as const
 const ACTION_TYPES = {
-  FETCH: "FETCH",
-  SUCCESS: "SUCCESS",
-  ERROR: "ERROR",
+	FETCH: 'FETCH',
+	SUCCESS: 'SUCCESS',
+	ERROR: 'ERROR',
 } as const;
 
-type ActionType = typeof ACTION_TYPES[keyof typeof ACTION_TYPES];
+type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
 ```
 
 ### Utility Types
@@ -178,10 +190,10 @@ type RequiredUser = Required<User>;
 type ReadonlyUser = Readonly<User>;
 
 // Pick - Select specific properties
-type UserCredentials = Pick<User, "email" | "password">;
+type UserCredentials = Pick<User, 'email' | 'password'>;
 
 // Omit - Exclude specific properties
-type PublicUser = Omit<User, "password">;
+type PublicUser = Omit<User, 'password'>;
 
 // Record - Create object type with specific keys
 type UserRoles = Record<string, Role>;
@@ -205,41 +217,35 @@ type FunctionParams = Parameters<typeof myFunction>;
 ```typescript
 // Type predicate functions
 function isUser(obj: unknown): obj is User {
-  return (
-    typeof obj === "object" &&
-    obj !== null &&
-    "id" in obj &&
-    "name" in obj &&
-    "email" in obj
-  );
+	return typeof obj === 'object' && obj !== null && 'id' in obj && 'name' in obj && 'email' in obj;
 }
 
 // Using type guards
 const processData = (data: unknown): void => {
-  if (isUser(data)) {
-    // data is typed as User here
-    console.log(data.email);
-  }
+	if (isUser(data)) {
+		// data is typed as User here
+		console.log(data.email);
+	}
 };
 
 // Narrowing with typeof
 function processValue(value: string | number) {
-  if (typeof value === "string") {
-    // value is string here
-    return value.toUpperCase();
-  } else {
-    // value is number here
-    return value * 2;
-  }
+	if (typeof value === 'string') {
+		// value is string here
+		return value.toUpperCase();
+	} else {
+		// value is number here
+		return value * 2;
+	}
 }
 
 // Narrowing with instanceof
 function handleError(error: unknown) {
-  if (error instanceof Error) {
-    console.error(error.message);
-  } else {
-    console.error("Unknown error", error);
-  }
+	if (error instanceof Error) {
+		console.error(error.message);
+	} else {
+		console.error('Unknown error', error);
+	}
 }
 ```
 
@@ -248,41 +254,41 @@ function handleError(error: unknown) {
 ```typescript
 // Generic functions
 function identity<T>(value: T): T {
-  return value;
+	return value;
 }
 
 // Generic interfaces
 interface ApiResponse<T> {
-  data: T;
-  status: number;
-  message: string;
+	data: T;
+	status: number;
+	message: string;
 }
 
 // Generic classes
 class DataStore<T> {
-  private items: T[] = [];
-  
-  add(item: T): void {
-    this.items.push(item);
-  }
-  
-  get(index: number): T | undefined {
-    return this.items[index];
-  }
+	private items: T[] = [];
+
+	add(item: T): void {
+		this.items.push(item);
+	}
+
+	get(index: number): T | undefined {
+		return this.items[index];
+	}
 }
 
 // Generic constraints
 interface HasId {
-  id: string;
+	id: string;
 }
 
 function findById<T extends HasId>(items: T[], id: string): T | undefined {
-  return items.find(item => item.id === id);
+	return items.find(item => item.id === id);
 }
 
 // Multiple type parameters
 function map<T, U>(items: T[], fn: (item: T) => U): U[] {
-  return items.map(fn);
+	return items.map(fn);
 }
 ```
 
@@ -294,22 +300,25 @@ function map<T, U>(items: T[], fn: (item: T) => U): U[] {
 // ✅ CORRECT - Always define array types explicitly
 const numbers: number[] = [1, 2, 3];
 const users: User[] = [];
-const matrix: number[][] = [[1, 2], [3, 4]];
+const matrix: number[][] = [
+	[1, 2],
+	[3, 4],
+];
 
 // Using Array<T> syntax
-const items: Array<string> = ["a", "b", "c"];
+const items: Array<string> = ['a', 'b', 'c'];
 
 // Readonly arrays
 const readonlyNumbers: ReadonlyArray<number> = [1, 2, 3];
 // or
-const readonlyStrings: readonly string[] = ["a", "b"];
+const readonlyStrings: readonly string[] = ['a', 'b'];
 
 // Tuple types
-const tuple: [string, number, boolean] = ["hello", 42, true];
+const tuple: [string, number, boolean] = ['hello', 42, true];
 
 // Rest parameters
 function sum(...numbers: number[]): number {
-  return numbers.reduce((a, b) => a + b, 0);
+	return numbers.reduce((a, b) => a + b, 0);
 }
 ```
 
@@ -318,35 +327,35 @@ function sum(...numbers: number[]): number {
 ```typescript
 // ✅ CORRECT - Define object shapes
 interface Product {
-  id: string;
-  name: string;
-  price: number;
-  tags?: string[];  // Optional property
-  readonly sku: string;  // Readonly property
+	id: string;
+	name: string;
+	price: number;
+	tags?: string[]; // Optional property
+	readonly sku: string; // Readonly property
 }
 
 // Index signatures
 interface StringDictionary {
-  [key: string]: string;
+	[key: string]: string;
 }
 
 // Nested objects
 interface Order {
-  id: string;
-  customer: {
-    name: string;
-    email: string;
-  };
-  items: Array<{
-    productId: string;
-    quantity: number;
-  }>;
+	id: string;
+	customer: {
+		name: string;
+		email: string;
+	};
+	items: Array<{
+		productId: string;
+		quantity: number;
+	}>;
 }
 
 // Using Record type
 const userRoles: Record<string, Role> = {
-  admin: { permissions: ["all"] },
-  user: { permissions: ["read"] },
+	admin: { permissions: ['all'] },
+	user: { permissions: ['read'] },
 };
 ```
 
@@ -361,20 +370,20 @@ type AsyncCallback<T> = (data: T) => Promise<void>;
 type Predicate<T> = (item: T) => boolean;
 
 // Function overloads
-function createElement(tag: "a"): HTMLAnchorElement;
-function createElement(tag: "div"): HTMLDivElement;
+function createElement(tag: 'a'): HTMLAnchorElement;
+function createElement(tag: 'div'): HTMLDivElement;
 function createElement(tag: string): HTMLElement {
-  return document.createElement(tag);
+	return document.createElement(tag);
 }
 
 // Optional and default parameters
-function greet(name: string, greeting: string = "Hello"): string {
-  return `${greeting}, ${name}!`;
+function greet(name: string, greeting: string = 'Hello'): string {
+	return `${greeting}, ${name}!`;
 }
 
 // Rest parameters with types
 function combine<T>(...arrays: T[][]): T[] {
-  return arrays.flat();
+	return arrays.flat();
 }
 ```
 
@@ -385,34 +394,29 @@ function combine<T>(...arrays: T[][]): T[] {
 ```typescript
 // Async function return types
 async function fetchUser(id: string): Promise<User> {
-  const response = await fetch(`/api/users/${id}`);
-  return response.json();
+	const response = await fetch(`/api/users/${id}`);
+	return response.json();
 }
 
 // Promise with union types
 async function tryFetchUser(id: string): Promise<User | null> {
-  try {
-    return await fetchUser(id);
-  } catch {
-    return null;
-  }
+	try {
+		return await fetchUser(id);
+	} catch {
+		return null;
+	}
 }
 
 // Async error handling
-type AsyncResult<T> = Promise<
-  | { success: true; data: T }
-  | { success: false; error: Error }
->;
+type AsyncResult<T> = Promise<{ success: true; data: T } | { success: false; error: Error }>;
 
-async function safeOperation<T>(
-  operation: () => Promise<T>
-): AsyncResult<T> {
-  try {
-    const data = await operation();
-    return { success: true, data };
-  } catch (error) {
-    return { success: false, error: error as Error };
-  }
+async function safeOperation<T>(operation: () => Promise<T>): AsyncResult<T> {
+	try {
+		const data = await operation();
+		return { success: true, data };
+	} catch (error) {
+		return { success: false, error: error as Error };
+	}
 }
 ```
 
@@ -422,26 +426,26 @@ async function safeOperation<T>(
 
 ```typescript
 // Type-only imports/exports
-import type { User } from "./types";
+import type { User } from './types';
 export type { User };
 
 // Namespace imports
-import * as Types from "./types";
+import * as Types from './types';
 
 // Module augmentation
-declare module "express" {
-  interface Request {
-    user?: User;
-  }
+declare module 'express' {
+	interface Request {
+		user?: User;
+	}
 }
 
 // Ambient declarations
 declare global {
-  interface Window {
-    customAPI: {
-      version: string;
-    };
-  }
+	interface Window {
+		customAPI: {
+			version: string;
+		};
+	}
 }
 ```
 
@@ -513,10 +517,10 @@ const data: any = fetchData();
 const data: UserData = fetchData();
 
 // ❌ Implicit any in functions
-function process(data) { }
+function process(data) {}
 
 // ✅ Explicit parameter types
-function process(data: UserData): void { }
+function process(data: UserData): void {}
 
 // ❌ Using Function type
 const callback: Function = () => {};
@@ -535,6 +539,6 @@ const user = response as User;
 
 // ✅ Validate before asserting
 if (isUser(response)) {
-  const user = response;
+	const user = response;
 }
 ```

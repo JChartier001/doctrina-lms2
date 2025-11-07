@@ -57,7 +57,11 @@ export const generate = mutation({
 export const remove = mutation({
 	args: { id: v.id('certificates') },
 	handler: async (ctx, { id }) => {
-		await ctx.db.delete(id);
+		// Check if certificate exists before attempting deletion
+		const certificate = await ctx.db.get(id);
+		if (certificate) {
+			await ctx.db.delete(id);
+		}
 		return id;
 	},
 });

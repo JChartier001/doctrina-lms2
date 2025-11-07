@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { Icons } from '@/components/icons';
 
-export function MarketingFooter(): JSX.Element {
+export function MarketingFooter(): React.ReactElement {
 	return (
 		<footer className="border-t bg-muted/50">
 			<div className="container mx-auto px-4 py-12">
@@ -156,4 +156,3 @@ export function MarketingFooter(): JSX.Element {
 		</footer>
 	);
 }
-
