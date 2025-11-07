@@ -115,9 +115,6 @@
 		"typescript": "^5.9.3",
 		"vitest": "4.0.8"
 	},
-	"resolutions": {
-		"rollup": "4.52.5"
-	},
 	"volta": {
 		"node": "24.10.0",
 		"yarn": "4.10.3"
