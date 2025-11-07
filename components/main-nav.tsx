@@ -1,10 +1,10 @@
 'use client';
 import { Search } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
-import { Icons } from '@/components/icons';
 import { SearchBar } from '@/components/search-bar';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
@@ -18,8 +18,7 @@ export function MainNav() {
 	return (
 		<div className="mr-4 flex items-center px-4">
 			<Link href="/" className="mr-6 flex items-center space-x-2">
-				<Icons.logo className="h-6 w-6" />
-				<span className="hidden font-bold sm:inline-block">Doctrina</span>
+				<Image src="/logo.png" alt="Doctrina" width={150} height={32} />
 			</Link>
 			<nav className="flex items-center space-x-6 text-sm font-medium">
 				<Link
