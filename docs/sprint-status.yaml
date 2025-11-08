@@ -36,11 +36,17 @@ tracking_system: file-system
 story_location: '{project-root}/docs/stories'
 
 development_status:
+  # EPIC-110: Testing & Quality Assurance (P0 - Critical, 21 pts)
+  epic-110: backlog
+  110-1-fix-typescript-errors: drafted
+  110-2-comprehensive-test-coverage: drafted
+  epic-110-retrospective: optional
+
   # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)
   epic-109: backlog
   109-1-quick-wins-mock-replacement: done
   109-2-progress-integration-mock-replacement: done
-  109-3-post-mvp-mock-replacement: backlog
+  109-3-post-mvp-mock-replacement: drafted
   epic-109-retrospective: optional
 
   # EPIC-101: Lesson Progress Tracking System (P0 - Critical, 13 pts)
@@ -50,8 +56,8 @@ development_status:
   epic-101-retrospective: optional
 
   # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
-  epic-102: backlog
-  102-1-create-quiz-system: backlog
+  epic-102: contexted
+  102-1-create-quiz-system: drafted
   epic-102-retrospective: optional
 
   # EPIC-103: Course Reviews & Ratings (P0 - Critical, 8 pts)

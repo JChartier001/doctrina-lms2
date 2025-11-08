@@ -131,6 +131,96 @@ The UI was built with mock/hardcoded data for rapid prototyping. Even though Con
 
 ---
 
+### EPIC-110: Testing & Quality Assurance
+
+**Status:** 🔴 Not Started
+**Priority:** P0 - CRITICAL
+**Effort:** 21 story points
+**Target Sprint:** Sprint 2 (Weeks 3-4)
+
+#### Problem
+
+Only 3 out of 25 Convex backend files have test coverage (lessonProgress, certificates, triggers). Critical functionality including course creation, enrollment, and payment processing is untested. This creates high risk for production bugs and makes refactoring dangerous.
+
+#### What Exists (Tests)
+
+- ✅ `convex/__test__/lessonProgress.test.ts` - 25 tests, 100% coverage
+- ✅ `convex/__test__/certificates.test.ts` - 15 tests, 100% coverage
+- ✅ `convex/__test__/triggers.test.ts` - 7 tests, 100% coverage
+- ✅ Vitest testing framework configured
+- ✅ convex-test library installed
+
+#### What's Missing (Tests for 22 files)
+
+**CRITICAL - Priority 1 (100% coverage required):**
+- ❌ `convex/__test__/purchases.test.ts` - Money handling
+- ❌ `convex/__test__/payments.test.ts` - Payment flows
+- ❌ `convex/__test__/enrollments.test.ts` - Access control
+
+**CORE - Priority 2 (85% coverage target):**
+- ❌ `convex/__test__/courses.test.ts` - Course CRUD
+- ❌ `convex/__test__/courseModules.test.ts` - Module management
+- ❌ `convex/__test__/lessons.test.ts` - Lesson management
+- ❌ `convex/__test__/users.test.ts` - User management
+
+**SECONDARY - Priority 3 (70% coverage target):**
+- ❌ favorites, liveSessions, notifications, recommendations, resources, search, analytics
+
+#### Implementation Tasks
+
+**Task 1: Critical Financial Tests** (8 pts)
+
+- Test purchase creation, refunds, access control
+- Test payment processing flows
+- Test enrollment creation and verification
+- **100% coverage required per TESTING-STRATEGY.md**
+
+**Task 2: Core Course Creation Tests** (8 pts)
+
+- Test course CRUD operations
+- Test module and lesson management
+- Test ordering and authorization
+- **85% coverage target**
+
+**Task 3: User Management Tests** (5 pts)
+
+- Test user CRUD and Clerk sync
+- Test role-based permissions
+- Test query functions
+- **85% coverage target**
+
+**Estimated Test Count:** ~190 tests
+
+#### Acceptance Criteria
+
+- [ ] **ALL Convex backend files: 100% test coverage**
+- [ ] Critical financial code: 100% (purchases, payments, enrollments)
+- [ ] Core features: 100% (courses, modules, lessons, users)
+- [ ] Secondary features: 100% (favorites, notifications, resources, etc.)
+- [ ] All tests pass (100% pass rate)
+- [ ] Coverage report validates 100% across all files
+- [ ] TypeScript compilation successful
+
+#### Technical Notes
+
+**Testing Framework:**
+- Vitest for test execution
+- convex-test for Convex mocking
+- Follow patterns from lessonProgress.test.ts
+
+**Coverage Target:**
+- **ALL Convex backend files: 100% coverage**
+- No exceptions - comprehensive coverage for all functions
+- Test every mutation, query, and edge case
+
+**Blocker for:** Safe implementation of quizzes, reviews, and all future features
+
+**Stories:**
+- **Story 110.1:** Fix TypeScript Errors Across Codebase (existing)
+- **Story 110.2:** Add Comprehensive Test Coverage for Core Convex Functions (21 pts)
+
+---
+
 ### EPIC-101: Lesson Progress Tracking System
 
 **Status:** 🔴 Not Started

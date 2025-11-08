@@ -1,0 +1,187 @@
+# Story 109.3: Replace Community Page Mock Data
+
+**Status:** Draft
+**Epic:** EPIC-109 - Replace Mock Data with Real Convex Queries
+**Type:** Feature Integration
+**Priority:** P2 - Low (Post-MVP)
+**Effort:** 3 story points
+**Risk:** Low
+**Blocked By:** EPIC-106 (Discussion Forums & Community backend not implemented)
+
+---
+
+## Story
+
+As a **student**,
+I want to **see real community discussions and forum posts**,
+so that **I can engage with other students and participate in course discussions**.
+
+---
+
+## Context
+
+The community page (`/app/community/page.tsx`) currently displays mock/hardcoded discussion data. This story will replace the mock data with real Convex queries once the discussion backend (EPIC-106) is implemented.
+
+**Current State:**
+- Community page shows mock discussion topics
+- Mock user posts and replies
+- Cannot create or interact with real discussions
+
+**Dependencies:**
+- ❌ EPIC-106 NOT STARTED: Discussion Forums & Community backend
+- ❌ `discussions` table not in schema
+- ❌ `discussions.list()` query not implemented
+- ❌ `discussionReplies.list()` query not implemented
+
+**Related:** EPIC-109 Phase 3 (Post-MVP Mock Replacement)
+
+---
+
+## Acceptance Criteria
+
+1. **AC1:** Community page displays real discussions from Convex
+   - Replace mock discussion data with `useQueryWithStatus(api.discussions.list)`
+   - Show actual discussion topics, authors, reply counts
+   - Real-time updates when new discussions posted
+
+2. **AC2:** Discussion threads show real replies
+   - Use `useQueryWithStatus(api.discussionReplies.list, { discussionId })`
+   - Display actual user replies with timestamps
+   - Handle loading and error states
+
+3. **AC3:** Loading and error states handled gracefully
+   - Show skeleton loaders while queries load
+   - Handle case when no discussions exist (empty state)
+   - Display friendly error messages if queries fail
+
+4. **AC4:** TypeScript types match Convex schema
+   - Import proper types from `convex/_generated/dataModel`
+   - Remove mock type definitions
+   - Full type safety maintained
+
+5. **AC5:** Mobile responsive layout maintained
+   - Page layout works on 320px+ screens
+   - Discussion threads readable on mobile
+   - No visual regressions
+
+---
+
+## Tasks / Subtasks
+
+### Task 1: Update Community Page (AC1, AC2)
+
+- [ ] **1.1** Replace mock discussion data with Convex queries
+  - Import `useQueryWithStatus` from `@/lib/convex`
+  - Replace mock discussions with `api.discussions.list`
+  - Update component to handle real data structure
+
+- [ ] **1.2** Update discussion thread views
+  - Use `api.discussionReplies.list` for replies
+  - Display real user names and timestamps
+  - Update reply counts with actual data
+
+### Task 2: Loading and Error States (AC3)
+
+- [ ] **2.1** Implement loading states
+  - Use `isPending` for skeleton loaders
+  - Show loading skeletons for discussion list
+
+- [ ] **2.2** Handle empty states
+  - Display message when no discussions exist
+  - Show CTA to create first discussion
+
+- [ ] **2.3** Error handling
+  - Display error messages if queries fail
+  - Add retry mechanism
+
+### Task 3: Type Safety and Testing (AC4, AC5)
+
+- [ ] **3.1** Update TypeScript types
+  - Import `Doc<'discussions'>` types
+  - Remove mock type definitions
+
+- [ ] **3.2** Mobile responsive verification
+  - Test on 320px+ screens
+  - Verify layout stacking
+
+---
+
+## Dev Notes
+
+### Architecture Patterns
+
+**Real-Time Data Pattern (Convex)**
+- Use `useQueryWithStatus` for reactive data subscriptions
+- Community page auto-updates when new discussions posted
+- No manual refresh needed
+
+**Richer useQuery Pattern (convex-helpers)**
+- Use existing `useQueryWithStatus` from `@/lib/convex`
+- Clean state handling with discriminated unions
+
+### Project Structure Notes
+
+**File to Modify:**
+- `/app/community/page.tsx` - Primary file to update
+
+**Convex Queries Needed (BLOCKED - not yet implemented):**
+- `api.discussions.list()` - Get all discussion topics
+- `api.discussionReplies.list({ discussionId })` - Get replies for a discussion
+- `api.discussions.create()` - Create new discussion (mutation)
+- `api.discussionReplies.create()` - Create reply (mutation)
+
+**Blocker:**
+This story CANNOT be implemented until EPIC-106 backend is complete. EPIC-106 requires:
+- `discussions` table in schema
+- `discussionReplies` table in schema
+- Discussion CRUD mutations and queries
+- Reply threading logic
+
+### Dependencies
+
+**Existing Dependencies:**
+- `convex@^1.28.2`
+- `convex-helpers@^0.1.104`
+- `next@16.0.1`
+- `react@^19.2.0`
+
+**Required (Not Yet Available):**
+- EPIC-106 backend implementation
+
+### References
+
+- **EPIC-109:** docs/epics.md - Replace Mock Data (Phase 3: Post-MVP)
+- **EPIC-106:** docs/epics.md - Discussion Forums & Community (21 story points, P2 priority)
+- **Architecture:** docs/ARCHITECTURE.md - Real-Time Data Pattern
+
+---
+
+## Dev Agent Record
+
+### Context Reference
+
+<!-- Story Context XML will be generated by story-context workflow -->
+
+### Agent Model Used
+
+Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
+
+### Completion Notes List
+
+- [ ] BLOCKED: Waiting for EPIC-106 backend implementation
+- [ ] Mock data replaced with real Convex queries (when unblocked)
+- [ ] Loading and error states implemented
+- [ ] TypeScript types updated
+
+### File List
+
+**Modified (when unblocked):**
+- `app/community/page.tsx` - Replace mock data with real queries
+
+---
+
+## Change Log
+
+| Date       | Author             | Changes                                        |
+| ---------- | ------------------ | ---------------------------------------------- |
+| 2025-11-07 | Bob (Scrum Master) | Initial story creation - BLOCKED on EPIC-106   |
