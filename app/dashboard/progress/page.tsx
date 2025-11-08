@@ -98,8 +98,10 @@ export default function StudentProgressDashboard() {
 	const router = useRouter();
 	const [_activeTab, setActiveTab] = useState('overview');
 
-	// Use comprehensive query to eliminate N+1 problem
-	// Single query fetches enrollments with course, instructor, progress, and nextLesson pre-loaded
+	// Use comprehensive query to consolidate data fetching
+	// Benefits: Single frontend request, no component-level waterfalls, data pre-loaded
+	// Trade-off: Backend performs ~6 queries per enrollment (see getMyEnrollmentsWithProgress)
+	// For 4 enrollments: ~26 queries total, acceptable for typical usage
 	const enrollmentsQuery = useQueryWithStatus(api.enrollments.getMyEnrollmentsWithProgress);
 
 	if (authLoading) {
@@ -483,8 +485,13 @@ export default function StudentProgressDashboard() {
 
 /**
  * Component to display progress for a single enrollment
- * All data is pre-loaded from parent via getMyEnrollmentsWithProgress
- * NO additional queries - eliminates N+1 problem
+ * Data is pre-loaded from parent via getMyEnrollmentsWithProgress
+ *
+ * PERFORMANCE: This component makes no additional queries (all data passed as props).
+ * The parent query performs ~6 database queries per enrollment (course, instructor, modules, lessons per module).
+ * For 4 enrollments: ~26 total queries. Acceptable trade-off vs frontend waterfalls.
+ *
+ * See getMyEnrollmentsWithProgress JSDoc in convex/enrollments.ts for full performance analysis.
  */
 function EnrollmentProgressCard({
 	enrollment,
@@ -513,10 +520,14 @@ function EnrollmentProgressCard({
 
 	// Handle failed course load
 	if (!course) {
-		// Log error for debugging
+		// TODO: Integrate proper error monitoring service (e.g., Sentry, LogRocket)
+		// Current limitation: console.error only logs to browser console
+		// Errors go unnoticed in production - no tracking, alerting, or aggregation
+		// Recommendation: Add Sentry.captureException() or similar when error tracking is set up
 		console.error('Failed to load course for enrollment:', {
 			enrollmentId: enrollment._id,
 			courseId: enrollment.courseId,
+			// Future: Send to error monitoring service
 		});
 
 		// Display error placeholder instead of silently hiding

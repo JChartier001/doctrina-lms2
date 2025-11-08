@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 
 import { api } from './_generated/api';
+import { Doc, Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 
 /**
@@ -150,10 +151,22 @@ export const getMyEnrollments = query({
 
 /**
  * Get current user's enrollments with all related data pre-loaded
- * Eliminates N+1 query problem by fetching course, instructor, progress, and next lesson in one efficient query
  *
- * This is more performant than separate queries per enrollment
- * For 4 enrollments: 1 query instead of 12+ queries (4 × 3)
+ * PERFORMANCE CHARACTERISTICS (honest assessment):
+ * - Fetches all user progress once (shared across enrollments)
+ * - Fetches lessons once per module (cached in Map to avoid duplicate fetches)
+ *
+ * Actual query pattern for 4 enrollments with 3 modules each:
+ * - 1 enrollments query
+ * - 1 progress query (all user progress)
+ * - Per enrollment (4×): 1 course + 1 instructor + 1 modules + 3 lesson queries = 6 queries
+ * Total: ~26 queries (2 + 4×6)
+ *
+ * TRADE-OFF: Consolidates frontend waterfalls into backend, but still O(enrollments × modules) queries.
+ * Acceptable for typical use (<10 courses, <5 modules each).
+ *
+ * LIMITATION: Cannot optimize further without denormalizing data or adding courseId index to lessons.
+ * Consider pagination if users have 20+ enrollments.
  */
 export const getMyEnrollmentsWithProgress = query({
 	args: {},
@@ -167,6 +180,12 @@ export const getMyEnrollmentsWithProgress = query({
 			.query('enrollments')
 			.withIndex('by_user', q => q.eq('userId', identity.subject))
 			.order('desc')
+			.collect();
+
+		// Fetch all progress records once (optimization)
+		const progressRecords = await ctx.db
+			.query('lessonProgress')
+			.withIndex('by_user', q => q.eq('userId', identity.subject))
 			.collect();
 
 		// Populate all related data for each enrollment
@@ -186,35 +205,18 @@ export const getMyEnrollmentsWithProgress = query({
 				// Load instructor
 				const instructor = await ctx.db.get(course.instructorId);
 
-				// Calculate progress
+				// Fetch modules
 				const modules = await ctx.db
 					.query('courseModules')
 					.withIndex('by_course', q => q.eq('courseId', enrollment.courseId))
 					.collect();
 
-				let totalLessons = 0;
-				const allLessonIds: string[] = [];
-
-				for (const courseModule of modules) {
-					const lessons = await ctx.db
-						.query('lessons')
-						.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
-						.collect();
-
-					totalLessons += lessons.length;
-					allLessonIds.push(...lessons.map(l => l._id));
-				}
-
-				const progressRecords = await ctx.db
-					.query('lessonProgress')
-					.withIndex('by_user', q => q.eq('userId', identity.subject))
-					.collect();
-
-				const completedLessonIds = progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId);
-
-				// Find next incomplete lesson
-				let nextLessonId = null;
 				const sortedModules = modules.sort((a, b) => a.order - b.order);
+
+				// OPTIMIZATION: Fetch lessons once per module and cache in Map
+				// Eliminates duplicate fetches (was fetching twice: once for count, once for next lesson)
+				const moduleLessonsMap = new Map<Id<'courseModules'>, Doc<'lessons'>[]>();
+				let totalLessons = 0;
 
 				for (const courseModule of sortedModules) {
 					const lessons = await ctx.db
@@ -223,10 +225,25 @@ export const getMyEnrollmentsWithProgress = query({
 						.collect();
 
 					const sortedLessons = lessons.sort((a, b) => a.order - b.order);
+					moduleLessonsMap.set(courseModule._id, sortedLessons);
+					totalLessons += lessons.length;
+				}
+
+				// Calculate totals using idiomatic array operations
+				const allLessonIds = Array.from(moduleLessonsMap.values())
+					.flat()
+					.map(l => l._id);
+				const completedLessonIds = progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId);
+
+				// Find next incomplete lesson (using cached data)
+				let nextLessonId = null;
+
+				for (const courseModule of sortedModules) {
+					const sortedLessons = moduleLessonsMap.get(courseModule._id) || [];
 
 					for (const lesson of sortedLessons) {
-						const progress = progressRecords.find(p => p.lessonId === lesson._id);
-						if (!progress) {
+						const isCompleted = progressRecords.some(p => p.lessonId === lesson._id);
+						if (!isCompleted) {
 							nextLessonId = lesson._id;
 							break;
 						}
@@ -237,14 +254,10 @@ export const getMyEnrollmentsWithProgress = query({
 				// If all complete, return first lesson
 				if (!nextLessonId && sortedModules.length > 0) {
 					const firstModule = sortedModules[0];
-					const firstModuleLessons = await ctx.db
-						.query('lessons')
-						.withIndex('by_module', q => q.eq('moduleId', firstModule._id))
-						.collect();
+					const firstModuleLessons = moduleLessonsMap.get(firstModule._id) || [];
 
-					const sortedFirstLessons = firstModuleLessons.sort((a, b) => a.order - b.order);
-					if (sortedFirstLessons.length > 0) {
-						nextLessonId = sortedFirstLessons[0]._id;
+					if (firstModuleLessons.length > 0) {
+						nextLessonId = firstModuleLessons[0]._id;
 					}
 				}
 
