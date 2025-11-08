@@ -300,6 +300,7 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 This refactoring successfully extracts certificate generation logic from `lessonProgress.recalculateProgress` into a dedicated trigger using convex-helpers, achieving the stated goal of improved separation of concerns. All seven acceptance criteria have been met, with 100% test coverage across all modified code (44 tests passing). The implementation is production-ready with one critical bug discovered and fixed during review, plus enhanced test coverage that caught edge cases not originally specified.
 
 **Key Achievements:**
+
 - Clean separation of concerns achieved
 - Zero breaking changes - all existing tests pass unchanged
 - Comprehensive test coverage including edge cases
@@ -317,9 +318,9 @@ This refactoring successfully extracts certificate generation logic from `lesson
 ```typescript
 // ❌ ORIGINAL (BROKEN):
 const instructor = await ctx.db
-  .query('users')
-  .withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
-  .first();
+	.query('users')
+	.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
+	.first();
 
 // ✅ FIXED:
 const instructor = await ctx.db.get(course.instructorId);
@@ -336,16 +337,19 @@ const instructor = await ctx.db.get(course.instructorId);
 **Finding:** Implementation uses `ctx.runMutation(api.certificates.generate)` instead of `ctx.scheduler.runAfter()` as specified in Story Context (line 163) and Tech Spec (line 222).
 
 **Current Implementation:**
+
 ```typescript
 await ctx.runMutation(api.certificates.generate, { ...args });
 ```
 
 **Story Context Specification:**
+
 ```typescript
 ctx.scheduler.runAfter(0, api.certificates.generate, { ...args });
 ```
 
 **Analysis:**
+
 - **Pros of Current Approach (synchronous):**
   - Runs in same transaction as enrollment update (ACID guarantees)
   - Certificate generation guaranteed to succeed if enrollment update succeeds
@@ -362,6 +366,7 @@ ctx.scheduler.runAfter(0, api.certificates.generate, { ...args });
 
 **L1: Test Coverage Enhancement Opportunity**
 **Finding:** During review, comprehensive test coverage was added that wasn't in original implementation:
+
 - Edge case: `totalLessons === 0` (division by zero)
 - Edge case: `sortedModules.length === 0` (empty course)
 - Operation filtering: `change.operation !== 'update'`
@@ -378,7 +383,7 @@ ctx.scheduler.runAfter(0, api.certificates.generate, { ...args });
 // Enhanced implementation checks existence before deletion
 const certificate = await ctx.db.get(id);
 if (certificate) {
-  await ctx.db.delete(id);
+	await ctx.db.delete(id);
 }
 return id;
 ```
@@ -387,19 +392,20 @@ return id;
 
 ### Acceptance Criteria Coverage
 
-| AC | Description | Status | Notes |
-|----|-------------|--------|-------|
-| AC1 | Create `convex/triggers.ts` with enrollment trigger | ✅ PASS | Trigger properly registered, fires on completedAt change |
-| AC2 | Create `convex/_customFunctions.ts` with wrapper | ✅ PASS | Correctly exports mutation wrapped with triggers support |
-| AC3 | Update `lessonProgress.ts` imports and remove logic | ✅ PASS | 27 lines removed (lines 143-170), imports updated |
-| AC4 | Certificate generation works automatically | ✅ PASS | Verified via tests - 100% completion triggers certificate |
-| AC5 | All existing tests pass | ✅ PASS | 21 original tests passing + 23 new tests = 44 total |
-| AC6 | No user-facing changes | ✅ PASS | Zero UI changes, identical behavior |
-| AC7 | Follows convex-helpers best practices | ✅ PASS | Triggers pattern correctly implemented, proper TypeScript types |
+| AC  | Description                                         | Status  | Notes                                                           |
+| --- | --------------------------------------------------- | ------- | --------------------------------------------------------------- |
+| AC1 | Create `convex/triggers.ts` with enrollment trigger | ✅ PASS | Trigger properly registered, fires on completedAt change        |
+| AC2 | Create `convex/_customFunctions.ts` with wrapper    | ✅ PASS | Correctly exports mutation wrapped with triggers support        |
+| AC3 | Update `lessonProgress.ts` imports and remove logic | ✅ PASS | 27 lines removed (lines 143-170), imports updated               |
+| AC4 | Certificate generation works automatically          | ✅ PASS | Verified via tests - 100% completion triggers certificate       |
+| AC5 | All existing tests pass                             | ✅ PASS | 21 original tests passing + 23 new tests = 44 total             |
+| AC6 | No user-facing changes                              | ✅ PASS | Zero UI changes, identical behavior                             |
+| AC7 | Follows convex-helpers best practices               | ✅ PASS | Triggers pattern correctly implemented, proper TypeScript types |
 
 ### Test Coverage and Gaps
 
 **Test Statistics:**
+
 - **Total Tests:** 44 (21 existing + 23 new)
 - **Pass Rate:** 100%
 - **Code Coverage:** 100% on modified files
@@ -409,6 +415,7 @@ return id;
   - `certificates.ts`: 100%
 
 **New Test Files Created:**
+
 1. `convex/__test__/triggers.test.ts` (7 tests)
    - Operation filtering (insert vs update)
    - All guard conditions (!course, !user, !instructor)
@@ -420,12 +427,13 @@ return id;
    - Edge cases and error conditions
    - Idempotency validation
 
-**Enhanced Test Coverage in Existing Files:**
-3. `convex/__test__/lessonProgress.test.ts` (+2 tests)
-   - Division by zero protection (`totalLessons === 0`)
-   - Empty course handling (`sortedModules.length === 0`)
+**Enhanced Test Coverage in Existing Files:** 3. `convex/__test__/lessonProgress.test.ts` (+2 tests)
+
+- Division by zero protection (`totalLessons === 0`)
+- Empty course handling (`sortedModules.length === 0`)
 
 **Test Architecture Improvements:**
+
 - Extracted `handleEnrollmentCompletion()` function for testability
 - Created `handleEnrollmentChange()` wrapper to test operation filtering
 - Custom `EnrollmentChange` type for trigger change objects
@@ -437,12 +445,14 @@ return id;
 
 **✅ Separation of Concerns** (ARCHITECTURE.md line 13)
 Successfully extracted certificate orchestration logic from progress calculation. Clear boundaries maintained:
+
 - **Progress Calculation:** `lessonProgress.ts` - focused on lesson completion tracking
 - **Certificate Orchestration:** `triggers.ts` - handles 100% completion event
 - **Certificate Generation:** `certificates.ts` - creates certificate records (unchanged)
 
 **✅ Triggers Pattern** (convex-helpers)
 Correctly implements event-driven side effects:
+
 - Triggers initialized with proper DataModel typing
 - Enrollment table watched for changes
 - Handler executes only on 'update' operations
@@ -450,6 +460,7 @@ Correctly implements event-driven side effects:
 
 **✅ Custom Functions Pattern**
 Mutation wrapper properly configured:
+
 - `customMutation(rawMutation, customCtx(triggers.wrapDB))`
 - Centralized in `_customFunctions.ts`
 - Applied to all mutations in `lessonProgress.ts`
@@ -460,12 +471,14 @@ Mutation wrapper properly configured:
 ### Security Notes
 
 **Authentication & Authorization:**
+
 - ✅ All existing auth checks preserved in `lessonProgress.ts`
 - ✅ Row-level security maintained (userId filtering)
 - ✅ Enrollment verification still required before marking lessons complete
 - ✅ Certificate generation inherits auth context from triggering mutation
 
 **Data Validation:**
+
 - ✅ Idempotency maintained: duplicate lesson completions handled correctly
 - ✅ Guard conditions prevent certificate generation with missing data
 - ✅ No SQL injection risks (Convex's type-safe queries)
@@ -474,18 +487,21 @@ Mutation wrapper properly configured:
 **Potential Security Concerns:** None identified.
 
 **Security Improvements:**
+
 - Better error handling with guard conditions (!course, !user, !instructor)
 - Synchronous execution reduces attack surface vs async scheduler
 
 ### Best-Practices and References
 
 **Convex-Helpers Documentation:**
+
 - ✅ Follows [Triggers README](https://github.com/get-convex/convex-helpers#triggers) pattern
 - ✅ Uses `Triggers<DataModel>()` with proper typing
 - ✅ Implements `customMutation` wrapper correctly
 - ✅ Handler signature matches: `(ctx, change) => Promise<void>`
 
 **TypeScript Best Practices:**
+
 - ✅ Proper type annotations throughout
 - ✅ Custom types defined: `EnrollmentChange`
 - ✅ Optional chaining (`?.`) used correctly for null/undefined handling
@@ -493,6 +509,7 @@ Mutation wrapper properly configured:
 - ✅ Full type safety maintained
 
 **Testing Best Practices:**
+
 - ✅ Tests isolated with fresh data per test
 - ✅ Descriptive test names explain intent
 - ✅ Edge cases comprehensively covered
@@ -500,6 +517,7 @@ Mutation wrapper properly configured:
 - ✅ Test architecture supports maintainability (extracted functions)
 
 **Code Quality:**
+
 - ✅ Clear, descriptive comments
 - ✅ Consistent code style (Prettier formatted)
 - ✅ No code duplication
@@ -507,6 +525,7 @@ Mutation wrapper properly configured:
 - ✅ Functions are small and focused
 
 **References:**
+
 - Convex Helpers: v0.1.104 (already installed, no new dependencies)
 - Convex: v1.28.2
 - TypeScript: v5.9.3

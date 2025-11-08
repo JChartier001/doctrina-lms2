@@ -21,6 +21,35 @@ export const get = query({
 	handler: async (ctx, { id }) => ctx.db.get(id),
 });
 
+/**
+ * Get course with instructor data included
+ * More efficient than separate queries for course + instructor
+ * Reduces N+1 query problem when displaying multiple courses
+ */
+export const getWithInstructor = query({
+	args: { id: v.id('courses') },
+	handler: async (ctx, { id }) => {
+		const course = await ctx.db.get(id);
+		if (!course) return null;
+
+		const instructor = await ctx.db.get(course.instructorId);
+
+		return {
+			...course,
+			instructor: instructor
+				? {
+						_id: instructor._id,
+						firstName: instructor.firstName,
+						lastName: instructor.lastName,
+						email: instructor.email,
+						profilePhotoUrl: instructor.profilePhotoUrl,
+						image: instructor.image,
+					}
+				: null,
+		};
+	},
+});
+
 export const create = mutation({
 	args: {
 		title: v.string(),
