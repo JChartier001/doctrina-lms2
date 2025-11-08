@@ -16,7 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/convex/_generated/api';
-import type { Doc } from '@/convex/_generated/dataModel';
+import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { useQueryWithStatus } from '@/lib/convex';
 
@@ -98,7 +98,9 @@ export default function StudentProgressDashboard() {
 	const router = useRouter();
 	const [_activeTab, setActiveTab] = useState('overview');
 
-	const enrollmentsQuery = useQueryWithStatus(api.enrollments.getMyEnrollments);
+	// Use comprehensive query to eliminate N+1 problem
+	// Single query fetches enrollments with course, instructor, progress, and nextLesson pre-loaded
+	const enrollmentsQuery = useQueryWithStatus(api.enrollments.getMyEnrollmentsWithProgress);
 
 	if (authLoading) {
 		return (
@@ -481,34 +483,40 @@ export default function StudentProgressDashboard() {
 
 /**
  * Component to display progress for a single enrollment
- * Fetches course data and progress data for the enrollment
+ * All data is pre-loaded from parent via getMyEnrollmentsWithProgress
+ * NO additional queries - eliminates N+1 problem
  */
 function EnrollmentProgressCard({
 	enrollment,
 	detailed = false,
 }: {
-	enrollment: Doc<'enrollments'>;
+	enrollment: Doc<'enrollments'> & {
+		course: Doc<'courses'> | null;
+		instructor: {
+			_id: Id<'users'>;
+			firstName: string;
+			lastName: string;
+			email: string;
+		} | null;
+		progress: {
+			percent: number;
+			total: number;
+			completed: number;
+			completedLessonIds: string[];
+		} | null;
+		nextLessonId: Id<'lessons'> | null;
+	};
 	detailed?: boolean;
 }) {
-	// Use getWithInstructor to fetch course + instructor in one query (performance optimization)
-	const courseQuery = useQueryWithStatus(api.courses.getWithInstructor, { id: enrollment.courseId });
-	const progressQuery = useQueryWithStatus(api.lessonProgress.getUserProgress, {
-		courseId: enrollment.courseId,
-	});
-	const nextLessonQuery = useQueryWithStatus(api.lessonProgress.getNextIncompleteLesson, {
-		courseId: enrollment.courseId,
-	});
+	// All data pre-loaded from parent query - no additional queries needed!
+	const { course, instructor, progress, nextLessonId } = enrollment;
 
-	if (courseQuery.isPending || progressQuery.isPending) {
-		return <Skeleton className="h-20 sm:h-24 w-full" />;
-	}
-
-	if (courseQuery.isError || !courseQuery.data) {
+	// Handle failed course load
+	if (!course) {
 		// Log error for debugging
 		console.error('Failed to load course for enrollment:', {
 			enrollmentId: enrollment._id,
 			courseId: enrollment.courseId,
-			error: courseQuery.error?.message,
 		});
 
 		// Display error placeholder instead of silently hiding
@@ -521,10 +529,7 @@ function EnrollmentProgressCard({
 						</div>
 						<div className="min-w-0 flex-1">
 							<p className="text-sm font-medium text-destructive">Failed to load course</p>
-							<p className="text-xs text-muted-foreground truncate">
-								Course ID: {enrollment.courseId}
-								{courseQuery.error && ` - ${courseQuery.error.message}`}
-							</p>
+							<p className="text-xs text-muted-foreground truncate">Course ID: {enrollment.courseId}</p>
 						</div>
 						<Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-xs shrink-0">
 							Retry
@@ -535,36 +540,24 @@ function EnrollmentProgressCard({
 		);
 	}
 
-	const courseWithInstructor = courseQuery.data;
-	const progress = progressQuery.data || {
-		total: 0,
-		completed: 0,
-		percent: 0,
-		completedLessonIds: [],
-	};
-
-	const nextLessonId = nextLessonQuery.data;
-
 	// Build continue learning URL
 	const continueUrl = nextLessonId
 		? `/courses/${enrollment.courseId}/learn?lesson=${nextLessonId}`
 		: `/courses/${enrollment.courseId}/learn`;
 
-	// Get instructor name from embedded instructor data
-	const instructorName = courseWithInstructor.instructor
-		? `${courseWithInstructor.instructor.firstName} ${courseWithInstructor.instructor.lastName}`
-		: 'Instructor';
+	// Get instructor name from pre-loaded data
+	const instructorName = instructor ? `${instructor.firstName} ${instructor.lastName}` : 'Instructor';
 
 	// Transform to CourseProgressCard expected format
 	const courseData = {
 		id: enrollment.courseId,
-		title: courseWithInstructor.title,
-		progress: progress.percent,
+		title: course.title,
+		progress: progress?.percent || 0,
 		lastAccessed: new Date(enrollment.enrolledAt).toLocaleDateString(),
-		nextLesson: nextLessonId ? 'Next lesson' : progress.percent === 100 ? 'Course complete' : 'Start learning',
-		totalLessons: progress.total,
-		completedLessons: progress.completed,
-		estimatedCompletion: progress.percent === 100 ? 'Complete!' : estimateCompletion(progress.percent),
+		nextLesson: nextLessonId ? 'Next lesson' : progress?.percent === 100 ? 'Course complete' : 'Start learning',
+		totalLessons: progress?.total || 0,
+		completedLessons: progress?.completed || 0,
+		estimatedCompletion: progress?.percent === 100 ? 'Complete!' : estimateCompletion(progress?.percent || 0),
 		instructor: instructorName,
 		continueUrl,
 	};
