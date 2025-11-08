@@ -39,7 +39,7 @@ development_status:
   # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)
   epic-109: backlog
   109-1-quick-wins-mock-replacement: done
-  109-2-progress-integration-mock-replacement: backlog
+  109-2-progress-integration-mock-replacement: done
   109-3-post-mvp-mock-replacement: backlog
   epic-109-retrospective: optional
 
