@@ -67,17 +67,17 @@ The Quiz Submission & Grading System enables instructors to create quizzes for t
 
 ### Services and Modules
 
-| Module/Service               | Responsibility                          | Inputs                                             | Outputs                                                           | Owner            |
-| ---------------------------- | --------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------- | ---------------- |
-| **convex/quizzes.ts**        | Core quiz management logic              | Quiz metadata, questions, student answers          | Quiz records, grading results, best attempts                      | Backend          |
-| **quizzes.create**           | Create new quiz for course/module       | `courseId, moduleId?, title, passingScore`         | `quizId: Id<"quizzes">`                                           | Backend Mutation |
-| **quizzes.addQuestions**     | Bulk add questions to quiz              | `quizId, questions[]`                              | `questionIds: Id<"quizQuestions">[]`                              | Backend Mutation |
-| **quizzes.getQuiz**          | Get quiz with questions (student-safe)  | `quizId: Id<"quizzes">`                            | Quiz object with questions (no correct answers)                   | Backend Query    |
-| **quizzes.submit**           | Grade quiz and save attempt             | `quizId, answers: number[]`                        | `{ attemptId, score, passed, results[] }`                         | Backend Mutation |
-| **quizzes.getBestAttempt**   | Get highest scoring attempt for student | `quizId: Id<"quizzes">`                            | Best attempt object or null                                       | Backend Query    |
-| **quizzes.getModuleQuizzes** | Get all quizzes for a module            | `moduleId: Id<"courseModules">`                    | Array of quiz objects                                             | Backend Query    |
-| **course-wizard**            | Instructor quiz creation UI             | AI-generated or manual questions                   | Quiz created in database                                          | Frontend         |
-| **learning-interface**       | Student quiz taking experience          | Quiz ID from lesson                                | Interactive quiz with instant grading                             | Frontend         |
+| Module/Service               | Responsibility                          | Inputs                                     | Outputs                                         | Owner            |
+| ---------------------------- | --------------------------------------- | ------------------------------------------ | ----------------------------------------------- | ---------------- |
+| **convex/quizzes.ts**        | Core quiz management logic              | Quiz metadata, questions, student answers  | Quiz records, grading results, best attempts    | Backend          |
+| **quizzes.create**           | Create new quiz for course/module       | `courseId, moduleId?, title, passingScore` | `quizId: Id<"quizzes">`                         | Backend Mutation |
+| **quizzes.addQuestions**     | Bulk add questions to quiz              | `quizId, questions[]`                      | `questionIds: Id<"quizQuestions">[]`            | Backend Mutation |
+| **quizzes.getQuiz**          | Get quiz with questions (student-safe)  | `quizId: Id<"quizzes">`                    | Quiz object with questions (no correct answers) | Backend Query    |
+| **quizzes.submit**           | Grade quiz and save attempt             | `quizId, answers: number[]`                | `{ attemptId, score, passed, results[] }`       | Backend Mutation |
+| **quizzes.getBestAttempt**   | Get highest scoring attempt for student | `quizId: Id<"quizzes">`                    | Best attempt object or null                     | Backend Query    |
+| **quizzes.getModuleQuizzes** | Get all quizzes for a module            | `moduleId: Id<"courseModules">`            | Array of quiz objects                           | Backend Query    |
+| **course-wizard**            | Instructor quiz creation UI             | AI-generated or manual questions           | Quiz created in database                        | Frontend         |
+| **learning-interface**       | Student quiz taking experience          | Quiz ID from lesson                        | Interactive quiz with instant grading           | Frontend         |
 
 ---
 
@@ -515,18 +515,18 @@ Id<"quizQuestions">[]  // Array of created question IDs
 
 ## Traceability Mapping
 
-| Acceptance Criteria | Spec Section                    | Component/API                | Test Idea                                                          |
-| ------------------- | ------------------------------- | ---------------------------- | ------------------------------------------------------------------ |
-| AC-102.1            | APIs - create                   | `quizzes.create()`           | Unit test: Instructor creates quiz, verify record created          |
-| AC-102.2            | APIs - addQuestions             | `quizzes.addQuestions()`     | Unit test: Add 10 questions, verify order preserved                |
-| AC-102.3            | APIs - getQuiz, Security        | `quizzes.getQuiz()`          | Unit test: Verify correctAnswer field excluded from response       |
-| AC-102.4            | Workflows - Submit Quiz         | `quizzes.submit()`           | Integration test: Submit quiz, verify results returned             |
-| AC-102.5            | APIs - submit, Grading Logic    | Grading algorithm            | Unit test: 8/10 correct = 80%, verify calculation                  |
-| AC-102.6            | Data Models - Unlimited Retakes | `quizAttempts` table         | Integration test: Submit 3 times, verify 3 attempt records         |
-| AC-102.7            | APIs - getBestAttempt           | `quizzes.getBestAttempt()`   | Unit test: 3 attempts (60%, 75%, 90%), verify returns 90%          |
-| AC-102.8            | Security - Authorization        | `create()` ownership check   | Unit test: Non-instructor tries to create, verify error            |
-| AC-102.9            | Security - Enrollment           | `submit()` enrollment check  | Unit test: Non-enrolled student submits, verify error              |
-| AC-102.10           | Workflows - Results Display     | `submit()` results format    | Integration test: Verify results include all required fields       |
+| Acceptance Criteria | Spec Section                    | Component/API               | Test Idea                                                    |
+| ------------------- | ------------------------------- | --------------------------- | ------------------------------------------------------------ |
+| AC-102.1            | APIs - create                   | `quizzes.create()`          | Unit test: Instructor creates quiz, verify record created    |
+| AC-102.2            | APIs - addQuestions             | `quizzes.addQuestions()`    | Unit test: Add 10 questions, verify order preserved          |
+| AC-102.3            | APIs - getQuiz, Security        | `quizzes.getQuiz()`         | Unit test: Verify correctAnswer field excluded from response |
+| AC-102.4            | Workflows - Submit Quiz         | `quizzes.submit()`          | Integration test: Submit quiz, verify results returned       |
+| AC-102.5            | APIs - submit, Grading Logic    | Grading algorithm           | Unit test: 8/10 correct = 80%, verify calculation            |
+| AC-102.6            | Data Models - Unlimited Retakes | `quizAttempts` table        | Integration test: Submit 3 times, verify 3 attempt records   |
+| AC-102.7            | APIs - getBestAttempt           | `quizzes.getBestAttempt()`  | Unit test: 3 attempts (60%, 75%, 90%), verify returns 90%    |
+| AC-102.8            | Security - Authorization        | `create()` ownership check  | Unit test: Non-instructor tries to create, verify error      |
+| AC-102.9            | Security - Enrollment           | `submit()` enrollment check | Unit test: Non-enrolled student submits, verify error        |
+| AC-102.10           | Workflows - Results Display     | `submit()` results format   | Integration test: Verify results include all required fields |
 
 ---
 

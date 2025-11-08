@@ -22,11 +22,13 @@ so that **I can assess student knowledge and provide structured learning assessm
 The course wizard includes an AI quiz generator UI component and the learning interface has quiz display components, but there's no backend to save quiz data or retrieve it for students. This story implements the backend mutations and queries to support quiz creation (instructor-side) and quiz retrieval (student-side). Quiz submission and grading will be handled in a separate story (102.2).
 
 **Current State:**
+
 - Quiz UI components exist but are not connected to backend
 - `quizzes`, `quizQuestions`, `quizAttempts` tables already in schema
 - No quiz backend functions implemented
 
 **Dependencies:**
+
 - ✅ Schema tables already defined (quizzes, quizQuestions, quizAttempts)
 - ✅ Course ownership pattern established in existing code
 - ✅ Authentication via Clerk integrated
@@ -164,77 +166,83 @@ The course wizard includes an AI quiz generator UI component and the learning in
 ### Architecture Patterns
 
 **Convex Mutation Pattern**
+
 ```typescript
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 
 export const create = mutation({
-  args: {
-    courseId: v.id('courses'),
-    moduleId: v.optional(v.id('courseModules')),
-    title: v.string(),
-    passingScore: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Not authenticated');
+	args: {
+		courseId: v.id('courses'),
+		moduleId: v.optional(v.id('courseModules')),
+		title: v.string(),
+		passingScore: v.number(),
+	},
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Not authenticated');
 
-    // Verify ownership
-    const course = await ctx.db.get(args.courseId);
-    if (!course) throw new Error('Course not found');
+		// Verify ownership
+		const course = await ctx.db.get(args.courseId);
+		if (!course) throw new Error('Course not found');
 
-    if (course.instructorId !== identity.subject) {
-      throw new Error('Not authorized');
-    }
+		if (course.instructorId !== identity.subject) {
+			throw new Error('Not authorized');
+		}
 
-    return await ctx.db.insert('quizzes', {
-      ...args,
-      createdAt: Date.now(),
-    });
-  },
+		return await ctx.db.insert('quizzes', {
+			...args,
+			createdAt: Date.now(),
+		});
+	},
 });
 ```
 
 **Security Pattern - Never Expose Correct Answers**
+
 ```typescript
 export const getQuiz = query({
-  args: { quizId: v.id('quizzes') },
-  handler: async (ctx, { quizId }) => {
-    const quiz = await ctx.db.get(quizId);
-    if (!quiz) return null;
+	args: { quizId: v.id('quizzes') },
+	handler: async (ctx, { quizId }) => {
+		const quiz = await ctx.db.get(quizId);
+		if (!quiz) return null;
 
-    const questions = await ctx.db
-      .query('quizQuestions')
-      .withIndex('by_quiz', q => q.eq('quizId', quizId))
-      .collect();
+		const questions = await ctx.db
+			.query('quizQuestions')
+			.withIndex('by_quiz', q => q.eq('quizId', quizId))
+			.collect();
 
-    return {
-      ...quiz,
-      questions: questions
-        .sort((a, b) => a.order - b.order)
-        .map(q => ({
-          id: q._id,
-          question: q.question,
-          options: q.options,
-          // SECURITY: Do NOT include correctAnswer
-        })),
-    };
-  },
+		return {
+			...quiz,
+			questions: questions
+				.sort((a, b) => a.order - b.order)
+				.map(q => ({
+					id: q._id,
+					question: q.question,
+					options: q.options,
+					// SECURITY: Do NOT include correctAnswer
+				})),
+		};
+	},
 });
 ```
 
 ### Project Structure Notes
 
 **File to Create:**
+
 - `convex/quizzes.ts` - Primary implementation file (est. 150-200 lines)
 
 **Schema Reference:**
+
 - `convex/schema.ts` - Lines 187-218 (quizzes, quizQuestions, quizAttempts tables)
 
 **Testing Files:**
+
 - `convex/__test__/quizzes.test.ts` - Comprehensive test suite
 
 **Existing Patterns to Follow:**
+
 - `convex/courses.ts` - Authorization pattern (instructor ownership)
 - `convex/lessonProgress.ts` - Authentication pattern
 - `convex/enrollments.ts` - Query patterns with indexes
@@ -242,6 +250,7 @@ export const getQuiz = query({
 ### Dependencies
 
 **Existing Dependencies (no new installs needed):**
+
 - `convex@^1.28.2` - Backend mutations and queries
 - `typescript@^5.9.3` - Type safety
 - `vitest@4.0.8` - Testing framework
@@ -250,17 +259,20 @@ export const getQuiz = query({
 ### Testing Strategy
 
 **Unit Tests (Vitest + convex-test):**
+
 - Test each mutation/query in isolation
 - Mock Convex context
 - Test authorization edge cases
 - Verify security (no answer leakage)
 
 **Test Coverage Target:**
+
 - 85% coverage (Priority 2: Core Features per TESTING-STRATEGY.md)
 - 100% coverage on authorization logic
 - 100% coverage on security-critical code (correctAnswer exclusion)
 
 **Manual Testing Checklist:**
+
 - [ ] Create quiz via course wizard
 - [ ] Add AI-generated questions
 - [ ] Add manual questions
@@ -299,6 +311,7 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 ### File List
 
 **Created:**
+
 - `convex/quizzes.ts` - Quiz mutations and queries
 - `convex/__test__/quizzes.test.ts` - Test suite
 

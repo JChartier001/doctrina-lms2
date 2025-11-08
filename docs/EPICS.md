@@ -153,17 +153,20 @@ Only 3 out of 25 Convex backend files have test coverage (lessonProgress, certif
 #### What's Missing (Tests for 22 files)
 
 **CRITICAL - Priority 1 (100% coverage required):**
+
 - ❌ `convex/__test__/purchases.test.ts` - Money handling
 - ❌ `convex/__test__/payments.test.ts` - Payment flows
 - ❌ `convex/__test__/enrollments.test.ts` - Access control
 
 **CORE - Priority 2 (85% coverage target):**
+
 - ❌ `convex/__test__/courses.test.ts` - Course CRUD
 - ❌ `convex/__test__/courseModules.test.ts` - Module management
 - ❌ `convex/__test__/lessons.test.ts` - Lesson management
 - ❌ `convex/__test__/users.test.ts` - User management
 
 **SECONDARY - Priority 3 (70% coverage target):**
+
 - ❌ favorites, liveSessions, notifications, recommendations, resources, search, analytics
 
 #### Implementation Tasks
@@ -204,11 +207,13 @@ Only 3 out of 25 Convex backend files have test coverage (lessonProgress, certif
 #### Technical Notes
 
 **Testing Framework:**
+
 - Vitest for test execution
 - convex-test for Convex mocking
 - Follow patterns from lessonProgress.test.ts
 
 **Coverage Target:**
+
 - **ALL Convex backend files: 100% coverage**
 - No exceptions - comprehensive coverage for all functions
 - Test every mutation, query, and edge case
@@ -216,6 +221,7 @@ Only 3 out of 25 Convex backend files have test coverage (lessonProgress, certif
 **Blocker for:** Safe implementation of quizzes, reviews, and all future features
 
 **Stories:**
+
 - **Story 110.1:** Fix TypeScript Errors Across Codebase (existing)
 - **Story 110.2:** Add Comprehensive Test Coverage for Core Convex Functions (21 pts)
 

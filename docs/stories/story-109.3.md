@@ -23,11 +23,13 @@ so that **I can engage with other students and participate in course discussions
 The community page (`/app/community/page.tsx`) currently displays mock/hardcoded discussion data. This story will replace the mock data with real Convex queries once the discussion backend (EPIC-106) is implemented.
 
 **Current State:**
+
 - Community page shows mock discussion topics
 - Mock user posts and replies
 - Cannot create or interact with real discussions
 
 **Dependencies:**
+
 - ❌ EPIC-106 NOT STARTED: Discussion Forums & Community backend
 - ❌ `discussions` table not in schema
 - ❌ `discussions.list()` query not implemented
@@ -111,20 +113,24 @@ The community page (`/app/community/page.tsx`) currently displays mock/hardcoded
 ### Architecture Patterns
 
 **Real-Time Data Pattern (Convex)**
+
 - Use `useQueryWithStatus` for reactive data subscriptions
 - Community page auto-updates when new discussions posted
 - No manual refresh needed
 
 **Richer useQuery Pattern (convex-helpers)**
+
 - Use existing `useQueryWithStatus` from `@/lib/convex`
 - Clean state handling with discriminated unions
 
 ### Project Structure Notes
 
 **File to Modify:**
+
 - `/app/community/page.tsx` - Primary file to update
 
 **Convex Queries Needed (BLOCKED - not yet implemented):**
+
 - `api.discussions.list()` - Get all discussion topics
 - `api.discussionReplies.list({ discussionId })` - Get replies for a discussion
 - `api.discussions.create()` - Create new discussion (mutation)
@@ -132,6 +138,7 @@ The community page (`/app/community/page.tsx`) currently displays mock/hardcoded
 
 **Blocker:**
 This story CANNOT be implemented until EPIC-106 backend is complete. EPIC-106 requires:
+
 - `discussions` table in schema
 - `discussionReplies` table in schema
 - Discussion CRUD mutations and queries
@@ -140,12 +147,14 @@ This story CANNOT be implemented until EPIC-106 backend is complete. EPIC-106 re
 ### Dependencies
 
 **Existing Dependencies:**
+
 - `convex@^1.28.2`
 - `convex-helpers@^0.1.104`
 - `next@16.0.1`
 - `react@^19.2.0`
 
 **Required (Not Yet Available):**
+
 - EPIC-106 backend implementation
 
 ### References
@@ -176,12 +185,13 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 ### File List
 
 **Modified (when unblocked):**
+
 - `app/community/page.tsx` - Replace mock data with real queries
 
 ---
 
 ## Change Log
 
-| Date       | Author             | Changes                                        |
-| ---------- | ------------------ | ---------------------------------------------- |
-| 2025-11-07 | Bob (Scrum Master) | Initial story creation - BLOCKED on EPIC-106   |
+| Date       | Author             | Changes                                      |
+| ---------- | ------------------ | -------------------------------------------- |
+| 2025-11-07 | Bob (Scrum Master) | Initial story creation - BLOCKED on EPIC-106 |

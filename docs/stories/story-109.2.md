@@ -361,6 +361,7 @@ Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
 This story successfully integrates real Convex progress tracking data into the student dashboard while maintaining the full UX design with all 4 tabs. The implementation leverages convex-helpers' richer useQuery pattern for clean state management, implements comprehensive loading/error/empty states, and includes mobile-first responsive CSS optimized for 320px+ screens. All 6 acceptance criteria met with no regressions.
 
 **Key Achievements:**
+
 - Hybrid data approach: real progress for Overview/Courses, mock for Skills/Goals
 - Richer useQuery pattern from convex-helpers (best practice)
 - Mobile-first responsive design (320px to desktop)
@@ -383,6 +384,7 @@ This story successfully integrates real Convex progress tracking data into the s
 **Finding:** Comprehensive mobile-first CSS with proper breakpoints, text scaling, and layout adaptations.
 
 **Details:**
+
 - Tab layout: 2x2 grid on mobile with proper height (`h-auto`)
 - Responsive spacing: `gap-3 sm:gap-4 md:gap-6`
 - Text sizing: `text-xs sm:text-sm`, `text-2xl sm:text-3xl`
@@ -396,6 +398,7 @@ This story successfully integrates real Convex progress tracking data into the s
 **Finding:** Created detailed seed data mutations for testing.
 
 **Includes:**
+
 - 3 test users (1 student, 2 instructors)
 - 3 courses with modules and lessons
 - 2 enrollments with realistic progress (70%, 80%)
@@ -405,14 +408,14 @@ This story successfully integrates real Convex progress tracking data into the s
 
 ### Acceptance Criteria Coverage
 
-| AC  | Description                       | Status  | Implementation Notes                                                  |
-| --- | --------------------------------- | ------- | --------------------------------------------------------------------- |
-| AC1 | Real progress from Convex         | ✅ PASS | useQueryWithStatus pattern, getUserProgress query                     |
-| AC2 | Accurate progress & Continue      | ✅ PASS | getNextIncompleteLesson, instructor names via users.getById           |
-| AC3 | Hybrid tab approach               | ✅ PASS | All 4 tabs kept per user request                                      |
-| AC4 | Loading/error states              | ✅ PASS | isPending, isError, empty state with CTA                              |
-| AC5 | TypeScript type safety            | ✅ PASS | Doc types from generated, no errors                                   |
-| AC6 | Mobile responsive, no regressions | ✅ PASS | Mobile-first CSS (320px+), layout preserved                           |
+| AC  | Description                       | Status  | Implementation Notes                                        |
+| --- | --------------------------------- | ------- | ----------------------------------------------------------- |
+| AC1 | Real progress from Convex         | ✅ PASS | useQueryWithStatus pattern, getUserProgress query           |
+| AC2 | Accurate progress & Continue      | ✅ PASS | getNextIncompleteLesson, instructor names via users.getById |
+| AC3 | Hybrid tab approach               | ✅ PASS | All 4 tabs kept per user request                            |
+| AC4 | Loading/error states              | ✅ PASS | isPending, isError, empty state with CTA                    |
+| AC5 | TypeScript type safety            | ✅ PASS | Doc types from generated, no errors                         |
+| AC6 | Mobile responsive, no regressions | ✅ PASS | Mobile-first CSS (320px+), layout preserved                 |
 
 ### Test Coverage and Gaps
 
@@ -423,6 +426,7 @@ This story successfully integrates real Convex progress tracking data into the s
 **Test Coverage Gaps:** Component tests not created (acceptable per TESTING-STRATEGY.md - UI components 70% target, manual testing sufficient for this story).
 
 **Recommended Future Tests:**
+
 - Component test for `EnrollmentProgressCard` with mocked queries
 - Visual regression tests for mobile layouts
 
@@ -451,16 +455,19 @@ End-to-end TypeScript with generated Convex types. No `any` types used.
 ### Best-Practices and References
 
 **Convex-Helpers:**
+
 - ✅ [Richer useQuery](https://github.com/get-convex/convex-helpers/blob/main/packages/convex-helpers/README.md#richer-usequery) - Correctly implemented
 - ✅ Discriminated unions for state management
 - ✅ `makeUseQueryWithStatus(useQueries)` pattern followed
 
 **React 19 / Next.js 16:**
+
 - ✅ Client component with 'use client' directive
 - ✅ Proper hook usage (useState, custom hooks)
 - ✅ React 19 compatible patterns
 
 **Tailwind CSS:**
+
 - ✅ Mobile-first utility classes
 - ✅ Responsive breakpoints (sm, md, lg)
 - ✅ Accessibility-friendly sizing
@@ -470,6 +477,7 @@ End-to-end TypeScript with generated Convex types. No `any` types used.
 **No action items required.** Story is production-ready as implemented.
 
 **Optional Enhancements (Future Stories):**
+
 1. Add component tests for EnrollmentProgressCard
 2. Replace mock Skills/Goals data when backend implemented
 3. Add visual regression tests for mobile layouts
