@@ -1,6 +1,6 @@
 import type { GenericMutationCtx } from 'convex/server';
 import { convexTest } from 'convex-test';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { api } from '../_generated/api';
 import type { DataModel, Doc, Id } from '../_generated/dataModel';
@@ -862,7 +862,7 @@ describe('Enrollments', () => {
 				});
 			});
 
-			const module2Id = await t.run(async (ctx: TestCtx) => {
+			await t.run(async (ctx: TestCtx) => {
 				return await ctx.db.insert('courseModules', {
 					courseId: testCourseId,
 					title: 'Empty Module',

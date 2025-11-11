@@ -1,6 +1,6 @@
 import type { GenericMutationCtx } from 'convex/server';
 import { convexTest } from 'convex-test';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { api } from '../_generated/api';
 import type { DataModel, Id } from '../_generated/dataModel';
@@ -11,7 +11,6 @@ type TestCtx = GenericMutationCtx<DataModel>;
 describe('Recommendations', () => {
 	let t: any;
 	let testUserId: Id<'users'>;
-	let _otherUserId: Id<'users'>;
 	let instructorId: Id<'users'>;
 	let courseId1: Id<'courses'>;
 	let courseId2: Id<'courses'>;
@@ -34,7 +33,7 @@ describe('Recommendations', () => {
 				isAdmin: false,
 			});
 
-			_otherUserId = await ctx.db.insert('users', {
+			await ctx.db.insert('users', {
 				firstName: 'Other',
 				lastName: 'User',
 				email: 'other@example.com',
