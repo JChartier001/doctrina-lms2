@@ -1,8 +1,9 @@
 import { v } from 'convex/values';
 
-import { mutation } from './_customFunctions';
 import { api } from './_generated/api';
+import { Doc } from './_generated/dataModel';
 import { query } from './_generated/server';
+import { mutation } from './triggers';
 
 /**
  * Mark a lesson as complete for the authenticated user
@@ -17,20 +18,29 @@ export const markComplete = mutation({
 	args: {
 		lessonId: v.id('lessons'),
 	},
-	handler: async (ctx, { lessonId }) => {
+	handler: async (ctx, { lessonId }): Promise<string> => {
 		// Authentication check (Constraint #1)
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			throw new Error('Not authenticated');
 		}
 
+		// Look up user by external ID to get Convex ID
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
+			throw new Error('User not found');
+		}
+
 		// Load lesson → get moduleId → get courseId
-		const lesson = await ctx.db.get(lessonId);
+		const lesson: Doc<'lessons'> | null = await ctx.db.get(lessonId);
 		if (!lesson) {
 			throw new Error('Lesson not found');
 		}
 
-		const courseModule = await ctx.db.get(lesson.moduleId);
+		const courseModule: Doc<'courseModules'> | null = await ctx.db.get(lesson.moduleId);
 		if (!courseModule) {
 			throw new Error('Module not found');
 		}
@@ -38,9 +48,9 @@ export const markComplete = mutation({
 		const courseId = courseModule.courseId;
 
 		// Verify enrollment exists (Constraint #2 - row-level security, AC-101.6)
-		const enrollment = await ctx.db
+		const enrollment: Doc<'enrollments'> | null = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
+			.withIndex('by_user_course', q => q.eq('userId', user._id).eq('courseId', courseId))
 			.first();
 
 		if (!enrollment) {
@@ -48,9 +58,9 @@ export const markComplete = mutation({
 		}
 
 		// Check for existing progress record (Constraint #8 - idempotency, AC-101.5)
-		const existing = await ctx.db
+		const existing: Doc<'lessonProgress'> | null = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user_lesson', q => q.eq('userId', identity.subject).eq('lessonId', lessonId))
+			.withIndex('by_user_lesson', q => q.eq('userId', user._id).eq('lessonId', lessonId))
 			.first();
 
 		if (existing) {
@@ -60,7 +70,7 @@ export const markComplete = mutation({
 
 		// Create new progress record (Constraint #4 - Unix epoch milliseconds)
 		const progressId = await ctx.db.insert('lessonProgress', {
-			userId: identity.subject,
+			userId: user._id,
 			lessonId,
 			completedAt: Date.now(),
 		});
@@ -141,9 +151,6 @@ export const recalculateProgress = mutation({
 			...(completedAt !== undefined && { completedAt }),
 		});
 
-		// Certificate generation now handled by enrollment trigger (see convex/triggers.ts)
-		// Trigger automatically fires when enrollment.completedAt is set via ctx.db.patch
-
 		return { progressPercent, completedAt: completedAt ?? null };
 	},
 });
@@ -157,17 +164,34 @@ export const recalculateProgress = mutation({
  */
 export const getUserProgress = query({
 	args: { courseId: v.id('courses') },
-	handler: async (ctx, { courseId }) => {
+	handler: async (
+		ctx,
+		{ courseId },
+	): Promise<{
+		enrollmentId: string;
+		total: number;
+		completed: number;
+		percent: number;
+		completedLessonIds: string[];
+	} | null> => {
 		// Authentication check (Constraint #1)
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			return null;
 		}
 
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
+			return null;
+		}
+
 		// Find enrollment (AC-101.3)
 		const enrollment = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
+			.withIndex('by_user_course', q => q.eq('userId', user._id).eq('courseId', courseId))
 			.first();
 
 		if (!enrollment) {
@@ -196,7 +220,7 @@ export const getUserProgress = query({
 		// Query progress records for user (Constraint #2 - row-level security)
 		const progressRecords = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user', q => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', user._id))
 			.collect();
 
 		// Filter to lessons in this course
@@ -221,10 +245,18 @@ export const getUserProgress = query({
  */
 export const getNextIncompleteLesson = query({
 	args: { courseId: v.id('courses') },
-	handler: async (ctx, { courseId }) => {
+	handler: async (ctx, { courseId }): Promise<string | null> => {
 		// Authentication check (Constraint #1)
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
+			return null;
+		}
+
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
 			return null;
 		}
 
@@ -249,7 +281,7 @@ export const getNextIncompleteLesson = query({
 				// Check if lesson is complete
 				const progress = await ctx.db
 					.query('lessonProgress')
-					.withIndex('by_user_lesson', q => q.eq('userId', identity.subject).eq('lessonId', lesson._id))
+					.withIndex('by_user_lesson', q => q.eq('userId', user._id).eq('lessonId', lesson._id))
 					.first();
 
 				if (!progress) {

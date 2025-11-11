@@ -33,7 +33,7 @@ export const create = mutation({
 			throw new Error('User is not an instructor');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		if (course.instructorId !== user._id) {
 			throw new Error('Not authorized to modify this course');
 		}
 
@@ -102,7 +102,12 @@ export const update = mutation({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
+			.first();
+
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 
@@ -133,7 +138,12 @@ export const remove = mutation({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
+			.first();
+
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 
@@ -182,7 +192,12 @@ export const reorder = mutation({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		const user = await ctx.db
+			.query('users')
+			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
+			.first();
+
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 

@@ -254,20 +254,16 @@ export const getTrendingContent = query({
 
 		const trendingCourses = await Promise.all(
 			topCourseIds.map(async courseId => {
-				try {
-					const course = await ctx.db.get(courseId as Id<'courses'>);
-					return course
-						? {
-								id: course._id,
-								title: course.title,
-								type: 'course' as const,
-								thumbnailUrl: course.thumbnailUrl,
-								popularity: coursePopularity.get(courseId) || 0,
-							}
-						: null;
-				} catch {
-					return null;
-				}
+				const course = await ctx.db.get(courseId as Id<'courses'>);
+				return course
+					? {
+							id: course._id,
+							title: course.title,
+							type: 'course' as const,
+							thumbnailUrl: course.thumbnailUrl,
+							popularity: coursePopularity.get(courseId) || 0,
+						}
+					: null;
 			}),
 		);
 
@@ -279,20 +275,16 @@ export const getTrendingContent = query({
 
 		const trendingResources = await Promise.all(
 			topResourceIds.map(async resourceId => {
-				try {
-					const resource = await ctx.db.get(resourceId as Id<'resources'>);
-					return resource
-						? {
-								id: resource._id,
-								title: resource.title,
-								type: 'resource' as const,
-								thumbnailUrl: resource.thumbnailUrl,
-								popularity: resourcePopularity.get(resourceId) || 0,
-							}
-						: null;
-				} catch {
-					return null;
-				}
+				const resource = await ctx.db.get(resourceId as Id<'resources'>);
+				return resource
+					? {
+							id: resource._id,
+							title: resource.title,
+							type: 'resource' as const,
+							thumbnailUrl: resource.thumbnailUrl,
+							popularity: resourcePopularity.get(resourceId) || 0,
+						}
+					: null;
 			}),
 		);
 

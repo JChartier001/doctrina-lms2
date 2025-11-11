@@ -1,6 +1,7 @@
 import type { Stripe } from 'stripe';
 
-import { Id } from './_generated/dataModel';
+import { api } from './_generated/api';
+import { Doc, Id } from './_generated/dataModel';
 import { MutationCtx } from './_generated/server';
 import { validateRequest } from './http';
 
@@ -13,30 +14,39 @@ export const handleStripeWebhook = async (ctx: MutationCtx, request: Request): P
 		switch (event.type) {
 			case 'checkout.session.completed': {
 				const session = event.data.object as Stripe.Checkout.Session;
-				const { courseId, userId } = session.metadata || {};
+				const { courseId, userId: externalUserId } = session.metadata || {};
 
-				if (!courseId || !userId) {
+				if (!courseId || !externalUserId) {
 					console.error('Missing metadata:', session.metadata);
 					throw new Error('Missing courseId or userId in metadata');
 				}
 
-				console.log('Processing purchase:', { courseId, userId });
+				// Look up user by externalId to get Convex ID
+				const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+					externalId: externalUserId,
+				});
+
+				if (!user) {
+					console.error('User not found for externalId:', externalUserId);
+					throw new Error(`User not found for externalId: ${externalUserId}`);
+				}
+
+				console.log('Processing purchase:', { courseId, userId: user._id, externalUserId });
 
 				const purchaseId = await ctx.db.insert('purchases', {
-					userId: userId as Id<'users'>,
+					userId: user._id,
 					courseId: courseId as Id<'courses'>,
 					amount: (session.amount_total || 0) / 100,
 					stripeSessionId: session.id,
 					status: 'complete',
 					createdAt: Date.now(),
 				});
-				// Create purchase record
 
 				console.log('Created purchase:', purchaseId);
 
 				// Create enrollment
 				const enrollmentId = await ctx.db.insert('enrollments', {
-					userId,
+					userId: user._id,
 					courseId: courseId as Id<'courses'>,
 					purchaseId,
 					enrolledAt: Date.now(),

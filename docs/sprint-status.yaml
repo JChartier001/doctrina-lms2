@@ -39,7 +39,7 @@ development_status:
   # EPIC-110: Testing & Quality Assurance (P0 - Critical, 21 pts)
   epic-110: backlog
   110-1-fix-typescript-errors: drafted
-  110-2-comprehensive-test-coverage: ready-for-dev
+  110-2-comprehensive-test-coverage: in-progress
   epic-110-retrospective: optional
 
   # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)

@@ -144,11 +144,8 @@ export const getWithCurriculum = query({
 			}),
 		);
 
-		// Get instructor details
-		const instructor = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
-			.first();
+		// Get instructor details (instructorId is Id<'users'>, not externalId)
+		const instructor = await ctx.db.get(course.instructorId);
 
 		// Get enrollment count
 		const enrollments = await ctx.db

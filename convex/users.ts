@@ -22,17 +22,17 @@ export const getById = query({
 
 export const getByExternalId = query({
 	args: { externalId: v.string() },
-	handler: async (ctx, { externalId }) => {
+	handler: async (ctx, args) => {
 		return await ctx.db
 			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', externalId))
+			.withIndex('by_externalId', q => q.eq('externalId', args.externalId))
 			.first();
 	},
 });
 
 export const create = mutation({
 	args: userSchema,
-	handler: async (ctx, { firstName, lastName, email, image, externalId, isInstructor, isAdmin }) => {
+	handler: async (ctx, { firstName, lastName, email, image, externalId }) => {
 		const existing = await ctx.db
 			.query('users')
 			.withIndex('by_email', q => q.eq('email', email))
@@ -45,8 +45,8 @@ export const create = mutation({
 			externalId,
 			email,
 			image,
-			isInstructor: isInstructor ?? false,
-			isAdmin: isAdmin ?? false,
+			isInstructor: false,
+			isAdmin: false,
 			createdAt: now,
 		});
 	},

@@ -3,7 +3,7 @@ import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
 
 export const listForUser = query({
-	args: { userId: v.string() },
+	args: { userId: v.id('users') },
 	handler: async (ctx, { userId }) => {
 		return await ctx.db
 			.query('purchases')
@@ -14,7 +14,7 @@ export const listForUser = query({
 
 export const create = mutation({
 	args: {
-		userId: v.string(), // Clerk external ID
+		userId: v.id('users'),
 		courseId: v.id('courses'),
 		amount: v.number(),
 		stripeSessionId: v.optional(v.string()),

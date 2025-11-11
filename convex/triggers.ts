@@ -1,19 +1,20 @@
 import type { GenericMutationCtx } from 'convex/server';
+import { customCtx, customMutation } from 'convex-helpers/server/customFunctions';
 import { Triggers } from 'convex-helpers/server/triggers';
 
 import { api } from './_generated/api';
 import type { DataModel, Doc, Id } from './_generated/dataModel';
+import { mutation as rawMutation } from './_generated/server';
 
 /**
  * Initialize Triggers system for event-driven architecture
  * Used to automatically trigger side effects when data changes
  */
-export const triggers = new Triggers<DataModel>();
+const triggers = new Triggers<DataModel>();
 
 /**
  * Type for trigger change events
  * Based on convex-helpers trigger callback signature
- * Note: oldDoc/newDoc can be null (not just undefined) depending on operation
  */
 export type EnrollmentChange = {
 	operation: 'insert' | 'update' | 'delete';
@@ -23,31 +24,20 @@ export type EnrollmentChange = {
 };
 
 /**
- * Handle enrollment completion and generate certificate
- * Internal function - use handleEnrollmentChange for operation filtering
+ * Generate certificate when enrollment completes
+ * Exported for testing purposes
  *
  * @param ctx - Mutation context with database access
- * @param oldEnrollment - Enrollment before update (or undefined/null)
- * @param newEnrollment - Enrollment after update (or undefined/null)
+ * @param change - Trigger change object with operation, oldDoc, newDoc
  */
-export async function handleEnrollmentCompletion(
-	ctx: GenericMutationCtx<DataModel>,
-	oldEnrollment: Doc<'enrollments'> | undefined | null,
-	newEnrollment: Doc<'enrollments'> | undefined | null,
-) {
-	// Check if completedAt was just set (wasn't set before, is set now)
-	// Note: ?. handles both undefined and null
-	if (newEnrollment?.completedAt && !oldEnrollment?.completedAt) {
+export async function generateCertificateOnCompletion(ctx: GenericMutationCtx<DataModel>, change: EnrollmentChange) {
+	// Only process updates where completedAt was just set
+	if (change.operation === 'update' && change.newDoc?.completedAt && !change.oldDoc?.completedAt) {
 		// Fetch required data for certificate generation
-		const course = await ctx.db.get(newEnrollment.courseId);
+		const course = await ctx.db.get(change.newDoc.courseId);
 		if (!course) return;
 
-		const user = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', newEnrollment.userId))
-			.first();
-
-		// Instructor ID is already a Convex Id<'users'>, not externalId
+		const user = await ctx.db.get(change.newDoc.userId);
 		const instructor = await ctx.db.get(course.instructorId);
 
 		// Generate certificate directly (runs in same transaction)
@@ -66,37 +56,20 @@ export async function handleEnrollmentCompletion(
 }
 
 /**
- * Handle enrollment database change with operation filtering
- * Testable wrapper that includes the operation type check
- *
- * @param ctx - Mutation context with database access
- * @param change - Trigger change object with operation, oldDoc, newDoc
- * @returns true if handler was executed, false if filtered out
- */
-export async function handleEnrollmentChange(
-	ctx: GenericMutationCtx<DataModel>,
-	change: EnrollmentChange,
-): Promise<boolean> {
-	// Only process 'update' operations (not 'insert', 'delete', etc.)
-	if (change.operation !== 'update') {
-		return false;
-	}
-
-	await handleEnrollmentCompletion(ctx, change.oldDoc, change.newDoc);
-	return true;
-}
-
-/**
  * Certificate Generation Trigger
  * Automatically generates certificate when enrollment reaches 100% completion
  *
  * This trigger fires when enrollment.completedAt is set (indicating 100% course completion).
- * It handles all certificate orchestration logic that was previously inline in
- * lessonProgress.recalculateProgress mutation (refactored for separation of concerns).
  *
  * @see convex/certificates.ts - Certificate generation implementation
  * @see convex/lessonProgress.ts - Progress tracking that triggers this
  */
-triggers.register('enrollments', async (ctx, change) => {
-	await handleEnrollmentChange(ctx, change);
-});
+triggers.register('enrollments', generateCertificateOnCompletion);
+
+/**
+ * Custom mutation wrapper with triggers enabled
+ * Use this instead of raw mutation from _generated/server
+ *
+ * All ctx.db operations automatically fire registered triggers
+ */
+export const mutation = customMutation(rawMutation, customCtx(triggers.wrapDB));
