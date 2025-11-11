@@ -91,7 +91,7 @@ export const unifiedSearch = query({
 				.map(user => ({
 					id: user._id,
 					title: `${user.firstName} ${user.lastName}`,
-					description: `${user.email}`,
+					description: user.email,
 					type: 'user' as const,
 					url: `/profile/${user._id}`,
 					image: user.image,
@@ -276,7 +276,7 @@ export const advancedSearch = query({
 				.map(user => ({
 					id: user._id,
 					title: `${user.firstName} ${user.lastName}`,
-					description: `${user.email}`,
+					description: user.email,
 					type: 'user' as const,
 					url: `/profile/${user._id}`,
 					image: user.image,

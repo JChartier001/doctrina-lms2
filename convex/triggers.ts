@@ -9,8 +9,9 @@ import { mutation as rawMutation } from './_generated/server';
 /**
  * Initialize Triggers system for event-driven architecture
  * Used to automatically trigger side effects when data changes
+ * Exported for testing and extension purposes
  */
-const triggers = new Triggers<DataModel>();
+export const triggers = new Triggers<DataModel>();
 
 /**
  * Type for trigger change events

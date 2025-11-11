@@ -107,7 +107,7 @@ export const getInstructorAnalytics = query({
 				averageRating: (() => {
 					const ratedCourses = courses.filter(c => typeof c.rating === 'number');
 					return ratedCourses.length > 0
-						? ratedCourses.reduce((sum, c) => sum + (c.rating || 0), 0) / ratedCourses.length
+						? ratedCourses.reduce((sum, c) => sum + c.rating!, 0) / ratedCourses.length
 						: 0;
 				})(),
 			},
@@ -359,7 +359,7 @@ export const getContentAnalytics = query({
 			averageRating: (() => {
 				const ratedResources = resources.filter(r => typeof r.rating === 'number');
 				return ratedResources.length > 0
-					? ratedResources.reduce((sum, r) => sum + (r.rating || 0), 0) / ratedResources.length
+					? ratedResources.reduce((sum, r) => sum + r.rating!, 0) / ratedResources.length
 					: 0;
 			})(),
 		};
