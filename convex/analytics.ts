@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { Id } from './_generated/dataModel';
-import { query } from './_generated/server';
+import { query, QueryCtx } from './_generated/server';
 
 // Dashboard analytics for instructors
 export const getInstructorAnalytics = query({
@@ -104,7 +104,12 @@ export const getInstructorAnalytics = query({
 				totalRevenue,
 				totalStudents,
 				totalCourses: courses.length,
-				averageRating: courses.reduce((sum, c) => sum + (c.rating || 0), 0) / courses.length,
+				averageRating: (() => {
+					const ratedCourses = courses.filter(c => typeof c.rating === 'number');
+					return ratedCourses.length > 0
+						? ratedCourses.reduce((sum, c) => sum + c.rating!, 0) / ratedCourses.length
+						: 0;
+				})(),
 			},
 			courseAnalytics,
 			enrollmentTrend,
@@ -112,109 +117,114 @@ export const getInstructorAnalytics = query({
 	},
 });
 
+// Internal helper for platform analytics (exported for testing)
+export const getPlatformAnalyticsInternal = async (ctx: QueryCtx, timeRange: '7d' | '30d' | '90d' | '1y' = '30d') => {
+	const now = Date.now();
+	let startTime: number;
+
+	switch (timeRange) {
+		case '7d':
+			startTime = now - 7 * 24 * 60 * 60 * 1000;
+			break;
+		case '90d':
+			startTime = now - 90 * 24 * 60 * 60 * 1000;
+			break;
+		case '1y':
+			startTime = now - 365 * 24 * 60 * 60 * 1000;
+			break;
+		case '30d':
+		default:
+			startTime = now - 30 * 24 * 60 * 60 * 1000;
+			break;
+	}
+
+	// Get all purchases in time range
+	const allPurchases = await ctx.db.query('purchases').collect();
+	const recentPurchases = allPurchases.filter(p => p.createdAt >= startTime);
+
+	// Get all users and courses
+	const totalUsers = await ctx.db.query('users').collect();
+	const totalCourses = await ctx.db.query('courses').collect();
+
+	// Calculate metrics
+	const totalRevenue = recentPurchases.filter(p => p.status === 'complete').reduce((sum, p) => sum + p.amount, 0);
+
+	const totalEnrollments = recentPurchases.filter(p => p.status === 'complete').length;
+
+	// User growth trend
+	const userGrowthTrend = [];
+	const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : timeRange === '90d' ? 90 : 365;
+
+	for (let i = days - 1; i >= 0; i--) {
+		const date = new Date(now - i * 24 * 60 * 60 * 1000);
+		const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+		const dayEnd = dayStart + 24 * 60 * 60 * 1000;
+
+		const dayPurchases = recentPurchases.filter(
+			p => p.createdAt >= dayStart && p.createdAt < dayEnd && p.status === 'complete',
+		);
+
+		const dayUsers = new Set(dayPurchases.map(p => p.userId)).size;
+
+		userGrowthTrend.push({
+			date: date.toISOString().split('T')[0],
+			newUsers: dayUsers,
+			enrollments: dayPurchases.length,
+			revenue: dayPurchases.reduce((sum, p) => sum + p.amount, 0),
+		});
+	}
+
+	// Top courses by enrollment
+	const courseEnrollmentMap = new Map<string, number>();
+	recentPurchases
+		.filter(p => p.status === 'complete')
+		.forEach(p => {
+			const count = courseEnrollmentMap.get(p.courseId) || 0;
+			courseEnrollmentMap.set(p.courseId, count + 1);
+		});
+
+	const topCourses = await Promise.all(
+		Array.from(courseEnrollmentMap.entries())
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 10)
+			.map(async ([courseId, enrollments]) => {
+				try {
+					const course = await ctx.db.get(courseId as Id<'courses'>);
+					return course
+						? {
+								courseId,
+								title: course.title,
+								instructor: course.instructorId,
+								enrollments,
+								rating: course.rating || 0,
+							}
+						: null;
+				} catch {
+					return null;
+				}
+			}),
+	);
+
+	return {
+		overview: {
+			totalRevenue,
+			totalEnrollments,
+			totalUsers: totalUsers.length,
+			totalCourses: totalCourses.length,
+			averageRevenuePerEnrollment: totalEnrollments > 0 ? totalRevenue / totalEnrollments : 0,
+		},
+		userGrowthTrend,
+		topCourses: topCourses.filter(Boolean),
+	};
+};
+
 // Platform-wide analytics (for admin)
 export const getPlatformAnalytics = query({
 	args: {
 		timeRange: v.optional(v.union(v.literal('7d'), v.literal('30d'), v.literal('90d'), v.literal('1y'))),
 	},
 	handler: async (ctx, { timeRange = '30d' }) => {
-		const now = Date.now();
-		let startTime: number;
-
-		switch (timeRange) {
-			case '7d':
-				startTime = now - 7 * 24 * 60 * 60 * 1000;
-				break;
-			case '90d':
-				startTime = now - 90 * 24 * 60 * 60 * 1000;
-				break;
-			case '1y':
-				startTime = now - 365 * 24 * 60 * 60 * 1000;
-				break;
-			case '30d':
-			default:
-				startTime = now - 30 * 24 * 60 * 60 * 1000;
-				break;
-		}
-
-		// Get all purchases in time range
-		const allPurchases = await ctx.db.query('purchases').collect();
-		const recentPurchases = allPurchases.filter(p => p.createdAt >= startTime);
-
-		// Get all users and courses
-		const totalUsers = await ctx.db.query('users').collect();
-		const totalCourses = await ctx.db.query('courses').collect();
-
-		// Calculate metrics
-		const totalRevenue = recentPurchases.filter(p => p.status === 'complete').reduce((sum, p) => sum + p.amount, 0);
-
-		const totalEnrollments = recentPurchases.filter(p => p.status === 'complete').length;
-
-		// User growth trend
-		const userGrowthTrend = [];
-		const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : timeRange === '90d' ? 90 : 365;
-
-		for (let i = days - 1; i >= 0; i--) {
-			const date = new Date(now - i * 24 * 60 * 60 * 1000);
-			const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-			const dayEnd = dayStart + 24 * 60 * 60 * 1000;
-
-			const dayPurchases = recentPurchases.filter(
-				p => p.createdAt >= dayStart && p.createdAt < dayEnd && p.status === 'complete',
-			);
-
-			const dayUsers = new Set(dayPurchases.map(p => p.userId)).size;
-
-			userGrowthTrend.push({
-				date: date.toISOString().split('T')[0],
-				newUsers: dayUsers,
-				enrollments: dayPurchases.length,
-				revenue: dayPurchases.reduce((sum, p) => sum + p.amount, 0),
-			});
-		}
-
-		// Top courses by enrollment
-		const courseEnrollmentMap = new Map<string, number>();
-		recentPurchases
-			.filter(p => p.status === 'complete')
-			.forEach(p => {
-				const count = courseEnrollmentMap.get(p.courseId) || 0;
-				courseEnrollmentMap.set(p.courseId, count + 1);
-			});
-
-		const topCourses = await Promise.all(
-			Array.from(courseEnrollmentMap.entries())
-				.sort(([, a], [, b]) => b - a)
-				.slice(0, 10)
-				.map(async ([courseId, enrollments]) => {
-					try {
-						const course = await ctx.db.get(courseId as Id<'courses'>);
-						return course
-							? {
-									courseId,
-									title: course.title,
-									instructor: course.instructorId,
-									enrollments,
-									rating: course.rating || 0,
-								}
-							: null;
-					} catch {
-						return null;
-					}
-				}),
-		);
-
-		return {
-			overview: {
-				totalRevenue,
-				totalEnrollments,
-				totalUsers: totalUsers.length,
-				totalCourses: totalCourses.length,
-				averageRevenuePerEnrollment: totalEnrollments > 0 ? totalRevenue / totalEnrollments : 0,
-			},
-			userGrowthTrend,
-			topCourses: topCourses.filter(Boolean),
-		};
+		return getPlatformAnalyticsInternal(ctx, timeRange);
 	},
 });
 
@@ -346,7 +356,12 @@ export const getContentAnalytics = query({
 			contentTypeStats,
 			categoryStats,
 			totalResources: resources.length,
-			averageRating: resources.reduce((sum, r) => sum + r.rating, 0) / resources.length,
+			averageRating: (() => {
+				const ratedResources = resources.filter(r => typeof r.rating === 'number');
+				return ratedResources.length > 0
+					? ratedResources.reduce((sum, r) => sum + r.rating!, 0) / ratedResources.length
+					: 0;
+			})(),
 		};
 	},
 });

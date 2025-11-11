@@ -22,9 +22,17 @@ export const createCheckoutSession = action({
 			throw new Error('Course not found');
 		}
 
+		// Get user by external ID
+		const user = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+		if (!user) {
+			throw new Error('User not found');
+		}
+
 		// Check if already enrolled
 		const enrolled = await ctx.runQuery(api.enrollments.isEnrolled, {
-			userId: identity.subject,
+			userId: user._id,
 			courseId,
 		});
 
@@ -44,7 +52,7 @@ export const createCheckoutSession = action({
 						currency: 'usd',
 						product_data: {
 							name: course.title,
-							description: course.description || '',
+							description: course.description,
 							images: course.thumbnailUrl ? [course.thumbnailUrl] : [],
 						},
 						unit_amount: Math.round((course.price || 0) * 100), // Convert to cents

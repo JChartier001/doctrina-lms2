@@ -5,6 +5,8 @@ export default defineConfig({
 	test: {
 		globals: true,
 		environment: 'edge-runtime',
+		pool: 'threads',
+		maxConcurrency: 5,
 		server: {
 			deps: {
 				inline: ['convex-test'],
@@ -13,6 +15,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],
+			include: ['convex/**/*.ts'],
 			exclude: [
 				'node_modules/',
 				'test/',
@@ -21,6 +24,8 @@ export default defineConfig({
 				'convex/_generated/**',
 				'convex/seedData.ts',
 				'convex/seedCurrentUser.ts',
+				'convex/seed.ts',
+				'convex/http.ts',
 			],
 			// Priority-based thresholds per TESTING-STRATEGY.md
 			thresholds: {

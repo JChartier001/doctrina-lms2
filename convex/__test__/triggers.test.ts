@@ -11,7 +11,8 @@ type TestCtx = GenericMutationCtx<DataModel>;
 
 describe('Enrollment Completion Trigger', () => {
 	let t: any;
-	let testUserId: string;
+	let testUserExternalId: string;
+	let testUserId: Id<'users'>;
 	let testInstructorId: Id<'users'>;
 	let testCourseId: Id<'courses'>;
 	let testLessonId: Id<'lessons'>;
@@ -23,11 +24,12 @@ describe('Enrollment Completion Trigger', () => {
 		// Set up test data
 		await baseT.run(async (ctx: TestCtx) => {
 			// Create test student user
-			await ctx.db.insert('users', {
+			testUserExternalId = 'test-student-clerk-id';
+			const userId = await ctx.db.insert('users', {
 				firstName: 'Test',
 				lastName: 'Student',
 				email: 'student@test.com',
-				externalId: 'test-student-clerk-id',
+				externalId: testUserExternalId,
 				isInstructor: false,
 				isAdmin: false,
 			});
@@ -72,7 +74,7 @@ describe('Enrollment Completion Trigger', () => {
 
 			// Create purchase
 			const purchaseId = await ctx.db.insert('purchases', {
-				userId: 'test-student-clerk-id',
+				userId: userId, // Use Convex ID
 				courseId,
 				amount: 29900,
 				status: 'complete',
@@ -81,7 +83,7 @@ describe('Enrollment Completion Trigger', () => {
 
 			// Create enrollment (NOT completed)
 			const enrollmentId = await ctx.db.insert('enrollments', {
-				userId: 'test-student-clerk-id',
+				userId: userId, // Use Convex ID
 				courseId,
 				purchaseId,
 				enrolledAt: Date.now(),
@@ -89,7 +91,7 @@ describe('Enrollment Completion Trigger', () => {
 			});
 
 			// Store IDs for tests
-			testUserId = 'test-student-clerk-id';
+			testUserId = userId;
 			testInstructorId = instructorId;
 			testCourseId = courseId;
 
@@ -98,7 +100,7 @@ describe('Enrollment Completion Trigger', () => {
 		});
 
 		// Create authenticated test instance
-		t = baseT.withIdentity({ subject: testUserId });
+		t = baseT.withIdentity({ subject: testUserExternalId });
 	});
 
 	describe('Certificate generation trigger', () => {
@@ -148,7 +150,7 @@ describe('Enrollment Completion Trigger', () => {
 
 				// Create purchase and enrollment
 				const purchaseId = await ctx.db.insert('purchases', {
-					userId: 'filter-test-user',
+					userId,
 					courseId,
 					amount: 100,
 					status: 'complete',
@@ -156,7 +158,7 @@ describe('Enrollment Completion Trigger', () => {
 				});
 
 				const enrollmentId = await ctx.db.insert('enrollments', {
-					userId: 'filter-test-user',
+					userId,
 					courseId,
 					purchaseId,
 					enrolledAt: Date.now(),
@@ -234,7 +236,7 @@ describe('Enrollment Completion Trigger', () => {
 			const studentUser = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db
 					.query('users')
-					.withIndex('by_externalId', q => q.eq('externalId', testUserId))
+					.withIndex('by_externalId', q => q.eq('externalId', testUserExternalId))
 					.first();
 			});
 
@@ -276,7 +278,7 @@ describe('Enrollment Completion Trigger', () => {
 			const studentUser = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db
 					.query('users')
-					.withIndex('by_externalId', q => q.eq('externalId', testUserId))
+					.withIndex('by_externalId', q => q.eq('externalId', testUserExternalId))
 					.first();
 			});
 
@@ -302,7 +304,7 @@ describe('Enrollment Completion Trigger', () => {
 			// But the handler itself should work correctly if called with undefined oldDoc
 			const newEnrollment = await t.run(async (ctx: TestCtx) => {
 				const newPurchaseId = await ctx.db.insert('purchases', {
-					userId: 'test-student-clerk-id',
+					userId: testUserId,
 					courseId: testCourseId,
 					amount: 100,
 					status: 'complete',
@@ -311,7 +313,7 @@ describe('Enrollment Completion Trigger', () => {
 
 				// Create enrollment with completedAt already set
 				const enrollmentId = await ctx.db.insert('enrollments', {
-					userId: 'test-student-clerk-id',
+					userId: testUserId,
 					courseId: testCourseId,
 					purchaseId: newPurchaseId,
 					enrolledAt: Date.now(),
@@ -395,7 +397,7 @@ describe('Enrollment Completion Trigger', () => {
 			const studentUser = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db
 					.query('users')
-					.withIndex('by_externalId', q => q.eq('externalId', testUserId))
+					.withIndex('by_externalId', q => q.eq('externalId', testUserExternalId))
 					.first();
 			});
 

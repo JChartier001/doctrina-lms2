@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 
+import dayjs from '../lib/dayjs';
 import { query } from './_generated/server';
 
 // Unified search across courses and resources
@@ -90,7 +91,7 @@ export const unifiedSearch = query({
 				.map(user => ({
 					id: user._id,
 					title: `${user.firstName} ${user.lastName}`,
-					description: user.email || '',
+					description: user.email,
 					type: 'user' as const,
 					url: `/profile/${user._id}`,
 					image: user.image,
@@ -174,6 +175,16 @@ export const advancedSearch = query({
 				}
 			}
 
+			// Get enrollment counts for courses
+			const enrollmentCounts = new Map<string, number>();
+			for (const course of courseResults) {
+				const enrollments = await ctx.db
+					.query('enrollments')
+					.withIndex('by_course', q => q.eq('courseId', course._id))
+					.collect();
+				enrollmentCounts.set(course._id, enrollments.length);
+			}
+
 			const formattedCourses = courseResults.map(course => ({
 				id: course._id,
 				title: course.title,
@@ -186,6 +197,7 @@ export const advancedSearch = query({
 					price: course.price,
 					rating: course.rating,
 					reviewCount: course.reviewCount,
+					students: enrollmentCounts.get(course._id) || 0,
 					createdAt: course.createdAt,
 				},
 			}));
@@ -220,6 +232,16 @@ export const advancedSearch = query({
 				}
 			}
 
+			// Get favorites count for resources (engagement metric alongside downloads)
+			const favoritesCounts = new Map<string, number>();
+			for (const resource of resourceResults) {
+				const favorites = await ctx.db
+					.query('favorites')
+					.withIndex('by_resource', q => q.eq('resourceId', resource._id))
+					.collect();
+				favoritesCounts.set(resource._id, favorites.length);
+			}
+
 			const formattedResources = resourceResults.map(resource => ({
 				id: resource._id,
 				title: resource.title,
@@ -231,6 +253,7 @@ export const advancedSearch = query({
 					type: resource.type,
 					difficulty: resource.difficulty,
 					downloadCount: resource.downloadCount,
+					favorites: favoritesCounts.get(resource._id) || 0,
 					rating: resource.rating,
 					createdAt: resource.dateAdded,
 				},
@@ -239,29 +262,78 @@ export const advancedSearch = query({
 			allResults.push(...formattedResources);
 		}
 
+		// Search users
+		if (!filters.entityTypes || filters.entityTypes.includes('user')) {
+			const users = await ctx.db.query('users').collect();
+
+			const userResults = users
+				.filter(
+					user =>
+						user.firstName.toLowerCase().includes(normalizedQuery) ||
+						user.lastName.toLowerCase().includes(normalizedQuery) ||
+						user.email.toLowerCase().includes(normalizedQuery),
+				)
+				.map(user => ({
+					id: user._id,
+					title: `${user.firstName} ${user.lastName}`,
+					description: user.email,
+					type: 'user' as const,
+					url: `/profile/${user._id}`,
+					image: user.image,
+					metadata: {
+						role: user.isAdmin ? 'admin' : user.isInstructor ? 'instructor' : 'student',
+						email: user.email,
+						createdAt: user._creationTime,
+					},
+				}));
+
+			allResults.push(...userResults);
+		}
+
 		// Sort results
 		switch (filters.sortBy) {
 			case 'newest':
-				allResults.sort((a, b) => (Number(b.metadata.createdAt) || 0) - (Number(a.metadata.createdAt) || 0));
+				allResults.sort((a, b) => {
+					const dateB = dayjs(b.metadata.createdAt);
+					const dateA = dayjs(a.metadata.createdAt);
+					return dateB.valueOf() - dateA.valueOf();
+				});
 				break;
 			case 'rating':
-				allResults.sort((a, b) => (b.metadata.rating || 0) - (a.metadata.rating || 0));
+				allResults.sort((a, b) => {
+					const aRating = 'rating' in a.metadata ? a.metadata.rating || 0 : 0;
+					const bRating = 'rating' in b.metadata ? b.metadata.rating || 0 : 0;
+					return bRating - aRating;
+				});
 				break;
 			case 'popular':
 				allResults.sort((a, b) => {
-					const bPop: number =
-						'downloadCount' in b.metadata
-							? Number(b.metadata.downloadCount) || 0
-							: 'students' in b.metadata
-								? Number(b.metadata.students) || 0
-								: 0;
-					const aPop: number =
-						'downloadCount' in a.metadata
-							? Number(a.metadata.downloadCount) || 0
-							: 'students' in a.metadata
-								? Number(a.metadata.students) || 0
-								: 0;
-					return bPop - aPop;
+					const calculatePopularity = (item: typeof a): number => {
+						const rating = 'rating' in item.metadata ? Number(item.metadata.rating) || 0 : 0;
+
+						// For resources: combine downloads, favorites, and rating quality
+						if ('downloadCount' in item.metadata && 'favorites' in item.metadata) {
+							const downloads = Number(item.metadata.downloadCount) || 0;
+							const favorites = Number(item.metadata.favorites) || 0;
+							// Weighted: downloads (40%) + favorites (40%) + rating boost (20%)
+							// Favorites weight slightly higher as they show intentional engagement
+							const baseEngagement = downloads * 0.6 + favorites * 0.8;
+							const ratingBoost = (rating / 5) * 0.2;
+							return baseEngagement * (1 + ratingBoost);
+						}
+
+						// For courses: combine students with rating and review engagement
+						if ('students' in item.metadata) {
+							const students = Number(item.metadata.students) || 0;
+							const reviews = Number(item.metadata.reviewCount) || 0;
+							// Weighted: students (primary) + review engagement boost + rating multiplier
+							return students * (1 + (rating / 5) * 0.3) + reviews * 2;
+						}
+
+						return 0;
+					};
+
+					return calculatePopularity(b) - calculatePopularity(a);
 				});
 				break;
 			case 'relevance':

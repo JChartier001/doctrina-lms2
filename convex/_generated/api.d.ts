@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as _customFunctions from "../_customFunctions.js";
 import type * as analytics from "../analytics.js";
 import type * as certificates from "../certificates.js";
 import type * as courseModules from "../courseModules.js";
@@ -27,9 +26,6 @@ import type * as purchases from "../purchases.js";
 import type * as recommendations from "../recommendations.js";
 import type * as resources from "../resources.js";
 import type * as search from "../search.js";
-import type * as seed from "../seed.js";
-import type * as seedCurrentUser from "../seedCurrentUser.js";
-import type * as seedData from "../seedData.js";
 import type * as stripe from "../stripe.js";
 import type * as triggers from "../triggers.js";
 import type * as users from "../users.js";
@@ -49,7 +45,6 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  _customFunctions: typeof _customFunctions;
   analytics: typeof analytics;
   certificates: typeof certificates;
   courseModules: typeof courseModules;
@@ -68,9 +63,6 @@ declare const fullApi: ApiFromModules<{
   recommendations: typeof recommendations;
   resources: typeof resources;
   search: typeof search;
-  seed: typeof seed;
-  seedCurrentUser: typeof seedCurrentUser;
-  seedData: typeof seedData;
   stripe: typeof stripe;
   triggers: typeof triggers;
   users: typeof users;

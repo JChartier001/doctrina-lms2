@@ -14,7 +14,8 @@ describe('Lesson Progress Tracking', () => {
 	let t: any;
 
 	let baseT: any; // Keep reference to base instance for creating other identities
-	let testUserId: string;
+	let testUserExternalId: string;
+	let testUserId: Id<'users'>;
 	let testCourseId: Id<'courses'>;
 	let testModuleId: Id<'courseModules'>;
 	let testLessonId: Id<'lessons'>;
@@ -26,11 +27,12 @@ describe('Lesson Progress Tracking', () => {
 		// Set up test data
 		await baseT.run(async (ctx: TestCtx) => {
 			// Create test user
-			const _userId = await ctx.db.insert('users', {
+			testUserExternalId = 'test-clerk-id-123';
+			const userId = await ctx.db.insert('users', {
 				firstName: 'Test',
 				lastName: 'Student',
 				email: 'student@test.com',
-				externalId: 'test-clerk-id-123',
+				externalId: testUserExternalId,
 				isInstructor: false,
 				isAdmin: false,
 			});
@@ -75,7 +77,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Create purchase
 			const purchaseId = await ctx.db.insert('purchases', {
-				userId: 'test-clerk-id-123',
+				userId: userId, // Use Convex ID
 				courseId,
 				amount: 29900,
 				status: 'complete',
@@ -84,7 +86,7 @@ describe('Lesson Progress Tracking', () => {
 
 			// Create enrollment
 			const enrollmentId = await ctx.db.insert('enrollments', {
-				userId: 'test-clerk-id-123',
+				userId: userId, // Use Convex ID
 				courseId,
 				purchaseId,
 				enrolledAt: Date.now(),
@@ -92,7 +94,7 @@ describe('Lesson Progress Tracking', () => {
 			});
 
 			// Store IDs for tests
-			testUserId = 'test-clerk-id-123';
+			testUserId = userId;
 			testCourseId = courseId;
 			testModuleId = moduleId;
 			testLessonId = lessonId;
@@ -100,7 +102,7 @@ describe('Lesson Progress Tracking', () => {
 		});
 
 		// Create authenticated test instance
-		t = baseT.withIdentity({ subject: testUserId });
+		t = baseT.withIdentity({ subject: testUserExternalId });
 	});
 
 	describe('markComplete()', () => {
@@ -158,9 +160,31 @@ describe('Lesson Progress Tracking', () => {
 			).rejects.toThrow('Not authenticated');
 		});
 
+		it('throws error when user not found in database', async () => {
+			const noUserT = baseT.withIdentity({ subject: 'user-that-does-not-exist' });
+
+			await expect(
+				noUserT.mutation(api.lessonProgress.markComplete, {
+					lessonId: testLessonId,
+				}),
+			).rejects.toThrow('User not found');
+		});
+
 		it('throws error when user is not enrolled in course', async () => {
 			// Create different user not enrolled in the same test instance
-			const otherUserId = 'other-user-id-not-enrolled';
+			const otherUserExternalId = 'other-user-id-not-enrolled';
+
+			// Create the other user first
+			await t.run(async (ctx: TestCtx) => {
+				await ctx.db.insert('users', {
+					firstName: 'Other',
+					lastName: 'User',
+					email: 'otheruser@test.com',
+					externalId: otherUserExternalId,
+					isInstructor: false,
+					isAdmin: false,
+				});
+			});
 
 			// Create a new lesson in a different course that the other user can attempt to access
 			const otherInstructorId = await t.run(async (ctx: TestCtx) => {
@@ -206,7 +230,7 @@ describe('Lesson Progress Tracking', () => {
 			});
 
 			// Use different identity from base test instance
-			const otherT = baseT.withIdentity({ subject: otherUserId });
+			const otherT = baseT.withIdentity({ subject: otherUserExternalId });
 
 			await expect(
 				otherT.mutation(api.lessonProgress.markComplete, {
@@ -289,9 +313,19 @@ describe('Lesson Progress Tracking', () => {
 		it('throws "Enrollment not found" when enrollment does not exist', async () => {
 			// Create a valid-looking enrollment ID that doesn't exist
 			const nonExistentEnrollmentId = await t.run(async (ctx: TestCtx) => {
+				// Create a temporary user
+				const tempUserId = await ctx.db.insert('users', {
+					firstName: 'Temp',
+					lastName: 'User',
+					email: 'temp@test.com',
+					externalId: 'temp-user-external',
+					isInstructor: false,
+					isAdmin: false,
+				});
+
 				// Create a temporary purchase first
 				const tempPurchaseId = await ctx.db.insert('purchases', {
-					userId: 'temp-user',
+					userId: tempUserId,
 					courseId: testCourseId,
 					amount: 100,
 					status: 'complete',
@@ -300,7 +334,7 @@ describe('Lesson Progress Tracking', () => {
 
 				// Create and immediately delete an enrollment to get a valid ID format
 				const tempId = await ctx.db.insert('enrollments', {
-					userId: 'temp-user',
+					userId: tempUserId,
 					courseId: testCourseId,
 					purchaseId: tempPurchaseId,
 					enrolledAt: Date.now(),
@@ -308,6 +342,7 @@ describe('Lesson Progress Tracking', () => {
 				});
 				await ctx.db.delete(tempId);
 				await ctx.db.delete(tempPurchaseId);
+				await ctx.db.delete(tempUserId);
 				return tempId;
 			});
 
@@ -594,9 +629,22 @@ describe('Lesson Progress Tracking', () => {
 		});
 
 		it('returns null for unenrolled user', async () => {
-			// Use different user who is not enrolled
-			const otherT = convexTest(schema).withIdentity({
-				subject: 'different-user-id',
+			// Create a different user who is NOT enrolled in testCourseId
+			const unenrolledExternalId = 'unenrolled-user-external-id';
+			await t.run(async (ctx: TestCtx) => {
+				await ctx.db.insert('users', {
+					firstName: 'Unenrolled',
+					lastName: 'User',
+					email: 'unenrolled@test.com',
+					externalId: unenrolledExternalId,
+					isInstructor: false,
+					isAdmin: false,
+				});
+			});
+
+			// Query with this user (who exists but is not enrolled)
+			const otherT = baseT.withIdentity({
+				subject: unenrolledExternalId,
 			});
 
 			const progress = await otherT.query(api.lessonProgress.getUserProgress, {
@@ -610,6 +658,16 @@ describe('Lesson Progress Tracking', () => {
 			const unauthT = convexTest(schema);
 
 			const progress = await unauthT.query(api.lessonProgress.getUserProgress, {
+				courseId: testCourseId,
+			});
+
+			expect(progress).toBeNull();
+		});
+
+		it('returns null when user not found in database', async () => {
+			const noUserT = baseT.withIdentity({ subject: 'nonexistent-user-external-id' });
+
+			const progress = await noUserT.query(api.lessonProgress.getUserProgress, {
 				courseId: testCourseId,
 			});
 
@@ -792,6 +850,16 @@ describe('Lesson Progress Tracking', () => {
 			});
 
 			const nextLessonId = await unauthT.query(api.lessonProgress.getNextIncompleteLesson, {
+				courseId: testCourseId,
+			});
+
+			expect(nextLessonId).toBeNull();
+		});
+
+		it('returns null when user not found in database', async () => {
+			const noUserT = baseT.withIdentity({ subject: 'user-does-not-exist-external' });
+
+			const nextLessonId = await noUserT.query(api.lessonProgress.getNextIncompleteLesson, {
 				courseId: testCourseId,
 			});
 

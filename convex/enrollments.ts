@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 
 import { api } from './_generated/api';
-import { Doc, Id } from './_generated/dataModel';
+import type { Doc, Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 
 /**
@@ -10,7 +10,7 @@ import { mutation, query } from './_generated/server';
  */
 export const create = mutation({
 	args: {
-		userId: v.string(), // Clerk external ID
+		userId: v.id('users'),
 		courseId: v.id('courses'),
 		purchaseId: v.id('purchases'),
 	},
@@ -35,10 +35,7 @@ export const create = mutation({
 
 		// Create welcome notification
 		const course = await ctx.db.get(args.courseId);
-		const user = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', args.userId))
-			.first();
+		const user = await ctx.db.get(args.userId);
 
 		if (course && user) {
 			await ctx.db.insert('notifications', {
@@ -61,7 +58,7 @@ export const create = mutation({
  */
 export const isEnrolled = query({
 	args: {
-		userId: v.string(),
+		userId: v.id('users'),
 		courseId: v.id('courses'),
 	},
 	handler: async (ctx, { userId, courseId }) => {
@@ -79,15 +76,24 @@ export const isEnrolled = query({
  */
 export const getCurrentUserEnrollment = query({
 	args: { courseId: v.id('courses') },
-	handler: async (ctx, { courseId }) => {
+	handler: async (ctx, { courseId }): Promise<Doc<'enrollments'> | null> => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			return null;
 		}
 
-		const enrollment = await ctx.db
+		// Look up user by externalId to get Convex ID
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
+			return null;
+		}
+
+		const enrollment: Doc<'enrollments'> | null = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user_course', q => q.eq('userId', identity.subject).eq('courseId', courseId))
+			.withIndex('by_user_course', q => q.eq('userId', user._id).eq('courseId', courseId))
 			.first();
 
 		return enrollment;
@@ -98,7 +104,7 @@ export const getCurrentUserEnrollment = query({
  * Get all enrollments for a user with course details
  */
 export const getUserEnrollments = query({
-	args: { userId: v.string() },
+	args: { userId: v.id('users') },
 	handler: async (ctx, { userId }) => {
 		const enrollments = await ctx.db
 			.query('enrollments')
@@ -124,22 +130,31 @@ export const getUserEnrollments = query({
  */
 export const getMyEnrollments = query({
 	args: {},
-	handler: async ctx => {
+	handler: async (ctx): Promise<Array<Doc<'enrollments'> & { course: Doc<'courses'> | null }>> => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			return [];
 		}
 
-		const enrollments = await ctx.db
+		// Look up user by externalId to get Convex ID
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
+			return [];
+		}
+
+		const enrollments: Array<Doc<'enrollments'>> = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user', q => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', user._id))
 			.order('desc')
 			.collect();
 
 		// Populate course details
 		return await Promise.all(
-			enrollments.map(async enrollment => {
-				const course = await ctx.db.get(enrollment.courseId);
+			enrollments.map(async (enrollment: Doc<'enrollments'>) => {
+				const course: Doc<'courses'> | null = await ctx.db.get(enrollment.courseId);
 				return {
 					...enrollment,
 					course,
@@ -149,49 +164,60 @@ export const getMyEnrollments = query({
 	},
 });
 
-/**
- * Get current user's enrollments with all related data pre-loaded
- *
- * PERFORMANCE CHARACTERISTICS (honest assessment):
- * - Fetches all user progress once (shared across enrollments)
- * - Fetches lessons once per module (cached in Map to avoid duplicate fetches)
- *
- * Actual query pattern for 4 enrollments with 3 modules each:
- * - 1 enrollments query
- * - 1 progress query (all user progress)
- * - Per enrollment (4×): 1 course + 1 instructor + 1 modules + 3 lesson queries = 6 queries
- * Total: ~26 queries (2 + 4×6)
- *
- * TRADE-OFF: Consolidates frontend waterfalls into backend, but still O(enrollments × modules) queries.
- * Acceptable for typical use (<10 courses, <5 modules each).
- *
- * LIMITATION: Cannot optimize further without denormalizing data or adding courseId index to lessons.
- * Consider pagination if users have 20+ enrollments.
- */
 export const getMyEnrollmentsWithProgress = query({
 	args: {},
-	handler: async ctx => {
+	handler: async (
+		ctx,
+	): Promise<
+		Array<
+			Doc<'enrollments'> & {
+				course: Doc<'courses'> | null;
+				instructor: {
+					_id: Id<'users'>;
+					firstName: string;
+					lastName: string;
+					email: string;
+				} | null;
+				progress: {
+					total: number;
+					completed: number;
+					percent: number;
+					completedLessonIds: Array<Id<'lessons'>>;
+				} | null;
+				nextLessonId: Id<'lessons'> | null;
+			}
+		>
+	> => {
 		const identity = await ctx.auth.getUserIdentity();
 		if (!identity) {
 			return [];
 		}
 
-		const enrollments = await ctx.db
+		// Look up user by externalId to get Convex ID
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user) {
+			return [];
+		}
+
+		const enrollments: Array<Doc<'enrollments'>> = await ctx.db
 			.query('enrollments')
-			.withIndex('by_user', q => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', user._id))
 			.order('desc')
 			.collect();
 
 		// Fetch all progress records once (optimization)
-		const progressRecords = await ctx.db
+		const progressRecords: Array<Doc<'lessonProgress'>> = await ctx.db
 			.query('lessonProgress')
-			.withIndex('by_user', q => q.eq('userId', identity.subject))
+			.withIndex('by_user', q => q.eq('userId', user._id))
 			.collect();
 
 		// Populate all related data for each enrollment
 		return await Promise.all(
-			enrollments.map(async enrollment => {
-				const course = await ctx.db.get(enrollment.courseId);
+			enrollments.map(async (enrollment: Doc<'enrollments'>) => {
+				const course: Doc<'courses'> | null = await ctx.db.get(enrollment.courseId);
 				if (!course) {
 					return {
 						...enrollment,
@@ -203,7 +229,7 @@ export const getMyEnrollmentsWithProgress = query({
 				}
 
 				// Load instructor
-				const instructor = await ctx.db.get(course.instructorId);
+				const instructor: Doc<'users'> | null = await ctx.db.get(course.instructorId);
 
 				// Fetch modules
 				const modules = await ctx.db
@@ -213,35 +239,30 @@ export const getMyEnrollmentsWithProgress = query({
 
 				const sortedModules = modules.sort((a, b) => a.order - b.order);
 
-				// OPTIMIZATION: Fetch lessons once per module and cache in Map
-				// Eliminates duplicate fetches (was fetching twice: once for count, once for next lesson)
-				const moduleLessonsMap = new Map<Id<'courseModules'>, Doc<'lessons'>[]>();
-				let totalLessons = 0;
+				// OPTIMIZATION: Fetch lessons once per module and store together
+				// Eliminates duplicate fetches and avoids Map.get() undefined branches
+				const modulesWithLessons = await Promise.all(
+					sortedModules.map(async courseModule => {
+						const lessons = await ctx.db
+							.query('lessons')
+							.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
+							.collect();
 
-				for (const courseModule of sortedModules) {
-					const lessons = await ctx.db
-						.query('lessons')
-						.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
-						.collect();
-
-					const sortedLessons = lessons.sort((a, b) => a.order - b.order);
-					moduleLessonsMap.set(courseModule._id, sortedLessons);
-					totalLessons += lessons.length;
-				}
+						const sortedLessons = lessons.sort((a, b) => a.order - b.order);
+						return { module: courseModule, lessons: sortedLessons };
+					}),
+				);
 
 				// Calculate totals using idiomatic array operations
-				const allLessonIds = Array.from(moduleLessonsMap.values())
-					.flat()
-					.map(l => l._id);
+				const allLessonIds = modulesWithLessons.flatMap(({ lessons }) => lessons).map(l => l._id);
 				const completedLessonIds = progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId);
+				const totalLessons = allLessonIds.length;
 
-				// Find next incomplete lesson (using cached data)
+				// Find next incomplete lesson
 				let nextLessonId = null;
 
-				for (const courseModule of sortedModules) {
-					const sortedLessons = moduleLessonsMap.get(courseModule._id) || [];
-
-					for (const lesson of sortedLessons) {
+				for (const { lessons } of modulesWithLessons) {
+					for (const lesson of lessons) {
 						const isCompleted = progressRecords.some(p => p.lessonId === lesson._id);
 						if (!isCompleted) {
 							nextLessonId = lesson._id;
@@ -252,9 +273,8 @@ export const getMyEnrollmentsWithProgress = query({
 				}
 
 				// If all complete, return first lesson
-				if (!nextLessonId && sortedModules.length > 0) {
-					const firstModule = sortedModules[0];
-					const firstModuleLessons = moduleLessonsMap.get(firstModule._id) || [];
+				if (!nextLessonId && modulesWithLessons.length > 0) {
+					const firstModuleLessons = modulesWithLessons[0].lessons;
 
 					if (firstModuleLessons.length > 0) {
 						nextLessonId = firstModuleLessons[0]._id;
@@ -318,7 +338,12 @@ export const getCourseStudents = query({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		// Get user record to compare Convex IDs (instructorId is Id<'users'>, not externalId)
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (!user || course.instructorId !== user._id) {
 			throw new Error('Not authorized');
 		}
 
@@ -338,6 +363,8 @@ export const getCourseStudents = query({
 
 /**
  * Update enrollment progress (called when lessons marked complete)
+ * Certificate generation is handled automatically by the enrollment trigger.
+ * @see convex/triggers.ts - handleEnrollmentCompletion()
  */
 export const updateProgress = mutation({
 	args: {
@@ -349,37 +376,5 @@ export const updateProgress = mutation({
 		const { enrollmentId, ...updates } = args;
 
 		await ctx.db.patch(enrollmentId, updates);
-
-		// If course completed, generate certificate
-		if (updates.completedAt) {
-			const enrollment = await ctx.db.get(enrollmentId);
-			if (enrollment) {
-				// Get user, course, and instructor for certificate generation
-				const user = await ctx.db
-					.query('users')
-					.withIndex('by_externalId', q => q.eq('externalId', enrollment.userId))
-					.first();
-
-				const course = await ctx.db.get(enrollment.courseId);
-				const instructor = course
-					? await ctx.db
-							.query('users')
-							.withIndex('by_externalId', q => q.eq('externalId', course.instructorId))
-							.first()
-					: null;
-
-				if (user && course && instructor) {
-					await ctx.scheduler.runAfter(0, api.certificates.generate, {
-						userId: user._id,
-						userName: `${user.firstName} ${user.lastName}`,
-						courseId: course._id,
-						courseName: course.title,
-						instructorId: instructor._id,
-						instructorName: `${instructor.firstName} ${instructor.lastName}`,
-						templateId: 'default',
-					});
-				}
-			}
-		}
 	},
 });

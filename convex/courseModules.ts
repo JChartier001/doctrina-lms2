@@ -1,5 +1,7 @@
 import { v } from 'convex/values';
 
+import { api } from './_generated/api';
+import { Doc } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
 
 /**
@@ -24,16 +26,15 @@ export const create = mutation({
 			throw new Error('Course not found');
 		}
 
-		const user = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
-			.first();
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
 
 		if (!user?.isInstructor) {
 			throw new Error('User is not an instructor');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		if (course.instructorId !== user._id) {
 			throw new Error('Not authorized to modify this course');
 		}
 
@@ -102,7 +103,11 @@ export const update = mutation({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 
@@ -133,7 +138,11 @@ export const remove = mutation({
 			throw new Error('Course not found');
 		}
 
-		if (course.instructorId !== identity.subject) {
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
+
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 
@@ -181,8 +190,11 @@ export const reorder = mutation({
 		if (!course) {
 			throw new Error('Course not found');
 		}
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
 
-		if (course.instructorId !== identity.subject) {
+		if (course.instructorId !== user?._id) {
 			throw new Error('Not authorized');
 		}
 
