@@ -54,10 +54,11 @@ const eslintConfig = defineConfig([
 
 	// Test file specific overrides
 	{
-		files: ['**/*.test.ts', '**/*.test.tsx', 'convex/__test__/*.ts'],
+		files: ['**/*.test.ts', '**/*.test.tsx', '**/__test__/*.test.ts', '**/__test__/*.test.tsx', 'convex/__test__/**'],
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'off',
 			'no-only-tests/no-only-tests': 'warn',
+			'@typescript-eslint/no-unused-vars': 'off',
 		},
 	},
 
@@ -74,10 +75,8 @@ const eslintConfig = defineConfig([
 
 		// Additional ignores
 		'node_modules/**',
-		'__mocks__/**',
 		'*.config.js',
 		'convex/_generated/**',
-		'convex/__test__/**',
 	]),
 ]);
 

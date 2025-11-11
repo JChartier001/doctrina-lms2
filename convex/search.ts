@@ -262,6 +262,34 @@ export const advancedSearch = query({
 			allResults.push(...formattedResources);
 		}
 
+		// Search users
+		if (!filters.entityTypes || filters.entityTypes.includes('user')) {
+			const users = await ctx.db.query('users').collect();
+
+			const userResults = users
+				.filter(
+					user =>
+						user.firstName.toLowerCase().includes(normalizedQuery) ||
+						user.lastName.toLowerCase().includes(normalizedQuery) ||
+						user.email.toLowerCase().includes(normalizedQuery),
+				)
+				.map(user => ({
+					id: user._id,
+					title: `${user.firstName} ${user.lastName}`,
+					description: `${user.email}`,
+					type: 'user' as const,
+					url: `/profile/${user._id}`,
+					image: user.image,
+					metadata: {
+						role: user.isAdmin ? 'admin' : user.isInstructor ? 'instructor' : 'student',
+						email: user.email,
+						createdAt: user._creationTime,
+					},
+				}));
+
+			allResults.push(...userResults);
+		}
+
 		// Sort results
 		switch (filters.sortBy) {
 			case 'newest':
@@ -272,12 +300,16 @@ export const advancedSearch = query({
 				});
 				break;
 			case 'rating':
-				allResults.sort((a, b) => (b.metadata.rating || 0) - (a.metadata.rating || 0));
+				allResults.sort((a, b) => {
+					const aRating = 'rating' in a.metadata ? a.metadata.rating || 0 : 0;
+					const bRating = 'rating' in b.metadata ? b.metadata.rating || 0 : 0;
+					return bRating - aRating;
+				});
 				break;
 			case 'popular':
 				allResults.sort((a, b) => {
 					const calculatePopularity = (item: typeof a): number => {
-						const rating = Number(item.metadata.rating) || 0;
+						const rating = 'rating' in item.metadata ? Number(item.metadata.rating) || 0 : 0;
 
 						// For resources: combine downloads, favorites, and rating quality
 						if ('downloadCount' in item.metadata && 'favorites' in item.metadata) {

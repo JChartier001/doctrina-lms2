@@ -239,35 +239,30 @@ export const getMyEnrollmentsWithProgress = query({
 
 				const sortedModules = modules.sort((a, b) => a.order - b.order);
 
-				// OPTIMIZATION: Fetch lessons once per module and cache in Map
-				// Eliminates duplicate fetches (was fetching twice: once for count, once for next lesson)
-				const moduleLessonsMap = new Map<Id<'courseModules'>, Doc<'lessons'>[]>();
-				let totalLessons = 0;
+				// OPTIMIZATION: Fetch lessons once per module and store together
+				// Eliminates duplicate fetches and avoids Map.get() undefined branches
+				const modulesWithLessons = await Promise.all(
+					sortedModules.map(async courseModule => {
+						const lessons = await ctx.db
+							.query('lessons')
+							.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
+							.collect();
 
-				for (const courseModule of sortedModules) {
-					const lessons = await ctx.db
-						.query('lessons')
-						.withIndex('by_module', q => q.eq('moduleId', courseModule._id))
-						.collect();
-
-					const sortedLessons = lessons.sort((a, b) => a.order - b.order);
-					moduleLessonsMap.set(courseModule._id, sortedLessons);
-					totalLessons += lessons.length;
-				}
+						const sortedLessons = lessons.sort((a, b) => a.order - b.order);
+						return { module: courseModule, lessons: sortedLessons };
+					}),
+				);
 
 				// Calculate totals using idiomatic array operations
-				const allLessonIds = Array.from(moduleLessonsMap.values())
-					.flat()
-					.map(l => l._id);
+				const allLessonIds = modulesWithLessons.flatMap(({ lessons }) => lessons).map(l => l._id);
 				const completedLessonIds = progressRecords.filter(p => allLessonIds.includes(p.lessonId)).map(p => p.lessonId);
+				const totalLessons = allLessonIds.length;
 
-				// Find next incomplete lesson (using cached data)
+				// Find next incomplete lesson
 				let nextLessonId = null;
 
-				for (const courseModule of sortedModules) {
-					const sortedLessons = moduleLessonsMap.get(courseModule._id) || [];
-
-					for (const lesson of sortedLessons) {
+				for (const { lessons } of modulesWithLessons) {
+					for (const lesson of lessons) {
 						const isCompleted = progressRecords.some(p => p.lessonId === lesson._id);
 						if (!isCompleted) {
 							nextLessonId = lesson._id;
@@ -278,9 +273,8 @@ export const getMyEnrollmentsWithProgress = query({
 				}
 
 				// If all complete, return first lesson
-				if (!nextLessonId && sortedModules.length > 0) {
-					const firstModule = sortedModules[0];
-					const firstModuleLessons = moduleLessonsMap.get(firstModule._id) || [];
+				if (!nextLessonId && modulesWithLessons.length > 0) {
+					const firstModuleLessons = modulesWithLessons[0].lessons;
 
 					if (firstModuleLessons.length > 0) {
 						nextLessonId = firstModuleLessons[0]._id;

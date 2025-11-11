@@ -247,13 +247,12 @@ export const getTrendingContent = query({
 		});
 
 		// Get top trending courses
-		const topCourseIds = Array.from(coursePopularity.entries())
+		const topCourseEntries = Array.from(coursePopularity.entries())
 			.sort(([, a], [, b]) => b - a)
-			.slice(0, Math.floor(limit / 2))
-			.map(([courseId]) => courseId);
+			.slice(0, Math.floor(limit / 2));
 
 		const trendingCourses = await Promise.all(
-			topCourseIds.map(async courseId => {
+			topCourseEntries.map(async ([courseId, popularity]) => {
 				const course = await ctx.db.get(courseId as Id<'courses'>);
 				return course
 					? {
@@ -261,20 +260,19 @@ export const getTrendingContent = query({
 							title: course.title,
 							type: 'course' as const,
 							thumbnailUrl: course.thumbnailUrl,
-							popularity: coursePopularity.get(courseId) || 0,
+							popularity,
 						}
 					: null;
 			}),
 		);
 
 		// Get top trending resources
-		const topResourceIds = Array.from(resourcePopularity.entries())
+		const topResourceEntries = Array.from(resourcePopularity.entries())
 			.sort(([, a], [, b]) => b - a)
-			.slice(0, Math.floor(limit / 2))
-			.map(([resourceId]) => resourceId);
+			.slice(0, Math.floor(limit / 2));
 
 		const trendingResources = await Promise.all(
-			topResourceIds.map(async resourceId => {
+			topResourceEntries.map(async ([resourceId, popularity]) => {
 				const resource = await ctx.db.get(resourceId as Id<'resources'>);
 				return resource
 					? {
@@ -282,7 +280,7 @@ export const getTrendingContent = query({
 							title: resource.title,
 							type: 'resource' as const,
 							thumbnailUrl: resource.thumbnailUrl,
-							popularity: resourcePopularity.get(resourceId) || 0,
+							popularity,
 						}
 					: null;
 			}),

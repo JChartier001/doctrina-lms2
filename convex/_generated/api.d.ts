@@ -8,7 +8,6 @@
  * @module
  */
 
-import type * as _customFunctions from "../_customFunctions.js";
 import type * as analytics from "../analytics.js";
 import type * as certificates from "../certificates.js";
 import type * as courseModules from "../courseModules.js";
@@ -46,7 +45,6 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  _customFunctions: typeof _customFunctions;
   analytics: typeof analytics;
   certificates: typeof certificates;
   courseModules: typeof courseModules;
