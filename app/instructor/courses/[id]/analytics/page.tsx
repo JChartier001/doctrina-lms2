@@ -4,7 +4,7 @@ import { useQuery } from 'convex/react';
 import { addDays } from 'date-fns';
 import { ArrowLeft, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { ContentPerformance } from '@/components/analytics/content-performance';
 import { EngagementMetrics } from '@/components/analytics/engagement-metrics';
@@ -37,12 +37,6 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 		api.analytics.getInstructorAnalytics,
 		user ? { instructorId: user.id as Id<'users'> } : 'skip',
 	);
-
-	useEffect(() => {
-		if (!isLoading && (!user || !user.isInstructor)) {
-			router.push('/sign-in');
-		}
-	}, [user, router, isLoading]);
 
 	// Show loading state
 	if (isLoading || course === undefined || instructorAnalytics === undefined) {

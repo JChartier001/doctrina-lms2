@@ -52,10 +52,6 @@ export default function RecommendationsPage() {
 	const isDataLoading = courseRecs.isLoading || pathwayRecs.isLoading || trendingRecs.isLoading;
 
 	// Redirect if not logged in
-	if (!isLoading && !user) {
-		router.push('/sign-in');
-		return null;
-	}
 
 	// Show loading state
 	if (isLoading || isDataLoading) {

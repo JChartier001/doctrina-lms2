@@ -4,7 +4,6 @@ import { useQuery } from 'convex/react';
 import { BarChart2, BookOpen, Clock, DollarSign, PlusCircle, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -21,12 +20,6 @@ export default function InstructorDashboardPage() {
 	const router = useRouter();
 	// Convex query for instructor's courses
 	const instructorCourses = useQuery(api.courses.list, user ? { instructorId: user.id as Id<'users'> } : 'skip');
-
-	useEffect(() => {
-		if (!user || !user.isInstructor) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
 
 	if (!user || !user.isInstructor) {
 		return null;

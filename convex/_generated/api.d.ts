@@ -26,6 +26,8 @@ import type * as purchases from "../purchases.js";
 import type * as recommendations from "../recommendations.js";
 import type * as resources from "../resources.js";
 import type * as search from "../search.js";
+import type * as seedCurrentUser from "../seedCurrentUser.js";
+import type * as seedData from "../seedData.js";
 import type * as stripe from "../stripe.js";
 import type * as triggers from "../triggers.js";
 import type * as users from "../users.js";
@@ -63,6 +65,8 @@ declare const fullApi: ApiFromModules<{
   recommendations: typeof recommendations;
   resources: typeof resources;
   search: typeof search;
+  seedCurrentUser: typeof seedCurrentUser;
+  seedData: typeof seedData;
   stripe: typeof stripe;
   triggers: typeof triggers;
   users: typeof users;

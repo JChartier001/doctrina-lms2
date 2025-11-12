@@ -1350,7 +1350,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Course Purchase Flow', () => {
 	test('complete course purchase journey', async ({ page }) => {
 		// 1. Sign in
-		await page.goto('/sign-in');
+
 		await page.fill('input[name="identifier"]', 'student@test.com');
 		await page.fill('input[name="password"]', 'TestP@ss123');
 		await page.click('button[type="submit"]');
@@ -1385,7 +1385,6 @@ test.describe('Course Purchase Flow', () => {
 	});
 
 	test('prevent access without purchase', async ({ page }) => {
-		await page.goto('/sign-in');
 		await page.fill('input[name="identifier"]', 'student@test.com');
 		await page.fill('input[name="password"]', 'TestP@ss123');
 		await page.click('button[type="submit"]');

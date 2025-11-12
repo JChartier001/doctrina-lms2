@@ -1,9 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,6 @@ import { useAuth } from '@/lib/auth';
 
 export default function SettingsPage() {
 	const { user } = useAuth();
-	const router = useRouter();
 
 	// Form state
 	const [emailNotifications, setEmailNotifications] = useState({
@@ -33,12 +31,6 @@ export default function SettingsPage() {
 	const [currentPassword, setCurrentPassword] = useState('');
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
 
 	const handleSaveNotifications = () => {
 		toast.success('Notification settings updated. Your notification preferences have been saved.');

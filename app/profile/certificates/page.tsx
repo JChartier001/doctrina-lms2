@@ -29,11 +29,6 @@ export default function UserCertificatesPage() {
 	useEffect(() => {
 		if (isLoading) return;
 
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
-
 		if (!selectedCertificate) {
 			selectFirstCertificate();
 		}

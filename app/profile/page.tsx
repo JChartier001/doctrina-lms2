@@ -111,11 +111,6 @@ export default function ProfilePage() {
 	});
 
 	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
-
 		if (!name) {
 			initializeForm();
 		}

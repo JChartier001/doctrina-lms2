@@ -62,11 +62,6 @@ export default function CourseDetailPage() {
 	}
 
 	const handleEnroll = () => {
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
-
 		if (hasPurchased) {
 			// If already purchased, go directly to course content
 			router.push(`/courses/${params.id}/learn`);

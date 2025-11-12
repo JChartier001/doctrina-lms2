@@ -2,7 +2,7 @@
 
 import { CalendarClock, Clock, Users, Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Button } from '@/components/ui/button';
@@ -23,12 +23,6 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 	const leaveSessionFn = useLeaveSession();
 
 	const { data: session, isLoading: _isLoading, error: _error } = sessionResult;
-
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
 
 	const handleJoinSession = async () => {
 		if (!user || !session) return;

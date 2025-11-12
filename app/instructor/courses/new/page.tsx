@@ -10,11 +10,6 @@ export default function NewCoursePage() {
 	const { user } = useAuth();
 
 	useEffect(() => {
-		if (!user || !user.isInstructor) {
-			router.push('/sign-in');
-			return;
-		}
-
 		// Redirect to the new course wizard
 		router.push('/instructor/courses/wizard');
 	}, [user, router]);

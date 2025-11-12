@@ -224,6 +224,7 @@ Only 3 out of 25 Convex backend files have test coverage (lessonProgress, certif
 
 - **Story 110.1:** Fix TypeScript Errors Across Codebase (existing)
 - **Story 110.2:** Add Comprehensive Test Coverage for Core Convex Functions (21 pts)
+- **Story 110.3:** Create Updated Seed Data for Manual Testing (5 pts)
 
 ---
 

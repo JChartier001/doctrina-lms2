@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -100,12 +100,6 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 	const [replyContent, setReplyContent] = useState('');
 	const { user } = useAuth();
 	const router = useRouter();
-
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
 
 	const handleSubmitReply = (e: React.FormEvent) => {
 		e.preventDefault();
