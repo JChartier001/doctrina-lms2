@@ -2,7 +2,7 @@
 
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -10,12 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/lib/auth';
 import { usePastSessions, useUpcomingSessions } from '@/lib/live-session-service';
 
 export default function LiveSessionsPage() {
 	const [date, setDate] = useState<Date | undefined>(new Date());
-	const { user } = useAuth();
+
 	const router = useRouter();
 
 	// Get sessions from Convex hooks
@@ -26,7 +25,6 @@ export default function LiveSessionsPage() {
 	const pastSessions = pastSessionsResult.data || [];
 	// const _isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
 
-	
 	return (
 		<div className="container py-10">
 			<h1 className="text-3xl font-bold mb-6">Live Sessions</h1>

@@ -101,8 +101,8 @@ Schema changes have required deletion of all seeded data. Manual testing is curr
 
 - [x] **1.2** Create helper: `clearExistingTestData(ctx)`
   - Delete all records with test identifiers
-  - Use externalId pattern: "test-*" for users
-  - Use title pattern: "Test *" or "[Test]" for courses
+  - Use externalId pattern: "test-\*" for users
+  - Use title pattern: "Test \*" or "[Test]" for courses
   - Return count of deleted records
 
 - [x] **1.3** Create helper: `generateVerificationCode()`
@@ -235,6 +235,7 @@ Schema changes have required deletion of all seeded data. Manual testing is curr
 **Approach:** Create a single comprehensive seed mutation that populates all tables with interconnected, realistic test data.
 
 **Key Principles:**
+
 1. **Idempotency:** Script can be run multiple times without duplicating data
 2. **Realism:** Data should mirror production scenarios for effective manual testing
 3. **Coverage:** Must support testing all implemented features
@@ -245,6 +246,7 @@ Schema changes have required deletion of all seeded data. Manual testing is curr
 All seed data must conform to current schema in `convex/schema.ts`:
 
 **Core Tables:**
+
 - `users` - User profiles with Clerk integration
 - `courses` - Course catalog
 - `courseModules` - Course structure
@@ -255,6 +257,7 @@ All seed data must conform to current schema in `convex/schema.ts`:
 - `certificates` - Achievement records
 
 **Supporting Tables:**
+
 - `notifications` - User notifications
 - `liveSessions` - Scheduled sessions
 - `resources` - Learning resources
@@ -265,6 +268,7 @@ All seed data must conform to current schema in `convex/schema.ts`:
 ### Test User Identifiers
 
 **Pattern:** Use `test-*` prefix for all test user externalIds to enable easy cleanup:
+
 - `test-student-clerk-id` - Student user
 - `test-instructor-clerk-id` - Instructor user
 - `test-admin-clerk-id` - Admin user
@@ -272,6 +276,7 @@ All seed data must conform to current schema in `convex/schema.ts`:
 ### Data Relationships
 
 **Critical Dependencies:**
+
 ```
 User (instructor) → Course
     ↓
@@ -289,19 +294,20 @@ Enrollment (100% complete) → Certificate
 ```typescript
 // Detect existing test data
 const existingTestUsers = await ctx.db
-  .query('users')
-  .filter(q => q.eq(q.field('externalId').startsWith('test-')))
-  .collect();
+	.query('users')
+	.filter(q => q.eq(q.field('externalId').startsWith('test-')))
+	.collect();
 
 if (existingTestUsers.length > 0) {
-  // Clear all related test data first
-  await clearExistingTestData(ctx);
+	// Clear all related test data first
+	await clearExistingTestData(ctx);
 }
 ```
 
 ### Testing Standards
 
 Per `docs/TESTING-STRATEGY.md`:
+
 - Seed data should support manual testing workflows
 - Data should be representative of production scenarios
 - Include edge cases for QA validation
@@ -309,6 +315,7 @@ Per `docs/TESTING-STRATEGY.md`:
 ### Project Structure Notes
 
 **New Files Created:**
+
 - `convex/seedData.ts` - Main seed data mutation
 - `convex/seedCurrentUser.ts` - User-friendly seed wrapper
 
@@ -337,13 +344,15 @@ claude-sonnet-4-5-20250929
 ### Debug Log
 
 **Implementation Approach:**
+
 - Created comprehensive seedData.ts (1124 lines) with 14 helper functions
-- Implemented idempotency via clearExistingTestData() detecting "test-*" externalId pattern
+- Implemented idempotency via clearExistingTestData() detecting "test-\*" externalId pattern
 - All helpers follow Convex mutation patterns from existing code (courses.ts, users.ts)
 - Used proper schema types for all fields (unions, IDs, timestamps)
 - Realistic test data: medical aesthetics courses, proper user roles, edge cases included
 
 **TypeScript Issues Resolved:**
+
 - Fixed implicit 'any' types on callback parameters (uid, q, u)
 - Simplified seedCurrentUser.ts to re-export instead of calling mutation
 - All 12 TypeScript errors resolved, compilation clean
@@ -351,11 +360,13 @@ claude-sonnet-4-5-20250929
 ### Completion Notes List
 
 **Completed:**
+
 1. **Task 1-7:** All seed helper functions implemented (users, courses, modules, lessons, purchases, enrollments, progress, certificates, notifications, sessions, resources, favorites)
 2. **Task 8:** seedTestData main mutation with idempotency, clearExistingTestData cleanup, generateVerificationCode utility
 3. **Task 9:** TypeScript compilation verified, ready for manual Convex Dashboard execution
 
 **Data Created:**
+
 - 3 users (student, instructor, admin) with realistic medical aesthetics profiles
 - 3 courses (Advanced Botox Techniques $299, Laser Fundamentals $199, Dermal Fillers Mastery $349)
 - 9 modules total (3 per course)
@@ -375,6 +386,7 @@ Seed script successfully executed via Convex Dashboard. All test data created an
 ### File List
 
 **Created:**
+
 - convex/seedData.ts (1124 lines - main seed mutation with 14 helpers)
 - convex/seedCurrentUser.ts (22 lines - convenience wrapper)
 
@@ -382,8 +394,8 @@ Seed script successfully executed via Convex Dashboard. All test data created an
 
 ## Change Log
 
-| Date       | Author             | Changes                                                                 |
-| ---------- | ------------------ | ----------------------------------------------------------------------- |
-| 2025-11-11 | Bob (Scrum Master) | Initial seed data story creation                                        |
+| Date       | Author             | Changes                                                                        |
+| ---------- | ------------------ | ------------------------------------------------------------------------------ |
+| 2025-11-11 | Bob (Scrum Master) | Initial seed data story creation                                               |
 | 2025-11-11 | Amelia (Developer) | Implemented comprehensive seed data script with all ACs satisfied (1146 lines) |
 | 2025-11-11 | Jen (User)         | Seed script executed successfully via Convex Dashboard - Story complete        |

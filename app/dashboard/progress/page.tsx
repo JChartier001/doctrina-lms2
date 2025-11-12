@@ -2,7 +2,6 @@
 
 import { Award, BookOpen, Calendar, ChevronRight, Clock, Target, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { CourseProgressCard } from '@/components/course-progress-card';
@@ -94,8 +93,8 @@ const mockOverviewData = {
 };
 
 export default function StudentProgressDashboard() {
-	const { user, isLoading: authLoading } = useAuth();
-	const router = useRouter();
+	const { isLoading: authLoading } = useAuth();
+
 	const [_activeTab, setActiveTab] = useState('overview');
 
 	// Use comprehensive query to consolidate data fetching

@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/lib/auth';
 
 export default function InstructorVerificationPage() {
 	const [licenseNumber, setLicenseNumber] = useState('');
@@ -20,7 +19,6 @@ export default function InstructorVerificationPage() {
 	const [_licenseFile, setLicenseFile] = useState<File | null>(null);
 	const [_idFile, setIdFile] = useState<File | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const { user } = useAuth();
 	const router = useRouter();
 
 	const handleSubmit = async (e: React.FormEvent) => {

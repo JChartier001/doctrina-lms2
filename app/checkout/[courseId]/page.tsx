@@ -75,8 +75,6 @@ export default function CheckoutPage({ params }: { params: Promise<{ courseId: s
 	useEffect(() => {
 		if (authLoading || courseData === undefined) return;
 
-	
-
 		// Handle course not found
 		if (courseData === null) {
 			toast.error('Course not found. The requested course could not be found.');
@@ -85,8 +83,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ courseId: s
 		}
 
 		// Initialize form with user data
-		setEmail(user.email || '');
-		setName(user.name || '');
+		setEmail(user?.email || '');
+		setName(user?.name || '');
 
 		// Create purchase record
 		const initPurchase = async () => {

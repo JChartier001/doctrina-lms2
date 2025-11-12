@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

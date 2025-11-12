@@ -2,7 +2,6 @@
 
 import { Check, Clock, Users } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -14,7 +13,6 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/lib/auth';
 
 // Mock data for the program
 const programData = {
@@ -221,12 +219,7 @@ The curriculum is structured to provide a systematic progression from basic prin
 
 export default function ProgramDetailPage({ params: _params }: { params: { id: string } }) {
 	const [selectedPricing, setSelectedPricing] = useState('monthly');
-	const { user } = useAuth();
-	const router = useRouter();
-
 	const handleEnroll = () => {
-		
-
 		toast.success('Enrollment successful. You have been enrolled in the program.');
 	};
 

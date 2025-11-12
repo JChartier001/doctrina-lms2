@@ -20,8 +20,8 @@
  * - Relationships properly maintained (instructor → course → modules → lessons)
  */
 
-import { mutation } from './_generated/server';
 import type { Id } from './_generated/dataModel';
+import { mutation } from './_generated/server';
 
 /**
  * Main seed mutation - creates all test data
@@ -253,15 +253,15 @@ async function clearExistingTestData(ctx: any) {
 
 		for (const course of courses) {
 			// Delete lessons (via modules)
-			const modules = await ctx.db.query('courseModules').withIndex('by_course', (q: any) => q.eq('courseId', course._id)).collect();
+			const courseModules = await ctx.db.query('courseModules').withIndex('by_course', (q: any) => q.eq('courseId', course._id)).collect();
 
-			for (const module of modules) {
-				const lessons = await ctx.db.query('lessons').withIndex('by_module', (q: any) => q.eq('moduleId', module._id)).collect();
+			for (const courseModule of courseModules) {
+				const lessons = await ctx.db.query('lessons').withIndex('by_module', (q: any) => q.eq('moduleId', courseModule._id)).collect();
 				for (const lesson of lessons) {
 					await ctx.db.delete(lesson._id);
 					stats.lessons++;
 				}
-				await ctx.db.delete(module._id);
+				await ctx.db.delete(courseModule._id);
 				stats.modules++;
 			}
 

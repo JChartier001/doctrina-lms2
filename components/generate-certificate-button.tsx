@@ -39,8 +39,8 @@ export function GenerateCertificateButton({
 		try {
 			// Generate certificate using Convex mutation
 			const certificateId = await generateCertificateMutation({
-				userId: user.id as Id<'users'>,
-				userName: user.name,
+				userId: user?.id as Id<'users'>,
+				userName: user?.name ?? '',
 				courseId: courseId as Id<'courses'>,
 				courseName,
 				instructorId: instructorId as Id<'users'>,

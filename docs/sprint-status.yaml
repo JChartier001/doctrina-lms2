@@ -58,7 +58,7 @@ development_status:
 
   # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
   epic-102: contexted
-  102-1-create-quiz-system: drafted
+  102-1-create-quiz-system: ready-for-dev
   epic-102-retrospective: optional
 
   # EPIC-103: Course Reviews & Ratings (P0 - Critical, 8 pts)

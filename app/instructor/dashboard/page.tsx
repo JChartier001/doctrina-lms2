@@ -4,7 +4,6 @@ import { useQuery } from 'convex/react';
 import { BarChart2, BookOpen, Clock, DollarSign, PlusCircle, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
