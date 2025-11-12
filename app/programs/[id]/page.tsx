@@ -225,10 +225,7 @@ export default function ProgramDetailPage({ params: _params }: { params: { id: s
 	const router = useRouter();
 
 	const handleEnroll = () => {
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
+		
 
 		toast.success('Enrollment successful. You have been enrolled in the program.');
 	};

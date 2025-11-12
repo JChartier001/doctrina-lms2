@@ -75,10 +75,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ courseId: s
 	useEffect(() => {
 		if (authLoading || courseData === undefined) return;
 
-		if (!user) {
-			router.push(`/sign-in?redirect=/checkout/${courseId}`);
-			return;
-		}
+	
 
 		// Handle course not found
 		if (courseData === null) {

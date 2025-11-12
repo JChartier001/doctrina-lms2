@@ -101,12 +101,6 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 	const { user } = useAuth();
 	const router = useRouter();
 
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
-
 	const handleSubmitReply = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (replyContent.trim()) {

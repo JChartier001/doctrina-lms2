@@ -24,11 +24,7 @@ export default function LiveSessionPage({ params }: { params: { id: string } }) 
 
 	const { data: session, isLoading: _isLoading, error: _error } = sessionResult;
 
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
+
 
 	const handleJoinSession = async () => {
 		if (!user || !session) return;

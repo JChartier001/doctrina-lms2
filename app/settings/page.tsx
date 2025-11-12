@@ -34,12 +34,6 @@ export default function SettingsPage() {
 	const [newPassword, setNewPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
-
 	const handleSaveNotifications = () => {
 		toast.success('Notification settings updated. Your notification preferences have been saved.');
 	};

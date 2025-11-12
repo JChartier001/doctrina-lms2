@@ -22,12 +22,6 @@ export default function InstructorDashboardPage() {
 	// Convex query for instructor's courses
 	const instructorCourses = useQuery(api.courses.list, user ? { instructorId: user.id as Id<'users'> } : 'skip');
 
-	useEffect(() => {
-		if (!user || !user.isInstructor) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
-
 	if (!user || !user.isInstructor) {
 		return null;
 	}

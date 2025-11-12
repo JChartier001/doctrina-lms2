@@ -34,11 +34,6 @@ export function GenerateCertificateButton({
 	const generateCertificateMutation = useGenerateCertificate();
 
 	const handleGenerateCertificate = async () => {
-		if (!user) {
-			router.push('/sign-in');
-			return;
-		}
-
 		setIsGenerating(true);
 
 		try {

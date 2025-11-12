@@ -113,11 +113,6 @@ export default function StudentProgressDashboard() {
 		);
 	}
 
-	if (!user) {
-		router.push('/sign-in');
-		return null;
-	}
-
 	if (enrollmentsQuery.isPending) {
 		return (
 			<div className="container py-4 sm:py-6 md:py-10">

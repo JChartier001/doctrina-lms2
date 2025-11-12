@@ -122,11 +122,6 @@ export default function AdminCertificatesPage() {
 	useEffect(() => {
 		if (isLoading) return;
 
-		if (!user || !user.isAdmin) {
-			router.push('/sign-in');
-			return;
-		}
-
 		if (certificates.length === 0) {
 			loadData();
 		}

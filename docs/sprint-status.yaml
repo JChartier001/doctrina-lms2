@@ -36,10 +36,11 @@ tracking_system: file-system
 story_location: '{project-root}/docs/stories'
 
 development_status:
-  # EPIC-110: Testing & Quality Assurance (P0 - Critical, 21 pts)
+  # EPIC-110: Testing & Quality Assurance (P0 - Critical, 26 pts)
   epic-110: backlog
-  110-1-fix-typescript-errors: drafted
-  110-2-comprehensive-test-coverage: in-progress
+  110-1-fix-typescript-errors: done # Fixed incrementally through other stories
+  110-2-comprehensive-test-coverage: done
+  110-3-create-updated-seed-data: done
   epic-110-retrospective: optional
 
   # EPIC-109: Replace Mock Data with Real Convex Queries (P0 - Critical, 23 pts)

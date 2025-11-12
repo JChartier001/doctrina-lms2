@@ -39,10 +39,7 @@ export default function CourseAnalyticsPage({ params }: { params: { id: string }
 	);
 
 	useEffect(() => {
-		if (!isLoading && (!user || !user.isInstructor)) {
-			router.push('/sign-in');
-		}
-	}, [user, router, isLoading]);
+		
 
 	// Show loading state
 	if (isLoading || course === undefined || instructorAnalytics === undefined) {

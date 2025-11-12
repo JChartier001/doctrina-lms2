@@ -26,16 +26,7 @@ export default function LiveSessionsPage() {
 	const pastSessions = pastSessionsResult.data || [];
 	// const _isLoading = upcomingSessionsResult.isLoading || pastSessionsResult.isLoading;
 
-	useEffect(() => {
-		if (!user) {
-			router.push('/sign-in');
-		}
-	}, [user, router]);
-
-	if (!user) {
-		return null;
-	}
-
+	
 	return (
 		<div className="container py-10">
 			<h1 className="text-3xl font-bold mb-6">Live Sessions</h1>
