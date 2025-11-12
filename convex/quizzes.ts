@@ -46,10 +46,26 @@ export const create = mutation({
 			throw new Error('Not authenticated');
 		}
 
+		// Validate passingScore range
+		if (args.passingScore < 0 || args.passingScore > 100) {
+			throw new Error('Passing score must be between 0 and 100');
+		}
+
 		// Load course and verify ownership
 		const course = await ctx.db.get(args.courseId);
 		if (!course) {
 			throw new Error('Course not found');
+		}
+
+		// If moduleId provided, validate module exists and belongs to course
+		if (args.moduleId) {
+			const courseModule = await ctx.db.get(args.moduleId);
+			if (!courseModule) {
+				throw new Error('Module not found');
+			}
+			if (courseModule.courseId !== args.courseId) {
+				throw new Error('Module does not belong to the specified course');
+			}
 		}
 
 		// Authorization: verify user is course instructor
@@ -93,8 +109,8 @@ export const addQuestions = mutation({
 		questions: v.array(
 			v.object({
 				question: v.string(),
-				options: v.array(v.string()), // Must be exactly 4 options (validated at app level)
-				correctAnswer: v.number(), // Index 0-3 of correct option
+				options: v.array(v.string()), // Must be exactly 4 options (validated in handler)
+				correctAnswer: v.number(), // Index 0-3 of correct option (validated in handler)
 				explanation: v.optional(v.string()),
 			}),
 		),
@@ -132,6 +148,18 @@ export const addQuestions = mutation({
 
 		for (let i = 0; i < args.questions.length; i++) {
 			const questionData = args.questions[i];
+
+			// Validate exactly 4 options
+			if (questionData.options.length !== 4) {
+				throw new Error(`Question ${i + 1}: Must have exactly 4 options, got ${questionData.options.length}`);
+			}
+
+			// Validate correctAnswer is within valid range (0-3)
+			if (questionData.correctAnswer < 0 || questionData.correctAnswer > 3) {
+				throw new Error(
+					`Question ${i + 1}: Correct answer index must be between 0 and 3, got ${questionData.correctAnswer}`,
+				);
+			}
 
 			const questionId = await ctx.db.insert('quizQuestions', {
 				quizId: args.quizId,

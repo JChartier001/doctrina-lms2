@@ -73,6 +73,64 @@ describe('Quiz System', () => {
 			expect(quiz?.courseId).toBe(courseId);
 		});
 
+		it('should allow instructor to create quiz with valid moduleId', async () => {
+			const t = convexTest(schema);
+
+			// Create instructor user
+			instructorId = await t.run(async ctx => {
+				return await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+			});
+
+			// Create course and module owned by instructor
+			const { courseId, moduleId } = await t.run(async ctx => {
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const moduleId = await ctx.db.insert('courseModules', {
+					courseId,
+					title: 'Module 1',
+					order: 0,
+					createdAt: now,
+				});
+
+				return { courseId, moduleId };
+			});
+
+			// Create quiz as instructor WITH moduleId
+			const quizId = await t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+				courseId,
+				moduleId, // Valid moduleId that belongs to the course
+				title: 'Module 1 Quiz',
+				passingScore: 80,
+			});
+
+			expect(quizId).toBeDefined();
+
+			// Verify quiz was created with moduleId
+			const quiz = await t.run(async ctx => {
+				return await ctx.db.get(quizId);
+			});
+
+			expect(quiz).toBeDefined();
+			expect(quiz?.title).toBe('Module 1 Quiz');
+			expect(quiz?.passingScore).toBe(80);
+			expect(quiz?.courseId).toBe(courseId);
+			expect(quiz?.moduleId).toBe(moduleId);
+		});
+
 		it('should throw error if user is not authenticated', async () => {
 			const t = convexTest(schema);
 
@@ -200,6 +258,172 @@ describe('Quiz System', () => {
 					passingScore: 80,
 				}),
 			).rejects.toThrow('Course not found');
+		});
+
+		it('should throw error for invalid passingScore (below 0)', async () => {
+			const t = convexTest(schema);
+
+			const { courseId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				return { courseId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+					courseId,
+					title: 'Quiz',
+					passingScore: -10,
+				}),
+			).rejects.toThrow('Passing score must be between 0 and 100');
+		});
+
+		it('should throw error for invalid passingScore (above 100)', async () => {
+			const t = convexTest(schema);
+
+			const { courseId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				return { courseId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+					courseId,
+					title: 'Quiz',
+					passingScore: 150,
+				}),
+			).rejects.toThrow('Passing score must be between 0 and 100');
+		});
+
+		it('should throw error when moduleId does not exist', async () => {
+			const t = convexTest(schema);
+
+			const { courseId, nonExistentModuleId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				// Create and delete a module to get a valid but non-existent ID
+				const moduleId = await ctx.db.insert('courseModules', {
+					courseId,
+					title: 'Temp Module',
+					order: 0,
+					createdAt: now,
+				});
+				await ctx.db.delete(moduleId);
+
+				return { courseId, nonExistentModuleId: moduleId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+					courseId,
+					moduleId: nonExistentModuleId,
+					title: 'Quiz',
+					passingScore: 80,
+				}),
+			).rejects.toThrow('Module not found');
+		});
+
+		it('should throw error when moduleId does not belong to course', async () => {
+			const t = convexTest(schema);
+
+			const { courseId, wrongModuleId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+
+				// Create first course
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Course 1',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				// Create second course
+				const otherCourseId = await ctx.db.insert('courses', {
+					title: 'Course 2',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				// Create module belonging to the OTHER course
+				const wrongModuleId = await ctx.db.insert('courseModules', {
+					courseId: otherCourseId,
+					title: 'Module from Course 2',
+					order: 0,
+					createdAt: now,
+				});
+
+				return { courseId, wrongModuleId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+					courseId,
+					moduleId: wrongModuleId,
+					title: 'Quiz',
+					passingScore: 80,
+				}),
+			).rejects.toThrow('Module does not belong to the specified course');
 		});
 	});
 
@@ -486,6 +710,190 @@ describe('Quiz System', () => {
 					],
 				}),
 			).rejects.toThrow('Course not found');
+		});
+
+		it('should throw error when question has less than 4 options', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: 'Question with 3 options?',
+							options: ['A', 'B', 'C'], // Only 3 options
+							correctAnswer: 0,
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1: Must have exactly 4 options, got 3');
+		});
+
+		it('should throw error when question has more than 4 options', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: 'Question with 5 options?',
+							options: ['A', 'B', 'C', 'D', 'E'], // 5 options
+							correctAnswer: 0,
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1: Must have exactly 4 options, got 5');
+		});
+
+		it('should throw error when correctAnswer is below 0', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: 'Question?',
+							options: ['A', 'B', 'C', 'D'],
+							correctAnswer: -1, // Invalid: below 0
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1: Correct answer index must be between 0 and 3, got -1');
+		});
+
+		it('should throw error when correctAnswer is above 3', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: 'Question?',
+							options: ['A', 'B', 'C', 'D'],
+							correctAnswer: 4, // Invalid: above 3
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1: Correct answer index must be between 0 and 3, got 4');
 		});
 	});
 
