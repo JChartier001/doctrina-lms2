@@ -17,6 +17,7 @@ import { v } from 'convex/values';
 
 import type { Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
+import { verifyInstructorAccess } from './authHelpers';
 
 /**
  * Create a new quiz for a course or module
@@ -40,22 +41,15 @@ export const create = mutation({
 		passingScore: v.number(),
 	},
 	handler: async (ctx, args) => {
-		// Authentication check
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error('Not authenticated');
-		}
-
-		// Validate passingScore range
 		if (args.passingScore < 0 || args.passingScore > 100) {
 			throw new Error('Passing score must be between 0 and 100');
 		}
 
-		// Load course and verify ownership
-		const course = await ctx.db.get(args.courseId);
-		if (!course) {
-			throw new Error('Course not found');
+		if (!args.title.trim()) {
+			throw new Error('Quiz title cannot be empty');
 		}
+
+		await verifyInstructorAccess(ctx, args.courseId);
 
 		// If moduleId provided, validate module exists and belongs to course
 		if (args.moduleId) {
@@ -66,16 +60,6 @@ export const create = mutation({
 			if (courseModule.courseId !== args.courseId) {
 				throw new Error('Module does not belong to the specified course');
 			}
-		}
-
-		// Authorization: verify user is course instructor
-		const user = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
-			.first();
-
-		if (!user || course.instructorId !== user._id) {
-			throw new Error('Not authorized');
 		}
 
 		// Create quiz record
@@ -116,42 +100,31 @@ export const addQuestions = mutation({
 		),
 	},
 	handler: async (ctx, args) => {
-		// Authentication check
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error('Not authenticated');
+		// FAIL-FAST: Validate inputs before database operations
+		// Validate at least one question provided
+		if (args.questions.length === 0) {
+			throw new Error('At least one question is required');
 		}
 
-		// Load quiz and course to verify ownership
-		const quiz = await ctx.db.get(args.quizId);
-		if (!quiz) {
-			throw new Error('Quiz not found');
-		}
-
-		const course = await ctx.db.get(quiz.courseId);
-		if (!course) {
-			throw new Error('Course not found');
-		}
-
-		// Authorization: verify user is course instructor
-		const user = await ctx.db
-			.query('users')
-			.withIndex('by_externalId', q => q.eq('externalId', identity.subject))
-			.first();
-
-		if (!user || course.instructorId !== user._id) {
-			throw new Error('Not authorized');
-		}
-
-		// Bulk insert questions with order preservation
-		const questionIds: Id<'quizQuestions'>[] = [];
-
+		// PRE-VALIDATE ALL questions to prevent partial insertions
 		for (let i = 0; i < args.questions.length; i++) {
 			const questionData = args.questions[i];
+
+			// Validate question text is not empty
+			if (!questionData.question.trim()) {
+				throw new Error(`Question ${i + 1}: Question text cannot be empty`);
+			}
 
 			// Validate exactly 4 options
 			if (questionData.options.length !== 4) {
 				throw new Error(`Question ${i + 1}: Must have exactly 4 options, got ${questionData.options.length}`);
+			}
+
+			// Validate each option is not empty
+			for (let j = 0; j < questionData.options.length; j++) {
+				if (!questionData.options[j].trim()) {
+					throw new Error(`Question ${i + 1}, Option ${j + 1}: Option text cannot be empty`);
+				}
 			}
 
 			// Validate correctAnswer is within valid range (0-3)
@@ -160,6 +133,22 @@ export const addQuestions = mutation({
 					`Question ${i + 1}: Correct answer index must be between 0 and 3, got ${questionData.correctAnswer}`,
 				);
 			}
+		}
+
+		// Load quiz
+		const quiz = await ctx.db.get(args.quizId);
+		if (!quiz) {
+			throw new Error('Quiz not found');
+		}
+
+		// Verify instructor authorization
+		await verifyInstructorAccess(ctx, quiz.courseId);
+
+		// All validations passed - bulk insert questions with order preservation
+		const questionIds: Id<'quizQuestions'>[] = [];
+
+		for (let i = 0; i < args.questions.length; i++) {
+			const questionData = args.questions[i];
 
 			const questionId = await ctx.db.insert('quizQuestions', {
 				quizId: args.quizId,

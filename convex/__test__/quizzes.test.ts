@@ -425,6 +425,40 @@ describe('Quiz System', () => {
 				}),
 			).rejects.toThrow('Module does not belong to the specified course');
 		});
+
+		it('should throw error for empty quiz title', async () => {
+			const t = convexTest(schema);
+
+			const { courseId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				return { courseId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.create, {
+					courseId,
+					title: '   ', // Empty/whitespace-only title
+					passingScore: 80,
+				}),
+			).rejects.toThrow('Quiz title cannot be empty');
+		});
 	});
 
 	describe('addQuestions() mutation', () => {
@@ -894,6 +928,138 @@ describe('Quiz System', () => {
 					],
 				}),
 			).rejects.toThrow('Question 1: Correct answer index must be between 0 and 3, got 4');
+		});
+
+		it('should throw error when questions array is empty', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [], // Empty array
+				}),
+			).rejects.toThrow('At least one question is required');
+		});
+
+		it('should throw error when question text is empty', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: '   ', // Empty/whitespace-only
+							options: ['A', 'B', 'C', 'D'],
+							correctAnswer: 0,
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1: Question text cannot be empty');
+		});
+
+		it('should throw error when an option is empty', async () => {
+			const t = convexTest(schema);
+
+			const { quizId } = await t.run(async ctx => {
+				const instructorId = await ctx.db.insert('users', {
+					firstName: 'Dr. Jane',
+					lastName: 'Smith',
+					email: 'instructor@test.com',
+					externalId: 'instructor-clerk-id',
+					isInstructor: true,
+					isAdmin: false,
+				});
+
+				const now = Date.now();
+				const courseId = await ctx.db.insert('courses', {
+					title: 'Test Course',
+					description: 'Test Description',
+					instructorId,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				const quizId = await ctx.db.insert('quizzes', {
+					courseId,
+					title: 'Test Quiz',
+					passingScore: 80,
+					createdAt: now,
+				});
+
+				return { quizId };
+			});
+
+			await expect(
+				t.withIdentity({ subject: 'instructor-clerk-id' }).mutation(api.quizzes.addQuestions, {
+					quizId,
+					questions: [
+						{
+							question: 'Valid question?',
+							options: ['A', '   ', 'C', 'D'], // Option 2 is empty
+							correctAnswer: 0,
+						},
+					],
+				}),
+			).rejects.toThrow('Question 1, Option 2: Option text cannot be empty');
 		});
 	});
 
