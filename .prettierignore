@@ -1,7 +1,0 @@
-convex/_generated/**
-convex/generated
-bmad/**
-.claude/**
-.github/**
-convex/seedData.ts
-convex/seedCurrentUser.ts
