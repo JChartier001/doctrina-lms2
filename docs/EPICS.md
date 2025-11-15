@@ -680,6 +680,56 @@ export const getBestAttempt = query({
 });
 ```
 
+**Story Breakdown:**
+
+**Story 102.1: Create Quiz System** (10 pts) - ✅ **COMPLETED**
+- Instructor can create quiz (title, passingScore, courseId, moduleId)
+- Instructor can add questions with options and correct answers
+- Students/instructors can retrieve quiz (security: no correctAnswer exposed to students)
+- Queries: getQuiz(), getModuleQuizzes(), getCourseQuizzes()
+- Files: convex/quizzes.ts (create, addQuestions mutations)
+
+**Story 102.2: Quiz Submission & Grading Backend** (6 pts) - ⏳ **BACKLOG**
+- Students submit quiz answers with maxAttempts enforcement (default: 3)
+- System grades quiz automatically and records attempt with score
+- Students view results with explanations for ALL questions (correct and incorrect)
+- Students retrieve best attempt (works with soft-deleted quizzes)
+- Students retrieve specific attempt results
+- Mutations: submit()
+- Queries: getBestAttempt(), getAttemptResults()
+- Test Coverage: 100%
+
+**Story 102.3: Quiz Management Backend** (4 pts) - ⏳ **BACKLOG**
+- Schema migration: Add maxAttempts (default: 3), deleted, deletedAt fields to quizzes table
+- Instructors update quiz details (title, passingScore, moduleId, maxAttempts)
+- Instructors soft-delete quiz (sets deleted=true, preserves data for student attempts)
+- Instructors restore soft-deleted quiz (sets deleted=false)
+- Queries filter out deleted quizzes by default (with option to include)
+- Mutations: update(), remove() [soft delete], restore()
+- Test Coverage: 100%
+
+**Story 102.4a: Quiz Creation UI Enhancements** (2 pts) - ⏳ **BACKLOG**
+- Add explanation textarea field to AI Quiz Generator component
+- Add quiz settings form in course wizard (passingScore slider 0-100%, maxAttempts input)
+- Update QuizQuestion interface to include explanation?: string field
+- Display explanation in generated question preview
+- Files: components/course-wizard/ai-quiz-generator.tsx
+- Test Coverage: 85%
+
+**Story 102.4b: Quiz Taking/Results UI** (3 pts) - ⏳ **BACKLOG**
+- Build quiz taking interface in learning page (display questions, radio buttons, submit)
+- Build results display component (score, pass/fail, correct/incorrect per question, explanations for ALL)
+- Show attempt tracking ("Attempt X of Y" or "Unlimited attempts")
+- Show "Retake Quiz" button if attempts remaining, disable if maxAttempts reached
+- Show "View Best Attempt" link and best score badge if multiple attempts exist
+- Integrate with quizzes.submit(), quizzes.getAttemptResults() backend APIs
+- Handle soft-deleted quizzes gracefully
+- Test Coverage: 85%
+
+**Total EPIC-102:** 25 story points (revised from 21)
+
+**Implementation Order:** Backend first (102.2, 102.3), then UI (102.4a, 102.4b)
+
 **Acceptance Criteria:**
 
 - [ ] Instructor can create quiz from wizard

@@ -3,6 +3,7 @@ import { v } from 'convex/values';
 import { api } from './_generated/api';
 import type { Doc, Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
+import { verifyInstructorAccess } from './authHelpers';
 
 /**
  * Create a course enrollment (called after successful payment)
@@ -327,25 +328,8 @@ export const getCourseEnrollmentCount = query({
 export const getCourseStudents = query({
 	args: { courseId: v.id('courses') },
 	handler: async (ctx, { courseId }) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error('Not authenticated');
-		}
-
-		// Verify instructor owns course
-		const course = await ctx.db.get(courseId);
-		if (!course) {
-			throw new Error('Course not found');
-		}
-
-		// Get user record to compare Convex IDs (instructorId is Id<'users'>, not externalId)
-		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
-			externalId: identity.subject,
-		});
-
-		if (!user || course.instructorId !== user._id) {
-			throw new Error('Not authorized');
-		}
+		// Verify instructor authorization
+		await verifyInstructorAccess(ctx, courseId);
 
 		const enrollments = await ctx.db
 			.query('enrollments')

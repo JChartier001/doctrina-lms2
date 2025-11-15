@@ -3,6 +3,7 @@ import { v } from 'convex/values';
 import { api } from './_generated/api';
 import { Doc } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
+import { verifyInstructorAccess } from './authHelpers';
 
 /**
  * Create a new course module (section)
@@ -15,28 +16,8 @@ export const create = mutation({
 		order: v.number(),
 	},
 	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error('Not authenticated');
-		}
-
-		// Verify user is instructor and owns course
-		const course = await ctx.db.get(args.courseId);
-		if (!course) {
-			throw new Error('Course not found');
-		}
-
-		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
-			externalId: identity.subject,
-		});
-
-		if (!user?.isInstructor) {
-			throw new Error('User is not an instructor');
-		}
-
-		if (course.instructorId !== user._id) {
-			throw new Error('Not authorized to modify this course');
-		}
+		// Verify instructor authorization
+		await verifyInstructorAccess(ctx, args.courseId);
 
 		// Create module
 		const moduleId = await ctx.db.insert('courseModules', {

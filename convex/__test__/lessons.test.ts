@@ -250,7 +250,7 @@ describe('Lessons', () => {
 					type: 'video',
 					order: 1,
 				}),
-			).rejects.toThrow('User is not an instructor');
+			).rejects.toThrow('Not authorized');
 		});
 
 		it('throws error when instructor does not own course', async () => {
@@ -274,7 +274,7 @@ describe('Lessons', () => {
 					type: 'video',
 					order: 1,
 				}),
-			).rejects.toThrow('Not authorized to modify this course');
+			).rejects.toThrow('Not authorized');
 		});
 	});
 

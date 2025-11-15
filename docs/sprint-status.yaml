@@ -56,14 +56,18 @@ development_status:
   101-2-refactor-certificate-triggers: done
   epic-101-retrospective: optional
 
-  # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 21 pts)
+  # EPIC-102: Quiz Submission & Grading System (P0 - Critical, 25 pts)
   epic-102: contexted
-  102-1-create-quiz-system: ready-for-dev
+  102-1-create-quiz-system: done
+  102-2-quiz-submission-grading: drafted
+  102-3-quiz-management: backlog
+  102-4a-quiz-creation-ui: backlog
+  102-4b-quiz-taking-results-ui: backlog
   epic-102-retrospective: optional
 
   # EPIC-103: Course Reviews & Ratings (P0 - Critical, 8 pts)
   epic-103: backlog
-  103-1-create-course-reviews: backlog
+  103-1-create-course-reviews: drafted
   103-2-update-course-ratings: backlog
   epic-103-retrospective: optional
 

@@ -147,7 +147,7 @@ describe('Course Modules', () => {
 					title: 'Module',
 					order: 0,
 				}),
-			).rejects.toThrow('User is not an instructor');
+			).rejects.toThrow('Not authorized');
 		});
 
 		it('throws error when instructor does not own course', async () => {
@@ -171,7 +171,7 @@ describe('Course Modules', () => {
 					title: 'Module',
 					order: 0,
 				}),
-			).rejects.toThrow('Not authorized to modify this course');
+			).rejects.toThrow('Not authorized');
 		});
 	});
 
