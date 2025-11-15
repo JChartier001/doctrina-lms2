@@ -1,0 +1,238 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>109</epicId>
+    <storyId>1</storyId>
+    <title>Replace Mock Data with Real Convex Queries (Quick Wins)</title>
+    <status>Ready</status>
+    <generatedAt>2025-10-29</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-109.1.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student and instructor</asA>
+    <iWant>the UI to display real data from the database instead of hardcoded mock data</iWant>
+    <soThat>I see accurate course information, enrollment status, and progress that reflects my actual account</soThat>
+    <tasks>
+      <task id="1" ac="1,6,7,8">Replace course detail mock data</task>
+      <task id="2" ac="2,6,7,8">Replace learning page mock data</task>
+      <task id="3" ac="3,6,7,8">Replace checkout page mock data</task>
+      <task id="4" ac="4,6,7,8">Replace instructor dashboard fallback mock</task>
+      <task id="5" ac="5,6,7,8">Replace dashboard certificate mock</task>
+      <task id="6" ac="all">Remove unused mock data files</task>
+      <task id="7" ac="all">Verify TypeScript and test all pages</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="109.1.1">Course detail page displays real course data from courses.getWithCurriculum()</ac>
+    <ac id="109.1.2">Learning page displays real course structure and user progress</ac>
+    <ac id="109.1.3">Checkout page displays real course information from courses.get()</ac>
+    <ac id="109.1.4">Instructor dashboard shows real enrolled courses from courses.list()</ac>
+    <ac id="109.1.5">Student dashboard shows real certificates from certificates.listForUser()</ac>
+    <ac id="109.1.6">Loading states handle undefined query results with skeleton/spinner</ac>
+    <ac id="109.1.7">Error states handle missing data gracefully with error messages or redirects</ac>
+    <ac id="109.1.8">TypeScript types match Convex schema using Doc types from generated dataModel</ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/epics.md</path>
+        <title>EPIC-109: Replace Mock Data with Real Convex Queries</title>
+        <section>Implementation Strategy</section>
+        <snippet>Phase 1 Quick Wins: Use courses.getWithCurriculum() in course detail, courses.get() in checkout, enrollments.getMyEnrollments() in dashboards, certificates.listForUser() for certificates. Pattern: Replace const data = mockObject with const data = useQuery(api.xxx). Handle undefined state while query loads and null state when data not found.</snippet>
+      </doc>
+      <doc>
+        <path>docs/PRD.md</path>
+        <title>Product Requirements - Course Learning Interface</title>
+        <section>F5: Course Learning Interface</section>
+        <snippet>Course learning page with sidebar navigation showing modules, lessons with checkmarks for completed, progress bar. Real-time progress updates with optimistic UI. Progress persists across sessions.</snippet>
+      </doc>
+      <doc>
+        <path>docs/architecture.md</path>
+        <title>Technical Architecture - Data Flow Patterns</title>
+        <section>Pattern 1: Real-Time Data Display</section>
+        <snippet>Components subscribe to live data using useQuery. When database changes, component re-renders automatically. Handle undefined (loading) and null (not found) states. Use Convex automatic reactivity for real-time updates.</snippet>
+      </doc>
+      <doc>
+        <path>docs/TESTING-STRATEGY.md</path>
+        <title>Testing Strategy</title>
+        <section>Testing Requirements</section>
+        <snippet>Core business logic requires 85% coverage. UI components require manual testing. Use Vitest for unit/integration tests.</snippet>
+      </doc>
+    </docs>
+    <code>
+      <file>
+        <path>lib/course-migration.ts</path>
+        <kind>mock-data</kind>
+        <symbol>mockCourseData</symbol>
+        <lines>7-366</lines>
+        <reason>Contains hardcoded mock course data that needs to be replaced with real Convex queries. This is the primary target for removal.</reason>
+      </file>
+      <file>
+        <path>app/courses/[id]/learn/page.tsx</path>
+        <kind>page-component</kind>
+        <symbol>CourseLearnPage</symbol>
+        <lines>16-77</lines>
+        <reason>Uses hardcoded courseData mock (lines 16-77) that needs replacement with courses.getWithCurriculum() and lessonProgress.getUserProgress() queries</reason>
+      </file>
+      <file>
+        <path>app/dashboard/progress/page.tsx</path>
+        <kind>page-component</kind>
+        <symbol>ProgressPage</symbol>
+        <lines>unknown</lines>
+        <reason>Contains mock data for progress dashboard - needs integration with lessonProgress.getUserProgress()</reason>
+      </file>
+      <file>
+        <path>app/instructor/dashboard/page.tsx</path>
+        <kind>page-component</kind>
+        <symbol>InstructorDashboardPage</symbol>
+        <lines>unknown</lines>
+        <reason>Has fallback mock courses - needs to use courses.list() with instructorId filter</reason>
+      </file>
+      <file>
+        <path>app/dashboard/page.tsx</path>
+        <kind>page-component</kind>
+        <symbol>DashboardPage</symbol>
+        <lines>unknown</lines>
+        <reason>Contains mock certificate data - needs certificates.listForUser() query</reason>
+      </file>
+      <file>
+        <path>app/checkout/[courseId]/page.tsx</path>
+        <kind>page-component</kind>
+        <symbol>CheckoutPage</symbol>
+        <lines>unknown</lines>
+        <reason>May contain mock course data - needs courses.get() query</reason>
+      </file>
+      <file>
+        <path>convex/courses.ts</path>
+        <kind>backend-query</kind>
+        <symbol>get, getWithCurriculum, list</symbol>
+        <lines>19-21, 77-130</lines>
+        <reason>Provides real course data queries to replace mock data. getWithCurriculum returns course with full curriculum structure.</reason>
+      </file>
+      <file>
+        <path>convex/lessonProgress.ts</path>
+        <kind>backend-query</kind>
+        <symbol>getUserProgress, markComplete</symbol>
+        <lines>183-238</lines>
+        <reason>Provides real progress tracking (Story 101.1). getUserProgress returns completed/total lesson counts and percentages.</reason>
+      </file>
+      <file>
+        <path>convex/certificates.ts</path>
+        <kind>backend-query</kind>
+        <symbol>listForUser</symbol>
+        <lines>5-13</lines>
+        <reason>Provides real certificate data by userId. Returns all certificates earned by user.</reason>
+      </file>
+      <file>
+        <path>convex/enrollments.ts</path>
+        <kind>backend-query</kind>
+        <symbol>getMyEnrollments</symbol>
+        <lines>60-82</lines>
+        <reason>Returns user's enrollments with course details. Useful for dashboard course lists.</reason>
+      </file>
+    </code>
+    <dependencies>
+      <node>
+        <package name="convex" version="^1.28.0" />
+        <package name="next" version="16.0.0" />
+        <package name="react" version="^19.2.0" />
+        <package name="typescript" version="^5" />
+        <package name="@clerk/nextjs" version="^6.34.0" />
+      </node>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint id="C1" source="docs/architecture.md">All Convex queries must handle undefined (loading) and null (not found) states before rendering content</constraint>
+    <constraint id="C2" source="docs/architecture.md">Use Doc types from convex/_generated/dataModel for type safety. Avoid any types.</constraint>
+    <constraint id="C3" source="docs/architecture.md">Leverage Convex automatic reactivity - components using useQuery will update when data changes</constraint>
+    <constraint id="C4" source="story Dev Notes">Replace mock data incrementally file-by-file to minimize risk</constraint>
+    <constraint id="C5" source="story Dev Notes">Always show loading skeletons - no flash of empty state</constraint>
+    <constraint id="C6" source="story Dev Notes">Graceful degradation with user-friendly error messages, not crashes</constraint>
+    <constraint id="C7" source="story Dev Notes">Fix all TypeScript errors before considering task complete</constraint>
+    <constraint id="C8" source="docs/architecture.md">Use path aliases (@/ for project root) in imports</constraint>
+  </constraints>
+
+  <interfaces>
+    <api>
+      <endpoint>
+        <name>api.courses.get</name>
+        <kind>Convex Query</kind>
+        <signature>get(args: { id: Id&lt;'courses'&gt; }) =&gt; Promise&lt;Doc&lt;'courses'&gt; | null&gt;</signature>
+        <path>convex/courses.ts:19-21</path>
+      </endpoint>
+      <endpoint>
+        <name>api.courses.getWithCurriculum</name>
+        <kind>Convex Query</kind>
+        <signature>getWithCurriculum(args: { courseId: Id&lt;'courses'&gt; }) =&gt; Promise&lt;CourseWithCurriculum | null&gt;</signature>
+        <path>convex/courses.ts:77-130</path>
+        <note>Returns course with modules and lessons sorted by order. Includes instructor details and enrollment count.</note>
+      </endpoint>
+      <endpoint>
+        <name>api.courses.list</name>
+        <kind>Convex Query</kind>
+        <signature>list(args: { instructorId?: Id&lt;'users'&gt; }) =&gt; Promise&lt;Doc&lt;'courses'&gt;[]&gt;</signature>
+        <path>convex/courses.ts:5-17</path>
+        <note>If instructorId provided, filters to instructor's courses. Otherwise returns all courses.</note>
+      </endpoint>
+      <endpoint>
+        <name>api.lessonProgress.getUserProgress</name>
+        <kind>Convex Query</kind>
+        <signature>getUserProgress(args: { courseId: Id&lt;'courses'&gt; }) =&gt; Promise&lt;ProgressData | null&gt;</signature>
+        <path>convex/lessonProgress.ts:183-238</path>
+        <note>Returns { enrollmentId, total, completed, percent, completedLessonIds }. Returns null if not enrolled or not authenticated.</note>
+      </endpoint>
+      <endpoint>
+        <name>api.lessonProgress.markComplete</name>
+        <kind>Convex Mutation</kind>
+        <signature>markComplete(args: { lessonId: Id&lt;'lessons'&gt; }) =&gt; Promise&lt;Id&lt;'lessonProgress'&gt;&gt;</signature>
+        <path>convex/lessonProgress.ts:15-74</path>
+        <note>Marks lesson complete and triggers progress recalculation. Idempotent.</note>
+      </endpoint>
+      <endpoint>
+        <name>api.certificates.listForUser</name>
+        <kind>Convex Query</kind>
+        <signature>listForUser(args: { userId: Id&lt;'users'&gt; }) =&gt; Promise&lt;Doc&lt;'certificates'&gt;[]&gt;</signature>
+        <path>convex/certificates.ts:5-13</path>
+        <note>Returns all certificates earned by the user.</note>
+      </endpoint>
+      <endpoint>
+        <name>api.enrollments.getMyEnrollments</name>
+        <kind>Convex Query</kind>
+        <signature>getMyEnrollments() =&gt; Promise&lt;EnrollmentWithCourse[]&gt;</signature>
+        <path>convex/enrollments.ts:60-82</path>
+        <note>Returns authenticated user's enrollments with populated course details.</note>
+      </endpoint>
+    </api>
+    <react>
+      <hook>
+        <name>useQuery</name>
+        <signature>useQuery(api.module.function, args) =&gt; Data | undefined | null</signature>
+        <note>Returns undefined while loading, null if not found, or data when successful. Auto-revalidates on database changes.</note>
+      </hook>
+      <hook>
+        <name>useMutation</name>
+        <signature>useMutation(api.module.function) =&gt; (args) =&gt; Promise&lt;Result&gt;</signature>
+        <note>Returns a function to call the mutation. Supports optimistic updates.</note>
+      </hook>
+    </react>
+  </interfaces>
+
+  <tests>
+    <standards>Use Vitest for testing. Core business logic requires 85% coverage per TESTING-STRATEGY.md. Frontend components require manual testing. Test files located in convex/__test__/ for backend and app/__test__/ for frontend.</standards>
+    <locations>
+      <pattern>convex/__test__/*.test.ts</pattern>
+      <pattern>app/__test__/*.test.tsx</pattern>
+    </locations>
+    <ideas>
+      <idea ac="109.1.1">Verify course detail page renders real data when courses.getWithCurriculum() returns a course</idea>
+      <idea ac="109.1.2">Verify learning page displays actual lessons from database and integrates with lessonProgress queries</idea>
+      <idea ac="109.1.6">Test loading state: verify skeleton displays when query returns undefined</idea>
+      <idea ac="109.1.7">Test error state: verify error message displays when query returns null</idea>
+      <idea ac="109.1.8">TypeScript compilation test: ensure no type errors after mock data removal</idea>
+    </ideas>
+  </tests>
+</story-context>
