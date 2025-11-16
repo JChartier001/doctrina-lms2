@@ -206,9 +206,7 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 										</div>
 										<div className="bg-accent rounded-lg p-2">
 											<p className="text-xs text-accent-foreground">Documents</p>
-											<p className="text-lg font-bold text-accent-foreground">
-												{lessonTypes.document || 0}
-											</p>
+											<p className="text-lg font-bold text-accent-foreground">{lessonTypes.document || 0}</p>
 										</div>
 										<div className="bg-accent rounded-lg p-2">
 											<p className="text-xs text-accent-foreground">Quizzes</p>

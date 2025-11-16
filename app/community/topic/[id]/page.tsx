@@ -343,7 +343,10 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 										</Avatar>
 										<span className="text-sm">{reply.author.name}</span>
 										{reply.isAnswer && (
-											<Badge variant="outline" className="ml-auto text-xs bg-accent text-accent-foreground border-border">
+											<Badge
+												variant="outline"
+												className="ml-auto text-xs bg-accent text-accent-foreground border-border"
+											>
 												Solution
 											</Badge>
 										)}
