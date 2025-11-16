@@ -60,7 +60,7 @@ Story 102.1 implemented quiz creation (instructors can create quizzes and add qu
 3. **AC3:** System grades quiz automatically ✅
    - Load quiz questions with correct answers
    - Compare student answers to correctAnswer for each question
-   - Calculate score as percentage (correct/total * 100)
+   - Calculate score as percentage (correct/total \* 100)
    - Determine pass/fail based on quiz.passingScore
    - Return detailed results array with per-question feedback
 
@@ -134,7 +134,7 @@ Story 102.1 implemented quiz creation (instructors can create quizzes and add qu
   - Count correct answers
 
 - [ ] **1.4** Calculate score and pass/fail status
-  - score = Math.round((correctCount / totalQuestions) * 100)
+  - score = Math.round((correctCount / totalQuestions) \* 100)
   - passed = score >= quiz.passingScore
   - Handle edge case: 0 questions (should not happen, but fail gracefully)
 
@@ -268,104 +268,98 @@ import { api } from './_generated/api';
 import type { Doc } from './_generated/dataModel';
 
 export const submit = mutation({
-  args: {
-    quizId: v.id('quizzes'),
-    answers: v.array(v.number()), // Array of selected option indices (0-3)
-  },
-  handler: async (ctx, { quizId, answers }) => {
-    // 1. Authentication
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error('Not authenticated');
-    }
+	args: {
+		quizId: v.id('quizzes'),
+		answers: v.array(v.number()), // Array of selected option indices (0-3)
+	},
+	handler: async (ctx, { quizId, answers }) => {
+		// 1. Authentication
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
 
-    // 2. Get user
-    const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
-      externalId: identity.subject,
-    });
+		// 2. Get user
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+		if (!user) {
+			throw new Error('User not found');
+		}
 
-    // 3. Load quiz
-    const quiz = await ctx.db.get(quizId);
-    if (!quiz) {
-      throw new Error('Quiz not found');
-    }
+		// 3. Load quiz
+		const quiz = await ctx.db.get(quizId);
+		if (!quiz) {
+			throw new Error('Quiz not found');
+		}
 
-    // 4. Verify enrollment
-    const enrollment = await ctx.db
-      .query('enrollments')
-      .withIndex('by_user_course', q =>
-        q.eq('userId', user._id).eq('courseId', quiz.courseId)
-      )
-      .first();
+		// 4. Verify enrollment
+		const enrollment = await ctx.db
+			.query('enrollments')
+			.withIndex('by_user_course', q => q.eq('userId', user._id).eq('courseId', quiz.courseId))
+			.first();
 
-    if (!enrollment) {
-      throw new Error('Must be enrolled to take this quiz');
-    }
+		if (!enrollment) {
+			throw new Error('Must be enrolled to take this quiz');
+		}
 
-    // 5. Check maxAttempts limit
-    const existingAttempts = await ctx.db
-      .query('quizAttempts')
-      .withIndex('by_user_quiz', q =>
-        q.eq('userId', user._id).eq('quizId', quizId)
-      )
-      .collect();
+		// 5. Check maxAttempts limit
+		const existingAttempts = await ctx.db
+			.query('quizAttempts')
+			.withIndex('by_user_quiz', q => q.eq('userId', user._id).eq('quizId', quizId))
+			.collect();
 
-    if (quiz.maxAttempts && existingAttempts.length >= quiz.maxAttempts) {
-      throw new Error(
-        `Maximum attempts (${quiz.maxAttempts}) reached for this quiz`
-      );
-    }
+		if (quiz.maxAttempts && existingAttempts.length >= quiz.maxAttempts) {
+			throw new Error(`Maximum attempts (${quiz.maxAttempts}) reached for this quiz`);
+		}
 
-    // 6. Load questions and grade
-    const questions = await ctx.db
-      .query('quizQuestions')
-      .withIndex('by_quiz', q => q.eq('quizId', quizId))
-      .collect();
+		// 6. Load questions and grade
+		const questions = await ctx.db
+			.query('quizQuestions')
+			.withIndex('by_quiz', q => q.eq('quizId', quizId))
+			.collect();
 
-    const sortedQuestions = questions.sort((a, b) => a.order - b.order);
+		const sortedQuestions = questions.sort((a, b) => a.order - b.order);
 
-    let correctCount = 0;
-    const results = sortedQuestions.map((q, i) => {
-      const isCorrect = q.correctAnswer === answers[i];
-      if (isCorrect) correctCount++;
+		let correctCount = 0;
+		const results = sortedQuestions.map((q, i) => {
+			const isCorrect = q.correctAnswer === answers[i];
+			if (isCorrect) correctCount++;
 
-      return {
-        questionId: q._id,
-        question: q.question,
-        selectedAnswer: answers[i],
-        correctAnswer: q.correctAnswer,
-        isCorrect,
-        explanation: q.explanation || null,
-      };
-    });
+			return {
+				questionId: q._id,
+				question: q.question,
+				selectedAnswer: answers[i],
+				correctAnswer: q.correctAnswer,
+				isCorrect,
+				explanation: q.explanation || null,
+			};
+		});
 
-    // 7. Calculate score and pass/fail
-    const score = Math.round((correctCount / sortedQuestions.length) * 100);
-    const passed = score >= quiz.passingScore;
+		// 7. Calculate score and pass/fail
+		const score = Math.round((correctCount / sortedQuestions.length) * 100);
+		const passed = score >= quiz.passingScore;
 
-    // 8. Save attempt
-    const attemptId = await ctx.db.insert('quizAttempts', {
-      userId: user._id,
-      quizId,
-      answers,
-      score,
-      passed,
-      submittedAt: Date.now(),
-    });
+		// 8. Save attempt
+		const attemptId = await ctx.db.insert('quizAttempts', {
+			userId: user._id,
+			quizId,
+			answers,
+			score,
+			passed,
+			submittedAt: Date.now(),
+		});
 
-    // 9. Return results
-    return {
-      attemptId,
-      score,
-      passed,
-      results,
-      passingScore: quiz.passingScore,
-    };
-  },
+		// 9. Return results
+		return {
+			attemptId,
+			score,
+			passed,
+			results,
+			passingScore: quiz.passingScore,
+		};
+	},
 });
 ```
 
@@ -373,37 +367,33 @@ export const submit = mutation({
 
 ```typescript
 export const getBestAttempt = query({
-  args: { quizId: v.id('quizzes') },
-  handler: async (ctx, { quizId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
+	args: { quizId: v.id('quizzes') },
+	handler: async (ctx, { quizId }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			return null;
+		}
 
-    const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
-      externalId: identity.subject,
-    });
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
 
-    if (!user) {
-      return null;
-    }
+		if (!user) {
+			return null;
+		}
 
-    const attempts = await ctx.db
-      .query('quizAttempts')
-      .withIndex('by_user_quiz', q =>
-        q.eq('userId', user._id).eq('quizId', quizId)
-      )
-      .collect();
+		const attempts = await ctx.db
+			.query('quizAttempts')
+			.withIndex('by_user_quiz', q => q.eq('userId', user._id).eq('quizId', quizId))
+			.collect();
 
-    if (attempts.length === 0) {
-      return null;
-    }
+		if (attempts.length === 0) {
+			return null;
+		}
 
-    // Return attempt with highest score
-    return attempts.reduce((best, current) =>
-      current.score > best.score ? current : best
-    );
-  },
+		// Return attempt with highest score
+		return attempts.reduce((best, current) => (current.score > best.score ? current : best));
+	},
 });
 ```
 
@@ -411,69 +401,69 @@ export const getBestAttempt = query({
 
 ```typescript
 export const getAttemptResults = query({
-  args: { attemptId: v.id('quizAttempts') },
-  handler: async (ctx, { attemptId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new Error('Not authenticated');
-    }
+	args: { attemptId: v.id('quizAttempts') },
+	handler: async (ctx, { attemptId }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			throw new Error('Not authenticated');
+		}
 
-    const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
-      externalId: identity.subject,
-    });
+		const user: Doc<'users'> | null = await ctx.runQuery(api.users.getByExternalId, {
+			externalId: identity.subject,
+		});
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+		if (!user) {
+			throw new Error('User not found');
+		}
 
-    // Load attempt
-    const attempt = await ctx.db.get(attemptId);
-    if (!attempt) {
-      throw new Error('Attempt not found');
-    }
+		// Load attempt
+		const attempt = await ctx.db.get(attemptId);
+		if (!attempt) {
+			throw new Error('Attempt not found');
+		}
 
-    // Verify ownership
-    if (attempt.userId !== user._id) {
-      throw new Error('Not authorized');
-    }
+		// Verify ownership
+		if (attempt.userId !== user._id) {
+			throw new Error('Not authorized');
+		}
 
-    // Load quiz and questions
-    const quiz = await ctx.db.get(attempt.quizId);
-    if (!quiz) {
-      throw new Error('Quiz not found');
-    }
+		// Load quiz and questions
+		const quiz = await ctx.db.get(attempt.quizId);
+		if (!quiz) {
+			throw new Error('Quiz not found');
+		}
 
-    const questions = await ctx.db
-      .query('quizQuestions')
-      .withIndex('by_quiz', q => q.eq('quizId', attempt.quizId))
-      .collect();
+		const questions = await ctx.db
+			.query('quizQuestions')
+			.withIndex('by_quiz', q => q.eq('quizId', attempt.quizId))
+			.collect();
 
-    const sortedQuestions = questions.sort((a, b) => a.order - b.order);
+		const sortedQuestions = questions.sort((a, b) => a.order - b.order);
 
-    // Reconstruct results
-    const results = sortedQuestions.map((q, i) => {
-      const selectedAnswer = attempt.answers[i];
-      const isCorrect = q.correctAnswer === selectedAnswer;
+		// Reconstruct results
+		const results = sortedQuestions.map((q, i) => {
+			const selectedAnswer = attempt.answers[i];
+			const isCorrect = q.correctAnswer === selectedAnswer;
 
-      return {
-        questionId: q._id,
-        question: q.question,
-        selectedAnswer,
-        correctAnswer: q.correctAnswer,
-        isCorrect,
-        explanation: q.explanation || null,
-      };
-    });
+			return {
+				questionId: q._id,
+				question: q.question,
+				selectedAnswer,
+				correctAnswer: q.correctAnswer,
+				isCorrect,
+				explanation: q.explanation || null,
+			};
+		});
 
-    return {
-      attemptId: attempt._id,
-      score: attempt.score,
-      passed: attempt.passed,
-      submittedAt: attempt.submittedAt,
-      results,
-      passingScore: quiz.passingScore,
-    };
-  },
+		return {
+			attemptId: attempt._id,
+			score: attempt.score,
+			passed: attempt.passed,
+			submittedAt: attempt.submittedAt,
+			results,
+			passingScore: quiz.passingScore,
+		};
+	},
 });
 ```
 

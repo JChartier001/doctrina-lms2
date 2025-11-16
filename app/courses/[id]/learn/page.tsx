@@ -163,12 +163,12 @@ export default function CourseLearnPage({ params }: { params: Promise<{ id: stri
 												{currentLesson?.moduleTitle} • Duration: {currentLesson?.duration}
 											</CardDescription>
 										</div>
-										{currentLesson?.isCompleted && <CheckCircle className="h-5 w-5 text-green-600" />}
+										{currentLesson?.isCompleted && <CheckCircle className="h-5 w-5 text-primary" />}
 									</div>
 								</CardHeader>
 								<CardContent>
 									{currentLesson?.type === 'video' && (
-										<div className="bg-black aspect-video rounded-lg mb-6 flex items-center justify-center">
+										<div className="bg-foreground aspect-video rounded-lg mb-6 flex items-center justify-center">
 											<svg
 												xmlns="http://www.w3.org/2000/svg"
 												width="48"
@@ -179,7 +179,7 @@ export default function CourseLearnPage({ params }: { params: Promise<{ id: stri
 												strokeWidth="2"
 												strokeLinecap="round"
 												strokeLinejoin="round"
-												className="text-white opacity-70"
+												className="text-background opacity-70"
 											>
 												<polygon points="5 3 19 12 5 21 5 3" />
 											</svg>
@@ -209,10 +209,10 @@ export default function CourseLearnPage({ params }: { params: Promise<{ id: stri
 							</Card>
 
 							{isCourseCompleted && (
-								<Card className="bg-green-50 border-green-200">
+								<Card className="bg-accent border-border">
 									<CardHeader>
 										<div className="flex items-center">
-											<CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+											<CheckCircle className="h-5 w-5 text-primary mr-2" />
 											<CardTitle>Course Completed!</CardTitle>
 										</div>
 										<CardDescription>

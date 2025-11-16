@@ -25,7 +25,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
-import dayjs from '@/lib/dayjs';
+import { dayjs } from '@/lib/dayjs';
 import { type Notification } from '@/lib/notification-service';
 
 export default function NotificationsPage() {

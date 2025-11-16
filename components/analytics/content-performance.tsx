@@ -112,11 +112,11 @@ export function ContentPerformance({ dateRange: _dateRange, courseId: _courseId 
 										<TableCell>{lesson.satisfaction}/5.0</TableCell>
 										<TableCell>
 											{(lesson.completions / lesson.views) * 100 >= 80 ? (
-												<Badge className="bg-green-500">High Performing</Badge>
+												<Badge className="bg-primary">High Performing</Badge>
 											) : (lesson.completions / lesson.views) * 100 >= 60 ? (
-												<Badge className="bg-amber-500">Average</Badge>
+												<Badge className="bg-muted">Average</Badge>
 											) : (
-												<Badge variant="outline" className="text-red-500 border-red-500">
+												<Badge variant="outline" className="text-muted-foreground border-border">
 													Needs Attention
 												</Badge>
 											)}
@@ -159,8 +159,8 @@ export function ContentPerformance({ dateRange: _dateRange, courseId: _courseId 
 													entry.completionRate >= 80
 														? 'var(--color-completionRate)'
 														: entry.completionRate >= 60
-															? '#f59e0b'
-															: '#ef4444'
+															? 'hsl(var(--muted))'
+															: 'hsl(var(--muted-foreground))'
 												}
 											/>
 										))}
@@ -200,8 +200,8 @@ export function ContentPerformance({ dateRange: _dateRange, courseId: _courseId 
 													entry.satisfaction >= 4.5
 														? 'var(--color-satisfaction)'
 														: entry.satisfaction >= 4.0
-															? '#f59e0b'
-															: '#ef4444'
+															? 'hsl(var(--muted))'
+															: 'hsl(var(--muted-foreground))'
 												}
 											/>
 										))}

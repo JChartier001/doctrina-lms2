@@ -93,7 +93,7 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 		<div className="flex flex-col items-center">
 			<div
 				ref={certificateRef}
-				className="relative w-full max-w-3xl aspect-[1.414/1] bg-white border rounded-lg overflow-hidden shadow-lg"
+				className="relative w-full max-w-3xl aspect-[1.414/1] bg-background border rounded-lg overflow-hidden shadow-lg"
 				style={{
 					backgroundImage: template
 						? `linear-gradient(135deg, ${template.primaryColor}22, ${template.secondaryColor}22)`
@@ -113,18 +113,18 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 						<div className="flex justify-center mb-2">
 							<Image src="/placeholder.svg?height=60&width=200" alt="Doctrina Logo" className="h-12" />
 						</div>
-						<h2 className="text-xl font-semibold text-gray-600">CERTIFICATE OF COMPLETION</h2>
+						<h2 className="text-xl font-semibold text-muted-foreground">CERTIFICATE OF COMPLETION</h2>
 					</div>
 
 					{/* Body */}
 					<div className="flex flex-col items-center justify-center flex-grow py-4">
-						<p className="text-gray-600 mb-2">This is to certify that</p>
+						<p className="text-muted-foreground mb-2">This is to certify that</p>
 						<h1 className="text-3xl sm:text-4xl font-bold mb-2" style={{ color: template?.primaryColor || '#4f46e5' }}>
 							{certificate.userName}
 						</h1>
-						<p className="text-gray-600 mb-4">has successfully completed the course</p>
+						<p className="text-muted-foreground mb-4">has successfully completed the course</p>
 						<h2 className="text-2xl sm:text-3xl font-semibold mb-4">{certificate.courseName}</h2>
-						<p className="text-gray-600">
+						<p className="text-muted-foreground">
 							Issued on{' '}
 							{new Date(certificate.issueDate).toLocaleDateString('en-US', {
 								year: 'numeric',
@@ -140,15 +140,15 @@ export function CertificateDisplay({ certificate, showControls = true }: Certifi
 						<div className="text-center sm:text-left mb-4 sm:mb-0">
 							<Image src="/placeholder.svg?height=40&width=150" alt="Instructor Signature" className="h-10 mb-1" />
 							<p className="text-sm font-medium">{certificate.instructorName}</p>
-							<p className="text-xs text-gray-500">Instructor</p>
+							<p className="text-xs text-muted-foreground">Instructor</p>
 						</div>
 
 						{/* QR Code */}
 						<div className="text-center">
-							<div className="bg-white p-1 rounded-md inline-block mb-1">
+							<div className="bg-background p-1 rounded-md inline-block mb-1">
 								<QRCodeCanvas value={verificationUrl} size={80} level="H" />
 							</div>
-							<p className="text-xs text-gray-500">Verification Code</p>
+							<p className="text-xs text-muted-foreground">Verification Code</p>
 							<p className="text-xs font-mono">{certificate.verificationCode}</p>
 						</div>
 					</div>

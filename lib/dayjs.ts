@@ -12,7 +12,7 @@ dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 dayjs.tz.setDefault('America/New_York');
 
-export default dayjs;
+export { dayjs };
 
 export const isDateBetween = (date: string, start: string, end: string) => {
 	const startDate = dayjs(start);

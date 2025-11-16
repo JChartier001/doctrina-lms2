@@ -35,6 +35,7 @@ All backups have been successfully created in the main repository:
 - [x] `.yarn-backup.tar.gz` (976KB - includes .yarn/ directory and .yarnrc.yml)
 
 **Restore Command**: If rollback is needed:
+
 ```bash
 git checkout backup/pre-bun-migration
 cp yarn.lock.backup yarn.lock
@@ -47,6 +48,7 @@ tar -xzf .yarn-backup.tar.gz
 ## Critical Dependency Compatibility Analysis
 
 ### 1. Next.js 16.0.1
+
 - **Status**: ✅ Fully Compatible
 - **Bun Support**: Native support since Bun 1.0+
 - **Notes**:
@@ -59,6 +61,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Source**: https://bun.sh/guides/ecosystem/nextjs
 
 ### 2. React 19.2.0
+
 - **Status**: ✅ Fully Compatible
 - **Bun Support**: Native support for all React versions
 - **Notes**:
@@ -70,6 +73,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Source**: https://bun.sh/docs/runtime/jsx
 
 ### 3. Convex 1.28.2
+
 - **Status**: ✅ Compatible with Configuration
 - **Bun Support**: Confirmed working with Bun
 - **Notes**:
@@ -90,6 +94,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Source**: Community reports and Bun ecosystem compatibility
 
 ### 4. TypeScript 5.9.3
+
 - **Status**: ✅ Native Support
 - **Bun Support**: Built-in TypeScript transpiler
 - **Notes**:
@@ -104,6 +109,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Source**: https://bun.sh/docs/runtime/typescript
 
 ### 5. Vitest 4.0.8
+
 - **Status**: ✅ Compatible (Alternative: Bun Test Runner)
 - **Bun Support**: Vitest works with Bun, native test runner available
 - **Notes**:
@@ -115,6 +121,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Configuration Options**:
 
   **Option A: Keep Vitest (Recommended for Migration)**
+
   ```json
   "scripts": {
     "test": "bun vitest run",
@@ -128,10 +135,12 @@ tar -xzf .yarn-backup.tar.gz
   - Available after migration stabilizes
   - Faster execution, simpler configuration
   - Built-in code coverage
+
 - **Recommendation**: Keep Vitest for initial migration, evaluate Bun test runner later
 - **Source**: https://bun.sh/docs/cli/test
 
 ### 6. Tailwind CSS 4.1.17
+
 - **Status**: ✅ Fully Compatible
 - **Bun Support**: Full PostCSS and Tailwind support
 - **Notes**:
@@ -145,6 +154,7 @@ tar -xzf .yarn-backup.tar.gz
 - **Source**: https://bun.sh/guides/ecosystem/tailwind
 
 ### 7. Clerk Authentication 6.34.5
+
 - **Status**: ✅ Fully Compatible
 - **Bun Support**: All Clerk packages work with Bun
 - **Notes**:
@@ -158,23 +168,28 @@ tar -xzf .yarn-backup.tar.gz
 ### 8. Additional Critical Dependencies
 
 #### Radix UI Components
+
 - **Status**: ✅ Compatible
 - **All 30+ Radix packages tested in Bun environments**
 - No compatibility issues reported
 
 #### React Hook Form 7.66.0 + Zod 4.1.12
+
 - **Status**: ✅ Compatible
 - Form validation and schema parsing work correctly
 
 #### Framer Motion 12.23.24
+
 - **Status**: ✅ Compatible
 - Animation library works with Bun's React runtime
 
 #### Recharts 3.3.0
+
 - **Status**: ✅ Compatible
 - SVG rendering and charts display correctly
 
 #### Stripe 19.3.0
+
 - **Status**: ✅ Compatible
 - API calls and webhook handling work correctly
 
@@ -183,6 +198,7 @@ tar -xzf .yarn-backup.tar.gz
 ## Known Issues and Mitigations
 
 ### Issue 1: npm-run-all Compatibility
+
 - **Impact**: Medium
 - **Description**: `npm-run-all` package may have issues with Bun
 - **Mitigation**: Replace with native Bun parallel execution or use `concurrently`
@@ -198,18 +214,21 @@ tar -xzf .yarn-backup.tar.gz
   ```
 
 ### Issue 2: Package Resolution
+
 - **Impact**: Low
 - **Description**: Some edge-case peer dependency resolutions may differ from Yarn
 - **Mitigation**: Bun's dependency resolution algorithm is compatible with npm/Yarn
 - **Action**: Monitor console for any warnings after migration
 
 ### Issue 3: Lockfile Format
+
 - **Impact**: None (informational)
 - **Description**: Bun uses `bun.lockb` (binary format) instead of `yarn.lock`
 - **Mitigation**: Both lockfiles can coexist during migration
 - **Action**: Add `bun.lockb` to git after successful migration
 
 ### Issue 4: Volta Integration
+
 - **Impact**: Low
 - **Description**: Volta manages Node.js version but doesn't manage Bun
 - **Mitigation**: Bun includes its own Node.js compatibility layer
@@ -222,13 +241,13 @@ tar -xzf .yarn-backup.tar.gz
 
 Based on Bun benchmarks and real-world migrations:
 
-| Operation | Yarn 4.10.3 | Bun 1.3.2 | Improvement |
-|-----------|-------------|-----------|-------------|
-| Install (cold) | ~45s | ~8s | 5-6x faster |
-| Install (warm) | ~12s | ~2s | 6x faster |
-| Run scripts | Baseline | 2-3x faster | Significant |
-| TypeScript execution | Baseline | 3-4x faster | Significant |
-| Dev server startup | Baseline | 1.5-2x faster | Moderate |
+| Operation            | Yarn 4.10.3 | Bun 1.3.2     | Improvement |
+| -------------------- | ----------- | ------------- | ----------- |
+| Install (cold)       | ~45s        | ~8s           | 5-6x faster |
+| Install (warm)       | ~12s        | ~2s           | 6x faster   |
+| Run scripts          | Baseline    | 2-3x faster   | Significant |
+| TypeScript execution | Baseline    | 3-4x faster   | Significant |
+| Dev server startup   | Baseline    | 1.5-2x faster | Moderate    |
 
 ---
 
@@ -244,6 +263,7 @@ Based on Bun benchmarks and real-world migrations:
 ## Migration Checklist
 
 ### Pre-Migration (Current Task - BUN-PREP)
+
 - [x] Install Bun globally (1.3.2)
 - [x] Create backup branch
 - [x] Backup all Yarn files
@@ -251,12 +271,14 @@ Based on Bun benchmarks and real-world migrations:
 - [x] Create compatibility report
 
 ### Package.json Updates (Next Task - BUN-PACKAGE-JSON)
+
 - [ ] Update scripts to use `bun` instead of `yarn`
 - [ ] Replace `npm-run-all` with `concurrently` or Bun native
 - [ ] Add `"type": "module"` if needed
 - [ ] Update CI/CD scripts
 
 ### Migration Execution (Wave 3 - BUN-MIGRATE)
+
 - [ ] Run `bun install`
 - [ ] Generate `bun.lockb`
 - [ ] Test all scripts
@@ -266,6 +288,7 @@ Based on Bun benchmarks and real-world migrations:
 - [ ] Test build process
 
 ### Post-Migration Validation
+
 - [ ] All tests pass
 - [ ] Build succeeds
 - [ ] Dev environment works
@@ -291,11 +314,13 @@ All critical dependencies are compatible with Bun. The migration is low-risk wit
 ### 3. Special Configurations Needed
 
 #### Required Changes:
+
 1. **npm-run-all replacement**: Switch to `concurrently` or native Bun
 2. **Script prefixes**: Update all scripts from `yarn` to `bun`
 3. **Convex scripts**: Ensure `bun run` prefix for Convex commands
 
 #### Optional Optimizations:
+
 1. **Bun test runner**: Evaluate after migration stabilizes
 2. **Bun build**: Consider Bun's bundler for production builds
 3. **Workspaces**: If needed in future, Bun supports monorepo workspaces
@@ -316,11 +341,13 @@ All critical dependencies are compatible with Bun. The migration is low-risk wit
 ## Testing Strategy
 
 ### Pre-Migration Testing
+
 - [x] Verify all backups created
 - [x] Document current behavior
 - [x] Baseline performance metrics
 
 ### Post-Migration Testing
+
 1. **Unit Tests**: Run full test suite with `bun test`
 2. **Integration Tests**: Verify Convex backend integration
 3. **E2E Tests**: Test full application flow
@@ -334,6 +361,7 @@ All critical dependencies are compatible with Bun. The migration is low-risk wit
 If critical issues are discovered:
 
 1. **Immediate Rollback**:
+
    ```bash
    git checkout backup/pre-bun-migration
    cp yarn.lock.backup yarn.lock
@@ -343,6 +371,7 @@ If critical issues are discovered:
    ```
 
 2. **Partial Rollback**: Keep Bun for scripts, revert to Yarn for package management
+
    ```bash
    # Restore Yarn lockfile
    cp yarn.lock.backup yarn.lock

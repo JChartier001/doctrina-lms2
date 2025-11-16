@@ -37,7 +37,7 @@ const questionDifficultyData = [
 	{ name: 'Hard', value: 20 },
 ];
 
-const COLORS = ['#4ade80', '#facc15', '#f87171'];
+const COLORS = ['hsl(var(--primary))', 'hsl(var(--muted))', 'hsl(var(--muted-foreground))'];
 
 const questionAnalysisData = [
 	{
@@ -92,7 +92,7 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 					</CardHeader>
 					<CardContent>
 						<div className="text-3xl font-bold">81%</div>
-						<div className="text-xs text-green-500 flex items-center mt-1">+3% from previous period</div>
+						<div className="text-xs text-primary flex items-center mt-1">+3% from previous period</div>
 					</CardContent>
 				</Card>
 				<Card>
@@ -101,7 +101,7 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 					</CardHeader>
 					<CardContent>
 						<div className="text-3xl font-bold">90%</div>
-						<div className="text-xs text-green-500 flex items-center mt-1">+2% from previous period</div>
+						<div className="text-xs text-primary flex items-center mt-1">+2% from previous period</div>
 					</CardContent>
 				</Card>
 				<Card>
@@ -110,7 +110,7 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 					</CardHeader>
 					<CardContent>
 						<div className="text-3xl font-bold">94%</div>
-						<div className="text-xs text-green-500 flex items-center mt-1">+5% from previous period</div>
+						<div className="text-xs text-primary flex items-center mt-1">+5% from previous period</div>
 					</CardContent>
 				</Card>
 			</div>
@@ -165,7 +165,7 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 										cy="50%"
 										labelLine={false}
 										outerRadius={100}
-										fill="#8884d8"
+										fill="hsl(var(--primary))"
 										dataKey="value"
 										label={({ name, percent }) => `${name} ${((percent as number) * 100).toFixed(0)}%`}
 									>
@@ -213,10 +213,10 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 											<Badge
 												className={
 													question.difficulty === 'Easy'
-														? 'bg-green-500'
+														? 'bg-primary'
 														: question.difficulty === 'Medium'
-															? 'bg-amber-500'
-															: 'bg-red-500'
+															? 'bg-muted'
+															: 'bg-muted-foreground'
 												}
 											>
 												{question.difficulty}
@@ -224,11 +224,11 @@ export function QuizAnalytics({ dateRange: _dateRange, courseId: _courseId }: Qu
 										</TableCell>
 										<TableCell>
 											{question.correctRate >= 85 ? (
-												<Badge className="bg-green-500">Good</Badge>
+												<Badge className="bg-primary">Good</Badge>
 											) : question.correctRate >= 70 ? (
-												<Badge className="bg-amber-500">Average</Badge>
+												<Badge className="bg-muted">Average</Badge>
 											) : (
-												<Badge variant="outline" className="text-red-500 border-red-500">
+												<Badge variant="outline" className="text-muted-foreground border-border">
 													Needs Review
 												</Badge>
 											)}

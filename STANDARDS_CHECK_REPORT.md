@@ -26,12 +26,12 @@
 **Total Issues Found**: 2
 **Status**: ⚠️ WARN
 
-| Severity | Count | Status |
-|----------|-------|--------|
-| 🚨 CRITICAL | 0 | ✅ PASS |
-| ⚠️ HIGH | 1 | ⚠️ WARN |
-| ℹ️ MEDIUM | 1 | ⚠️ WARN |
-| 💡 LOW | 0 | ✅ PASS |
+| Severity    | Count | Status  |
+| ----------- | ----- | ------- |
+| 🚨 CRITICAL | 0     | ✅ PASS |
+| ⚠️ HIGH     | 1     | ⚠️ WARN |
+| ℹ️ MEDIUM   | 1     | ⚠️ WARN |
+| 💡 LOW      | 0     | ✅ PASS |
 
 ---
 
@@ -40,11 +40,13 @@
 ### ⚠️ **HIGH (1 issue)**
 
 #### 1. Default Exports Pattern
+
 **Location**: 54 files across the codebase
 **Standard**: `CLAUDE.md` - Code Style (Named exports preferred)
 **Severity**: ⚠️ HIGH
 
 **Files Affected**:
+
 ```
 app/page.tsx
 app/layout.tsx
@@ -57,20 +59,23 @@ app/courses/page.tsx
 The project standards state "Named exports (not default exports)" but 54 files use default exports. While this is **required by Next.js** for page.tsx, layout.tsx, loading.tsx, error.tsx, and not-found.tsx files, regular components should use named exports for better refactorability.
 
 **Breakdown**:
+
 - **Next.js special files (OK)**: ~45 files (page.tsx, layout.tsx, etc.) - Required by framework
 - **Regular components (NEEDS REVIEW)**: ~9 files - Should use named exports
 
 **Fix**:
 For regular components (not Next.js special files):
+
 ```typescript
 // ❌ Current (if not a page/layout file):
-export default function MyComponent() { }
+export default function MyComponent() {}
 
 // ✅ Fix:
-export function MyComponent() { }
+export function MyComponent() {}
 ```
 
 **Required Actions**:
+
 1. Audit all 54 files with default exports
 2. Keep default exports for Next.js special files (page.tsx, layout.tsx, loading.tsx, error.tsx)
 3. Convert regular components to named exports
@@ -82,11 +87,13 @@ export function MyComponent() { }
 ### ℹ️ **MEDIUM (1 issue)**
 
 #### 2. Explicit Color Usage (Non-Theme Variables)
+
 **Location**: 8 files
 **Standard**: `.claude/standards/active/tailwind.md` - Theme Variables First
 **Severity**: ℹ️ MEDIUM
 
 **Files Affected**:
+
 - `app/community/topic/[id]/page.tsx:2`
 - `app/courses/[id]/learn/page.tsx:2`
 - `app/community/page.tsx:3`
@@ -100,6 +107,7 @@ export function MyComponent() { }
 Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) instead of theme variables. This breaks dark mode support and theme consistency.
 
 **Current Code Examples**:
+
 ```typescript
 // ❌ Explicit colors
 <div className="bg-white text-black">
@@ -108,6 +116,7 @@ Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) 
 ```
 
 **Fix**:
+
 ```typescript
 // ✅ Theme variables
 <div className="bg-background text-foreground">
@@ -116,6 +125,7 @@ Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) 
 ```
 
 **Required Actions**:
+
 1. Replace `bg-white` → `bg-background`
 2. Replace `bg-gray-*` → `bg-muted` or `bg-card`
 3. Replace `text-black` → `text-foreground`
@@ -129,18 +139,20 @@ Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) 
 ## ✅ **EXCELLENT COMPLIANCE**
 
 ### Security ✅ PASS (100%)
+
 - ✅ **No dangerouslySetInnerHTML with user input**
 - ✅ **No eval() or Function() usage**
 - ✅ **No innerHTML usage**
 - ✅ **Proper environment variable handling**
   - Server secrets properly guarded (STRIPE_SECRET_KEY, CLERK_WEBHOOK_SECRET)
-  - Public variables correctly prefixed with NEXT_PUBLIC_
+  - Public variables correctly prefixed with NEXT*PUBLIC*
   - Validation for missing env vars
 - ✅ **No hardcoded secrets**
 - ✅ **No @ts-ignore in production code**
 - ✅ **No class components** (fully functional)
 
 ### TypeScript ✅ PASS (95%)
+
 - ✅ **Strict mode enabled**
 - ✅ **Proper type definitions**
 - ✅ **`any` usage only in test files** ✨ (UPDATED STANDARD - NOW COMPLIANT)
@@ -148,11 +160,13 @@ Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) 
 - ✅ **No type hacks** (minimal @ts-ignore)
 
 ### React ✅ PASS (100%)
+
 - ✅ **Functional components with hooks** (zero class components except ErrorBoundary)
 - ✅ **Proper hook usage** (top-level, consistent order)
 - ✅ **No hook rule violations**
 
 ### Next.js 16 ✅ PASS (100%)
+
 - ✅ **App Router usage**
 - ✅ **Server Components by default**
 - ✅ **Correct `'use client'` usage** for interactive components
@@ -160,12 +174,14 @@ Using explicit color classes (e.g., `bg-white`, `bg-gray-100`, `text-blue-600`) 
 - ✅ **Next/Image optimization**
 
 ### React + Convex ✅ PASS (100%)
+
 - ✅ **No useState for backend data** (uses useQuery/fetchQuery)
 - ✅ **No useEffect for data fetching**
 - ✅ **Proper useState usage** (UI state only: modals, tabs, dropdowns)
 - ✅ **Correct mutation patterns** (useMutation with error handling)
 
 **Example of Excellent Pattern**:
+
 ```typescript
 // app/search/page.tsx
 const [searchQuery, setSearchQuery] = useState(''); // ✅ UI state
@@ -173,12 +189,14 @@ const searchResult = useUnifiedSearch(searchQuery); // ✅ Convex for data
 ```
 
 ### Forms ✅ PASS (100%)
+
 - ✅ **FormProvider + Controller pattern** (no register())
 - ✅ **Zod validation**
 - ✅ **Proper form state management**
 - ✅ **shadcn/ui form components**
 
 ### shadcn/ui ✅ PASS (100%)
+
 - ✅ **Correct component usage**
 - ✅ **FormField wrapper** in ui/form.tsx (standard pattern)
 - ✅ **Proper composition**
@@ -188,6 +206,7 @@ const searchResult = useUnifiedSearch(searchQuery); // ✅ Convex for data
 ## 📈 **TEST COVERAGE**
 
 **Test Files**: 20+ Convex test files
+
 - `convex/__test__/lessons.test.ts` ✅
 - `convex/__test__/courseModules.test.ts` ✅
 - `convex/__test__/quizzes.test.ts` ✅
@@ -206,6 +225,7 @@ const searchResult = useUnifiedSearch(searchQuery); // ✅ Convex for data
 ### Priority 1: HIGH Issues (Should fix before merge)
 
 **1. Review Default Exports** (1-2 hours)
+
 ```bash
 # Find all default exports (excluding Next.js special files)
 git grep "export default" | grep -v "page.tsx" | grep -v "layout.tsx" | grep -v "loading.tsx" | grep -v "error.tsx" | grep -v "not-found.tsx"
@@ -216,6 +236,7 @@ git grep "export default" | grep -v "page.tsx" | grep -v "layout.tsx" | grep -v 
 ### Priority 2: MEDIUM Issues (Recommended)
 
 **2. Replace Explicit Colors with Theme Variables** (30 minutes)
+
 ```typescript
 // In the 8 affected files, replace:
 bg-white → bg-background
@@ -229,28 +250,30 @@ text-white (on colored bg) → text-primary-foreground
 ### Priority 3: Proactive Improvements
 
 **3. Add ESLint Rules**
+
 ```json
 // .eslintrc.json
 {
-  "rules": {
-    "@typescript-eslint/no-explicit-any": ["error", {
-      "ignoreRestArgs": false,
-      "fixToUnknown": true
-    }],
-    "import/no-default-export": ["warn", {
-      "allow": [
-        "**/*page.tsx",
-        "**/*layout.tsx",
-        "**/*loading.tsx",
-        "**/*error.tsx",
-        "**/*not-found.tsx"
-      ]
-    }]
-  }
+	"rules": {
+		"@typescript-eslint/no-explicit-any": [
+			"error",
+			{
+				"ignoreRestArgs": false,
+				"fixToUnknown": true
+			}
+		],
+		"import/no-default-export": [
+			"warn",
+			{
+				"allow": ["**/*page.tsx", "**/*layout.tsx", "**/*loading.tsx", "**/*error.tsx", "**/*not-found.tsx"]
+			}
+		]
+	}
 }
 ```
 
 **4. Pre-commit Hook**
+
 ```bash
 # .git/hooks/pre-commit
 #!/bin/bash
@@ -303,6 +326,7 @@ yarn verify           # Format + Lint + TypeCheck + Test
 **Location**: `.claude/standards/active/typescript.md`
 
 **Change**: Added explicit exception for test files
+
 ```typescript
 ### ❌ DON'T
 - Don't use any (use unknown) - **Exception: Test files only** (see below)
@@ -329,6 +353,7 @@ export function getData(): any { } // FORBIDDEN
 **Reason**: 1 HIGH + 1 MEDIUM severity issue found
 
 **Recommendation**:
+
 - ✅ **CRITICAL issues**: 0 - Safe to commit
 - ⚠️ **HIGH issues**: 1 - Should review before merge (default exports)
 - ℹ️ **MEDIUM issues**: 1 - Recommended to fix (theme colors)
@@ -337,18 +362,18 @@ export function getData(): any { } // FORBIDDEN
 
 ## 📊 **STANDARDS COMPLIANCE SCORECARD**
 
-| Standard | Score | Status |
-|----------|-------|--------|
-| Security | 100% | ✅ EXCELLENT |
-| TypeScript | 95% | ✅ EXCELLENT |
-| React | 100% | ✅ EXCELLENT |
-| Next.js | 100% | ✅ EXCELLENT |
-| React+Convex | 100% | ✅ EXCELLENT |
-| Forms | 100% | ✅ EXCELLENT |
-| shadcn/ui | 100% | ✅ EXCELLENT |
-| Tailwind | 92% | ⚠️ GOOD |
-| Testing | 100% | ✅ EXCELLENT |
-| Code Style | 88% | ⚠️ GOOD |
+| Standard     | Score | Status       |
+| ------------ | ----- | ------------ |
+| Security     | 100%  | ✅ EXCELLENT |
+| TypeScript   | 95%   | ✅ EXCELLENT |
+| React        | 100%  | ✅ EXCELLENT |
+| Next.js      | 100%  | ✅ EXCELLENT |
+| React+Convex | 100%  | ✅ EXCELLENT |
+| Forms        | 100%  | ✅ EXCELLENT |
+| shadcn/ui    | 100%  | ✅ EXCELLENT |
+| Tailwind     | 92%   | ⚠️ GOOD      |
+| Testing      | 100%  | ✅ EXCELLENT |
+| Code Style   | 88%   | ⚠️ GOOD      |
 
 **Overall Compliance**: **97%** ⭐⭐⭐⭐
 
@@ -356,7 +381,7 @@ export function getData(): any { } // FORBIDDEN
 
 ## 🔄 **CHANGES MADE**
 
-✅ **TypeScript Standards Updated**: Added explicit exception allowing `any` usage in test files (*.test.ts, *.test.tsx, *.spec.ts, *.spec.tsx)
+✅ **TypeScript Standards Updated**: Added explicit exception allowing `any` usage in test files (_.test.ts, _.test.tsx, _.spec.ts, _.spec.tsx)
 
 ✅ **All Standards Loaded**: Confirmed loading of all 10 standards files from `.claude/standards/active/`
 

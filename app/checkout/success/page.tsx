@@ -60,10 +60,10 @@ export default function CheckoutSuccessPage() {
 	return (
 		<div className="container py-10">
 			<div className="max-w-2xl mx-auto">
-				<Card className="border-green-200">
+				<Card className="border-border">
 					<CardHeader className="text-center pb-2">
 						<div className="flex justify-center mb-4">
-							<CheckCircle2 className="h-16 w-16 text-green-500" />
+							<CheckCircle2 className="h-16 w-16 text-primary" />
 						</div>
 						<CardTitle className="text-2xl">Payment Successful!</CardTitle>
 						<CardDescription>Thank you for your purchase. Your order has been processed successfully.</CardDescription>
@@ -94,9 +94,9 @@ export default function CheckoutSuccessPage() {
 							</div>
 						</div>
 
-						<div className="bg-green-50 p-4 rounded-lg border border-green-100">
-							<h3 className="font-medium text-green-800 mb-2">What's Next?</h3>
-							<ul className="space-y-2 text-sm text-green-700">
+						<div className="bg-accent p-4 rounded-lg border border-border">
+							<h3 className="font-medium text-accent-foreground mb-2">What's Next?</h3>
+							<ul className="space-y-2 text-sm text-accent-foreground">
 								<li className="flex items-start">
 									<span className="mr-2">•</span>
 									{/* <span>You now have full access to "{session.courseName}"</span> */}

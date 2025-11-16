@@ -391,4 +391,4 @@ const ImageUpload = forwardRef<HTMLInputElement, ImageUploadProps>(
 
 ImageUpload.displayName = 'ImageUpload';
 
-export default ImageUpload;
+export { ImageUpload };

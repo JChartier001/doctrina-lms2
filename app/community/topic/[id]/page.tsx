@@ -149,7 +149,7 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 							<div className="flex justify-between items-start">
 								<h1 className="text-2xl font-bold">{topicData.title}</h1>
 								{topicData.solved && (
-									<Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+									<Badge variant="outline" className="bg-accent text-accent-foreground border-border">
 										Solved
 									</Badge>
 								)}
@@ -194,10 +194,10 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 
 					<div className="space-y-6">
 						{topicData.replies.map(reply => (
-							<Card key={reply.id} className={reply.isAnswer ? 'border-green-500' : ''}>
+							<Card key={reply.id} className={reply.isAnswer ? 'border-primary' : ''}>
 								<CardContent className="p-6">
 									{reply.isAnswer && (
-										<div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-medium w-fit mb-4">
+										<div className="bg-accent text-accent-foreground px-3 py-1 rounded-full text-xs font-medium w-fit mb-4">
 											Accepted Answer
 										</div>
 									)}
@@ -343,7 +343,7 @@ export default function TopicPage({ params: _params }: { params: { id: string } 
 										</Avatar>
 										<span className="text-sm">{reply.author.name}</span>
 										{reply.isAnswer && (
-											<Badge variant="outline" className="ml-auto text-xs bg-green-50 text-green-700 border-green-200">
+											<Badge variant="outline" className="ml-auto text-xs bg-accent text-accent-foreground border-border">
 												Solution
 											</Badge>
 										)}

@@ -173,7 +173,7 @@ export default function CommunityPage() {
 															{topic.solved && (
 																<>
 																	<span>•</span>
-																	<Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+																	<Badge variant="outline" className="bg-accent text-accent-foreground border-border">
 																		Solved
 																	</Badge>
 																</>
@@ -225,7 +225,7 @@ export default function CommunityPage() {
 																{topic.solved && (
 																	<>
 																		<span>•</span>
-																		<Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+																		<Badge variant="outline" className="bg-accent text-accent-foreground border-border">
 																			Solved
 																		</Badge>
 																	</>
@@ -275,7 +275,7 @@ export default function CommunityPage() {
 																<span>•</span>
 																<span>{new Date(topic.date).toLocaleDateString()}</span>
 																<span>•</span>
-																<Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+																<Badge variant="outline" className="bg-accent text-accent-foreground border-border">
 																	Solved
 																</Badge>
 															</div>

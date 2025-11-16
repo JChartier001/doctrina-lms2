@@ -7,6 +7,7 @@
 ## Prerequisites
 
 Ensure you have these installed:
+
 ```bash
 brew install git jq tmux
 ```
@@ -14,27 +15,32 @@ brew install git jq tmux
 ## 5-Minute Quick Start
 
 ### 1. Initialize Droidz (First Time Only)
+
 ```bash
 /droidz-init
 ```
 
 This sets up:
+
 - Memory system (5 JSON files)
 - Directory structure
 - Coordination infrastructure
 
 ### 2. Create a Specification
+
 ```bash
 /create-spec feature my-feature
 ```
 
 Available types:
+
 - `feature` - New functionality
 - `epic` - Multi-feature initiative
 - `refactor` - Code improvement
 - `integration` - External service integration
 
 ### 3. Validate Your Spec
+
 ```bash
 /validate-spec .claude/specs/active/my-feature.md
 ```
@@ -42,6 +48,7 @@ Available types:
 Modes: `--quick`, `--standard` (default), `--strict`
 
 ### 4. Generate Task Breakdown
+
 ```bash
 /spec-to-tasks .claude/specs/active/my-feature.md
 ```
@@ -49,17 +56,20 @@ Modes: `--quick`, `--standard` (default), `--strict`
 Creates: `.claude/specs/active/tasks/my-feature-tasks.json` with orchestration metadata
 
 ### 5. Execute in Parallel
+
 ```bash
 /orchestrate file:.claude/specs/active/tasks/my-feature-tasks.json
 ```
 
 This will:
+
 - Create isolated git worktrees (one per task)
 - Spawn tmux sessions for monitoring
 - Set up coordination tracking
 - Execute tasks in parallel phases
 
 ### 6. Monitor Progress
+
 ```bash
 /orchestrate list
 ```
@@ -69,6 +79,7 @@ View active orchestrations and their status.
 ## Common Workflows
 
 ### Simple Feature (No Parallelization Needed)
+
 ```bash
 # Just describe what you want
 "I need to add a search bar to the header"
@@ -78,6 +89,7 @@ View active orchestrations and their status.
 ```
 
 ### Complex Multi-Task Feature
+
 ```bash
 # Describe complex requirement
 "Build authentication system with OAuth, JWT, and user management"
@@ -89,12 +101,14 @@ View active orchestrations and their status.
 ```
 
 ### Existing Spec to Orchestration
+
 ```bash
 /spec-to-tasks .claude/specs/active/auth-system.md
 /orchestrate file:.claude/specs/active/tasks/auth-system-tasks.json
 ```
 
 ### Linear Integration (Future)
+
 ```bash
 /orchestrate linear:"team:ENG sprint:current"
 ```
@@ -104,6 +118,7 @@ View active orchestrations and their status.
 Droidz analyzes your tasks and creates an execution plan:
 
 **Example**: 4 tasks, 6.5 hours sequential
+
 - Phase 1 (Parallel): Tasks A + B → 2 hours
 - Phase 2 (Sequential): Task C (depends on A) → 1 hour
 - Phase 3 (Sequential): Task D (depends on A+B) → 2 hours
@@ -113,15 +128,15 @@ Droidz analyzes your tasks and creates an execution plan:
 
 Droidz routes tasks to domain experts:
 
-| Agent | Specialty | Use For |
-|-------|-----------|---------|
-| droidz-codegen | Feature implementation | New code, components, APIs |
-| droidz-test | Testing & quality | Unit tests, integration tests |
-| droidz-refactor | Code improvement | Performance, structure, cleanup |
-| droidz-infra | CI/build/tooling | Pipelines, configs, automation |
-| droidz-integration | External services | OAuth, APIs, webhooks |
-| droidz-orchestrator | Coordination | Multi-task orchestration |
-| droidz-generalist | General tasks | Fallback for simple tasks |
+| Agent               | Specialty              | Use For                         |
+| ------------------- | ---------------------- | ------------------------------- |
+| droidz-codegen      | Feature implementation | New code, components, APIs      |
+| droidz-test         | Testing & quality      | Unit tests, integration tests   |
+| droidz-refactor     | Code improvement       | Performance, structure, cleanup |
+| droidz-infra        | CI/build/tooling       | Pipelines, configs, automation  |
+| droidz-integration  | External services      | OAuth, APIs, webhooks           |
+| droidz-orchestrator | Coordination           | Multi-task orchestration        |
+| droidz-generalist   | General tasks          | Fallback for simple tasks       |
 
 Agents auto-activate based on task requirements.
 
@@ -130,16 +145,19 @@ Agents auto-activate based on task requirements.
 These skills trigger automatically based on context:
 
 ### spec-shaper
+
 **Triggers**: Fuzzy requests, incomplete requirements
 **Purpose**: Transform ideas into clear specifications
 **Example**: "I want to build..." → Comprehensive spec
 
 ### auto-orchestrator
+
 **Triggers**: Complex multi-task requests, 3+ distinct tasks
 **Purpose**: Detect complexity and recommend parallelization
 **Example**: Large feature → Parallel execution plan
 
 ### memory-manager
+
 **Triggers**: Architectural decisions, pattern establishment
 **Purpose**: Auto-persist decisions and patterns
 **Example**: "Let's use PostgreSQL" → Saved to decisions.json
@@ -149,15 +167,18 @@ These skills trigger automatically based on context:
 Droidz remembers across sessions:
 
 ### Organization Memory (`.claude/memory/org/`)
+
 - **decisions.json** - Architectural choices
 - **patterns.json** - Code patterns and conventions
 - **tech-stack.json** - Technology configuration
 
 ### User Memory (`.claude/memory/user/`)
+
 - **preferences.json** - Your settings
 - **context.json** - Current session state
 
 Query memory naturally:
+
 ```
 "What did we decide about authentication?"
 "Show me our error handling patterns"
@@ -167,21 +188,25 @@ Query memory naturally:
 ## Monitoring Active Orchestrations
 
 ### View tmux sessions
+
 ```bash
 tmux list-sessions | grep droidz
 ```
 
 ### Attach to a session
+
 ```bash
 tmux attach -t droidz-TASK-KEY
 ```
 
 ### View coordination state
+
 ```bash
 cat .runs/.coordination/orchestration-*.json
 ```
 
 ### View logs
+
 ```bash
 tail -f .runs/.coordination/orchestration.log
 ```
@@ -189,16 +214,19 @@ tail -f .runs/.coordination/orchestration.log
 ## Cleanup
 
 ### Clean up specific orchestration
+
 ```bash
 /orchestrate cleanup:SESSION_ID
 ```
 
 This removes:
+
 - Git worktrees
 - Tmux sessions
 - Archives coordination state
 
 ### Manual cleanup
+
 ```bash
 # List all worktrees
 git worktree list
@@ -213,6 +241,7 @@ tmux kill-session -t droidz-TASK-KEY
 ## Best Practices
 
 ### ✅ Do This
+
 - Create clear, detailed specs before implementation
 - Let auto-orchestrator recommend parallelization
 - Use specialist agents for their expertise
@@ -221,6 +250,7 @@ tmux kill-session -t droidz-TASK-KEY
 - Archive completed specs to `.claude/specs/archive/`
 
 ### ❌ Avoid This
+
 - Skipping spec creation for complex features
 - Force-parallelizing dependent tasks
 - Ignoring dependency warnings
@@ -229,20 +259,22 @@ tmux kill-session -t droidz-TASK-KEY
 
 ## Realistic Expectations
 
-| Scenario | Sequential | With Droidz | Speedup |
-|----------|------------|-------------|---------|
-| Single task | 4 hours | 4 hours | 1x (no benefit) |
-| Feature + tests | 7 hours | 5 hours | 1.4x |
-| Full-stack feature | 12 hours | 6 hours | 2x |
-| Sprint (10 tickets) | 80 hours | 30 hours | 2.7x |
+| Scenario            | Sequential | With Droidz | Speedup         |
+| ------------------- | ---------- | ----------- | --------------- |
+| Single task         | 4 hours    | 4 hours     | 1x (no benefit) |
+| Feature + tests     | 7 hours    | 5 hours     | 1.4x            |
+| Full-stack feature  | 12 hours   | 6 hours     | 2x              |
+| Sprint (10 tickets) | 80 hours   | 30 hours    | 2.7x            |
 
 **When Droidz Helps Most**:
+
 - Multiple independent tasks
 - Clear task boundaries
 - Well-defined acceptance criteria
 - Tasks that can be parallelized
 
 **When Droidz Doesn't Help**:
+
 - Single linear task
 - Highly dependent sequential work
 - Exploratory/research work
@@ -251,16 +283,19 @@ tmux kill-session -t droidz-TASK-KEY
 ## Troubleshooting
 
 ### "tmux: command not found"
+
 ```bash
 brew install tmux
 ```
 
 ### "jq: command not found"
+
 ```bash
 brew install jq
 ```
 
 ### Orchestration won't start
+
 ```bash
 # Check git status (must be clean or on feature branch)
 git status
@@ -270,14 +305,18 @@ git status
 ```
 
 ### Memory not persisting
+
 Check file permissions:
+
 ```bash
 ls -la .claude/memory/org/
 ls -la .claude/memory/user/
 ```
 
 ### Worktrees not cleaning up
+
 Manual cleanup:
+
 ```bash
 git worktree prune
 ```
@@ -327,4 +366,4 @@ git worktree prune
 **Last Updated**: 2025-11-13
 **Status**: Production Ready ✅
 
-*From idea to implementation, faster and more organized.*
+_From idea to implementation, faster and more organized._

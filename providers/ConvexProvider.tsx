@@ -19,4 +19,4 @@ const ConvexClientProvider = ({ children }: { children: ReactNode }) => {
 	);
 };
 
-export default ConvexClientProvider;
+export { ConvexClientProvider };

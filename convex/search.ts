@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 
-import dayjs from '../lib/dayjs';
+import { dayjs } from '../lib/dayjs';
 import { query } from './_generated/server';
 
 // Unified search across courses and resources

@@ -5,7 +5,7 @@ import { Fira_Code, Montserrat, Noto_Serif_Georgian } from 'next/font/google';
 import type React from 'react';
 
 import { LayoutContent } from '@/components/layout-content';
-import Providers from '@/providers';
+import { Providers } from '@/providers';
 
 export const metadata: Metadata = {
 	title: 'Doctrina - Medical Aesthetics Education',

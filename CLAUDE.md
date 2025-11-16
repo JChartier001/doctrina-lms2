@@ -7,6 +7,7 @@
 ## Quick Reference
 
 ### Tech Stack Overview
+
 - **Frontend**: Next.js 16.0.1 (App Router)
 - **UI Library**: React 19.2.0
 - **Backend/Database**: Convex 1.28.2
@@ -87,6 +88,7 @@ doctrina-lms/
 ## Coding Standards
 
 ### Core Standards (Read these first!)
+
 1. [Next.js Standards](.claude/standards/nextjs.md) - App Router, Server Components, routing
 2. [React + Convex Standards](.claude/standards/react-convex.md) - useState-less pattern, real-time data
 3. [React Standards](.claude/standards/react.md) - Components, hooks, patterns
@@ -95,6 +97,7 @@ doctrina-lms/
 6. [Security Standards](.claude/standards/security.md) - Auth, validation, XSS prevention
 
 ### UI & Styling Standards
+
 7. [shadcn/ui Standards](.claude/standards/shadcn-ui.md) - Component library, theming
 8. [Tailwind CSS Standards](.claude/standards/tailwind.md) - Utility-first CSS, theme variables
 9. [Form Patterns](.claude/standards/forms.md) - React Hook Form + Zod + Controller pattern
@@ -102,6 +105,7 @@ doctrina-lms/
 ### Key Principles
 
 **Architecture**
+
 - Server Components by default (use 'use client' only when needed)
 - Convex for all backend operations (no REST APIs)
 - Clerk for authentication/authorization
@@ -109,6 +113,7 @@ doctrina-lms/
 - Test-driven development (TDD)
 
 **Code Style**
+
 - Functional components with hooks (no class components)
 - Named exports (not default exports)
 - Explicit types for all function parameters and returns
@@ -116,6 +121,7 @@ doctrina-lms/
 - ESLint + Prettier (zero warnings policy)
 
 **File Organization**
+
 - Collocate related files (components, hooks, tests)
 - Use route groups in app/ directory
 - Keep components small and focused
@@ -125,16 +131,20 @@ doctrina-lms/
 ## Development Workflow
 
 ### 1. Start Development Environment
+
 ```bash
 yarn dev
 ```
+
 This starts:
+
 - Next.js on `http://localhost:3000`
 - Convex on configured URL
 
 ### 2. Create a Feature
 
 **Frontend (React Component)**
+
 ```typescript
 // components/courses/CourseCard.tsx
 'use client';
@@ -157,33 +167,35 @@ export function CourseCard({ title, description }: CourseCardProps) {
 ```
 
 **Backend (Convex)**
+
 ```typescript
 // convex/courses.ts
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
 
 export const list = query({
-  handler: async (ctx) => {
-    return await ctx.db.query('courses').collect();
-  },
+	handler: async ctx => {
+		return await ctx.db.query('courses').collect();
+	},
 });
 
 export const create = mutation({
-  args: {
-    title: v.string(),
-    description: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Check auth
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
-    
-    return await ctx.db.insert('courses', args);
-  },
+	args: {
+		title: v.string(),
+		description: v.string(),
+	},
+	handler: async (ctx, args) => {
+		// Check auth
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
+
+		return await ctx.db.insert('courses', args);
+	},
 });
 ```
 
 **Using in Page**
+
 ```typescript
 // app/courses/page.tsx
 'use client';
@@ -195,9 +207,9 @@ import { CourseCard } from '@/components/courses/CourseCard';
 export default function CoursesPage() {
   const courses = useQuery(api.courses.list);
   const createCourse = useMutation(api.courses.create);
-  
+
   if (courses === undefined) return <div>Loading...</div>;
-  
+
   return (
     <div>
       {courses.map((course) => (
@@ -209,6 +221,7 @@ export default function CoursesPage() {
 ```
 
 ### 3. Write Tests
+
 ```typescript
 // components/courses/CourseCard.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -218,12 +231,12 @@ import { CourseCard } from './CourseCard';
 describe('CourseCard', () => {
   it('renders course information', () => {
     render(
-      <CourseCard 
-        title="Test Course" 
-        description="Test Description" 
+      <CourseCard
+        title="Test Course"
+        description="Test Description"
       />
     );
-    
+
     expect(screen.getByText('Test Course')).toBeInTheDocument();
     expect(screen.getByText('Test Description')).toBeInTheDocument();
   });
@@ -231,11 +244,13 @@ describe('CourseCard', () => {
 ```
 
 ### 4. Verify Code Quality
+
 ```bash
 yarn verify
 ```
 
 ### 5. Commit Changes
+
 ```bash
 git add .
 git commit -m "feat: add course card component"
@@ -244,6 +259,7 @@ git commit -m "feat: add course card component"
 ## Authentication & Authorization
 
 ### Protect Server Components
+
 ```typescript
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
@@ -251,32 +267,34 @@ import { redirect } from 'next/navigation';
 export default async function ProtectedPage() {
   const { userId } = await auth();
   if (!userId) redirect('/sign-in');
-  
+
   return <div>Protected content</div>;
 }
 ```
 
 ### Protect Convex Functions
+
 ```typescript
 export const protectedMutation = mutation({
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
-    
-    // Check role
-    const user = await getUserByClerkId(ctx, identity.subject);
-    if (user?.role !== 'instructor') {
-      throw new Error('Forbidden');
-    }
-    
-    // Proceed
-  },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
+
+		// Check role
+		const user = await getUserByClerkId(ctx, identity.subject);
+		if (user?.role !== 'instructor') {
+			throw new Error('Forbidden');
+		}
+
+		// Proceed
+	},
 });
 ```
 
 ## Environment Variables
 
 ### Required Variables
+
 ```env
 # Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
@@ -298,6 +316,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ## Common Patterns
 
 ### Form with Validation (FormProvider + Controller)
+
 ```typescript
 'use client';
 
@@ -352,6 +371,7 @@ export function CourseForm() {
 ```
 
 ### Data Fetching with Loading State
+
 ```typescript
 'use client';
 
@@ -360,15 +380,15 @@ import { api } from '@/convex/_generated/api';
 
 export function DataComponent() {
   const data = useQuery(api.myQuery);
-  
+
   if (data === undefined) {
     return <LoadingSkeleton />;
   }
-  
+
   if (data.length === 0) {
     return <EmptyState />;
   }
-  
+
   return <DataDisplay data={data} />;
 }
 ```
@@ -378,24 +398,28 @@ export function DataComponent() {
 ### Common Issues
 
 **TypeScript Errors**
+
 ```bash
 yarn typescript
 # Fix errors, don't use @ts-ignore
 ```
 
 **ESLint Warnings**
+
 ```bash
 yarn lint:fix
 # Zero warnings policy
 ```
 
 **Test Failures**
+
 ```bash
 yarn test:ui
 # Debug with UI mode
 ```
 
 **Convex Connection Issues**
+
 ```bash
 # Check .env.local has NEXT_PUBLIC_CONVEX_URL
 # Restart dev server

@@ -3,7 +3,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 
 import { AuthProvider } from '@/lib/auth';
 
-import ConvexClientProvider from './ConvexProvider';
+import { ConvexClientProvider } from './ConvexProvider';
 import { ThemeProvider } from './ThemeProvider';
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
@@ -17,4 +17,4 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 		</ClerkProvider>
 	);
 };
-export default Providers;
+export { Providers };

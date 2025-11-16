@@ -150,9 +150,9 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 											<ul className="space-y-1 pl-6">
 												{section.lessons.map((lesson, lessonIndex) => (
 													<li key={lesson.id} className="flex items-center gap-2">
-														{lesson.type === 'video' && <Video className="h-4 w-4 text-blue-500" />}
-														{lesson.type === 'document' && <FileText className="h-4 w-4 text-green-500" />}
-														{lesson.type === 'quiz' && <ListChecks className="h-4 w-4 text-purple-500" />}
+														{lesson.type === 'video' && <Video className="h-4 w-4 text-primary" />}
+														{lesson.type === 'document' && <FileText className="h-4 w-4 text-primary" />}
+														{lesson.type === 'quiz' && <ListChecks className="h-4 w-4 text-primary" />}
 														<span>
 															{lessonIndex + 1}. {lesson.title}
 														</span>
@@ -200,19 +200,19 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<div className="space-y-2">
 									<h3 className="text-sm font-medium">Content Breakdown</h3>
 									<div className="grid grid-cols-3 gap-2 text-center">
-										<div className="bg-blue-100 dark:bg-blue-900/20 rounded-lg p-2">
-											<p className="text-xs text-blue-800 dark:text-blue-300">Videos</p>
-											<p className="text-lg font-bold text-blue-800 dark:text-blue-300">{lessonTypes.video || 0}</p>
+										<div className="bg-accent rounded-lg p-2">
+											<p className="text-xs text-accent-foreground">Videos</p>
+											<p className="text-lg font-bold text-accent-foreground">{lessonTypes.video || 0}</p>
 										</div>
-										<div className="bg-green-100 dark:bg-green-900/20 rounded-lg p-2">
-											<p className="text-xs text-green-800 dark:text-green-300">Documents</p>
-											<p className="text-lg font-bold text-green-800 dark:text-green-300">
+										<div className="bg-accent rounded-lg p-2">
+											<p className="text-xs text-accent-foreground">Documents</p>
+											<p className="text-lg font-bold text-accent-foreground">
 												{lessonTypes.document || 0}
 											</p>
 										</div>
-										<div className="bg-purple-100 dark:bg-purple-900/20 rounded-lg p-2">
-											<p className="text-xs text-purple-800 dark:text-purple-300">Quizzes</p>
-											<p className="text-lg font-bold text-purple-800 dark:text-purple-300">{lessonTypes.quiz || 0}</p>
+										<div className="bg-accent rounded-lg p-2">
+											<p className="text-xs text-accent-foreground">Quizzes</p>
+											<p className="text-lg font-bold text-accent-foreground">{lessonTypes.quiz || 0}</p>
 										</div>
 									</div>
 								</div>
@@ -229,14 +229,14 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										{isBasicInfoComplete() ? (
-											<Check className="h-5 w-5 text-green-500" />
+											<Check className="h-5 w-5 text-primary" />
 										) : (
-											<AlertCircle className="h-5 w-5 text-amber-500" />
+											<AlertCircle className="h-5 w-5 text-muted-foreground" />
 										)}
 										<span>Basic Information</span>
 									</div>
 									{!isBasicInfoComplete() && (
-										<Badge variant="outline" className="text-amber-500">
+										<Badge variant="outline" className="text-muted-foreground">
 											Incomplete
 										</Badge>
 									)}
@@ -245,14 +245,14 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										{isStructureComplete() ? (
-											<Check className="h-5 w-5 text-green-500" />
+											<Check className="h-5 w-5 text-primary" />
 										) : (
-											<AlertCircle className="h-5 w-5 text-amber-500" />
+											<AlertCircle className="h-5 w-5 text-muted-foreground" />
 										)}
 										<span>Course Structure</span>
 									</div>
 									{!isStructureComplete() && (
-										<Badge variant="outline" className="text-amber-500">
+										<Badge variant="outline" className="text-muted-foreground">
 											Incomplete
 										</Badge>
 									)}
@@ -261,14 +261,14 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										{isContentComplete() ? (
-											<Check className="h-5 w-5 text-green-500" />
+											<Check className="h-5 w-5 text-primary" />
 										) : (
-											<AlertCircle className="h-5 w-5 text-amber-500" />
+											<AlertCircle className="h-5 w-5 text-muted-foreground" />
 										)}
 										<span>Course Content</span>
 									</div>
 									{!isContentComplete() && (
-										<Badge variant="outline" className="text-amber-500">
+										<Badge variant="outline" className="text-muted-foreground">
 											Incomplete
 										</Badge>
 									)}
@@ -277,14 +277,14 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-2">
 										{isPricingComplete() ? (
-											<Check className="h-5 w-5 text-green-500" />
+											<Check className="h-5 w-5 text-primary" />
 										) : (
-											<AlertCircle className="h-5 w-5 text-amber-500" />
+											<AlertCircle className="h-5 w-5 text-muted-foreground" />
 										)}
 										<span>Pricing</span>
 									</div>
 									{!isPricingComplete() && (
-										<Badge variant="outline" className="text-amber-500">
+										<Badge variant="outline" className="text-muted-foreground">
 											Incomplete
 										</Badge>
 									)}
@@ -302,27 +302,27 @@ export function ReviewStep({ courseData }: ReviewStepProps) {
 								<p className="text-sm text-muted-foreground">Before publishing your course, make sure you have:</p>
 								<ul className="space-y-2 text-sm">
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Provided a clear and descriptive course title</span>
 									</li>
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Written a comprehensive course description</span>
 									</li>
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Uploaded a high-quality course thumbnail</span>
 									</li>
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Organized your course into logical sections</span>
 									</li>
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Added content to your lessons</span>
 									</li>
 									<li className="flex items-start gap-2">
-										<Check className="h-4 w-4 text-green-500 mt-0.5" />
+										<Check className="h-4 w-4 text-primary mt-0.5" />
 										<span>Set an appropriate price for your course</span>
 									</li>
 								</ul>

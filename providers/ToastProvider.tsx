@@ -34,4 +34,4 @@ const ToastProvider = () => {
 	);
 };
 
-export default ToastProvider;
+export { ToastProvider };
