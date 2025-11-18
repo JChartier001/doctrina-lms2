@@ -66,6 +66,7 @@ If a skill for your task exists, you must use it or you will fail at your task.
 If a skill has a checklist, YOU MUST create TodoWrite todos for EACH item.
 
 **Don't:**
+
 - Work through checklist mentally
 - Skip creating todos "to save time"
 - Batch multiple items into one todo
@@ -79,6 +80,7 @@ Before using a skill, announce that you are using it.
 "I'm using [Skill Name] to [what you're doing]."
 
 **Examples:**
+
 - "I'm using the brainstorming skill to refine your idea into a design."
 - "I'm using the test-driven-development skill to implement this feature."
 - "I'm using the React skill to ensure proper hooks usage and component patterns."
@@ -96,6 +98,7 @@ The skill itself tells you which type it is.
 ## How Factory.ai Loads Skills
 
 Factory.ai automatically detects which skills apply based on:
+
 - **Code context**: Files you're reading/editing trigger relevant tech skills
 - **File types**: `.tsx` → React skill, `schema.prisma` → Prisma skill
 - **Imports**: `import { useQuery }` → Tanstack Query skill
@@ -118,11 +121,13 @@ Your human partner's specific instructions describe WHAT to do, not HOW.
 ### `/droidz-build` - AI-Powered Spec Generation
 
 **Use when:**
+
 - Vague requirements → need comprehensive spec
 - User says "add authentication" without details
 - Building complex features that need scoping
 
 **Process:**
+
 1. Asks clarifying questions (OAuth vs email/password? JWT vs sessions?)
 2. Generates production-ready spec in `.droidz/specs/`
 3. Covers: acceptance criteria, edge cases, testing, security
@@ -130,11 +135,13 @@ Your human partner's specific instructions describe WHAT to do, not HOW.
 ### `/auto-parallel` - Parallel Execution
 
 **Use when:**
+
 - Multiple independent tasks (3-5 tasks)
 - Each task can run in parallel
 - Want 3-5x faster execution
 
 **How it works:**
+
 - Spawns specialist droids: `droidz-codegen`, `droidz-test`, `droidz-refactor`
 - Each works independently on assigned task
 - Coordinator synthesizes results
@@ -142,6 +149,7 @@ Your human partner's specific instructions describe WHAT to do, not HOW.
 ### Workflow Skills
 
 Available in `.factory/skills/`:
+
 - `brainstorming.md` - Ideas → designs before coding
 - `test-driven-development.md` - RED-GREEN-REFACTOR workflow
 - `systematic-debugging.md` - Root cause analysis
@@ -152,6 +160,7 @@ Available in `.factory/skills/`:
 ## Summary
 
 **Starting any task:**
+
 1. If relevant skill exists in `.factory/skills/` → Read the skill
 2. Announce you're using it
 3. Follow what it says

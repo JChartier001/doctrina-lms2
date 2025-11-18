@@ -34,7 +34,7 @@ While v0.1.0 fixed the Task tool calls (removed invalid `model` parameter), ther
 ❌ WRONG (all droids had this):
 ---
 name: droidz-codegen
-model: sonnet  # ← Invalid shorthand identifier
+model: sonnet # ← Invalid shorthand identifier
 tools: [...]
 ---
 ```
@@ -45,7 +45,7 @@ tools: [...]
 ✅ CORRECT (what they needed):
 ---
 name: droidz-codegen
-model: claude-sonnet-4-5-20250929  # ← Full model identifier
+model: claude-sonnet-4-5-20250929 # ← Full model identifier
 tools: [...]
 ---
 ```
@@ -53,6 +53,7 @@ tools: [...]
 ### Why It Failed Silently
 
 When Factory.ai's Task tool tried to spawn a droid with `model: sonnet`:
+
 1. Task tool spawned the droid successfully
 2. Droid tried to use model identifier `"sonnet"`
 3. Factory.ai API rejected the invalid model
@@ -74,16 +75,16 @@ Updated all 7 droids from shorthand to fully qualified model identifiers:
 
 ### Files Fixed
 
-| File | Before | After |
-|------|--------|-------|
-| droidz-codegen.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-test.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-integration.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-refactor.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-infra.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-generalist.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-orchestrator.md | `model: sonnet` | `model: claude-sonnet-4-5-20250929` |
-| droidz-parallel.md | Already correct ✅ | No change needed |
+| File                   | Before             | After                               |
+| ---------------------- | ------------------ | ----------------------------------- |
+| droidz-codegen.md      | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-test.md         | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-integration.md  | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-refactor.md     | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-infra.md        | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-generalist.md   | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-orchestrator.md | `model: sonnet`    | `model: claude-sonnet-4-5-20250929` |
+| droidz-parallel.md     | Already correct ✅ | No change needed                    |
 
 ### Verification
 
@@ -111,11 +112,13 @@ droid
 ```
 
 Then test:
+
 ```
 /auto-parallel "implement proxy server with Axum, Claude API, and OpenAI endpoint"
 ```
 
 **Expected output (SUCCESS):**
+
 ```
 ○ Spawning 3 specialist agents in parallel NOW
 ○ PROXY-001: Add dependencies (droidz-infra)
@@ -134,12 +137,12 @@ TASK  (droidz-codegen: "Update Tauri server state")
 
 ## Impact
 
-| Metric | v0.1.0 | v0.1.1 |
-|--------|--------|--------|
-| Task tool parameters | ✅ Fixed | ✅ Fixed |
+| Metric                  | v0.1.0               | v0.1.1              |
+| ----------------------- | -------------------- | ------------------- |
+| Task tool parameters    | ✅ Fixed             | ✅ Fixed            |
 | Droid model identifiers | ❌ Invalid shorthand | ✅ Full identifiers |
-| Agent spawn success | 0% (invalid model) | 100% (expected) |
-| Parallel execution | ❌ Broken | ✅ Working |
+| Agent spawn success     | 0% (invalid model)   | 100% (expected)     |
+| Parallel execution      | ❌ Broken            | ✅ Working          |
 
 ## Lessons Learned
 

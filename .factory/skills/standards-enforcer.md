@@ -10,6 +10,7 @@ You are the Standards Enforcer. Your mission is to ensure all code follows proje
 ## When to Activate
 
 Auto-activate when:
+
 - **Code files created** (new components, utils, etc.)
 - **Code files modified** (via Edit, Create, ApplyPatch)
 - **Pull request review** (before commit)
@@ -35,24 +36,20 @@ Based on file type and imports, load relevant standards:
 ```typescript
 // For .tsx files with React imports
 const standards = [
-  '.factory/standards/react.md',
-  '.factory/standards/typescript.md',
-  '.factory/standards/security.md',
-  '.factory/standards/testing.md'
+	'.factory/standards/react.md',
+	'.factory/standards/typescript.md',
+	'.factory/standards/security.md',
+	'.factory/standards/testing.md',
 ];
 
 // For .py files
-const standards = [
-  '.factory/standards/python.md',
-  '.factory/standards/security.md',
-  '.factory/standards/testing.md'
-];
+const standards = ['.factory/standards/python.md', '.factory/standards/security.md', '.factory/standards/testing.md'];
 
 // For API routes
 const standards = [
-  ...baseStandards,
-  '.factory/standards/api.md',
-  '.factory/standards/security.md' // Extra emphasis on security
+	...baseStandards,
+	'.factory/standards/api.md',
+	'.factory/standards/security.md', // Extra emphasis on security
 ];
 ```
 
@@ -61,16 +58,16 @@ const standards = [
 ```json
 // .factory/memory/org/decisions.json
 {
-  "architecture": {
-    "stateManagement": "Zustand for client state",
-    "apiClient": "Custom useApi hook with React Query",
-    "errorHandling": "Result<T, E> pattern"
-  },
-  "security": {
-    "authentication": "JWT with refresh tokens",
-    "authorization": "Role-based access control (RBAC)",
-    "inputValidation": "Zod schemas for all API inputs"
-  }
+	"architecture": {
+		"stateManagement": "Zustand for client state",
+		"apiClient": "Custom useApi hook with React Query",
+		"errorHandling": "Result<T, E> pattern"
+	},
+	"security": {
+		"authentication": "JWT with refresh tokens",
+		"authorization": "Role-based access control (RBAC)",
+		"inputValidation": "Zod schemas for all API inputs"
+	}
 }
 ```
 
@@ -102,19 +99,20 @@ import { useState } from 'react';
 ⚠️ **Requires review:** Architectural decisions
 
 **React Example:**
+
 ```typescript
 // ❌ Violation: Logic in component (should be custom hook)
 function UserProfile({ userId }: Props) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     fetch(`/api/users/${userId}`)
       .then(r => r.json())
       .then(setUser)
       .finally(() => setLoading(false));
   }, [userId]);
-  
+
   if (loading) return <div>Loading...</div>;
   return <div>{user?.name}</div>;
 }
@@ -123,26 +121,27 @@ function UserProfile({ userId }: Props) {
 function useUser(userId: string) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     fetch(`/api/users/${userId}`)
       .then(r => r.json())
       .then(setUser)
       .finally(() => setLoading(false));
   }, [userId]);
-  
+
   return { user, loading };
 }
 
 function UserProfile({ userId }: Props) {
   const { user, loading } = useUser(userId);
-  
+
   if (loading) return <div>Loading...</div>;
   return <div>{user?.name}</div>;
 }
 ```
 
 **Report:**
+
 ```
 ⚠️ MEDIUM: Component contains business logic
 Location: src/components/UserProfile.tsx:5-15
@@ -161,26 +160,25 @@ Apply fix? (y/n)
 🚨 **Must fix before commit:** Security vulnerabilities
 
 **Example 1: SQL Injection**
+
 ```typescript
 // 🚨 CRITICAL: SQL Injection vulnerability
 async function getUser(userId: string) {
-  const result = await db.query(`
+	const result = await db.query(`
     SELECT * FROM users WHERE id = '${userId}'
   `);
-  return result.rows[0];
+	return result.rows[0];
 }
 
 // ✅ Fix: Parameterized query
 async function getUser(userId: string) {
-  const result = await db.query(
-    'SELECT * FROM users WHERE id = $1',
-    [userId]
-  );
-  return result.rows[0];
+	const result = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
+	return result.rows[0];
 }
 ```
 
 **Report:**
+
 ```
 🚨 CRITICAL: SQL Injection Vulnerability Detected
 Location: src/api/users.ts:23
@@ -200,6 +198,7 @@ Apply fix now? (y/n)
 ```
 
 **Example 2: Hardcoded Secrets**
+
 ```typescript
 // 🚨 CRITICAL: Hardcoded API key
 const apiKey = 'sk_live_abc123def456';
@@ -207,11 +206,12 @@ const apiKey = 'sk_live_abc123def456';
 // ✅ Fix: Environment variable
 const apiKey = process.env.STRIPE_API_KEY;
 if (!apiKey) {
-  throw new Error('STRIPE_API_KEY environment variable not set');
+	throw new Error('STRIPE_API_KEY environment variable not set');
 }
 ```
 
 **Report:**
+
 ```
 🚨 CRITICAL: Hardcoded Secret Detected
 Location: src/lib/stripe.ts:5
@@ -237,16 +237,17 @@ Apply fix? (y/n)
 ```typescript
 // ❌ Violation: Using `any`
 function processData(data: any) {
-  return data.map((x: any) => x.value);
+	return data.map((x: any) => x.value);
 }
 
 // ✅ Fix: Proper types
 function processData<T extends { value: number }>(data: T[]): number[] {
-  return data.map(x => x.value);
+	return data.map(x => x.value);
 }
 ```
 
 **Report:**
+
 ```
 ⚠️ HIGH: Usage of `any` type
 Location: src/utils/data.ts:12
@@ -268,10 +269,10 @@ Apply fix? (y/n)
 ```typescript
 // ⚠️ Violation: Missing memoization
 function UserList({ users }: Props) {
-  const sortedUsers = users.sort((a, b) => 
+  const sortedUsers = users.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
-  
+
   return (
     <div>
       {sortedUsers.map(user => (
@@ -289,7 +290,7 @@ function UserList({ users }: Props) {
     () => users.sort((a, b) => a.name.localeCompare(b.name)),
     [users]
   );
-  
+
   return (
     <div>
       {sortedUsers.map(user => (
@@ -301,6 +302,7 @@ function UserList({ users }: Props) {
 ```
 
 **Report:**
+
 ```
 ℹ️ MEDIUM: Missing performance optimization
 Location: src/components/UserList.tsx:8
@@ -338,7 +340,7 @@ Issues Found: 3
 2. Missing error handling on fetch (Line 23)
    Standard: src/components/CLAUDE.md - Error Handling Required
    Fix: Wrap in try-catch, show user-friendly error
-   
+
 ℹ️ MEDIUM (1):
 3. Component not memoized (Line 45)
    Standard: .factory/standards/react.md - Performance
@@ -391,18 +393,18 @@ Teams can customize enforcement levels in `.factory/config.json`:
 
 ```json
 {
-  "standards": {
-    "enforcement": {
-      "security": "block",      // Block commits
-      "typescript": "warn",      // Warn but allow
-      "performance": "suggest",  // Suggest only
-      "style": "auto-fix"        // Auto-fix silently
-    },
-    "autoFix": {
-      "enabled": true,
-      "requireApproval": false   // Auto-fix without asking
-    }
-  }
+	"standards": {
+		"enforcement": {
+			"security": "block", // Block commits
+			"typescript": "warn", // Warn but allow
+			"performance": "suggest", // Suggest only
+			"style": "auto-fix" // Auto-fix silently
+		},
+		"autoFix": {
+			"enabled": true,
+			"requireApproval": false // Auto-fix without asking
+		}
+	}
 }
 ```
 

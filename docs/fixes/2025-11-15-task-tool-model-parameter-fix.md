@@ -37,17 +37,18 @@ TASK  (droidz-generalist: "OAUTH-004: Create documentation")
    - Frontmatter valid: All droids have correct YAML frontmatter ✅
 
 3. **Analyzed Task Tool Definition**:
+
    ```typescript
    Task({
-     subagent_type: "The type of specialized agent to use for this task",
-     description: "A short (3-5 word) description of the task",
-     prompt: "The task for the agent to perform"
-   })
+   	subagent_type: 'The type of specialized agent to use for this task',
+   	description: 'A short (3-5 word) description of the task',
+   	prompt: 'The task for the agent to perform',
+   });
    ```
 
 4. **Found the Bug**:
    The orchestrator was passing an **invalid `model` parameter**:
-   
+
    ```typescript
    ❌ WRONG:
    Task({
@@ -66,7 +67,7 @@ TASK  (droidz-generalist: "OAUTH-004: Create documentation")
   ```yaml
   ---
   name: droidz-codegen
-  model: sonnet  # ← Model configured HERE
+  model: sonnet # ← Model configured HERE
   tools: [...]
   ---
   ```
@@ -76,11 +77,13 @@ TASK  (droidz-generalist: "OAUTH-004: Create documentation")
 **File Modified:** `.factory/droids/droidz-orchestrator.md`
 
 **Changes Made:**
+
 - Removed `model: "sonnet"` parameter from Task tool example 1 (Backend API)
 - Removed `model: "sonnet"` parameter from Task tool example 2 (Frontend UI)
 - Removed `model: "sonnet"` parameter from Task tool example 3 (Tests)
 
 **Diff:**
+
 ```diff
  Task({
    subagent_type: "droidz-codegen",
@@ -92,11 +95,12 @@ TASK  (droidz-generalist: "OAUTH-004: Create documentation")
 ## Verification
 
 ✅ **Correct Task Tool Usage:**
+
 ```typescript
 Task({
-  subagent_type: "droidz-codegen",
-  description: "Build authentication API",
-  prompt: `# Task: Build Authentication API
+	subagent_type: 'droidz-codegen',
+	description: 'Build authentication API',
+	prompt: `# Task: Build Authentication API
   
 ## Context
 User requested: "[original user request]"
@@ -104,17 +108,18 @@ User requested: "[original user request]"
 ## Your Specific Mission
 Build a complete JWT-based authentication API with:
 ...
-`
+`,
 });
 ```
 
 ✅ **Model Configuration** (in droid frontmatter):
+
 ```yaml
 ---
 name: droidz-codegen
 description: PROACTIVELY USED for implementing features and bugfixes
 model: sonnet
-tools: ["Read", "LS", "Execute", "Edit", "Create", "Grep", "Glob", "TodoWrite", "WebSearch", "FetchUrl"]
+tools: ['Read', 'LS', 'Execute', 'Edit', 'Create', 'Grep', 'Glob', 'TodoWrite', 'WebSearch', 'FetchUrl']
 ---
 ```
 
@@ -123,11 +128,13 @@ tools: ["Read", "LS", "Execute", "Edit", "Create", "Grep", "Glob", "TodoWrite", 
 To test the fix:
 
 1. **Start Factory.ai droid:**
+
    ```bash
    droid
    ```
 
 2. **Trigger orchestration with a multi-component task:**
+
    ```
    Build a simple authentication system with login API, login form, and tests
    ```
@@ -139,12 +146,13 @@ To test the fix:
    - All agents execute without "Task failed" errors ✓
 
 4. **Monitor output:**
+
    ```
    ○ Spawning 3 specialist agents in parallel NOW
    ○ AUTH-001: Build login API (droidz-codegen)
    ○ AUTH-002: Build login form (droidz-codegen)
    ○ AUTH-003: Write tests (droidz-test)
-   
+
    TASK  (droidz-codegen: "AUTH-001: Build login API")
    ✅ Task completed  # ← Should show completion, not failure
    ```

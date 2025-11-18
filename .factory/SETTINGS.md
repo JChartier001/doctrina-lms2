@@ -12,77 +12,77 @@ The `.factory/settings.json` file configures how droids behave in your project.
 
 ```json
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "name": "load-project-skills",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$FACTORY_PROJECT_DIR/.factory/hooks/load-project-skills.sh"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-file-skills.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Create|Edit|Write",
-        "hooks": [
-          {
-            "name": "auto-lint",
-            "type": "command",
-            "command": ".factory/hooks/auto-lint.sh"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-skills.sh"
-          }
-        ]
-      }
-    ]
-  },
-  "contextManagement": {
-    "autoOptimize": true,
-    "optimizationThreshold": 0.70,
-    "aggressiveThreshold": 0.90,
-    "createCheckpoints": true
-  },
-  "standards": {
-    "enforcement": {
-      "security": "block",
-      "typescript": "warn",
-      "performance": "suggest",
-      "style": "auto-fix"
-    },
-    "autoFix": {
-      "enabled": true,
-      "requireApproval": false
-    }
-  },
-  "memory": {
-    "autoSave": true,
-    "saveDecisions": true,
-    "savePatterns": true,
-    "savePreferences": true
-  },
-  "enableCustomDroids": true
+	"hooks": {
+		"SessionStart": [
+			{
+				"name": "load-project-skills",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/load-project-skills.sh"
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit|MultiEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-file-skills.sh"
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Create|Edit|Write",
+				"hooks": [
+					{
+						"name": "auto-lint",
+						"type": "command",
+						"command": ".factory/hooks/auto-lint.sh"
+					}
+				]
+			}
+		],
+		"UserPromptSubmit": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-skills.sh"
+					}
+				]
+			}
+		]
+	},
+	"contextManagement": {
+		"autoOptimize": true,
+		"optimizationThreshold": 0.7,
+		"aggressiveThreshold": 0.9,
+		"createCheckpoints": true
+	},
+	"standards": {
+		"enforcement": {
+			"security": "block",
+			"typescript": "warn",
+			"performance": "suggest",
+			"style": "auto-fix"
+		},
+		"autoFix": {
+			"enabled": true,
+			"requireApproval": false
+		}
+	},
+	"memory": {
+		"autoSave": true,
+		"saveDecisions": true,
+		"savePatterns": true,
+		"savePreferences": true
+	},
+	"enableCustomDroids": true
 }
 ```
 
@@ -93,6 +93,7 @@ The `.factory/settings.json` file configures how droids behave in your project.
 Configure lifecycle hooks to inject custom behavior. See [HOOKS.md](./HOOKS.md) for details.
 
 **Available hook types:**
+
 - `SessionStart` - When droid starts
 - `PreToolUse` - Before tool execution
 - `PostToolUse` - After tool execution
@@ -107,16 +108,17 @@ Control how droid manages context window:
 
 ```json
 {
-  "contextManagement": {
-    "autoOptimize": true,           // Auto-compress when needed
-    "optimizationThreshold": 0.70,  // Trigger at 70% capacity
-    "aggressiveThreshold": 0.90,    // Aggressive compression at 90%
-    "createCheckpoints": true       // Save context snapshots
-  }
+	"contextManagement": {
+		"autoOptimize": true, // Auto-compress when needed
+		"optimizationThreshold": 0.7, // Trigger at 70% capacity
+		"aggressiveThreshold": 0.9, // Aggressive compression at 90%
+		"createCheckpoints": true // Save context snapshots
+	}
 }
 ```
 
 **Options:**
+
 - `autoOptimize` (boolean): Enable automatic context compression
 - `optimizationThreshold` (0-1): When to start optimization
 - `aggressiveThreshold` (0-1): When to aggressively compress
@@ -128,22 +130,23 @@ Configure how coding standards are enforced:
 
 ```json
 {
-  "standards": {
-    "enforcement": {
-      "security": "block",      // Block unsafe operations
-      "typescript": "warn",     // Warn about type issues
-      "performance": "suggest", // Suggest optimizations
-      "style": "auto-fix"       // Automatically fix style
-    },
-    "autoFix": {
-      "enabled": true,          // Enable auto-fixing
-      "requireApproval": false  // Fix without asking
-    }
-  }
+	"standards": {
+		"enforcement": {
+			"security": "block", // Block unsafe operations
+			"typescript": "warn", // Warn about type issues
+			"performance": "suggest", // Suggest optimizations
+			"style": "auto-fix" // Automatically fix style
+		},
+		"autoFix": {
+			"enabled": true, // Enable auto-fixing
+			"requireApproval": false // Fix without asking
+		}
+	}
 }
 ```
 
 **Enforcement levels:**
+
 - `block` - Prevent operation
 - `warn` - Allow with warning
 - `suggest` - Provide suggestions
@@ -156,12 +159,12 @@ Configure persistent memory:
 
 ```json
 {
-  "memory": {
-    "autoSave": true,         // Save context automatically
-    "saveDecisions": true,    // Remember decisions
-    "savePatterns": true,     // Remember code patterns
-    "savePreferences": true   // Remember preferences
-  }
+	"memory": {
+		"autoSave": true, // Save context automatically
+		"saveDecisions": true, // Remember decisions
+		"savePatterns": true, // Remember code patterns
+		"savePreferences": true // Remember preferences
+	}
 }
 ```
 
@@ -171,7 +174,7 @@ Enable custom droid (subagent) support:
 
 ```json
 {
-  "enableCustomDroids": true
+	"enableCustomDroids": true
 }
 ```
 
@@ -185,8 +188,8 @@ Configure default model and reasoning:
 
 ```json
 {
-  "model": "sonnet",
-  "reasoningEffort": "low"
+	"model": "sonnet",
+	"reasoningEffort": "low"
 }
 ```
 
@@ -199,7 +202,7 @@ Configure how changes are displayed:
 
 ```json
 {
-  "diffMode": "github"
+	"diffMode": "github"
 }
 ```
 
@@ -211,7 +214,7 @@ Sync sessions across devices:
 
 ```json
 {
-  "cloudSessionSync": true
+	"cloudSessionSync": true
 }
 ```
 
@@ -221,7 +224,7 @@ Play sound on completion:
 
 ```json
 {
-  "completionSound": "bell"
+	"completionSound": "bell"
 }
 ```
 
@@ -233,9 +236,9 @@ Enable verbose logging:
 
 ```json
 {
-  "debugHooks": true,
-  "debugTools": true,
-  "verboseLogging": true
+	"debugHooks": true,
+	"debugTools": true,
+	"verboseLogging": true
 }
 ```
 
@@ -271,19 +274,19 @@ Don't need all features? Start minimal:
 
 ```json
 {
-  "enableCustomDroids": true,
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".factory/hooks/load-project-skills.sh"
-          }
-        ]
-      }
-    ]
-  }
+	"enableCustomDroids": true,
+	"hooks": {
+		"SessionStart": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".factory/hooks/load-project-skills.sh"
+					}
+				]
+			}
+		]
+	}
 }
 ```
 
@@ -293,15 +296,15 @@ Don't need all features? Start minimal:
 
 ```json
 {
-  "enableCustomDroids": true,
-  "contextManagement": {
-    "autoOptimize": true,
-    "optimizationThreshold": 0.80
-  },
-  "memory": {
-    "autoSave": true,
-    "saveDecisions": true
-  }
+	"enableCustomDroids": true,
+	"contextManagement": {
+		"autoOptimize": true,
+		"optimizationThreshold": 0.8
+	},
+	"memory": {
+		"autoSave": true,
+		"saveDecisions": true
+	}
 }
 ```
 
@@ -309,42 +312,42 @@ Don't need all features? Start minimal:
 
 ```json
 {
-  "enableCustomDroids": true,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".factory/hooks/validate-standards.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".factory/hooks/auto-lint.sh"
-          }
-        ]
-      }
-    ]
-  },
-  "standards": {
-    "enforcement": {
-      "security": "block",
-      "style": "auto-fix"
-    }
-  },
-  "memory": {
-    "autoSave": true,
-    "saveDecisions": true,
-    "savePatterns": true
-  }
+	"enableCustomDroids": true,
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".factory/hooks/validate-standards.sh"
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Write|Edit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": ".factory/hooks/auto-lint.sh"
+					}
+				]
+			}
+		]
+	},
+	"standards": {
+		"enforcement": {
+			"security": "block",
+			"style": "auto-fix"
+		}
+	},
+	"memory": {
+		"autoSave": true,
+		"saveDecisions": true,
+		"savePatterns": true
+	}
 }
 ```
 
@@ -352,17 +355,17 @@ Don't need all features? Start minimal:
 
 ```json
 {
-  "enableCustomDroids": true,
-  "contextManagement": {
-    "autoOptimize": false
-  },
-  "standards": {
-    "enforcement": {
-      "security": "block",
-      "typescript": "block",
-      "style": "block"
-    }
-  }
+	"enableCustomDroids": true,
+	"contextManagement": {
+		"autoOptimize": false
+	},
+	"standards": {
+		"enforcement": {
+			"security": "block",
+			"typescript": "block",
+			"style": "block"
+		}
+	}
 }
 ```
 
@@ -381,16 +384,19 @@ python3 -m json.tool .factory/settings.json
 ## Troubleshooting
 
 **Hooks not running?**
+
 - Check `debugHooks: true` in settings
 - Verify hook scripts are executable: `chmod +x .factory/hooks/*.sh`
 - Check logs: `~/.factory/logs/hooks.log`
 
 **Settings not applied?**
+
 - Restart droid session
 - Check for JSON syntax errors
 - Verify file location (`.factory/settings.json`)
 
 **Performance issues?**
+
 - Lower `optimizationThreshold` to 0.60
 - Disable heavy hooks
 - Reduce checkpoint frequency

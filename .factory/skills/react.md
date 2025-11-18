@@ -15,6 +15,7 @@
 ### useState - State Management
 
 #### ✅ Good: Basic useState Patterns
+
 ```typescript
 import { useState } from 'react'
 
@@ -80,9 +81,9 @@ function UserProfile() {
   }
 
   return (
-    <input 
-      value={user.name} 
-      onChange={e => updateName(e.target.value)} 
+    <input
+      value={user.name}
+      onChange={e => updateName(e.target.value)}
     />
   )
 }
@@ -100,47 +101,49 @@ function ExpensiveComponent() {
 ```
 
 #### ❌ Bad: useState Anti-patterns
+
 ```typescript
 // ❌ WRONG - Mutating state directly
 function Counter() {
-  const [count, setCount] = useState(0)
+	const [count, setCount] = useState(0);
 
-  const increment = () => {
-    count++  // ❌ Direct mutation doesn't trigger re-render
-    setCount(count)
-  }
+	const increment = () => {
+		count++; // ❌ Direct mutation doesn't trigger re-render
+		setCount(count);
+	};
 }
 
 // ❌ WRONG - Not using functional updates
 function Counter() {
-  const [count, setCount] = useState(0)
+	const [count, setCount] = useState(0);
 
-  const incrementByFive = () => {
-    setCount(count + 1)  // ❌ All updates use same count value
-    setCount(count + 1)  // Only increments by 1, not 5
-    setCount(count + 1)
-  }
+	const incrementByFive = () => {
+		setCount(count + 1); // ❌ All updates use same count value
+		setCount(count + 1); // Only increments by 1, not 5
+		setCount(count + 1);
+	};
 }
 
 // ❌ WRONG - Mutating object state
 function UserProfile() {
-  const [user, setUser] = useState({ name: '', age: 0 })
+	const [user, setUser] = useState({ name: '', age: 0 });
 
-  const updateName = (name: string) => {
-    user.name = name  // ❌ Direct mutation
-    setUser(user)     // ❌ Same object reference, no re-render
-  }
+	const updateName = (name: string) => {
+		user.name = name; // ❌ Direct mutation
+		setUser(user); // ❌ Same object reference, no re-render
+	};
 }
 
 // ❌ WRONG - Expensive computation on every render
 function ExpensiveComponent() {
-  const [data, setData] = useState(computeExpensiveValue())  // ❌ Runs on every render
+	const [data, setData] = useState(computeExpensiveValue()); // ❌ Runs on every render
 }
 ```
 
 ### useEffect - Side Effects & External System Synchronization
 
 #### ✅ Good: useEffect Patterns
+
 ```typescript
 import { useEffect, useState } from 'react'
 
@@ -245,71 +248,73 @@ function Component({ shouldSubscribe, channel }: Props) {
 ```
 
 #### ❌ Bad: useEffect Anti-patterns
+
 ```typescript
 // ❌ WRONG - Missing dependencies
 function ChatRoom({ roomId }: { roomId: string }) {
-  useEffect(() => {
-    const connection = createConnection(roomId)
-    connection.connect()
-    return () => connection.disconnect()
-  }, [])  // ❌ Missing roomId dependency
+	useEffect(() => {
+		const connection = createConnection(roomId);
+		connection.connect();
+		return () => connection.disconnect();
+	}, []); // ❌ Missing roomId dependency
 }
 
 // ❌ WRONG - No cleanup function
 function ChatRoom({ roomId }: { roomId: string }) {
-  useEffect(() => {
-    const connection = createConnection(roomId)
-    connection.connect()
-    // ❌ Missing cleanup - connection leak
-  }, [roomId])
+	useEffect(() => {
+		const connection = createConnection(roomId);
+		connection.connect();
+		// ❌ Missing cleanup - connection leak
+	}, [roomId]);
 }
 
 // ❌ WRONG - Infinite loop
 function BadComponent() {
-  const [count, setCount] = useState(0)
+	const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    setCount(count + 1)  // ❌ Updates count, triggers re-render, runs effect again
-  })  // ❌ No dependency array - runs after every render
+	useEffect(() => {
+		setCount(count + 1); // ❌ Updates count, triggers re-render, runs effect again
+	}); // ❌ No dependency array - runs after every render
 }
 
 // ❌ WRONG - Object/function dependencies causing unnecessary re-runs
 function BadComponent() {
-  const options = { filter: 'active' }  // ❌ New object every render
+	const options = { filter: 'active' }; // ❌ New object every render
 
-  useEffect(() => {
-    fetchData(options)
-  }, [options])  // ❌ Effect runs every render
+	useEffect(() => {
+		fetchData(options);
+	}, [options]); // ❌ Effect runs every render
 }
 
 // ❌ WRONG - Not handling race conditions
 function UserProfile({ userId }: { userId: string }) {
-  const [user, setUser] = useState<User | null>(null)
+	const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    fetch(`/api/users/${userId}`)
-      .then(r => r.json())
-      .then(setUser)  // ❌ No race condition handling
-    // If userId changes quickly, older responses may overwrite newer ones
-  }, [userId])
+	useEffect(() => {
+		fetch(`/api/users/${userId}`)
+			.then(r => r.json())
+			.then(setUser); // ❌ No race condition handling
+		// If userId changes quickly, older responses may overwrite newer ones
+	}, [userId]);
 }
 
 // ❌ WRONG - Using effect for derived state
 function BadComponent({ items }: { items: Item[] }) {
-  const [filteredItems, setFilteredItems] = useState<Item[]>([])
+	const [filteredItems, setFilteredItems] = useState<Item[]>([]);
 
-  useEffect(() => {
-    setFilteredItems(items.filter(i => i.active))  // ❌ Don't use effect for this
-  }, [items])
+	useEffect(() => {
+		setFilteredItems(items.filter(i => i.active)); // ❌ Don't use effect for this
+	}, [items]);
 
-  // ✅ Better: Compute during render
-  // const filteredItems = items.filter(i => i.active)
+	// ✅ Better: Compute during render
+	// const filteredItems = items.filter(i => i.active)
 }
 ```
 
 ### useCallback - Memoizing Functions
 
 #### ✅ Good: useCallback Patterns
+
 ```typescript
 import { useCallback, memo } from 'react'
 
@@ -366,6 +371,7 @@ function DataFetcher({ userId }: { userId: string }) {
 ```
 
 #### ❌ Bad: useCallback Anti-patterns
+
 ```typescript
 // ❌ WRONG - Premature optimization
 function SimpleComponent() {
@@ -399,6 +405,7 @@ function BadComponent() {
 ### useMemo - Memoizing Computed Values
 
 #### ✅ Good: useMemo Patterns
+
 ```typescript
 import { useMemo, useState } from 'react'
 
@@ -443,7 +450,7 @@ function Statistics({ data }: { data: number[] }) {
     const mean = sum / data.length
     const variance = data.reduce((v, n) => v + Math.pow(n - mean, 2), 0) / data.length
     const stdDev = Math.sqrt(variance)
-    
+
     return { sum, mean, variance, stdDev }
   }, [data])
 
@@ -462,37 +469,39 @@ function ParentComponent({ data }: Props) {
 ```
 
 #### ❌ Bad: useMemo Anti-patterns
+
 ```typescript
 // ❌ WRONG - Memoizing simple operations
-function BadComponent({ a, b }: { a: number, b: number }) {
-  const sum = useMemo(() => a + b, [a, b])  // ❌ Simple addition doesn't need memoization
-  const doubled = useMemo(() => a * 2, [a])  // ❌ Overhead > benefit
+function BadComponent({ a, b }: { a: number; b: number }) {
+	const sum = useMemo(() => a + b, [a, b]); // ❌ Simple addition doesn't need memoization
+	const doubled = useMemo(() => a * 2, [a]); // ❌ Overhead > benefit
 }
 
 // ❌ WRONG - Missing dependencies
 function BadComponent({ items, filter }: Props) {
-  const filtered = useMemo(() => {
-    return items.filter(i => i.category === filter)
-  }, [items])  // ❌ Missing filter dependency
+	const filtered = useMemo(() => {
+		return items.filter(i => i.category === filter);
+	}, [items]); // ❌ Missing filter dependency
 }
 
 // ❌ WRONG - Over-optimization
 function BadComponent() {
-  const name = useMemo(() => 'John', [])  // ❌ Pointless
-  const age = useMemo(() => 30, [])  // ❌ Overhead for no benefit
+	const name = useMemo(() => 'John', []); // ❌ Pointless
+	const age = useMemo(() => 30, []); // ❌ Overhead for no benefit
 }
 
 // ❌ WRONG - Memoizing everything
 function BadComponent({ data }: Props) {
-  const value1 = useMemo(() => data.field1, [data])  // ❌ Simple property access
-  const value2 = useMemo(() => data.field2, [data])  // ❌ No calculation needed
-  const value3 = useMemo(() => data.field3, [data])  // ❌ Over-optimization
+	const value1 = useMemo(() => data.field1, [data]); // ❌ Simple property access
+	const value2 = useMemo(() => data.field2, [data]); // ❌ No calculation needed
+	const value3 = useMemo(() => data.field3, [data]); // ❌ Over-optimization
 }
 ```
 
 ### useRef - References & Mutable Values
 
 #### ✅ Good: useRef Patterns
+
 ```typescript
 import { useRef, useEffect } from 'react'
 
@@ -595,6 +604,7 @@ function ChatRoom({ onMessage }: { onMessage: (msg: string) => void }) {
 ```
 
 #### ❌ Bad: useRef Anti-patterns
+
 ```typescript
 // ❌ WRONG - Using ref for state that should trigger renders
 function BadCounter() {
@@ -610,7 +620,7 @@ function BadCounter() {
 // ❌ WRONG - Modifying ref during render
 function BadComponent() {
   const renderCountRef = useRef(0)
-  
+
   renderCountRef.current++  // ❌ Don't mutate refs during render
 
   // ✅ Better: Use useEffect
@@ -634,6 +644,7 @@ function BadComponent() {
 ### useContext - Context API
 
 #### ✅ Good: useContext Patterns
+
 ```typescript
 import { createContext, useContext, useState } from 'react'
 
@@ -670,9 +681,9 @@ function useTheme() {
 
 function Button() {
   const { theme, toggleTheme } = useTheme()
-  
+
   return (
-    <button 
+    <button
       style={{ background: theme === 'light' ? '#fff' : '#000' }}
       onClick={toggleTheme}
     >
@@ -758,6 +769,7 @@ function LoginButton() {
 ```
 
 #### ❌ Bad: useContext Anti-patterns
+
 ```typescript
 // ❌ WRONG - Context for frequently changing values
 const AppContext = createContext<{
@@ -790,6 +802,7 @@ const GlobalContext = createContext<{
 ### useReducer - Complex State Logic
 
 #### ✅ Good: useReducer Patterns
+
 ```typescript
 import { useReducer } from 'react'
 
@@ -851,13 +864,13 @@ function RegistrationForm() {
 
   return (
     <form>
-      <input 
-        value={state.name} 
-        onChange={e => handleChange('name', e.target.value)} 
+      <input
+        value={state.name}
+        onChange={e => handleChange('name', e.target.value)}
       />
-      <input 
-        value={state.email} 
-        onChange={e => handleChange('email', e.target.value)} 
+      <input
+        value={state.email}
+        onChange={e => handleChange('email', e.target.value)}
       />
       {state.errors.email && <span>{state.errors.email}</span>}
     </form>
@@ -887,7 +900,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD_ITEM': {
       const existing = state.items.find(i => i.id === action.item.id)
-      
+
       const items = existing
         ? state.items.map(i =>
             i.id === action.item.id
@@ -934,28 +947,27 @@ function ShoppingCart() {
 ```
 
 #### ❌ Bad: useReducer Anti-patterns
+
 ```typescript
 // ❌ WRONG - Using useReducer for simple state
 function BadCounter() {
-  const [count, dispatch] = useReducer(
-    (state: number, action: { type: 'INC' | 'DEC' }) => {
-      return action.type === 'INC' ? state + 1 : state - 1
-    },
-    0
-  )
-  // ✅ Better: const [count, setCount] = useState(0)
+	const [count, dispatch] = useReducer((state: number, action: { type: 'INC' | 'DEC' }) => {
+		return action.type === 'INC' ? state + 1 : state - 1;
+	}, 0);
+	// ✅ Better: const [count, setCount] = useState(0)
 }
 
 // ❌ WRONG - Mutating state directly
 function badReducer(state: State, action: Action): State {
-  state.count++  // ❌ Mutation
-  return state   // ❌ Same reference
+	state.count++; // ❌ Mutation
+	return state; // ❌ Same reference
 }
 ```
 
 ### Custom Hooks - Reusable Logic
 
 #### ✅ Good: Custom Hook Patterns
+
 ```typescript
 // useFetch - Data fetching hook
 function useFetch<T>(url: string) {
@@ -971,7 +983,7 @@ function useFetch<T>(url: string) {
         setLoading(true)
         const response = await fetch(url)
         const json = await response.json()
-        
+
         if (!ignore) {
           setData(json)
           setError(null)
@@ -1003,7 +1015,7 @@ function UserProfile({ userId }: { userId: string }) {
 
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
-  
+
   return <div>{data?.name}</div>
 }
 
@@ -1035,7 +1047,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 // Usage
 function Settings() {
   const [theme, setTheme] = useLocalStorage('theme', 'light')
-  
+
   return (
     <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       Theme: {theme}
@@ -1113,7 +1125,7 @@ function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     const media = window.matchMedia(query)
-    
+
     if (media.matches !== matches) {
       setMatches(media.matches)
     }
@@ -1130,7 +1142,7 @@ function useMediaQuery(query: string): boolean {
 // Usage
 function ResponsiveComponent() {
   const isMobile = useMediaQuery('(max-width: 768px)')
-  
+
   return <div>{isMobile ? 'Mobile View' : 'Desktop View'}</div>
 }
 
@@ -1155,7 +1167,7 @@ function useInterval(callback: () => void, delay: number | null) {
 // Usage
 function Clock() {
   const [time, setTime] = useState(new Date())
-  
+
   useInterval(() => {
     setTime(new Date())
   }, 1000)
@@ -1165,23 +1177,26 @@ function Clock() {
 ```
 
 #### ❌ Bad: Custom Hook Anti-patterns
+
 ```typescript
 // ❌ WRONG - Not starting with 'use' prefix
-function fetchData() {  // ❌ Should be useFetchData
-  const [data, setData] = useState(null)
-  // ... violates Rules of Hooks
+function fetchData() {
+	// ❌ Should be useFetchData
+	const [data, setData] = useState(null);
+	// ... violates Rules of Hooks
 }
 
 // ❌ WRONG - Over-abstracting simple logic
-function useAddition(a: number, b: number) {  // ❌ Unnecessary hook
-  return a + b
+function useAddition(a: number, b: number) {
+	// ❌ Unnecessary hook
+	return a + b;
 }
 
 // ❌ WRONG - Not following hook rules
 function useBadHook(condition: boolean) {
-  if (condition) {
-    const [state, setState] = useState(0)  // ❌ Conditional hook call
-  }
+	if (condition) {
+		const [state, setState] = useState(0); // ❌ Conditional hook call
+	}
 }
 ```
 
@@ -1190,6 +1205,7 @@ function useBadHook(condition: boolean) {
 ### Composition Patterns
 
 #### ✅ Good: Component Composition
+
 ```typescript
 // Children prop pattern
 function Card({ children }: { children: React.ReactNode }) {
@@ -1277,9 +1293,9 @@ interface TabsContextValue {
 
 const TabsContext = createContext<TabsContextValue | null>(null)
 
-function Tabs({ children, defaultTab }: { 
+function Tabs({ children, defaultTab }: {
   children: React.ReactNode
-  defaultTab: string 
+  defaultTab: string
 }) {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
@@ -1310,7 +1326,7 @@ function Tab({ id, children }: { id: string; children: React.ReactNode }) {
 
 function TabPanel({ id, children }: { id: string; children: React.ReactNode }) {
   const context = useContext(TabsContext)!
-  
+
   if (context.activeTab !== id) return null
 
   return <div className="tab-panel">{children}</div>
@@ -1337,6 +1353,7 @@ function App() {
 ```
 
 #### ❌ Bad: Composition Anti-patterns
+
 ```typescript
 // ❌ WRONG - Prop drilling
 function App() {
@@ -1362,6 +1379,7 @@ function Child({ user }: { user: User }) {
 ### Higher-Order Components (HOCs)
 
 #### ✅ Good: HOC Patterns (Legacy)
+
 ```typescript
 // withAuth HOC
 function withAuth<P extends object>(
@@ -1397,26 +1415,28 @@ function withLogging<P extends object>(
 ```
 
 #### ❌ Bad: HOC Anti-patterns
+
 ```typescript
 // ❌ WRONG - Prefer custom hooks over HOCs in modern React
 // HOCs create wrapper hell and naming collisions
 
 // ✅ Better: Custom hook
 function useAuth() {
-  const { user, loading } = useAuthContext()
-  
-  if (loading) return { user: null, loading: true }
-  if (!user) {
-    // Redirect logic
-  }
+	const { user, loading } = useAuthContext();
 
-  return { user, loading: false }
+	if (loading) return { user: null, loading: true };
+	if (!user) {
+		// Redirect logic
+	}
+
+	return { user, loading: false };
 }
 ```
 
 ### Controlled vs Uncontrolled Components
 
 #### ✅ Good: Controlled Components
+
 ```typescript
 // Controlled input
 function ControlledForm() {
@@ -1430,13 +1450,13 @@ function ControlledForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input 
-        value={name} 
-        onChange={e => setName(e.target.value)} 
+      <input
+        value={name}
+        onChange={e => setName(e.target.value)}
       />
-      <input 
-        value={email} 
-        onChange={e => setEmail(e.target.value)} 
+      <input
+        value={email}
+        onChange={e => setEmail(e.target.value)}
       />
       <button type="submit">Submit</button>
     </form>
@@ -1445,6 +1465,7 @@ function ControlledForm() {
 ```
 
 #### ✅ Good: Uncontrolled Components
+
 ```typescript
 // Uncontrolled input with ref
 function UncontrolledForm() {
@@ -1474,6 +1495,7 @@ function UncontrolledForm() {
 ### React.memo - Prevent Unnecessary Re-renders
 
 #### ✅ Good: React.memo Usage
+
 ```typescript
 import { memo } from 'react'
 
@@ -1485,7 +1507,7 @@ interface ProductCardProps {
 
 const ProductCard = memo(({ product, onAddToCart }: ProductCardProps) => {
   console.log('Rendering ProductCard:', product.name)
-  
+
   return (
     <div>
       <h3>{product.name}</h3>
@@ -1521,10 +1543,10 @@ function ProductList({ products }: { products: Product[] }) {
   return (
     <div>
       {products.map(product => (
-        <ProductCard 
-          key={product.id} 
-          product={product} 
-          onAddToCart={handleAddToCart} 
+        <ProductCard
+          key={product.id}
+          product={product}
+          onAddToCart={handleAddToCart}
         />
       ))}
     </div>
@@ -1533,6 +1555,7 @@ function ProductList({ products }: { products: Product[] }) {
 ```
 
 #### ❌ Bad: React.memo Anti-patterns
+
 ```typescript
 // ❌ WRONG - Memoizing everything
 const Text = memo(({ children }: { children: string }) => {
@@ -1544,7 +1567,7 @@ function BadList() {
   return (
     <div>
       {items.map(item => (
-        <MemoizedItem 
+        <MemoizedItem
           item={item}
           onClick={() => console.log(item)}  // ❌ New function every render
           style={{ color: 'red' }}  // ❌ New object every render
@@ -1558,6 +1581,7 @@ function BadList() {
 ### Code Splitting with React.lazy and Suspense
 
 #### ✅ Good: Code Splitting Patterns
+
 ```typescript
 import { lazy, Suspense } from 'react'
 
@@ -1589,7 +1613,7 @@ function Analytics() {
   return (
     <div>
       <button onClick={() => setShowChart(true)}>Show Chart</button>
-      
+
       {showChart && (
         <Suspense fallback={<div>Loading chart...</div>}>
           <HeavyChart />
@@ -1600,7 +1624,7 @@ function Analytics() {
 }
 
 // Named export code splitting
-const Dashboard = lazy(() => 
+const Dashboard = lazy(() =>
   import('./pages/Dashboard').then(module => ({ default: module.Dashboard }))
 )
 
@@ -1636,6 +1660,7 @@ function App() {
 ```
 
 #### ❌ Bad: Code Splitting Anti-patterns
+
 ```typescript
 // ❌ WRONG - Splitting too aggressively
 const Button = lazy(() => import('./Button'))  // ❌ Too small
@@ -1651,6 +1676,7 @@ function BadApp() {
 ### Virtual Lists for Large Datasets
 
 #### ✅ Good: Virtual List Usage
+
 ```typescript
 import { FixedSizeList } from 'react-window'
 
@@ -1695,6 +1721,7 @@ function ProductList({ products }: { products: Product[] }) {
 ### Profiling and Performance Measurement
 
 #### ✅ Good: Performance Profiling
+
 ```typescript
 import { Profiler } from 'react'
 
@@ -1722,13 +1749,13 @@ function App() {
 function ExpensiveComponent() {
   useEffect(() => {
     performance.mark('expensive-start')
-    
+
     // Expensive operation
     doExpensiveWork()
-    
+
     performance.mark('expensive-end')
     performance.measure('expensive-operation', 'expensive-start', 'expensive-end')
-    
+
     const measure = performance.getEntriesByName('expensive-operation')[0]
     console.log(`Operation took ${measure.duration}ms`)
   }, [])
@@ -1740,6 +1767,7 @@ function ExpensiveComponent() {
 ### When to Use Server Components
 
 #### ✅ Good: Server Component Patterns
+
 ```typescript
 // app/products/page.tsx - Server Component (default in Next.js App Router)
 async function ProductsPage() {
@@ -1773,6 +1801,7 @@ async function ProductsPage() {
 ### When to Use Client Components
 
 #### ✅ Good: Client Component Patterns
+
 ```typescript
 // components/SearchBox.tsx - Client Component
 'use client'  // ✅ Directive at top of file
@@ -1784,8 +1813,8 @@ export function SearchBox() {
   const [query, setQuery] = useState('')
 
   return (
-    <input 
-      value={query} 
+    <input
+      value={query}
       onChange={e => setQuery(e.target.value)}  // ✅ Event handlers
       placeholder="Search..."
     />
@@ -1802,6 +1831,7 @@ export function SearchBox() {
 ### Composing Server and Client Components
 
 #### ✅ Good: Server + Client Composition
+
 ```typescript
 // app/page.tsx - Server Component
 import { SearchBox } from '@/components/SearchBox'  // Client Component
@@ -1814,7 +1844,7 @@ async function HomePage() {
     <div>
       {/* ✅ Client Component for interactivity */}
       <SearchBox />
-      
+
       {/* ✅ Server Component for data fetching */}
       <ProductList products={products} />
     </div>
@@ -1847,6 +1877,7 @@ function Page() {
 ```
 
 #### ❌ Bad: Server/Client Component Anti-patterns
+
 ```typescript
 // ❌ WRONG - Importing Server Component into Client Component
 'use client'
@@ -1860,7 +1891,7 @@ export function ClientComponent() {
 // ❌ WRONG - Using hooks in Server Component
 async function ServerComponent() {
   const [state, setState] = useState(0)  // ❌ Error: hooks not allowed
-  
+
   useEffect(() => {  // ❌ Error: hooks not allowed
     // ...
   }, [])
@@ -1888,6 +1919,7 @@ export function StaticComponent() {
 ### Error Boundaries
 
 #### ✅ Good: Error Boundary Patterns
+
 ```typescript
 import React from 'react'
 
@@ -1950,11 +1982,11 @@ function Page() {
       <ErrorBoundary fallback={<div>Header failed to load</div>}>
         <Header />
       </ErrorBoundary>
-      
+
       <ErrorBoundary fallback={<div>Main content failed to load</div>}>
         <MainContent />
       </ErrorBoundary>
-      
+
       <ErrorBoundary fallback={<div>Sidebar failed to load</div>}>
         <Sidebar />
       </ErrorBoundary>
@@ -1966,6 +1998,7 @@ function Page() {
 ### Suspense for Data Fetching
 
 #### ✅ Good: Suspense Patterns
+
 ```typescript
 import { Suspense } from 'react'
 
@@ -1985,7 +2018,7 @@ function Page() {
       <Suspense fallback={<HeaderSkeleton />}>
         <Header />
       </Suspense>
-      
+
       <Suspense fallback={<ContentSkeleton />}>
         <MainContent />
       </Suspense>
@@ -2010,6 +2043,7 @@ function App() {
 ### When to Use Context vs External Libraries
 
 #### ✅ Good: Context for Simple State
+
 ```typescript
 // ✅ Context for theme, auth, i18n
 const ThemeContext = createContext<Theme>('light')
@@ -2029,6 +2063,7 @@ function App() {
 ```
 
 #### ✅ Good: External Libraries for Complex State
+
 ```typescript
 // Zustand for complex client state
 import { create } from 'zustand'
@@ -2087,6 +2122,7 @@ function ShoppingCart() {
 ## Best Practices Checklist
 
 ### Key Prop Usage
+
 ```typescript
 // ✅ Use unique, stable keys
 {items.map(item => (
@@ -2103,6 +2139,7 @@ function ShoppingCart() {
 ```
 
 ### Fragment Usage
+
 ```typescript
 // ✅ Use fragments to avoid extra DOM nodes
 function Component() {
@@ -2125,6 +2162,7 @@ function Component() {
 ```
 
 ### Event Handler Naming
+
 ```typescript
 // ✅ Consistent naming: handle* for handlers
 function Form() {
@@ -2142,6 +2180,7 @@ function Form() {
 ```
 
 ### File Organization
+
 ```
 src/
 ├── components/
@@ -2165,6 +2204,7 @@ src/
 ```
 
 ### TypeScript Integration
+
 ```typescript
 // ✅ Type props interfaces
 interface ButtonProps {
@@ -2187,16 +2227,17 @@ const inputRef = useRef<HTMLInputElement>(null)
 ```
 
 ### Testing Approaches
+
 ```typescript
 // Component testing with React Testing Library
 import { render, screen, fireEvent } from '@testing-library/react'
 
 test('Counter increments', () => {
   render(<Counter />)
-  
+
   const button = screen.getByText('Increment')
   fireEvent.click(button)
-  
+
   expect(screen.getByText('Count: 1')).toBeInTheDocument()
 })
 
@@ -2205,7 +2246,7 @@ import { renderHook, act } from '@testing-library/react'
 
 test('useFetch returns data', async () => {
   const { result } = renderHook(() => useFetch('/api/data'))
-  
+
   await waitFor(() => {
     expect(result.current.data).toBeTruthy()
   })

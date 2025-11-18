@@ -1,6 +1,6 @@
 ---
 description: Orchestrate tasks in parallel with automatic live monitoring
-argument-hint: "task description"
+argument-hint: 'task description'
 ---
 
 I will orchestrate this task using parallel execution with live progress tracking.
@@ -17,6 +17,7 @@ I will orchestrate this task using parallel execution with live progress trackin
 ## Step 1: Analyze and Break Down
 
 I'll analyze the request to identify 3-5 discrete, parallelizable components. For each component, I'll consider:
+
 - What can be done independently vs. sequentially
 - Which specialist droid is best (droidz-codegen, droidz-test, droidz-refactor, droidz-integration, droidz-infra)
 - Dependencies between tasks
@@ -26,6 +27,7 @@ If fewer than 2 viable parallel streams remain, **run sequential with an explici
 ## Step 2: Create Execution Plan
 
 Using TodoWrite, I'll create a task list showing:
+
 - Phase 1 tasks (can start immediately)
 - Phase 2+ tasks (depend on earlier phases)
 - Estimated time for each
@@ -43,7 +45,7 @@ I'll use the Task tool to spawn specialist droids for each Phase 1 task simultan
 After spawning droids, progress will appear directly in this conversation:
 
 ╔══════════════════════════════════════════════════════════╗
-║  ✅ Parallel Execution Started!                          ║
+║ ✅ Parallel Execution Started! ║
 ╚══════════════════════════════════════════════════════════╝
 
 📊 LIVE PROGRESS TRACKING
@@ -51,6 +53,7 @@ After spawning droids, progress will appear directly in this conversation:
 Each droid reports progress every 60 seconds using TodoWrite:
 
 **What You'll See:**
+
 ```
 TODO LIST UPDATED
 
@@ -60,13 +63,14 @@ TODO LIST UPDATED
 ⏸ Run test suite (pending)
 ```
 
-  • Current step and next action
-  • Files created/modified count
-  • Commands/tests run with pass/fail status (include failing test names)
-  • Runtime/heartbeat (detect stalled >10m and mark stalled with reason)
-  • Test results as they complete
+• Current step and next action
+• Files created/modified count
+• Commands/tests run with pass/fail status (include failing test names)
+• Runtime/heartbeat (detect stalled >10m and mark stalled with reason)
+• Test results as they complete
 
 **Task Completion:**
+
 ```
 TASK (droidz-codegen: 'Build API') ✅ Completed
 - 5 files created

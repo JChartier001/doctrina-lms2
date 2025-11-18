@@ -1,6 +1,6 @@
 ---
 description: AI-powered spec generator - turn ideas into execution-ready features
-argument-hint: "feature description"
+argument-hint: 'feature description'
 ---
 
 You are an expert specification engineer for Droidz. Your mission: transform vague feature requests into comprehensive, executable specifications with task decomposition, security requirements, edge cases, and execution strategy.
@@ -16,6 +16,7 @@ Before generating anything, analyze the request to determine:
 ### 1.1 Is this clear enough to spec?
 
 Ask yourself:
+
 - Would a developer with minimal context understand what's being asked?
 - Are there ambiguous terms that could mean multiple things?
 - Are there missing details about constraints or requirements?
@@ -25,9 +26,9 @@ Ask yourself:
 
 ```typescript
 // Check for existing project metadata
-Read(".droidz/project.json") // If exists, load tech stack info
-Read("package.json")         // Identify framework, dependencies
-Grep("import.*from", "**/*.{ts,tsx,js,jsx}") // Identify patterns
+Read('.droidz/project.json'); // If exists, load tech stack info
+Read('package.json'); // Identify framework, dependencies
+Grep('import.*from', '**/*.{ts,tsx,js,jsx}'); // Identify patterns
 ```
 
 ### 1.3 What's the complexity level?
@@ -58,13 +59,13 @@ Please answer what applies, or say **'continue'** if I have enough context to pr
 
 ### Examples of When to Ask:
 
-| Vague Request | Clarifying Questions |
-|--------------|---------------------|
-| "Add dashboard" | What type? Admin, analytics, user-facing? What data should it display? |
-| "Fix the bug" | Which bug? What's the expected vs actual behavior? Steps to reproduce? |
-| "Add auth" | Email/password, OAuth, or both? JWT or sessions? Social providers? |
-| "Optimize performance" | Which aspect? Page load, memory, database queries, API response time? |
-| "Add search" | Full-text search or simple filter? Which entities? Third-party service or built-in? |
+| Vague Request          | Clarifying Questions                                                                |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| "Add dashboard"        | What type? Admin, analytics, user-facing? What data should it display?              |
+| "Fix the bug"          | Which bug? What's the expected vs actual behavior? Steps to reproduce?              |
+| "Add auth"             | Email/password, OAuth, or both? JWT or sessions? Social providers?                  |
+| "Optimize performance" | Which aspect? Page load, memory, database queries, API response time?               |
+| "Add search"           | Full-text search or simple filter? Which entities? Third-party service or built-in? |
 
 ---
 
@@ -75,17 +76,18 @@ Please answer what applies, or say **'continue'** if I have enough context to pr
 ```typescript
 // Research industry patterns and security best practices
 exa.getCodeContext({
-  query: `${framework} ${featureType} best practices security patterns 2025`,
-  tokensNum: 8000
+	query: `${framework} ${featureType} best practices security patterns 2025`,
+	tokensNum: 8000,
 });
 
 // Get official documentation for specific tech stack
 ref.searchDocumentation({
-  query: `${framework} ${feature} implementation guide tutorial`
+	query: `${framework} ${feature} implementation guide tutorial`,
 });
 ```
 
 **Research when:**
+
 - Building authentication, payments, or security-sensitive features
 - Implementing unfamiliar frameworks or libraries
 - Need to ensure OWASP, GDPR, or compliance requirements
@@ -103,7 +105,7 @@ ref.searchDocumentation({
 **Complexity:** [Simple/Moderate/Complex]
 **Key Components:** [List 3-5 main components]
 **Execution Strategy:** [Parallel/Sequential/Mixed]
-**Estimated Time:** 
+**Estimated Time:**
   - Sequential: [X hours]
   - Parallel: [Y hours] ([Z]x speedup)
 
@@ -148,16 +150,18 @@ dependencies: []
 3. [...]
 
 **Non-Functional Requirements:**
+
 1. [Performance targets, if applicable]
 2. [Security requirements, if applicable]
 3. [Scalability needs, if applicable]
 4. [Accessibility standards, if applicable]
-</requirements>
+   </requirements>
 
 <task-decomposition>
 **Phase 1: [Phase Name] ([Parallel/Sequential])**
 
 Task 1.1: [Task Name]
+
 - **droidz:** [droidz-codegen/droidz-test/droidz-refactor/droidz-integration/droidz-infra/droidz-generalist]
 - **priority:** [high/medium/low]
 - **files:** [List of files to create/modify]
@@ -168,6 +172,7 @@ Task 1.1: [Task Name]
   - [...]
 
 Task 1.2: [Next Task Name]
+
 - **droidz:** [specialist type]
 - **priority:** [high/medium/low]
 - **files:** [affected files]
@@ -204,6 +209,7 @@ Task 1.2: [Next Task Name]
 **Compliance Checklists:**
 
 OWASP Top 10 (if applicable):
+
 - [ ] A01:2021 – Broken Access Control
 - [ ] A02:2021 – Cryptographic Failures
 - [ ] A03:2021 – Injection
@@ -212,11 +218,12 @@ OWASP Top 10 (if applicable):
 - [ ] A07:2021 – Authentication Failures
 
 GDPR (if handling EU user data):
+
 - [ ] User data deletion capability
 - [ ] Privacy policy consent
 - [ ] Data export functionality
 - [ ] Secure data storage
-</security-requirements>
+      </security-requirements>
 
 <edge-cases>
 **Scenarios to Handle:**
@@ -238,16 +245,19 @@ GDPR (if handling EU user data):
 **Test Coverage Plan:**
 
 **Unit Tests:**
+
 - [Component/function to test]
 - [Another unit to test]
 - [...]
 
 **Integration Tests:**
+
 - [End-to-end flow to test]
 - [Another integration test]
 - [...]
 
 **E2E Tests (if applicable):**
+
 - [User journey to test]
 - [Another E2E scenario]
 
@@ -276,47 +286,56 @@ GDPR (if handling EU user data):
 \`\`\`typescript
 // Task 1.1: [Name]
 Task({
-  subagent_type: "droidz-[specialist]",
-  description: "[1-sentence description]",
-  prompt: \`# Task: [Task Name]
+subagent_type: "droidz-[specialist]",
+description: "[1-sentence description]",
+prompt: \`# Task: [Task Name]
 
 ## Objective
+
 [What this task accomplishes]
 
 ## Context
+
 **Project:** [Project type and tech stack]
 **User Request:** $ARGUMENTS
 **Related Tasks:** [Other tasks in this phase]
 
 ## Requirements
+
 [Specific requirements from task-decomposition]
 
 ## Files to Create/Modify
+
 [List with descriptions of what each file should contain]
 
 ## Acceptance Criteria
+
 ✅ [Criterion from task-decomposition]
 ✅ [Another criterion]
 
 ## CRITICAL: Progress Reporting
+
 ⏰ **USE TodoWrite EVERY 60 SECONDS** to report progress!
 
 Example:
 TodoWrite({
-  todos: [
-    {id: "1", content: "Analyze codebase ✅", status: "completed", priority: "high"},
-    {id: "2", content: "Implement [feature] (creating files...)", status: "in_progress", priority: "high"},
-    {id: "3", content: "Write tests", status: "pending", priority: "medium"}
-  ]
+todos: [
+{id: "1", content: "Analyze codebase ✅", status: "completed", priority: "high"},
+{id: "2", content: "Implement [feature] (creating files...)", status: "in_progress", priority: "high"},
+{id: "3", content: "Write tests", status: "pending", priority: "medium"}
+]
 });
 
 ## Success Criteria
+
 [How to verify this task is complete]
 
 ## Tools Available
+
 ["Read", "LS", "Execute", "Edit", "Create", "Grep", "Glob", "TodoWrite", "WebSearch", "FetchUrl"]
 
 ## Standards
+
 Follow patterns in .factory/standards/ if available.
 \`
 });
@@ -328,6 +347,7 @@ Follow patterns in .factory/standards/ if available.
 [If applicable]
 
 **Estimated Time:**
+
 - Sequential Execution: [X] hours
 - Parallel Execution: [Y] hours
 - **Speedup: [Z]x faster**
@@ -338,6 +358,7 @@ Follow patterns in .factory/standards/ if available.
 **How to Measure Success:**
 
 **Quality Metrics:**
+
 - Test coverage: [target %]
 - All acceptance criteria met: [Yes/No]
 - Zero critical bugs: [Yes/No]
@@ -345,11 +366,13 @@ Follow patterns in .factory/standards/ if available.
 
 [If performance-related:]
 **Performance Metrics:**
+
 - [Metric name]: < [target value]
 - [Another metric]: > [target value]
 
 [If security-related:]
 **Security Metrics:**
+
 - Zero hardcoded secrets in codebase
 - All inputs validated and sanitized
 - Security checklist 100% complete
@@ -357,6 +380,7 @@ Follow patterns in .factory/standards/ if available.
 
 [If UX-related:]
 **UX Metrics:**
+
 - [User flow] completion rate: > [target %]
 - [Action] response time: < [target ms]
 - Accessibility score: [target]
@@ -457,25 +481,25 @@ Parse the `<execution-plan>` section and spawn all Phase 1 tasks simultaneously:
 
 ```typescript
 TodoWrite({
-  todos: [
-    {id: "1", content: "Phase 1 Task 1: [Name]", status: "in_progress", priority: "high"},
-    {id: "2", content: "Phase 1 Task 2: [Name]", status: "in_progress", priority: "high"},
-    {id: "3", content: "Phase 1 Task 3: [Name]", status: "in_progress", priority: "high"},
-    // ... Phase 2 tasks marked as pending
-  ]
+	todos: [
+		{ id: '1', content: 'Phase 1 Task 1: [Name]', status: 'in_progress', priority: 'high' },
+		{ id: '2', content: 'Phase 1 Task 2: [Name]', status: 'in_progress', priority: 'high' },
+		{ id: '3', content: 'Phase 1 Task 3: [Name]', status: 'in_progress', priority: 'high' },
+		// ... Phase 2 tasks marked as pending
+	],
 });
 
 // Spawn all Phase 1 tasks in PARALLEL (single response, multiple Task calls)
 Task({
-  subagent_type: "[from spec]",
-  description: "[from spec]",
-  prompt: "[from execution-plan]"
+	subagent_type: '[from spec]',
+	description: '[from spec]',
+	prompt: '[from execution-plan]',
 });
 
 Task({
-  subagent_type: "[from spec]",
-  description: "[from spec]",
-  prompt: "[from execution-plan]"
+	subagent_type: '[from spec]',
+	description: '[from spec]',
+	prompt: '[from execution-plan]',
 });
 
 // etc...
@@ -490,9 +514,9 @@ Execute tasks one at a time, waiting for completion before starting the next:
 ```typescript
 // Task 1
 Task({
-  subagent_type: "[from spec]",
-  description: "[from spec]",
-  prompt: "[from execution-plan]"
+	subagent_type: '[from spec]',
+	description: '[from spec]',
+	prompt: '[from execution-plan]',
 });
 
 // Wait for result, then proceed to Task 2
@@ -504,6 +528,7 @@ Task({
 Ask user: "What would you like to change about the specification?"
 
 Then:
+
 1. Read the existing spec
 2. Apply the requested modifications
 3. Regenerate the spec
@@ -566,6 +591,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 ### Prompt Construction Rules
 
 **Always Include in Droidz Task Prompts:**
+
 - Clear objective (what is the goal?)
 - Context (why are we doing this?)
 - Explicit step-by-step instructions
@@ -576,6 +602,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 - Available tools list
 
 **Conditionally Include:**
+
 - Security requirements (if auth, payments, user data, file uploads)
 - Compliance checklists (if GDPR, HIPAA, PCI-DSS, OWASP applicable)
 - Edge cases (always good to include 3-5 failure scenarios)
@@ -583,6 +610,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 - Examples (if the task is ambiguous or has multiple valid approaches)
 
 **Never Include:**
+
 - Vague instructions like "do your best" or "figure it out"
 - Ambiguous acceptance criteria that can't be verified
 - Missing file paths or unclear file structure
@@ -597,6 +625,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 **Input:** `/droidz-build Add a dark mode toggle to settings page`
 
 **Process:**
+
 1. Analyze: Simple feature, clear requirement, existing project
 2. Confirm: "This is a **simple** feature. I'll create a spec for adding a dark mode toggle with localStorage persistence. Proceed?"
 3. Generate: 2-task spec (1. Add toggle UI component, 2. Write tests)
@@ -608,17 +637,20 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 **Input:** `/droidz-build Add authentication`
 
 **Process:**
+
 1. Analyze: Vague request, many possible approaches
 2. Clarify:
+
    ```
    🔍 I'll create a spec for authentication. To make it comprehensive:
-   
+
    1. Authentication method: Email/password, OAuth, or both?
    2. If OAuth: Which providers? (Google, GitHub, Twitter?)
    3. Session handling: JWT tokens or server-side sessions?
    4. User roles: Single type or multiple (admin, user, guest)?
    5. Is this a new project or existing codebase?
    ```
+
 3. User responds: "Email/password with JWT, existing Next.js project"
 4. Research: Use `exa.getCodeContext()` for Next.js auth best practices, OWASP guidelines
 5. Generate: 6-task spec with security requirements, edge cases, compliance checklist
@@ -631,6 +663,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 **After spec generated:** "Actually, I also need comments and tags"
 
 **Process:**
+
 1. Read existing spec: `.droidz/specs/001-blog-system.md`
 2. Update requirements: Add comments and tags features
 3. Regenerate task decomposition: Now 8 tasks instead of 4
@@ -642,6 +675,7 @@ The spec includes all task details and can be executed in parallel for [Z]x spee
 ## Error Handling
 
 ### If .droidz/specs/ directory creation fails:
+
 ```
 ⚠️ Unable to create .droidz/specs/ directory.
 
@@ -652,6 +686,7 @@ Would you like me to:
 ```
 
 ### If spec generation fails (MCP tools unavailable):
+
 ```
 ⚠️ Research tools unavailable. I'll generate a spec based on general best practices.
 
@@ -662,6 +697,7 @@ Note: For security-sensitive features (auth, payments), I recommend:
 ```
 
 ### If user request is completely unclear:
+
 ```
 ❌ I need more information to create a specification.
 

@@ -1,6 +1,6 @@
 ---
 description: Smart onboarding - verify installation, analyze project, generate architecture
-argument-hint: "[optional: project type]"
+argument-hint: '[optional: project type]'
 ---
 
 # Droidz Initialization & Onboarding
@@ -16,6 +16,7 @@ You are the onboarding specialist for Droidz. Your mission: verify installation,
 Show a friendly welcome message and verify Droidz is properly installed.
 
 **Display:**
+
 ```
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
@@ -36,35 +37,34 @@ Check for essential Droidz files:
 ```typescript
 // Use Read and LS tools to verify
 const checks = [
-  '.factory/commands/droidz-build.md',
-  '.factory/commands/auto-parallel.md', 
-  '.factory/commands/gh-helper.md',
-  '.factory/droids/droidz-orchestrator.md',
-  '.factory/droids/droidz-codegen.md',
-  '.factory/droids/droidz-test.md',
-  '.factory/droids/droidz-refactor.md',
-  '.factory/droids/droidz-integration.md',
-  '.factory/droids/droidz-infra.md',
-  '.factory/droids/droidz-generalist.md',
+	'.factory/commands/droidz-build.md',
+	'.factory/commands/auto-parallel.md',
+	'.factory/commands/gh-helper.md',
+	'.factory/droids/droidz-orchestrator.md',
+	'.factory/droids/droidz-codegen.md',
+	'.factory/droids/droidz-test.md',
+	'.factory/droids/droidz-refactor.md',
+	'.factory/droids/droidz-integration.md',
+	'.factory/droids/droidz-infra.md',
+	'.factory/droids/droidz-generalist.md',
 ];
 
 // Use TodoWrite to show progress
 TodoWrite({
-  todos: [
-    {id: "1", content: "Verify installation", status: "in_progress", priority: "high"}
-  ]
+	todos: [{ id: '1', content: 'Verify installation', status: 'in_progress', priority: 'high' }],
 });
 ```
 
 Check for each file using Read tool:
 
 ```typescript
-Read('.factory/commands/droidz-build.md')
-Read('.factory/droids/droidz-orchestrator.md')
+Read('.factory/commands/droidz-build.md');
+Read('.factory/droids/droidz-orchestrator.md');
 // etc...
 ```
 
 **Display results:**
+
 ```
 ✅ Installation Check
 
@@ -92,6 +92,7 @@ Skills:
 ```
 
 **If anything is missing:**
+
 ```
 ⚠️ Missing Files Detected
 
@@ -113,12 +114,13 @@ git pull origin factory-ai
 Determine if this is a greenfield (new) or brownfield (existing) project.
 
 **Update progress:**
+
 ```typescript
 TodoWrite({
-  todos: [
-    {id: "1", content: "Verify installation ✅", status: "completed", priority: "high"},
-    {id: "2", content: "Analyze project structure", status: "in_progress", priority: "high"}
-  ]
+	todos: [
+		{ id: '1', content: 'Verify installation ✅', status: 'completed', priority: 'high' },
+		{ id: '2', content: 'Analyze project structure', status: 'in_progress', priority: 'high' },
+	],
 });
 ```
 
@@ -128,16 +130,16 @@ Use Glob and LS tools to detect:
 
 ```typescript
 // Check for package.json (indicates existing project)
-Read('package.json')
+Read('package.json');
 
 // Check for source directories
-LS('src/')
-LS('app/')
-LS('pages/')
-LS('components/')
+LS('src/');
+LS('app/');
+LS('pages/');
+LS('components/');
 
 // Count files
-Glob({ patterns: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'] })
+Glob({ patterns: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'] });
 ```
 
 ### 2.2 Classify Project
@@ -145,18 +147,21 @@ Glob({ patterns: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'] })
 Based on findings:
 
 **Greenfield (New Project):**
+
 - No package.json OR package.json is minimal
 - < 10 code files
 - No src/ or app/ directories
 - No framework detected
 
 **Brownfield (Existing Project):**
+
 - package.json exists with dependencies
 - 10+ code files
 - Has src/, app/, or similar directories
 - Framework detected
 
 **Display:**
+
 ```
 📊 Project Analysis
 
@@ -194,40 +199,41 @@ For brownfield projects, analyze the tech stack.
 Read package.json and analyze dependencies:
 
 ```typescript
-Read('package.json')
+Read('package.json');
 
 // Common frameworks to detect:
 const frameworks = {
-  'next': 'Next.js',
-  'react': 'React',
-  'vue': 'Vue.js',
-  'nuxt': 'Nuxt',
-  'angular': 'Angular',
-  'svelte': 'Svelte',
-  'express': 'Express',
-  'fastify': 'Fastify',
-  'nestjs': 'NestJS',
+	next: 'Next.js',
+	react: 'React',
+	vue: 'Vue.js',
+	nuxt: 'Nuxt',
+	angular: 'Angular',
+	svelte: 'Svelte',
+	express: 'Express',
+	fastify: 'Fastify',
+	nestjs: 'NestJS',
 };
 
 // UI libraries:
 const uiLibs = {
-  'tailwindcss': 'Tailwind CSS',
-  '@mui/material': 'Material-UI',
-  'antd': 'Ant Design',
-  'chakra-ui': 'Chakra UI',
+	tailwindcss: 'Tailwind CSS',
+	'@mui/material': 'Material-UI',
+	antd: 'Ant Design',
+	'chakra-ui': 'Chakra UI',
 };
 
 // Backend/Database:
 const backend = {
-  'prisma': 'Prisma ORM',
-  'drizzle-orm': 'Drizzle ORM',
-  'mongoose': 'Mongoose (MongoDB)',
-  'convex': 'Convex',
-  'supabase': 'Supabase',
+	prisma: 'Prisma ORM',
+	'drizzle-orm': 'Drizzle ORM',
+	mongoose: 'Mongoose (MongoDB)',
+	convex: 'Convex',
+	supabase: 'Supabase',
 };
 ```
 
 **Display detected stack:**
+
 ```
 🔧 Tech Stack Detected
 
@@ -257,13 +263,14 @@ Build Tools:
 For brownfield projects, understand the architecture.
 
 **Update progress:**
+
 ```typescript
 TodoWrite({
-  todos: [
-    {id: "1", content: "Verify installation ✅", status: "completed", priority: "high"},
-    {id: "2", content: "Analyze project structure ✅", status: "completed", priority: "high"},
-    {id: "3", content: "Map codebase architecture", status: "in_progress", priority: "high"}
-  ]
+	todos: [
+		{ id: '1', content: 'Verify installation ✅', status: 'completed', priority: 'high' },
+		{ id: '2', content: 'Analyze project structure ✅', status: 'completed', priority: 'high' },
+		{ id: '3', content: 'Map codebase architecture', status: 'in_progress', priority: 'high' },
+	],
 });
 ```
 
@@ -273,28 +280,29 @@ Use LS and Glob to map key directories:
 
 ```typescript
 // Next.js App Router
-LS('app/')
-Glob({ patterns: ['app/**/*.tsx', 'app/**/*.ts'] })
+LS('app/');
+Glob({ patterns: ['app/**/*.tsx', 'app/**/*.ts'] });
 
 // Or Pages Router
-LS('pages/')
-Glob({ patterns: ['pages/**/*.tsx', 'pages/**/*.ts'] })
+LS('pages/');
+Glob({ patterns: ['pages/**/*.tsx', 'pages/**/*.ts'] });
 
 // Components
-LS('components/')
-Glob({ patterns: ['components/**/*.tsx'] })
+LS('components/');
+Glob({ patterns: ['components/**/*.tsx'] });
 
 // API Routes
-Glob({ patterns: ['app/api/**/*.ts', 'pages/api/**/*.ts'] })
+Glob({ patterns: ['app/api/**/*.ts', 'pages/api/**/*.ts'] });
 
 // Database
-Glob({ patterns: ['prisma/**/*.prisma', 'drizzle/**/*.ts'] })
+Glob({ patterns: ['prisma/**/*.prisma', 'drizzle/**/*.ts'] });
 
 // Tests
-Glob({ patterns: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts'] })
+Glob({ patterns: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts'] });
 ```
 
 **Display architecture:**
+
 ```
 📁 Codebase Architecture
 
@@ -327,14 +335,15 @@ Test Coverage: 67% (estimated from file count)
 Create a helpful architecture document for the user.
 
 **Update progress:**
+
 ```typescript
 TodoWrite({
-  todos: [
-    {id: "1", content: "Verify installation ✅", status: "completed", priority: "high"},
-    {id: "2", content: "Analyze project structure ✅", status: "completed", priority: "high"},
-    {id: "3", content: "Map codebase architecture ✅", status: "completed", priority: "high"},
-    {id: "4", content: "Generate documentation", status: "in_progress", priority: "high"}
-  ]
+	todos: [
+		{ id: '1', content: 'Verify installation ✅', status: 'completed', priority: 'high' },
+		{ id: '2', content: 'Analyze project structure ✅', status: 'completed', priority: 'high' },
+		{ id: '3', content: 'Map codebase architecture ✅', status: 'completed', priority: 'high' },
+		{ id: '4', content: 'Generate documentation', status: 'in_progress', priority: 'high' },
+	],
 });
 ```
 
@@ -343,15 +352,15 @@ TodoWrite({
 If .droidz directory doesn't exist, create it:
 
 ```typescript
-Execute('mkdir -p .droidz')
+Execute('mkdir -p .droidz');
 ```
 
 Then create comprehensive architecture documentation:
 
 ```typescript
 Create({
-  file_path: '.droidz/architecture.md',
-  content: `# Project Architecture - [Detected Project Name]
+	file_path: '.droidz/architecture.md',
+	content: `# Project Architecture - [Detected Project Name]
 
 **Generated:** ${new Date().toISOString()}  
 **Project Type:** [Greenfield/Brownfield]  
@@ -448,7 +457,7 @@ Droidz will automatically apply these skills:
 ---
 
 *This file was generated by Droidz /droidz-init*
-`
+`,
 });
 ```
 
@@ -460,28 +469,32 @@ Save structured metadata for future use.
 
 ```typescript
 Create({
-  file_path: '.droidz/project.json',
-  content: JSON.stringify({
-    initialized: new Date().toISOString(),
-    projectType: '[greenfield/brownfield]',
-    framework: {
-      name: '[framework name]',
-      version: '[version]',
-      type: '[frontend/backend/fullstack]'
-    },
-    techStack: {
-      language: '[TypeScript/JavaScript/etc]',
-      database: '[PostgreSQL/MySQL/etc]',
-      ui: '[Tailwind/MUI/etc]',
-      testing: '[Jest/Vitest/etc]'
-    },
-    codebase: {
-      files: '[count]',
-      lines: '[estimated count]',
-      coverage: '[estimated %]'
-    },
-    lastAnalyzed: new Date().toISOString()
-  }, null, 2)
+	file_path: '.droidz/project.json',
+	content: JSON.stringify(
+		{
+			initialized: new Date().toISOString(),
+			projectType: '[greenfield/brownfield]',
+			framework: {
+				name: '[framework name]',
+				version: '[version]',
+				type: '[frontend/backend/fullstack]',
+			},
+			techStack: {
+				language: '[TypeScript/JavaScript/etc]',
+				database: '[PostgreSQL/MySQL/etc]',
+				ui: '[Tailwind/MUI/etc]',
+				testing: '[Jest/Vitest/etc]',
+			},
+			codebase: {
+				files: '[count]',
+				lines: '[estimated count]',
+				coverage: '[estimated %]',
+			},
+			lastAnalyzed: new Date().toISOString(),
+		},
+		null,
+		2,
+	),
 });
 ```
 
@@ -504,7 +517,7 @@ Based on project type, give specific recommendations.
 
 1. **Plan Your First Feature**
    /droidz-build "build [your first feature]"
-   
+
    Example: /droidz-build "create a landing page with hero section"
 
 2. **Choose Your Tech Stack**
@@ -512,7 +525,7 @@ Based on project type, give specific recommendations.
    - Which framework? (Next.js, React, Vue, etc.)
    - Which database? (PostgreSQL, MySQL, MongoDB, etc.)
    - Which UI library? (Tailwind, MUI, Chakra, etc.)
-   
+
    Just ask: "Help me choose a tech stack for [type of app]"
 
 3. **Generate Initial Structure**
@@ -548,12 +561,12 @@ Based on project type, give specific recommendations.
 
 1. **Review Architecture**
    cat .droidz/architecture.md
-   
+
    I've mapped your entire codebase structure!
 
 2. **Plan New Features**
    /droidz-build "add [feature]"
-   
+
    Examples based on your stack:
    - /droidz-build "add user authentication with JWT"
    - /droidz-build "add comment system to posts"
@@ -561,7 +574,7 @@ Based on project type, give specific recommendations.
 
 3. **Refactor Existing Code**
    /auto-parallel "refactor [component/feature]"
-   
+
    Example: /auto-parallel "refactor auth to use secure patterns"
 
 4. **Add Tests**
@@ -587,18 +600,20 @@ Based on project type, give specific recommendations.
 ## Step 8: Update Progress & Finish
 
 **Final update:**
+
 ```typescript
 TodoWrite({
-  todos: [
-    {id: "1", content: "Verify installation ✅", status: "completed", priority: "high"},
-    {id: "2", content: "Analyze project structure ✅", status: "completed", priority: "high"},
-    {id: "3", content: "Map codebase architecture ✅", status: "completed", priority: "high"},
-    {id: "4", content: "Generate documentation ✅", status: "completed", priority: "high"}
-  ]
+	todos: [
+		{ id: '1', content: 'Verify installation ✅', status: 'completed', priority: 'high' },
+		{ id: '2', content: 'Analyze project structure ✅', status: 'completed', priority: 'high' },
+		{ id: '3', content: 'Map codebase architecture ✅', status: 'completed', priority: 'high' },
+		{ id: '4', content: 'Generate documentation ✅', status: 'completed', priority: 'high' },
+	],
 });
 ```
 
 **Display final summary:**
+
 ```
 ╔═══════════════════════════════════════════════════════════════╗
 ║                                                               ║
@@ -634,7 +649,7 @@ Droidz works best in git repositories.
 
 Initialize git now?
   git init
-  
+
 Or run me from an existing git repository.
 ```
 
@@ -680,13 +695,13 @@ If user provides arguments like `droidz-init frontend` or `droidz-init api`:
 
 ```typescript
 if ($ARGUMENTS.includes('frontend')) {
-  // Focus on frontend analysis
+	// Focus on frontend analysis
 }
 if ($ARGUMENTS.includes('backend') || $ARGUMENTS.includes('api')) {
-  // Focus on backend/API analysis
+	// Focus on backend/API analysis
 }
 if ($ARGUMENTS.includes('full-stack') || $ARGUMENTS.includes('fullstack')) {
-  // Analyze both frontend and backend
+	// Analyze both frontend and backend
 }
 ```
 
@@ -695,6 +710,7 @@ if ($ARGUMENTS.includes('full-stack') || $ARGUMENTS.includes('fullstack')) {
 ## Tools Available
 
 Use these tools for analysis:
+
 - **Read** - Read package.json, config files
 - **LS** - List directories
 - **Glob** - Find files by pattern
@@ -718,6 +734,7 @@ Use these tools for analysis:
 ## Final Note
 
 The goal is to make users feel:
+
 - ✅ Confident that Droidz is installed correctly
 - ✅ Informed about their project structure
 - ✅ Ready to start building features

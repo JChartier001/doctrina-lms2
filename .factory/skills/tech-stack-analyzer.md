@@ -10,6 +10,7 @@ You are the Tech Stack Analyzer. Your mission is to automatically detect the pro
 ## When to Activate
 
 Auto-activate when:
+
 - **New project detected** (first session in a repository)
 - **package.json modified** (dependencies added/removed)
 - **Explicit request** (`/analyze-tech-stack` command)
@@ -20,6 +21,7 @@ Auto-activate when:
 ### Step 1: Detect Package Manager
 
 Check for lock files in this order:
+
 1. `bun.lockb` → Bun
 2. `pnpm-lock.yaml` → pnpm
 3. `yarn.lock` → Yarn
@@ -82,8 +84,7 @@ if (allDeps['prettier']) linters.push('prettier');
 if (allDeps['@biomejs/biome']) linters.push('biome');
 
 // Detect TypeScript
-const isTypeScript = allDeps['typescript'] || 
-                     pkg.scripts?.some(s => s.includes('tsc'));
+const isTypeScript = allDeps['typescript'] || pkg.scripts?.some(s => s.includes('tsc'));
 ```
 
 **Output:** Framework inventory with versions
@@ -91,6 +92,7 @@ const isTypeScript = allDeps['typescript'] ||
 ### Step 3: Detect Languages
 
 Check for config files:
+
 - `tsconfig.json` → TypeScript
 - `*.py` files → Python
 - `Cargo.toml` → Rust
@@ -113,94 +115,102 @@ For each detected framework/language, create a standards file in `.factory/stand
 ## Component Patterns
 
 ### Functional Components (Required)
+
 - Use functional components with hooks
 - Avoid class components unless maintaining legacy code
 - Co-locate component logic with UI
 
 ### Hooks Best Practices
+
 \`\`\`typescript
 // ✅ Good: Custom hooks for reusable logic
 function useUserData(userId: string) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  
-  useEffect(() => {
-    setLoading(true);
-    fetchUser(userId)
-      .then(setUser)
-      .finally(() => setLoading(false));
-  }, [userId]);
-  
-  return { user, loading };
+const [user, setUser] = useState<User | null>(null);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+setLoading(true);
+fetchUser(userId)
+.then(setUser)
+.finally(() => setLoading(false));
+}, [userId]);
+
+return { user, loading };
 }
 
 // ❌ Bad: Logic directly in component
 function UserProfile({ userId }: Props) {
-  const [user, setUser] = useState<User | null>(null);
-  
-  useEffect(() => {
-    fetch(\`/api/users/\${userId}\`).then(r => r.json()).then(setUser);
-  }, [userId]);
-  
-  return <div>{user?.name}</div>;
+const [user, setUser] = useState<User | null>(null);
+
+useEffect(() => {
+fetch(\`/api/users/\${userId}\`).then(r => r.json()).then(setUser);
+}, [userId]);
+
+return <div>{user?.name}</div>;
 }
 \`\`\`
 
 ### State Management
+
 - **Local State:** useState/useReducer for component-specific state
 - **Global State:** ${stateManager || 'Context API for simple cases'}
 - **Server State:** React Query or SWR for API data
 
 ### Performance Optimization
+
 - Memoize expensive computations with `useMemo`
 - Memoize callbacks with `useCallback` when passed to memoized children
 - Use `React.memo` for pure components that re-render frequently
 - Lazy load routes and heavy components: `React.lazy(() => import('./Heavy'))`
 
 ## File Structure
+
 \`\`\`
 src/
 ├── components/
-│   ├── ui/              # Reusable UI components (Button, Input, etc.)
-│   ├── features/        # Feature-specific components (UserDashboard, etc.)
-│   └── layouts/         # Layout components (Header, Footer, etc.)
-├── hooks/               # Custom hooks
-├── utils/               # Utility functions
-├── types/               # TypeScript types and interfaces
-├── lib/                 # Third-party library configurations
-└── app/ or pages/       # Routes (Next.js) or page components
+│ ├── ui/ # Reusable UI components (Button, Input, etc.)
+│ ├── features/ # Feature-specific components (UserDashboard, etc.)
+│ └── layouts/ # Layout components (Header, Footer, etc.)
+├── hooks/ # Custom hooks
+├── utils/ # Utility functions
+├── types/ # TypeScript types and interfaces
+├── lib/ # Third-party library configurations
+└── app/ or pages/ # Routes (Next.js) or page components
 \`\`\`
 
 ## Testing
+
 - **Framework:** ${testFramework || 'React Testing Library (recommended)'}
 - Test user behavior, not implementation details
 - Avoid testing library internals (hooks, state)
 - Always test accessibility (screen reader, keyboard navigation)
 
 ### Example Test
+
 \`\`\`typescript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 test('user can submit login form', async () => {
-  render(<LoginForm onSubmit={mockSubmit} />);
-  
-  await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
-  await userEvent.type(screen.getByLabelText(/password/i), 'password123');
-  await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
-  
-  expect(mockSubmit).toHaveBeenCalledWith({
-    email: 'user@example.com',
-    password: 'password123'
-  });
+render(<LoginForm onSubmit={mockSubmit} />);
+
+await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
+await userEvent.type(screen.getByLabelText(/password/i), 'password123');
+await userEvent.click(screen.getByRole('button', { name: /sign in/i }));
+
+expect(mockSubmit).toHaveBeenCalledWith({
+email: 'user@example.com',
+password: 'password123'
+});
 });
 \`\`\`
 
 ## Never
+
 - ❌ Never mutate state directly (always use setState)
 - ❌ Never use index as key in dynamic lists
 - ❌ Never ignore ESLint warnings without documented justification
-- ❌ Never skip accessibility attributes (aria-*, role, alt)
+- ❌ Never skip accessibility attributes (aria-\*, role, alt)
 - ❌ Never use `any` type in TypeScript (use `unknown` if type is truly unknown)
 - ❌ Never commit console.log statements (use proper logging library)
 ```
@@ -217,76 +227,81 @@ test('user can submit login form', async () => {
 \`\`\`json
 // tsconfig.json
 {
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
-  }
+"compilerOptions": {
+"strict": true,
+"noUncheckedIndexedAccess": true,
+"noImplicitReturns": true,
+"noFallthroughCasesInSwitch": true,
+"forceConsistentCasingInFileNames": true,
+"skipLibCheck": true
+}
 }
 \`\`\`
 
 ## Type Annotations
 
 ### Function Signatures
+
 \`\`\`typescript
 // ✅ Good: Explicit return types
 function calculateTotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+return items.reduce((sum, item) => sum + item.price \* item.quantity, 0);
 }
 
 // ❌ Bad: Inferred return type (can lead to accidental type changes)
 function calculateTotal(items: CartItem[]) {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+return items.reduce((sum, item) => sum + item.price \* item.quantity, 0);
 }
 \`\`\`
 
 ### Avoid `any`
+
 \`\`\`typescript
 // ❌ Bad: Using any
 function processData(data: any): any {
-  return data.map((x: any) => x.value);
+return data.map((x: any) => x.value);
 }
 
 // ✅ Good: Proper generic types
 function processData<T extends { value: number }>(data: T[]): number[] {
-  return data.map(x => x.value);
+return data.map(x => x.value);
 }
 
 // ✅ Good: Using unknown when type is truly unknown
 function handleError(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return String(error);
+if (error instanceof Error) {
+return error.message;
+}
+return String(error);
 }
 \`\`\`
 
 ### Utility Types
+
 \`\`\`typescript
 // Use built-in utility types
-type UpdateUserDTO = Partial<User>;          // All properties optional
-type CreateUserDTO = Required<UserInput>;    // All properties required
-type UserKeys = keyof User;                  // Union of all keys
-type PublicUser = Omit<User, 'password'>;   // Exclude password
+type UpdateUserDTO = Partial<User>; // All properties optional
+type CreateUserDTO = Required<UserInput>; // All properties required
+type UserKeys = keyof User; // Union of all keys
+type PublicUser = Omit<User, 'password'>; // Exclude password
 type UserCredentials = Pick<User, 'email' | 'password'>; // Pick specific fields
-type StatusMap = Record<string, Status>;     // Dictionary type
+type StatusMap = Record<string, Status>; // Dictionary type
 \`\`\`
 
 ### Branded Types (for type safety)
+
 \`\`\`typescript
 // Prevent mixing similar primitives
-type UserId = string & { readonly __brand: 'UserId' };
-type Email = string & { readonly __brand: 'Email' };
+type UserId = string & { readonly **brand: 'UserId' };
+type Email = string & { readonly **brand: 'Email' };
 
 function getUserById(id: UserId): Promise<User> {
-  // Type-safe: can't accidentally pass email as userId
+// Type-safe: can't accidentally pass email as userId
 }
 \`\`\`
 
 ## Naming Conventions
+
 - **Types/Interfaces:** PascalCase (`UserProfile`, `ApiResponse`)
 - **Type Parameters:** Single capital letter or PascalCase (`T`, `TData`, `TResponse`)
 - **Enums:** PascalCase (`UserRole`, `HttpStatus`)
@@ -295,22 +310,24 @@ function getUserById(id: UserId): Promise<User> {
 - **Private Fields:** Prefix with `_` (`_internalCache`)
 
 ## Type Guards
+
 \`\`\`typescript
 // ✅ Good: Type guard function
 function isUser(value: unknown): value is User {
-  return typeof value === 'object' &&
-         value !== null &&
-         'id' in value &&
-         'email' in value;
+return typeof value === 'object' &&
+value !== null &&
+'id' in value &&
+'email' in value;
 }
 
 // Usage
 if (isUser(data)) {
-  console.log(data.email); // TypeScript knows data is User
+console.log(data.email); // TypeScript knows data is User
 }
 \`\`\`
 
 ## Never
+
 - ❌ Never use `@ts-ignore` (fix the type issue or use `@ts-expect-error` with explanation)
 - ❌ Never use `as any` (use proper type guards or `unknown`)
 - ❌ Never leave unused imports or variables
@@ -337,47 +354,49 @@ const apiKey = 'sk_live_abc123def456'; // NEVER DO THIS
 \`\`\`
 
 ### Validation
+
 \`\`\`typescript
 // Always validate environment variables at startup
 const config = {
-  apiKey: process.env.API_KEY,
-  dbUrl: process.env.DATABASE_URL
+apiKey: process.env.API_KEY,
+dbUrl: process.env.DATABASE_URL
 };
 
 // Check for missing required variables
 Object.entries(config).forEach(([key, value]) => {
-  if (!value) {
-    throw new Error(\`Missing required environment variable: \${key}\`);
-  }
+if (!value) {
+throw new Error(\`Missing required environment variable: \${key}\`);
+}
 });
 \`\`\`
 
 ## Input Validation
 
 ### API Endpoints
+
 \`\`\`typescript
 import { z } from 'zod';
 
 // Define schema
 const CreateUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(128),
-  name: z.string().min(1).max(255)
+email: z.string().email(),
+password: z.string().min(8).max(128),
+name: z.string().min(1).max(255)
 });
 
 // Validate before processing
 app.post('/users', async (req, res) => {
-  const result = CreateUserSchema.safeParse(req.body);
-  
-  if (!result.success) {
-    return res.status(400).json({ 
-      error: 'Validation failed',
-      details: result.error.flatten()
-    });
-  }
-  
-  const user = await createUser(result.data);
-  res.json(user);
+const result = CreateUserSchema.safeParse(req.body);
+
+if (!result.success) {
+return res.status(400).json({
+error: 'Validation failed',
+details: result.error.flatten()
+});
+}
+
+const user = await createUser(result.data);
+res.json(user);
 });
 \`\`\`
 
@@ -385,29 +404,33 @@ app.post('/users', async (req, res) => {
 
 \`\`\`typescript
 // ✅ Good: Parameterized queries
-await db.query('SELECT * FROM users WHERE id = $1', [userId]);
-await db.query('SELECT * FROM users WHERE email = $1 AND status = $2', [email, 'active']);
+await db.query('SELECT _ FROM users WHERE id = $1', [userId]);
+await db.query('SELECT _ FROM users WHERE email = $1 AND status = $2', [email, 'active']);
 
 // ❌ Bad: String concatenation (SQL INJECTION VULNERABILITY)
-await db.query(\`SELECT * FROM users WHERE id = '\${userId}'\`);
-await db.query("SELECT * FROM users WHERE email = '" + email + "'");
+await db.query(\`SELECT _ FROM users WHERE id = '\${userId}'\`);
+await db.query("SELECT _ FROM users WHERE email = '" + email + "'");
 \`\`\`
 
 ## XSS Prevention
 
 ### React (Safe by Default)
+
 \`\`\`typescript
 // ✅ Good: React escapes by default
+
 <div>{userInput}</div>
 <div>{user.name}</div>
 
 // ⚠️ Dangerous: Only use with sanitized HTML
 import DOMPurify from 'dompurify';
 const sanitized = DOMPurify.sanitize(userHtml);
+
 <div dangerouslySetInnerHTML={{ __html: sanitized }} />
 \`\`\`
 
 ### Express Headers
+
 \`\`\`typescript
 import helmet from 'helmet';
 
@@ -423,6 +446,7 @@ app.use(helmet.xssFilter());
 ## Authentication & Authorization
 
 ### Password Hashing
+
 \`\`\`typescript
 import bcrypt from 'bcrypt';
 
@@ -435,33 +459,35 @@ const isValid = await bcrypt.compare(password, hashedPassword);
 \`\`\`
 
 ### JWT Tokens
+
 \`\`\`typescript
 import jwt from 'jsonwebtoken';
 
 // Create token with short expiration
 const token = jwt.sign(
-  { userId: user.id },
-  process.env.JWT_SECRET!,
-  { expiresIn: '15m' } // Short-lived access token
+{ userId: user.id },
+process.env.JWT_SECRET!,
+{ expiresIn: '15m' } // Short-lived access token
 );
 
 // Refresh token (longer expiration, stored securely)
 const refreshToken = jwt.sign(
-  { userId: user.id, type: 'refresh' },
-  process.env.JWT_REFRESH_SECRET!,
-  { expiresIn: '7d' }
+{ userId: user.id, type: 'refresh' },
+process.env.JWT_REFRESH_SECRET!,
+{ expiresIn: '7d' }
 );
 \`\`\`
 
 ### Rate Limiting
+
 \`\`\`typescript
 import rateLimit from 'express-rate-limit';
 
 // Apply to auth endpoints
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 requests per window
-  message: 'Too many login attempts, please try again later'
+windowMs: 15 _ 60 _ 1000, // 15 minutes
+max: 5, // 5 requests per window
+message: 'Too many login attempts, please try again later'
 });
 
 app.post('/auth/login', authLimiter, loginHandler);
@@ -472,16 +498,17 @@ app.post('/auth/login', authLimiter, loginHandler);
 \`\`\`typescript
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
-    if (!req.secure) {
-      return res.redirect(301, \`https://\${req.headers.host}\${req.url}\`);
-    }
-    next();
-  });
+app.use((req, res, next) => {
+if (!req.secure) {
+return res.redirect(301, \`https://\${req.headers.host}\${req.url}\`);
+}
+next();
+});
 }
 \`\`\`
 
 ## Never
+
 - ❌ Never commit API keys, tokens, or passwords (use .env + .gitignore)
 - ❌ Never trust user input without validation
 - ❌ Never use MD5 or SHA1 for passwords (use bcrypt/argon2)
@@ -508,19 +535,25 @@ Based on detected stack, generate a comprehensive root CLAUDE.md file:
 ## 🚀 Quick Start
 
 \`\`\`bash
+
 # Install dependencies
+
 ${packageManager} install
 
 # Start development server
+
 ${packageManager} ${devCommand}
 
 # Run tests
+
 ${packageManager} ${testCommand}
 
 # Build for production
+
 ${packageManager} ${buildCommand}
 
 # Lint code
+
 ${packageManager} run lint${linters.includes('prettier') ? ' && ' + packageManager + ' run format' : ''}
 \`\`\`
 
@@ -535,16 +568,17 @@ ${directoryStructure}
 ## 📚 Framework-Specific Standards
 
 This project uses:
-${detectedFrameworks.map(f => \`- **\${f}:** See [.factory/standards/\${f}.md](.factory/standards/\${f}.md)\`).join('\n')}
+${detectedFrameworks.map(f => \`- **\${f}:** See [.factory/standards/\${f}.md](.factory/standards/${f}.md)\`).join('\n')}
 
 **Language Standards:**
-${detectedLanguages.map(l => \`- **\${l}:** See [.factory/standards/\${l}.md](.factory/standards/\${l}.md)\`).join('\n')}
+${detectedLanguages.map(l => \`- **\${l}:** See [.factory/standards/\${l}.md](.factory/standards/${l}.md)\`).join('\n')}
 
 **Security:** See [.factory/standards/security.md](.factory/standards/security.md)
 
 ## 🎨 Code Style
 
 **Detected Configuration:**
+
 - **Linter:** ${linters.join(', ') || 'None (consider adding ESLint)'}
 - **Formatter:** ${linters.includes('prettier') ? 'Prettier' : 'None (consider adding Prettier)'}
 - **Type Checker:** ${isTypeScript ? 'TypeScript' : 'JavaScript (consider TypeScript)'}
@@ -569,6 +603,7 @@ ${autoGeneratedAntiPatterns.map(p => \`- ❌ \${p}\`).join('\n')}
 ---
 
 📝 **Note:** This file was auto-generated by Droidz tech-stack-analyzer.
+
 - **To regenerate:** Run \`/analyze-tech-stack\`
 - **To customize:** Edit manually (custom sections preserved on regeneration)
 - **To add directory-specific standards:** Create \`CLAUDE.md\` in subdirectories
@@ -584,6 +619,7 @@ After generation, provide a summary:
 ✅ Tech Stack Analysis Complete
 
 **Detected:**
+
 - Package Manager: ${packageManager}
 - Frameworks: ${frameworks.join(', ')}
 - Languages: ${languages.join(', ')}
@@ -596,9 +632,11 @@ After generation, provide a summary:
 ${generatedFiles.map(f => \`- ✅ \${f}\`).join('\n')}
 
 **Updated:**
+
 - ✅ Root CLAUDE.md
 
 **Next Steps:**
+
 1. Review generated standards in .factory/standards/
 2. Customize any standards for your team's preferences
 3. Add directory-specific CLAUDE.md files as needed
@@ -610,6 +648,7 @@ All agents will now automatically enforce these standards!
 ## Tools Available
 
 You have access to all Claude Code tools:
+
 - **Read** - Read files to detect package.json, config files
 - **LS** - List directory structure
 - **Grep** - Search for specific files/patterns
@@ -621,6 +660,7 @@ You have access to all Claude Code tools:
 User says: "I just started working on this project"
 
 You respond:
+
 1. Run: Read('package.json')
 2. Detect: React, TypeScript, Vite, Jest
 3. Create: .factory/standards/react.md

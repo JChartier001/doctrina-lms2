@@ -13,6 +13,7 @@
 ## Next.js 16 Async Request APIs (BREAKING CHANGE)
 
 ### ✅ Good: Await All Request APIs
+
 ```typescript
 // app/product/[id]/page.tsx
 export default async function Page({
@@ -45,25 +46,27 @@ export async function GET() {
 ```
 
 ### ❌ Bad: Old Next.js 15 Synchronous APIs
+
 ```typescript
 // ❌ WRONG - This worked in Next.js 15, breaks in 16
 export default function Page({ params, searchParams }) {
-  const id = params.id  // Error: params is a Promise
-  const filter = searchParams.filter  // Error: searchParams is a Promise
+	const id = params.id; // Error: params is a Promise
+	const filter = searchParams.filter; // Error: searchParams is a Promise
 }
 
 // ❌ WRONG - This worked in Next.js 15, breaks in 16
-import { cookies, headers } from 'next/headers'
+import { cookies, headers } from 'next/headers';
 
 export async function GET() {
-  const cookieStore = cookies()  // Error: must await
-  const headersList = headers()  // Error: must await
+	const cookieStore = cookies(); // Error: must await
+	const headersList = headers(); // Error: must await
 }
 ```
 
 ## Upgrading from Next.js 15 to 16
 
 ### Use Codemod for Automatic Migration
+
 ```bash
 # Automatically migrates async request APIs
 npx @next/codemod@latest upgrade latest
@@ -73,6 +76,7 @@ npx @next/codemod@canary next-async-request-api .
 ```
 
 ### Manual Migration Checklist
+
 ```typescript
 // 1. Add await to params
 - const { id } = params
@@ -98,6 +102,7 @@ npx @next/codemod@canary next-async-request-api .
 ## Server Components (Default)
 
 ### ✅ Good: Server Component Patterns
+
 ```typescript
 // app/posts/page.tsx - Server Component (default)
 import { Suspense } from 'react'
@@ -136,6 +141,7 @@ async function PostList({ posts }: { posts: Post[] }) {
 ```
 
 ### ✅ Good: Environment Variables in Server Components
+
 ```typescript
 // Server Component - safe to access env vars
 export default async function Page() {
@@ -150,6 +156,7 @@ export default async function Page() {
 ```
 
 ### ❌ Bad: Server Component Anti-patterns
+
 ```typescript
 // ❌ WRONG - useState in Server Component
 import { useState } from 'react'
@@ -176,6 +183,7 @@ export default async function Page() {
 ## Client Components
 
 ### ✅ Good: Client Component with 'use client'
+
 ```typescript
 // app/components/Counter.tsx
 'use client'
@@ -197,6 +205,7 @@ export default function Counter() {
 ```
 
 ### ✅ Good: Composing Server and Client Components
+
 ```typescript
 // app/page.tsx - Server Component
 import Counter from './components/Counter'  // Client Component
@@ -222,6 +231,7 @@ export default async function Page() {
 ```
 
 ### ✅ Good: Passing Server Data to Client Components
+
 ```typescript
 // app/page.tsx - Server Component
 import ClientComponent from './ClientComponent'
@@ -247,6 +257,7 @@ export default function ClientComponent({ user }) {
 ```
 
 ### ❌ Bad: Client Component Anti-patterns
+
 ```typescript
 // ❌ WRONG - Don't wrap Server Component in Client Component
 'use client'
@@ -280,36 +291,38 @@ export default function Page() {
 ## Server Actions and Mutations
 
 ### ✅ Good: Server Actions with 'use server'
+
 ```typescript
 // app/actions.ts
-'use server'
+'use server';
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export async function createPost(formData: FormData) {
-  const title = formData.get('title') as string
-  const content = formData.get('content') as string
+	const title = formData.get('title') as string;
+	const content = formData.get('content') as string;
 
-  // Validate
-  if (!title || !content) {
-    throw new Error('Title and content are required')
-  }
+	// Validate
+	if (!title || !content) {
+		throw new Error('Title and content are required');
+	}
 
-  // Database operation
-  await db.post.create({
-    data: { title, content }
-  })
+	// Database operation
+	await db.post.create({
+		data: { title, content },
+	});
 
-  // Revalidate cache
-  revalidatePath('/posts')
+	// Revalidate cache
+	revalidatePath('/posts');
 
-  // Redirect
-  redirect('/posts')
+	// Redirect
+	redirect('/posts');
 }
 ```
 
 ### ✅ Good: Form with Server Action
+
 ```typescript
 // app/posts/new/page.tsx
 import { createPost } from '@/app/actions'
@@ -326,6 +339,7 @@ export default function NewPost() {
 ```
 
 ### ✅ Good: Server Action with useFormState (React 19)
+
 ```typescript
 // app/actions.ts
 'use server'
@@ -362,6 +376,7 @@ export default function CreatePostForm() {
 ```
 
 ### ✅ Good: Server Action with useFormStatus (React 19)
+
 ```typescript
 'use client'
 
@@ -379,121 +394,126 @@ export default function SubmitButton() {
 ```
 
 ### ✅ Good: Server Action with Zod Validation
-```typescript
-'use server'
 
-import { z } from 'zod'
+```typescript
+'use server';
+
+import { z } from 'zod';
 
 const schema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
+	email: z.string().email(),
+	password: z.string().min(8),
+});
 
 export async function signup(formData: FormData) {
-  const result = schema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  })
+	const result = schema.safeParse({
+		email: formData.get('email'),
+		password: formData.get('password'),
+	});
 
-  if (!result.success) {
-    return { errors: result.error.flatten().fieldErrors }
-  }
+	if (!result.success) {
+		return { errors: result.error.flatten().fieldErrors };
+	}
 
-  const { email, password } = result.data
+	const { email, password } = result.data;
 
-  // Create user
-  await db.user.create({ data: { email, password } })
+	// Create user
+	await db.user.create({ data: { email, password } });
 
-  return { success: true }
+	return { success: true };
 }
 ```
 
 ### ❌ Bad: Server Action Anti-patterns
+
 ```typescript
 // ❌ WRONG - No validation
-'use server'
+'use server';
 
 export async function createPost(formData: FormData) {
-  const title = formData.get('title')
-  await db.post.create({ data: { title } })  // No validation!
+	const title = formData.get('title');
+	await db.post.create({ data: { title } }); // No validation!
 }
 
 // ❌ WRONG - No error handling
-'use server'
+('use server');
 
 export async function createPost(formData: FormData) {
-  await db.post.create({ data: {} })  // Can throw, not handled!
+	await db.post.create({ data: {} }); // Can throw, not handled!
 }
 
 // ❌ WRONG - Not calling revalidatePath after mutation
-'use server'
+('use server');
 
 export async function createPost(formData: FormData) {
-  await db.post.create({ data: { title: 'Post' } })
-  // Missing: revalidatePath('/posts')
+	await db.post.create({ data: { title: 'Post' } });
+	// Missing: revalidatePath('/posts')
 }
 ```
 
 ## Data Fetching and Caching
 
 ### ✅ Good: Fetch with Caching Strategies
+
 ```typescript
 // Static data - cached indefinitely
 async function getStaticData() {
-  const res = await fetch('https://api.example.com/static', {
-    cache: 'force-cache'  // default
-  })
-  return res.json()
+	const res = await fetch('https://api.example.com/static', {
+		cache: 'force-cache', // default
+	});
+	return res.json();
 }
 
 // Dynamic data - no cache
 async function getDynamicData() {
-  const res = await fetch('https://api.example.com/dynamic', {
-    cache: 'no-store'
-  })
-  return res.json()
+	const res = await fetch('https://api.example.com/dynamic', {
+		cache: 'no-store',
+	});
+	return res.json();
 }
 
 // Revalidate every hour
 async function getRevalidatedData() {
-  const res = await fetch('https://api.example.com/data', {
-    next: { revalidate: 3600 }  // seconds
-  })
-  return res.json()
+	const res = await fetch('https://api.example.com/data', {
+		next: { revalidate: 3600 }, // seconds
+	});
+	return res.json();
 }
 
 // Tag-based revalidation
 async function getTaggedData() {
-  const res = await fetch('https://api.example.com/posts', {
-    next: { tags: ['posts'] }
-  })
-  return res.json()
+	const res = await fetch('https://api.example.com/posts', {
+		next: { tags: ['posts'] },
+	});
+	return res.json();
 }
 ```
 
 ### ✅ Good: Revalidating Cached Data
-```typescript
-'use server'
 
-import { revalidatePath, revalidateTag } from 'next/cache'
+```typescript
+'use server';
+
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 // Revalidate specific path
 export async function revalidatePostsPath() {
-  revalidatePath('/posts')
+	revalidatePath('/posts');
 }
 
 // Revalidate specific tag
 export async function revalidatePostsTag() {
-  revalidateTag('posts')
+	revalidateTag('posts');
 }
 
 // Revalidate layout
 export async function revalidateLayout() {
-  revalidatePath('/dashboard', 'layout')
+	revalidatePath('/dashboard', 'layout');
 }
 ```
 
 ### ✅ Good: Parallel Data Fetching
+
 ```typescript
 export default async function Page() {
   // Parallel fetching - both requests start at once
@@ -507,6 +527,7 @@ export default async function Page() {
 ```
 
 ### ✅ Good: Sequential Data Fetching (when dependent)
+
 ```typescript
 export default async function Page() {
   // Sequential fetching - second depends on first
@@ -521,6 +542,7 @@ export default async function Page() {
 ```
 
 ### ❌ Bad: Data Fetching Anti-patterns
+
 ```typescript
 // ❌ WRONG - Fetching in useEffect (use Server Component instead)
 'use client'
@@ -562,6 +584,7 @@ async function PostWithComments({ postId }) {
 ## Loading and Streaming
 
 ### ✅ Good: loading.tsx for Instant Loading UI
+
 ```typescript
 // app/posts/loading.tsx
 export default function Loading() {
@@ -576,6 +599,7 @@ export default async function PostsPage() {
 ```
 
 ### ✅ Good: Suspense for Granular Streaming
+
 ```typescript
 import { Suspense } from 'react'
 
@@ -611,147 +635,146 @@ async function Comments() {
 ## Route Handlers (API Routes)
 
 ### ✅ Good: GET Route Handler
+
 ```typescript
 // app/api/posts/route.ts
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const query = searchParams.get('query')
+	const searchParams = request.nextUrl.searchParams;
+	const query = searchParams.get('query');
 
-  const posts = await db.post.findMany({
-    where: query ? { title: { contains: query } } : {}
-  })
+	const posts = await db.post.findMany({
+		where: query ? { title: { contains: query } } : {},
+	});
 
-  return NextResponse.json({ posts })
+	return NextResponse.json({ posts });
 }
 ```
 
 ### ✅ Good: POST Route Handler with Validation
+
 ```typescript
 // app/api/posts/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 const schema = z.object({
-  title: z.string().min(1),
-  content: z.string().min(1),
-})
+	title: z.string().min(1),
+	content: z.string().min(1),
+});
 
 export async function POST(request: NextRequest) {
-  const body = await request.json()
+	const body = await request.json();
 
-  const result = schema.safeParse(body)
-  if (!result.success) {
-    return NextResponse.json(
-      { errors: result.error.flatten() },
-      { status: 400 }
-    )
-  }
+	const result = schema.safeParse(body);
+	if (!result.success) {
+		return NextResponse.json({ errors: result.error.flatten() }, { status: 400 });
+	}
 
-  const post = await db.post.create({ data: result.data })
+	const post = await db.post.create({ data: result.data });
 
-  return NextResponse.json({ post }, { status: 201 })
+	return NextResponse.json({ post }, { status: 201 });
 }
 ```
 
 ### ✅ Good: Dynamic Route Handler
+
 ```typescript
 // app/api/posts/[id]/route.ts
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params  // Must await in Next.js 16
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+	const { id } = await params; // Must await in Next.js 16
 
-  const post = await db.post.findUnique({
-    where: { id }
-  })
+	const post = await db.post.findUnique({
+		where: { id },
+	});
 
-  if (!post) {
-    return NextResponse.json(
-      { error: 'Post not found' },
-      { status: 404 }
-    )
-  }
+	if (!post) {
+		return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+	}
 
-  return NextResponse.json({ post })
+	return NextResponse.json({ post });
 }
 ```
 
 ### ✅ Good: CORS Headers in Route Handler
+
 ```typescript
 export async function GET(request: NextRequest) {
-  const data = { message: 'Hello from API' }
+	const data = { message: 'Hello from API' };
 
-  return NextResponse.json(data, {
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
-  })
+	return NextResponse.json(data, {
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+		},
+	});
 }
 ```
 
 ## Middleware
 
 ### ✅ Good: Middleware for Authentication
+
 ```typescript
 // middleware.ts
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value
+	const token = request.cookies.get('token')?.value;
 
-  // Redirect to login if not authenticated
-  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
+	// Redirect to login if not authenticated
+	if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
 
-  return NextResponse.next()
+	return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*']
-}
+	matcher: ['/dashboard/:path*'],
+};
 ```
 
 ### ✅ Good: Middleware for Rewrites
+
 ```typescript
 // middleware.ts
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Rewrite /blog/* to /posts/*
-  if (request.nextUrl.pathname.startsWith('/blog')) {
-    const newPath = request.nextUrl.pathname.replace('/blog', '/posts')
-    return NextResponse.rewrite(new URL(newPath, request.url))
-  }
+	// Rewrite /blog/* to /posts/*
+	if (request.nextUrl.pathname.startsWith('/blog')) {
+		const newPath = request.nextUrl.pathname.replace('/blog', '/posts');
+		return NextResponse.rewrite(new URL(newPath, request.url));
+	}
 
-  return NextResponse.next()
+	return NextResponse.next();
 }
 ```
 
 ### ✅ Good: Middleware for Headers
+
 ```typescript
 // middleware.ts
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next()
+	const response = NextResponse.next();
 
-  // Add custom headers
-  response.headers.set('x-custom-header', 'my-value')
-  response.headers.set('x-request-id', crypto.randomUUID())
+	// Add custom headers
+	response.headers.set('x-custom-header', 'my-value');
+	response.headers.set('x-request-id', crypto.randomUUID());
 
-  return response
+	return response;
 }
 ```
 
 ## Metadata and SEO
 
 ### ✅ Good: Static Metadata
+
 ```typescript
 // app/page.tsx
 import { Metadata } from 'next'
@@ -772,6 +795,7 @@ export default function Page() {
 ```
 
 ### ✅ Good: Dynamic Metadata with generateMetadata
+
 ```typescript
 // app/posts/[id]/page.tsx
 import { Metadata } from 'next'
@@ -813,6 +837,7 @@ export default async function Page({
 ## Image Optimization
 
 ### ✅ Good: Next.js Image Component
+
 ```typescript
 import Image from 'next/image'
 
@@ -852,25 +877,27 @@ export default function Page() {
 ```
 
 ### ✅ Good: Image Loader for External CDN
+
 ```typescript
 // next.config.js
 module.exports = {
-  images: {
-    loader: 'custom',
-    loaderFile: './imageLoader.ts',
-  },
-}
+	images: {
+		loader: 'custom',
+		loaderFile: './imageLoader.ts',
+	},
+};
 
 // imageLoader.ts
 export default function cloudinaryLoader({ src, width, quality }) {
-  const params = ['f_auto', 'c_limit', `w_${width}`, `q_${quality || 'auto'}`]
-  return `https://res.cloudinary.com/demo/image/upload/${params.join(',')}${src}`
+	const params = ['f_auto', 'c_limit', `w_${width}`, `q_${quality || 'auto'}`];
+	return `https://res.cloudinary.com/demo/image/upload/${params.join(',')}${src}`;
 }
 ```
 
 ## Static Generation
 
 ### ✅ Good: generateStaticParams for Dynamic Routes
+
 ```typescript
 // app/posts/[id]/page.tsx
 export async function generateStaticParams() {
@@ -898,6 +925,7 @@ export default async function Page({
 ## Performance Optimization
 
 ### ✅ Good: Lazy Loading Components
+
 ```typescript
 import dynamic from 'next/dynamic'
 
@@ -917,6 +945,7 @@ export default function Page() {
 ```
 
 ### ✅ Good: Font Optimization
+
 ```typescript
 // app/layout.tsx
 import { Inter, Roboto_Mono } from 'next/font/google'
@@ -941,6 +970,7 @@ export default function RootLayout({ children }) {
 ```
 
 ### ✅ Good: Script Optimization
+
 ```typescript
 import Script from 'next/script'
 
@@ -966,6 +996,7 @@ export default function Page() {
 ## Error Handling
 
 ### ✅ Good: error.tsx for Error Boundaries
+
 ```typescript
 // app/posts/error.tsx
 'use client'
@@ -988,6 +1019,7 @@ export default function Error({
 ```
 
 ### ✅ Good: not-found.tsx for 404 Errors
+
 ```typescript
 // app/posts/[id]/not-found.tsx
 export default function NotFound() {
@@ -1022,6 +1054,7 @@ export default async function Page({
 ## Environment Variables
 
 ### ✅ Good: Environment Variables
+
 ```bash
 # .env.local
 
@@ -1037,16 +1070,16 @@ NEXT_PUBLIC_SITE_URL=https://example.com
 ```typescript
 // Server Component or Server Action - can access all env vars
 export default async function Page() {
-  const dbUrl = process.env.DATABASE_URL  // ✅ OK
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL  // ✅ OK
+	const dbUrl = process.env.DATABASE_URL; // ✅ OK
+	const apiUrl = process.env.NEXT_PUBLIC_API_URL; // ✅ OK
 }
 
 // Client Component - can only access NEXT_PUBLIC_*
-'use client'
+('use client');
 
 export default function ClientComponent() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL  // ✅ OK
-  const dbUrl = process.env.DATABASE_URL  // ❌ undefined
+	const apiUrl = process.env.NEXT_PUBLIC_API_URL; // ✅ OK
+	const dbUrl = process.env.DATABASE_URL; // ❌ undefined
 }
 ```
 

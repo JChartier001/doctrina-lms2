@@ -11,18 +11,21 @@ I've successfully implemented a **complete skills injection system** for Droidz 
 ### 1. **Three Hook Scripts** (.factory/hooks/)
 
 #### inject-skills.sh (UserPromptSubmit Hook)
+
 - **When**: User types a prompt
 - **What**: Detects keywords in prompts and injects relevant skills
 - **Detection**: TypeScript, React, Tailwind, Convex, Testing, Security, Performance, Accessibility
 - **Example**: Prompt mentions "TypeScript component" → Loads typescript.md
 
 #### inject-file-skills.sh (PreToolUse Hook)
+
 - **When**: Droid writes/edits files
 - **What**: Detects file type and injects relevant skills
 - **Detection**: `.ts`, `.tsx`, `.css`, `convex/`, `.test.ts`, etc.
 - **Example**: Editing `Button.tsx` → Loads typescript.md + react.md
 
 #### load-project-skills.sh (SessionStart Hook)
+
 - **When**: Droid session starts
 - **What**: Analyzes project structure and loads relevant skills once
 - **Detection**: `tsconfig.json`, `package.json`, `tailwind.config.ts`, `convex/`
@@ -35,21 +38,25 @@ I've successfully implemented a **complete skills injection system** for Droidz 
 ### 2. **Four Professional Skill Templates** (.factory/skills/)
 
 #### typescript.md
+
 - **Covers**: Type safety, strict mode, interfaces vs types, React + TypeScript, async/await, error handling
 - **Examples**: ✅ Good patterns, ❌ Bad patterns
 - **Size**: ~200 lines of best practices
 
 #### tailwind-4.md
+
 - **Covers**: Tailwind 4.0 new features, responsive design, dark mode, accessibility, component composition
 - **Examples**: Layout patterns, forms, animations
 - **Size**: ~180 lines with modern patterns
 
 #### convex.md
+
 - **Covers**: Queries, mutations, actions, validators, authentication, file storage, performance
 - **Examples**: Complete working examples with error handling
 - **Size**: ~250 lines of Convex best practices
 
 #### security.md
+
 - **Covers**: Environment variables, input validation, SQL injection prevention, authentication, CORS, rate limiting, file uploads
 - **Examples**: Zod validation, bcrypt hashing, JWT handling
 - **Size**: ~220 lines of security guidelines
@@ -59,6 +66,7 @@ I've successfully implemented a **complete skills injection system** for Droidz 
 ### 3. **Comprehensive Documentation**
 
 #### SKILLS.md (Complete User Guide)
+
 - **Table of Contents**: 8 major sections
 - **What Are Skills**: Clear explanation with benefits
 - **How Skills Work**: 3 hook types explained with diagrams
@@ -70,6 +78,7 @@ I've successfully implemented a **complete skills injection system** for Droidz 
 - **Size**: ~500 lines of comprehensive documentation
 
 **Topics Covered:**
+
 1. What are skills and why use them
 2. How automatic injection works
 3. Creating custom skills (step-by-step)
@@ -84,6 +93,7 @@ I've successfully implemented a **complete skills injection system** for Droidz 
 ### 4. **README.md Enhancement**
 
 Added complete **Skills System** section to README with:
+
 - Clear explanation for beginners
 - Comparison table (with/without skills)
 - Pre-built skills list
@@ -103,34 +113,40 @@ Updated settings.json with three skill injection hooks:
 
 ```json
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "name": "load-project-skills",
-        "hooks": [{
-          "type": "command",
-          "command": "$FACTORY_PROJECT_DIR/.factory/hooks/load-project-skills.sh"
-        }]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [{
-          "type": "command",
-          "command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-file-skills.sh"
-        }]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [{
-          "type": "command",
-          "command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-skills.sh"
-        }]
-      }
-    ]
-  }
+	"hooks": {
+		"SessionStart": [
+			{
+				"name": "load-project-skills",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/load-project-skills.sh"
+					}
+				]
+			}
+		],
+		"PreToolUse": [
+			{
+				"matcher": "Write|Edit|MultiEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-file-skills.sh"
+					}
+				]
+			}
+		],
+		"UserPromptSubmit": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "$FACTORY_PROJECT_DIR/.factory/hooks/inject-skills.sh"
+					}
+				]
+			}
+		]
+	}
 }
 ```
 
@@ -175,6 +191,7 @@ Updated settings.json with three skill injection hooks:
 ## 📋 Files Created/Modified
 
 ### New Files Created:
+
 ```
 ✅ .factory/hooks/inject-skills.sh                 (~80 lines)
 ✅ .factory/hooks/inject-file-skills.sh            (~70 lines)
@@ -188,6 +205,7 @@ Updated settings.json with three skill injection hooks:
 ```
 
 ### Files Modified:
+
 ```
 ✅ README.md                                       (Added Skills section)
 ✅ .factory/settings.json                          (Added hooks config)
@@ -239,7 +257,7 @@ droid
 
 ### Example 3: Custom Skill
 
-```bash
+````bash
 # Create your own skill:
 .factory/skills/vue-3.md
 
@@ -265,10 +283,11 @@ export default {
 }
 </script>
 \`\`\`
-```
+````
 
 # Auto-loads when editing .vue files!
-```
+
+````
 
 ---
 
@@ -284,7 +303,7 @@ Skills were built using best practices from:
 
 Each skill includes:
 - ✅ Concrete working examples (no pseudocode)
-- ✅ Both good (✅) and bad (❌) patterns  
+- ✅ Both good (✅) and bad (❌) patterns
 - ✅ Explanations of WHY (not just what)
 - ✅ Specific version numbers when relevant
 - ✅ Comments in code examples
@@ -303,13 +322,14 @@ Each skill includes:
    droid
    # Enable hooks in /settings if not already enabled
    # Test: "Create a TypeScript component"
-   ```
+````
 
 2. **Create your own skill**:
+
    ```bash
    # Read the guide
    cat SKILLS.md
-   
+
    # Create a skill for your favorite framework
    vim .factory/skills/your-framework.md
    ```
@@ -323,17 +343,18 @@ Each skill includes:
 
 **Share these instructions:**
 
-```markdown
+````markdown
 # Getting Started with Droidz Skills
 
 1. **Skills are already set up!** No configuration needed.
 
-2. **Test it**: 
+2. **Test it**:
    ```bash
    droid
    > Create a TypeScript React component
    # Watch as it applies all standards automatically!
    ```
+````
 
 3. **Create your own**:
    - Read SKILLS.md (comprehensive guide)
@@ -346,6 +367,7 @@ Each skill includes:
    - tailwind-4.md
    - convex.md
    - security.md
+
 ```
 
 ---
@@ -388,3 +410,4 @@ When announcing to users:
 - README.md: Quick start section
 
 **Questions or issues?** Check SKILLS.md troubleshooting section first!
+```

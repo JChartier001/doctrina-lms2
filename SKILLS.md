@@ -31,6 +31,7 @@
 Droidz uses **Factory.ai hooks** to inject skills automatically:
 
 ### 1. **UserPromptSubmit Hook** (Prompt-based)
+
 When you type a prompt mentioning "TypeScript" or "Tailwind", relevant skills are injected:
 
 ```bash
@@ -44,6 +45,7 @@ Droid sees your prompt + coding standards
 ```
 
 ### 2. **PreToolUse Hook** (File-based)
+
 When droid writes/edits a file, skills are injected based on file type:
 
 ```bash
@@ -57,6 +59,7 @@ Code follows TypeScript + React standards
 ```
 
 ### 3. **SessionStart Hook** (Project-level)
+
 When you start droid, project-relevant skills are loaded once:
 
 ```bash
@@ -82,6 +85,7 @@ Skills live in `.factory/skills/` and use markdown format:
 ```
 
 **Naming Convention:**
+
 - Lowercase with hyphens: `my-framework.md`
 - Descriptive: `python-django.md` not just `python.md`
 - Technology-specific: `vue-3-composition.md`
@@ -96,18 +100,20 @@ Use this proven structure:
 ## Core Principles
 
 1. **Principle 1** - Brief explanation
-2. **Principle 2** - Brief explanation  
+2. **Principle 2** - Brief explanation
 3. **Principle 3** - Brief explanation
 
 ## [Topic Area 1]
 
 ### ✅ Good
+
 \`\`\`[language]
 // Example of correct pattern
 const example = "with comments explaining why";
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`[language]
 // Example of what NOT to do
 const badExample = "with explanation of why it's wrong";
@@ -128,6 +134,7 @@ const badExample = "with explanation of why it's wrong";
 ### Step 3: Write Clear, Actionable Content
 
 #### ✅ DO:
+
 - Use **concrete code examples** (not pseudocode)
 - Show **both good (✅) and bad (❌) patterns**
 - **Explain WHY**, not just what
@@ -137,6 +144,7 @@ const badExample = "with explanation of why it's wrong";
 - End with a **strong directive** (ALWAYS, NEVER, etc.)
 
 #### ❌ DON'T:
+
 - Write vague advice like "write clean code"
 - Use placeholder code like `// your code here`
 - Assume knowledge without examples
@@ -158,6 +166,7 @@ fi
 ```
 
 **Detection Patterns:**
+
 - **Technology names**: `django|flask|fastapi`
 - **File extensions**: `\.vue|\.svelte`
 - **Keywords**: `database|orm|migration`
@@ -182,6 +191,7 @@ droid
 ### 1. Keep It Focused
 
 **✅ Good**: One skill per technology/framework
+
 ```
 - typescript.md
 - react.md
@@ -189,6 +199,7 @@ droid
 ```
 
 **❌ Bad**: One massive skill file
+
 ```
 - frontend.md  (too broad!)
 ```
@@ -201,6 +212,7 @@ Every rule should have a code example:
 ## State Management
 
 ### ✅ Good
+
 \`\`\`tsx
 // Use useState for simple state
 const [count, setCount] = useState<number>(0);
@@ -210,9 +222,10 @@ const [state, dispatch] = useReducer(reducer, initialState);
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`tsx
 // Don't mutate state directly
-state.count++  // ❌ Never mutate!
+state.count++ // ❌ Never mutate!
 \`\`\`
 ```
 
@@ -242,17 +255,19 @@ Be explicit about versions:
 \`\`\`vue
 // Vue 2 style - DON'T USE
 export default {
-  data() { return { count: 0 } }
+data() { return { count: 0 } }
 }
 \`\`\`
 
 ✅ Use Composition API with setup:
 \`\`\`vue
 // Vue 3 style - USE THIS
+
 <script setup lang="ts">
 import { ref } from 'vue';
 const count = ref(0);
 </script>
+
 \`\`\`
 ```
 
@@ -264,6 +279,7 @@ Research official docs and community standards:
 # Research Checklist
 
 Before writing a skill, check:
+
 1. ✅ Official documentation
 2. ✅ GitHub awesome lists (e.g., awesome-react)
 3. ✅ Popular style guides (e.g., Airbnb, Google)
@@ -310,22 +326,24 @@ Copy this template to get started:
 ## [Topic Area 1: e.g., "Component Structure"]
 
 ### ✅ Good
+
 \`\`\`[language]
 // Concrete working example
 // Include comments explaining WHY this is good
 const example = {
-  pattern: "correct",
-  reason: "clear and maintainable"
+pattern: "correct",
+reason: "clear and maintainable"
 };
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`[language]
 // Example of what NOT to do
 // Include comments explaining WHY this is bad
 var badExample = {
-  pattern: "incorrect",
-  reason: "prone to bugs"
+pattern: "incorrect",
+reason: "prone to bugs"
 };
 \`\`\`
 
@@ -347,7 +365,9 @@ var badExample = {
 If this requires specific packages:
 
 \`\`\`bash
+
 # Install required dependencies
+
 npm install [package]@[version]
 \`\`\`
 
@@ -387,65 +407,70 @@ npm install [package]@[version]
 ## Model Definitions
 
 ### ✅ Good
+
 \`\`\`python
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 
 class Product(models.Model):
-    """Product model with proper validation and methods."""
-    
+"""Product model with proper validation and methods."""
+
     name = models.CharField(max_length=200, db_index=True)
     price = models.DecimalField(
-        max_digits=10, 
+        max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(0.01)]
     )
     created_at = models.DateTimeField(default=timezone.now)
-    
+
     class Meta:
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['name', 'created_at']),
         ]
-    
+
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
         return reverse('product-detail', kwargs={'pk': self.pk})
+
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`python
 class Product(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.FloatField()  # ❌ Use DecimalField for money!
-    # ❌ Missing __str__, indexes, validators
+name = models.CharField(max_length=200)
+price = models.FloatField() # ❌ Use DecimalField for money! # ❌ Missing **str**, indexes, validators
 \`\`\`
 
 ## View Patterns
 
 ### ✅ Good
+
 \`\`\`python
 from django.views.generic import ListView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ProductListView(LoginRequiredMixin, ListView):
-    model = Product
-    template_name = 'products/list.html'
-    context_object_name = 'products'
-    paginate_by = 20
-    
+model = Product
+template_name = 'products/list.html'
+context_object_name = 'products'
+paginate_by = 20
+
     def get_queryset(self):
         return Product.objects.select_related('category')
+
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`python
 def product_list(request):
-    products = Product.objects.all()  # ❌ No pagination, no optimization
-    return render(request, 'list.html', {'products': products})
+products = Product.objects.all() # ❌ No pagination, no optimization
+return render(request, 'list.html', {'products': products})
 \`\`\`
 
 **ALWAYS use Django best practices: Fat models, class-based views, proper validation, and security features.**
@@ -469,30 +494,38 @@ def product_list(request):
 ## Dockerfile Structure
 
 ### ✅ Good
+
 \`\`\`dockerfile
+
 # Multi-stage build for Node.js app
+
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Install dependencies (cached layer)
-COPY package*.json ./
+
+COPY package\*.json ./
 RUN npm ci --only=production
 
 # Copy source code
+
 COPY . .
 RUN npm run build
 
 # Production stage
+
 FROM node:20-alpine
 
 # Security: Run as non-root user
+
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+ adduser -S nodejs -u 1001
 
 WORKDIR /app
 
 # Copy only production files
+
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
@@ -504,56 +537,57 @@ CMD ["node", "dist/index.js"]
 \`\`\`
 
 ### ❌ Bad
+
 \`\`\`dockerfile
-FROM node:20  # ❌ Use alpine for smaller size
+FROM node:20 # ❌ Use alpine for smaller size
 
 WORKDIR /app
 
-COPY . .  # ❌ This invalidates cache on every file change!
+COPY . . # ❌ This invalidates cache on every file change!
 
-RUN npm install  # ❌ Installs dev dependencies too
+RUN npm install # ❌ Installs dev dependencies too
 
 # ❌ Running as root is a security risk
+
 CMD ["node", "index.js"]
 \`\`\`
 
 ## Docker Compose
 
 ### ✅ Good
+
 \`\`\`yaml
 version: '3.9'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production  # Use multi-stage target
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:password@db:5432/myapp
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
-    
-  db:
-    image: postgres:16-alpine
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: myapp
-      POSTGRES_PASSWORD: password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+app:
+build:
+context: .
+dockerfile: Dockerfile
+target: production # Use multi-stage target
+ports: - "3000:3000"
+environment:
+NODE_ENV: production
+DATABASE_URL: postgresql://postgres:password@db:5432/myapp
+depends_on:
+db:
+condition: service_healthy
+restart: unless-stopped
+
+db:
+image: postgres:16-alpine
+volumes: - db-data:/var/lib/postgresql/data
+environment:
+POSTGRES_DB: myapp
+POSTGRES_PASSWORD: password
+healthcheck:
+test: ["CMD-SHELL", "pg_isready -U postgres"]
+interval: 10s
+timeout: 5s
+retries: 5
 
 volumes:
-  db-data:
+db-data:
 \`\`\`
 
 **ALWAYS use multi-stage builds, non-root users, .dockerignore, and health checks in Docker.**
@@ -568,6 +602,7 @@ volumes:
 **Problem**: Skills aren't being injected
 
 **Solutions**:
+
 1. Check file location: Must be in `.factory/skills/`
 2. Check file extension: Must be `.md`
 3. Check hook script permissions:
@@ -585,6 +620,7 @@ volumes:
 **Problem**: Hooks failing silently
 
 **Solutions**:
+
 1. Run droid with debug mode:
    ```bash
    droid --debug
@@ -603,6 +639,7 @@ volumes:
 **Problem**: Context window filling up
 
 **Solutions**:
+
 1. **Be concise**: Focus on most important patterns
 2. **Split skills**: Create focused files (`react-hooks.md`, `react-components.md`)
 3. **Remove duplication**: Link to external docs for details
@@ -619,6 +656,7 @@ volumes:
 5. ✅ **Share** successful skills with your team
 
 **Want more examples?** Check out the pre-built skills:
+
 - `typescript.md` - TypeScript standards
 - `tailwind-4.md` - Tailwind CSS patterns
 - `convex.md` - Convex best practices

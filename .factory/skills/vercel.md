@@ -29,7 +29,7 @@ The `vercel.json` file is the primary configuration file for customizing Vercel 
 
 ```json
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+	"$schema": "https://openapi.vercel.sh/vercel.json"
 }
 ```
 
@@ -39,15 +39,15 @@ Adding the schema enables autocomplete and validation in modern IDEs.
 
 ```json
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "name": "my-awesome-project",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node"
-    }
-  ]
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"version": 2,
+	"name": "my-awesome-project",
+	"builds": [
+		{
+			"src": "package.json",
+			"use": "@vercel/node"
+		}
+	]
 }
 ```
 
@@ -57,26 +57,28 @@ Adding the schema enables autocomplete and validation in modern IDEs.
 
 ```json
 {
-  "buildCommand": "npm run build:production",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install"
+	"buildCommand": "npm run build:production",
+	"devCommand": "npm run dev",
+	"installCommand": "npm install"
 }
 ```
 
 ✅ **Good**: Custom build pipeline
+
 ```json
 {
-  "buildCommand": "prisma generate && next build",
-  "installCommand": "npm ci",
-  "framework": "nextjs"
+	"buildCommand": "prisma generate && next build",
+	"installCommand": "npm ci",
+	"framework": "nextjs"
 }
 ```
 
 ❌ **Bad**: Hardcoded paths or environment-specific commands
+
 ```json
 {
-  "buildCommand": "export NODE_ENV=production && /usr/local/bin/node build.js",
-  "installCommand": "rm -rf node_modules && npm install"
+	"buildCommand": "export NODE_ENV=production && /usr/local/bin/node build.js",
+	"installCommand": "rm -rf node_modules && npm install"
 }
 ```
 
@@ -86,12 +88,13 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "framework": "nextjs",
-  "buildCommand": null
+	"framework": "nextjs",
+	"buildCommand": null
 }
 ```
 
 **Supported Frameworks**:
+
 - `nextjs` - Next.js
 - `vite` - Vite
 - `create-react-app` - Create React App
@@ -107,23 +110,25 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "outputDirectory": "dist"
+	"outputDirectory": "dist"
 }
 ```
 
 ✅ **Good**: Match your framework's output
+
 ```json
 {
-  "framework": "vite",
-  "outputDirectory": "dist"
+	"framework": "vite",
+	"outputDirectory": "dist"
 }
 ```
 
 ❌ **Bad**: Wrong directory for framework
+
 ```json
 {
-  "framework": "nextjs",
-  "outputDirectory": "build"
+	"framework": "nextjs",
+	"outputDirectory": "build"
 }
 ```
 
@@ -133,10 +138,10 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ../.. && npx turbo run build --filter=web",
-  "outputDirectory": ".next",
-  "installCommand": "npm install --prefix=../.."
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"buildCommand": "cd ../.. && npx turbo run build --filter=web",
+	"outputDirectory": ".next",
+	"installCommand": "npm install --prefix=../.."
 }
 ```
 
@@ -144,27 +149,29 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "buildCommand": "npx nx build web --prod",
-  "outputDirectory": "dist/apps/web",
-  "installCommand": "npm install"
+	"buildCommand": "npx nx build web --prod",
+	"outputDirectory": "dist/apps/web",
+	"installCommand": "npm install"
 }
 ```
 
 ✅ **Good**: Proper monorepo setup
+
 ```json
 {
-  "buildCommand": "pnpm turbo build --filter=@myapp/web",
-  "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
+	"buildCommand": "pnpm turbo build --filter=@myapp/web",
+	"installCommand": "pnpm install --frozen-lockfile",
+	"outputDirectory": "apps/web/.next",
+	"framework": "nextjs"
 }
 ```
 
 ❌ **Bad**: Building entire monorepo
+
 ```json
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install"
+	"buildCommand": "npm run build",
+	"installCommand": "npm install"
 }
 ```
 
@@ -172,61 +179,63 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "redirects": [
-    {
-      "source": "/old-blog/:slug",
-      "destination": "/blog/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/api/old",
-      "destination": "/api/v2/old",
-      "permanent": false
-    }
-  ]
+	"redirects": [
+		{
+			"source": "/old-blog/:slug",
+			"destination": "/blog/:slug",
+			"permanent": true
+		},
+		{
+			"source": "/api/old",
+			"destination": "/api/v2/old",
+			"permanent": false
+		}
+	]
 }
 ```
 
 ✅ **Good**: SEO-friendly redirects
+
 ```json
 {
-  "redirects": [
-    {
-      "source": "/old-path/:path*",
-      "destination": "/new-path/:path*",
-      "permanent": true,
-      "statusCode": 301
-    },
-    {
-      "source": "/:path((?!new-path).*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "old-domain.com"
-        }
-      ],
-      "destination": "https://new-domain.com/:path*",
-      "permanent": true
-    }
-  ]
+	"redirects": [
+		{
+			"source": "/old-path/:path*",
+			"destination": "/new-path/:path*",
+			"permanent": true,
+			"statusCode": 301
+		},
+		{
+			"source": "/:path((?!new-path).*)",
+			"has": [
+				{
+					"type": "host",
+					"value": "old-domain.com"
+				}
+			],
+			"destination": "https://new-domain.com/:path*",
+			"permanent": true
+		}
+	]
 }
 ```
 
 ❌ **Bad**: Redirect loops or wrong status codes
+
 ```json
 {
-  "redirects": [
-    {
-      "source": "/blog/:slug",
-      "destination": "/old-blog/:slug",
-      "permanent": true
-    },
-    {
-      "source": "/old-blog/:slug",
-      "destination": "/blog/:slug",
-      "permanent": true
-    }
-  ]
+	"redirects": [
+		{
+			"source": "/blog/:slug",
+			"destination": "/old-blog/:slug",
+			"permanent": true
+		},
+		{
+			"source": "/old-blog/:slug",
+			"destination": "/blog/:slug",
+			"permanent": true
+		}
+	]
 }
 ```
 
@@ -234,44 +243,46 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://api.example.com/:path*"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/blog/[slug]"
-    }
-  ]
+	"rewrites": [
+		{
+			"source": "/api/:path*",
+			"destination": "https://api.example.com/:path*"
+		},
+		{
+			"source": "/blog/:slug",
+			"destination": "/blog/[slug]"
+		}
+	]
 }
 ```
 
 ✅ **Good**: API proxy pattern
+
 ```json
 {
-  "rewrites": [
-    {
-      "source": "/api/v1/:path*",
-      "destination": "https://backend.example.com/v1/:path*"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
-    }
-  ]
+	"rewrites": [
+		{
+			"source": "/api/v1/:path*",
+			"destination": "https://backend.example.com/v1/:path*"
+		},
+		{
+			"source": "/sitemap.xml",
+			"destination": "/api/sitemap"
+		}
+	]
 }
 ```
 
 ❌ **Bad**: Exposing internal services
+
 ```json
 {
-  "rewrites": [
-    {
-      "source": "/admin",
-      "destination": "http://internal-admin.local:3000"
-    }
-  ]
+	"rewrites": [
+		{
+			"source": "/admin",
+			"destination": "http://internal-admin.local:3000"
+		}
+	]
 }
 ```
 
@@ -279,80 +290,82 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "s-maxage=86400, stale-while-revalidate"
-        },
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        }
-      ]
-    }
-  ]
+	"headers": [
+		{
+			"source": "/api/(.*)",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "s-maxage=86400, stale-while-revalidate"
+				},
+				{
+					"key": "Access-Control-Allow-Origin",
+					"value": "*"
+				}
+			]
+		}
+	]
 }
 ```
 
 ✅ **Good**: Security and caching headers
+
 ```json
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
-      ]
-    },
-    {
-      "source": "/static/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    }
-  ]
+	"headers": [
+		{
+			"source": "/(.*)",
+			"headers": [
+				{
+					"key": "X-Content-Type-Options",
+					"value": "nosniff"
+				},
+				{
+					"key": "X-Frame-Options",
+					"value": "DENY"
+				},
+				{
+					"key": "X-XSS-Protection",
+					"value": "1; mode=block"
+				},
+				{
+					"key": "Referrer-Policy",
+					"value": "strict-origin-when-cross-origin"
+				}
+			]
+		},
+		{
+			"source": "/static/(.*)",
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "public, max-age=31536000, immutable"
+				}
+			]
+		}
+	]
 }
 ```
 
 ❌ **Bad**: Overly permissive CORS
+
 ```json
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Credentials",
-          "value": "true"
-        }
-      ]
-    }
-  ]
+	"headers": [
+		{
+			"source": "/(.*)",
+			"headers": [
+				{
+					"key": "Access-Control-Allow-Origin",
+					"value": "*"
+				},
+				{
+					"key": "Access-Control-Allow-Credentials",
+					"value": "true"
+				}
+			]
+		}
+	]
 }
 ```
 
@@ -360,50 +373,52 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    },
-    "api/heavy-task.ts": {
-      "memory": 3008,
-      "maxDuration": 60
-    }
-  }
+	"functions": {
+		"api/**/*.ts": {
+			"memory": 1024,
+			"maxDuration": 10
+		},
+		"api/heavy-task.ts": {
+			"memory": 3008,
+			"maxDuration": 60
+		}
+	}
 }
 ```
 
 ✅ **Good**: Optimized per function
+
 ```json
 {
-  "functions": {
-    "api/auth/**/*.ts": {
-      "memory": 512,
-      "maxDuration": 10,
-      "regions": ["iad1"]
-    },
-    "api/image-processing.ts": {
-      "memory": 3008,
-      "maxDuration": 60,
-      "regions": ["sfo1", "iad1"]
-    },
-    "api/quick/**/*.ts": {
-      "memory": 256,
-      "maxDuration": 5
-    }
-  }
+	"functions": {
+		"api/auth/**/*.ts": {
+			"memory": 512,
+			"maxDuration": 10,
+			"regions": ["iad1"]
+		},
+		"api/image-processing.ts": {
+			"memory": 3008,
+			"maxDuration": 60,
+			"regions": ["sfo1", "iad1"]
+		},
+		"api/quick/**/*.ts": {
+			"memory": 256,
+			"maxDuration": 5
+		}
+	}
 }
 ```
 
 ❌ **Bad**: Over-provisioning all functions
+
 ```json
 {
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 3008,
-      "maxDuration": 60
-    }
-  }
+	"functions": {
+		"api/**/*.ts": {
+			"memory": 3008,
+			"maxDuration": 60
+		}
+	}
 }
 ```
 
@@ -411,11 +426,12 @@ Vercel automatically detects frameworks, but you can override:
 
 ```json
 {
-  "regions": ["iad1", "sfo1"]
+	"regions": ["iad1", "sfo1"]
 }
 ```
 
 Available regions:
+
 - `iad1` - Washington, D.C., USA
 - `sfo1` - San Francisco, CA, USA
 - `pdx1` - Portland, OR, USA
@@ -428,23 +444,25 @@ Available regions:
 - `bom1` - Mumbai, India
 
 ✅ **Good**: Target specific user regions
+
 ```json
 {
-  "functions": {
-    "api/eu/**/*.ts": {
-      "regions": ["lhr1", "fra1"]
-    },
-    "api/us/**/*.ts": {
-      "regions": ["iad1", "sfo1"]
-    }
-  }
+	"functions": {
+		"api/eu/**/*.ts": {
+			"regions": ["lhr1", "fra1"]
+		},
+		"api/us/**/*.ts": {
+			"regions": ["iad1", "sfo1"]
+		}
+	}
 }
 ```
 
 ❌ **Bad**: All regions everywhere (high cost)
+
 ```json
 {
-  "regions": ["iad1", "sfo1", "pdx1", "gru1", "lhr1", "fra1", "sin1", "syd1", "hnd1", "bom1"]
+	"regions": ["iad1", "sfo1", "pdx1", "gru1", "lhr1", "fra1", "sin1", "syd1", "hnd1", "bom1"]
 }
 ```
 
@@ -460,11 +478,12 @@ Vercel supports three environment scopes:
 2. **Preview** - Used for preview deployments (branches, PRs)
 3. **Development** - Used locally with `vercel dev`
 
-### 2.2 NEXT_PUBLIC_ Pattern
+### 2.2 NEXT*PUBLIC* Pattern
 
 Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser.
 
 ✅ **Good**: Public API endpoints
+
 ```bash
 # .env.production
 NEXT_PUBLIC_API_URL=https://api.example.com
@@ -472,7 +491,8 @@ NEXT_PUBLIC_ANALYTICS_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_APP_VERSION=1.0.0
 ```
 
-❌ **Bad**: Secrets with NEXT_PUBLIC_
+❌ **Bad**: Secrets with NEXT*PUBLIC*
+
 ```bash
 # .env.production - NEVER DO THIS
 NEXT_PUBLIC_DATABASE_URL=postgres://user:password@host/db
@@ -495,6 +515,7 @@ JWT_SECRET=my-jwt-secret
 Vercel automatically encrypts all environment variables. For sensitive data:
 
 ✅ **Good**: Use Vercel environment variables UI
+
 ```bash
 # Via Vercel Dashboard
 # Settings > Environment Variables
@@ -504,6 +525,7 @@ Vercel automatically encrypts all environment variables. For sensitive data:
 ```
 
 ❌ **Bad**: Committing secrets
+
 ```bash
 # .env.local (committed to Git) - NEVER DO THIS
 DATABASE_PASSWORD=super-secret-password
@@ -516,39 +538,41 @@ Vercel provides automatic environment variables:
 
 ```typescript
 // Available in all environments
-process.env.VERCEL // "1"
-process.env.VERCEL_ENV // "production" | "preview" | "development"
-process.env.VERCEL_URL // "myapp-abc123.vercel.app"
-process.env.VERCEL_REGION // "iad1"
-process.env.VERCEL_GIT_PROVIDER // "github" | "gitlab" | "bitbucket"
-process.env.VERCEL_GIT_REPO_SLUG // "my-repo"
-process.env.VERCEL_GIT_REPO_OWNER // "my-org"
-process.env.VERCEL_GIT_COMMIT_REF // "main"
-process.env.VERCEL_GIT_COMMIT_SHA // "abc123def456"
-process.env.VERCEL_GIT_COMMIT_MESSAGE // "feat: add feature"
-process.env.VERCEL_GIT_COMMIT_AUTHOR_LOGIN // "username"
+process.env.VERCEL; // "1"
+process.env.VERCEL_ENV; // "production" | "preview" | "development"
+process.env.VERCEL_URL; // "myapp-abc123.vercel.app"
+process.env.VERCEL_REGION; // "iad1"
+process.env.VERCEL_GIT_PROVIDER; // "github" | "gitlab" | "bitbucket"
+process.env.VERCEL_GIT_REPO_SLUG; // "my-repo"
+process.env.VERCEL_GIT_REPO_OWNER; // "my-org"
+process.env.VERCEL_GIT_COMMIT_REF; // "main"
+process.env.VERCEL_GIT_COMMIT_SHA; // "abc123def456"
+process.env.VERCEL_GIT_COMMIT_MESSAGE; // "feat: add feature"
+process.env.VERCEL_GIT_COMMIT_AUTHOR_LOGIN; // "username"
 ```
 
 ✅ **Good**: Use system variables for conditional logic
+
 ```typescript
 export function getBaseUrl() {
-  if (process.env.VERCEL_ENV === 'production') {
-    return 'https://myapp.com';
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return 'http://localhost:3000';
+	if (process.env.VERCEL_ENV === 'production') {
+		return 'https://myapp.com';
+	}
+	if (process.env.VERCEL_URL) {
+		return `https://${process.env.VERCEL_URL}`;
+	}
+	return 'http://localhost:3000';
 }
 ```
 
 ❌ **Bad**: Hardcoding environment detection
+
 ```typescript
 export function getBaseUrl() {
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://myapp.com'; // Wrong for preview deployments
-  }
-  return 'http://localhost:3000';
+	if (process.env.NODE_ENV === 'production') {
+		return 'https://myapp.com'; // Wrong for preview deployments
+	}
+	return 'http://localhost:3000';
 }
 ```
 
@@ -571,6 +595,7 @@ vercel env ls
 ```
 
 ✅ **Good**: Environment-specific configuration
+
 ```bash
 # Development
 vercel env add NEXT_PUBLIC_API_URL development
@@ -586,6 +611,7 @@ vercel env add NEXT_PUBLIC_API_URL production
 ```
 
 ❌ **Bad**: Same value for all environments
+
 ```bash
 # All environments
 vercel env add NEXT_PUBLIC_API_URL
@@ -596,6 +622,7 @@ vercel env add NEXT_PUBLIC_API_URL
 ### 2.7 Local Development Setup
 
 ✅ **Good**: Proper .env file hierarchy
+
 ```
 .env                # Shared defaults (committed)
 .env.local          # Local overrides (NOT committed)
@@ -621,6 +648,7 @@ LOG_LEVEL=error
 ```
 
 ❌ **Bad**: Single .env file for everything
+
 ```bash
 # .env (committed) - NEVER DO THIS
 DATABASE_URL=postgres://prod-server:5432/mydb
@@ -635,11 +663,11 @@ NEXT_PUBLIC_API_URL=https://api.example.com
 ```typescript
 // app/api/users/route.ts
 export async function GET() {
-  const dbUrl = process.env.DATABASE_URL; // Available server-side only
-  const apiKey = process.env.API_SECRET_KEY; // Available server-side only
-  
-  // ... use variables
-  return Response.json({ success: true });
+	const dbUrl = process.env.DATABASE_URL; // Available server-side only
+	const apiKey = process.env.API_SECRET_KEY; // Available server-side only
+
+	// ... use variables
+	return Response.json({ success: true });
 }
 ```
 
@@ -650,42 +678,45 @@ export async function GET() {
 'use client';
 
 export function Analytics() {
-  const analyticsId = process.env.NEXT_PUBLIC_ANALYTICS_ID; // Available client-side
-  
-  // ... initialize analytics
-  return null;
+	const analyticsId = process.env.NEXT_PUBLIC_ANALYTICS_ID; // Available client-side
+
+	// ... initialize analytics
+	return null;
 }
 ```
 
 ✅ **Good**: Environment-aware configuration
+
 ```typescript
 // lib/config.ts
 const config = {
-  apiUrl: process.env.NEXT_PUBLIC_API_URL,
-  isDev: process.env.VERCEL_ENV === 'development',
-  isPreview: process.env.VERCEL_ENV === 'preview',
-  isProd: process.env.VERCEL_ENV === 'production',
-  deploymentUrl: process.env.VERCEL_URL,
+	apiUrl: process.env.NEXT_PUBLIC_API_URL,
+	isDev: process.env.VERCEL_ENV === 'development',
+	isPreview: process.env.VERCEL_ENV === 'preview',
+	isProd: process.env.VERCEL_ENV === 'production',
+	deploymentUrl: process.env.VERCEL_URL,
 };
 
 export default config;
 ```
 
 ❌ **Bad**: Accessing server variables client-side
+
 ```typescript
 'use client';
 
 export function ClientComponent() {
-  // This will be undefined in the browser!
-  const dbUrl = process.env.DATABASE_URL;
-  
-  return <div>{dbUrl}</div>; // undefined
+	// This will be undefined in the browser!
+	const dbUrl = process.env.DATABASE_URL;
+
+	return <div>{ dbUrl } < /div>; / / undefined;
 }
 ```
 
 ### 2.9 Secret Management Best Practices
 
 ✅ **Good**: Rotate secrets regularly
+
 ```bash
 # 1. Update in Vercel Dashboard
 # 2. Trigger redeployment
@@ -696,11 +727,13 @@ vercel --prod
 ```
 
 ❌ **Bad**: Never rotating secrets
+
 ```bash
 # Same API key for 3 years - SECURITY RISK
 ```
 
 ✅ **Good**: Use different secrets per environment
+
 ```bash
 # Production
 STRIPE_SECRET_KEY=sk_live_xxxxx
@@ -713,6 +746,7 @@ STRIPE_SECRET_KEY=sk_test_local_xxxxx
 ```
 
 ❌ **Bad**: Same production secrets in development
+
 ```bash
 # All environments
 STRIPE_SECRET_KEY=sk_live_xxxxx # DANGEROUS!
@@ -731,14 +765,15 @@ STRIPE_SECRET_KEY=sk_live_xxxxx # DANGEROUS!
 export const runtime = 'edge';
 
 export async function GET(request: Request) {
-  return Response.json({ 
-    message: 'Running on Edge',
-    region: process.env.VERCEL_REGION 
-  });
+	return Response.json({
+		message: 'Running on Edge',
+		region: process.env.VERCEL_REGION,
+	});
 }
 ```
 
 **Characteristics**:
+
 - Executes close to users globally
 - Starts in <10ms
 - Limited to Web APIs (no Node.js APIs)
@@ -754,13 +789,14 @@ export const runtime = 'nodejs';
 import { readFile } from 'fs/promises';
 
 export async function GET() {
-  // Full Node.js API access
-  const data = await readFile('./data.json', 'utf-8');
-  return Response.json({ data });
+	// Full Node.js API access
+	const data = await readFile('./data.json', 'utf-8');
+	return Response.json({ data });
 }
 ```
 
 **Characteristics**:
+
 - Full Node.js API access
 - Regional execution
 - 10s execution timeout (Pro: 60s, Enterprise: 900s)
@@ -769,33 +805,35 @@ export async function GET() {
 ### 3.2 Choosing the Right Runtime
 
 ✅ **Good**: Edge for low-latency global responses
+
 ```typescript
 // middleware.ts - Perfect for Edge
 export const config = { runtime: 'edge' };
 
 export function middleware(request: Request) {
-  const country = request.headers.get('x-vercel-ip-country');
-  
-  // Fast geo-routing
-  if (country === 'US') {
-    return NextResponse.rewrite('/us');
-  }
-  return NextResponse.rewrite('/intl');
+	const country = request.headers.get('x-vercel-ip-country');
+
+	// Fast geo-routing
+	if (country === 'US') {
+		return NextResponse.rewrite('/us');
+	}
+	return NextResponse.rewrite('/intl');
 }
 ```
 
 ❌ **Bad**: Edge with heavy computation
+
 ```typescript
 // app/api/heavy/route.ts
 export const runtime = 'edge'; // Wrong choice!
 
 export async function POST(request: Request) {
-  const data = await request.json();
-  
-  // Heavy CPU work - should use Node.js runtime
-  const result = complexAlgorithm(data); // Might timeout on Edge
-  
-  return Response.json(result);
+	const data = await request.json();
+
+	// Heavy CPU work - should use Node.js runtime
+	const result = complexAlgorithm(data); // Might timeout on Edge
+
+	return Response.json(result);
 }
 ```
 
@@ -808,8 +846,8 @@ Edge Config is an ultra-low latency data store for the Edge.
 import { get } from '@vercel/edge-config';
 
 export async function getFeatureFlags() {
-  const flags = await get('featureFlags');
-  return flags;
+	const flags = await get('featureFlags');
+	return flags;
 }
 ```
 
@@ -817,38 +855,40 @@ export async function getFeatureFlags() {
 
 ```json
 {
-  "edgeConfig": "ecfg_xxxxxxxxxxxxx"
+	"edgeConfig": "ecfg_xxxxxxxxxxxxx"
 }
 ```
 
 ✅ **Good**: Feature flags with Edge Config
+
 ```typescript
 // middleware.ts
 import { get } from '@vercel/edge-config';
 import { NextResponse } from 'next/server';
 
 export async function middleware(request: Request) {
-  const flags = await get('features');
-  const newUIEnabled = flags?.newUI === true;
-  
-  if (newUIEnabled) {
-    return NextResponse.rewrite('/new-ui');
-  }
-  
-  return NextResponse.next();
+	const flags = await get('features');
+	const newUIEnabled = flags?.newUI === true;
+
+	if (newUIEnabled) {
+		return NextResponse.rewrite('/new-ui');
+	}
+
+	return NextResponse.next();
 }
 ```
 
 ❌ **Bad**: Database queries in middleware
+
 ```typescript
 // middleware.ts
 import { sql } from '@vercel/postgres';
 
 export async function middleware(request: Request) {
-  // Too slow for middleware!
-  const flags = await sql`SELECT * FROM feature_flags`;
-  
-  return NextResponse.next();
+	// Too slow for middleware!
+	const flags = await sql`SELECT * FROM feature_flags`;
+
+	return NextResponse.next();
 }
 ```
 
@@ -862,238 +902,243 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  
-  // Add custom header
-  response.headers.set('x-middleware-version', '1.0');
-  
-  return response;
+	const response = NextResponse.next();
+
+	// Add custom header
+	response.headers.set('x-middleware-version', '1.0');
+
+	return response;
 }
 
 export const config = {
-  matcher: '/api/:path*',
+	matcher: '/api/:path*',
 };
 ```
 
 #### Path Matching
 
 ✅ **Good**: Specific path matchers
+
 ```typescript
 export const config = {
-  matcher: [
-    '/api/:path*',
-    '/dashboard/:path*',
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+	matcher: ['/api/:path*', '/dashboard/:path*', '/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
 ```
 
 ❌ **Bad**: Running on all paths unnecessarily
+
 ```typescript
 export const config = {
-  matcher: '/:path*', // Runs on EVERYTHING
+	matcher: '/:path*', // Runs on EVERYTHING
 };
 ```
 
 ### 3.5 Authentication Middleware
 
 ✅ **Good**: JWT verification on Edge
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value;
-  
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    await jwtVerify(token, secret);
-    
-    return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
+	const token = request.cookies.get('auth-token')?.value;
+
+	if (!token) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
+
+	try {
+		const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+		await jwtVerify(token, secret);
+
+		return NextResponse.next();
+	} catch (error) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/api/protected/:path*'],
+	matcher: ['/dashboard/:path*', '/api/protected/:path*'],
 };
 ```
 
 ❌ **Bad**: Blocking database calls in middleware
+
 ```typescript
 // middleware.ts
 import { sql } from '@vercel/postgres';
 
 export async function middleware(request: NextRequest) {
-  const sessionId = request.cookies.get('session')?.value;
-  
-  // Too slow for Edge!
-  const session = await sql`
+	const sessionId = request.cookies.get('session')?.value;
+
+	// Too slow for Edge!
+	const session = await sql`
     SELECT * FROM sessions WHERE id = ${sessionId}
   `;
-  
-  return NextResponse.next();
+
+	return NextResponse.next();
 }
 ```
 
 ### 3.6 Geo-location & A/B Testing
 
 ✅ **Good**: Geo-based routing
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const country = request.geo?.country || 'US';
-  const city = request.geo?.city;
-  
-  const response = NextResponse.next();
-  
-  // Set geo headers for personalization
-  response.headers.set('x-user-country', country);
-  response.headers.set('x-user-city', city || 'unknown');
-  
-  // Route EU users differently
-  if (['DE', 'FR', 'IT', 'ES'].includes(country)) {
-    return NextResponse.rewrite(new URL('/eu', request.url));
-  }
-  
-  return response;
+	const country = request.geo?.country || 'US';
+	const city = request.geo?.city;
+
+	const response = NextResponse.next();
+
+	// Set geo headers for personalization
+	response.headers.set('x-user-country', country);
+	response.headers.set('x-user-city', city || 'unknown');
+
+	// Route EU users differently
+	if (['DE', 'FR', 'IT', 'ES'].includes(country)) {
+		return NextResponse.rewrite(new URL('/eu', request.url));
+	}
+
+	return response;
 }
 ```
 
 ✅ **Good**: A/B testing with cookies
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const variant = request.cookies.get('ab-test-variant')?.value;
-  
-  if (!variant) {
-    // Assign random variant
-    const newVariant = Math.random() < 0.5 ? 'A' : 'B';
-    const response = NextResponse.next();
-    response.cookies.set('ab-test-variant', newVariant, {
-      maxAge: 60 * 60 * 24 * 30, // 30 days
-    });
-    
-    if (newVariant === 'B') {
-      return NextResponse.rewrite(new URL('/variant-b', request.url));
-    }
-    
-    return response;
-  }
-  
-  if (variant === 'B') {
-    return NextResponse.rewrite(new URL('/variant-b', request.url));
-  }
-  
-  return NextResponse.next();
+	const variant = request.cookies.get('ab-test-variant')?.value;
+
+	if (!variant) {
+		// Assign random variant
+		const newVariant = Math.random() < 0.5 ? 'A' : 'B';
+		const response = NextResponse.next();
+		response.cookies.set('ab-test-variant', newVariant, {
+			maxAge: 60 * 60 * 24 * 30, // 30 days
+		});
+
+		if (newVariant === 'B') {
+			return NextResponse.rewrite(new URL('/variant-b', request.url));
+		}
+
+		return response;
+	}
+
+	if (variant === 'B') {
+		return NextResponse.rewrite(new URL('/variant-b', request.url));
+	}
+
+	return NextResponse.next();
 }
 
 export const config = {
-  matcher: '/',
+	matcher: '/',
 };
 ```
 
 ### 3.7 Request/Response Manipulation
 
 ✅ **Good**: Adding security headers
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  
-  // Security headers
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=()'
-  );
-  
-  return response;
+	const response = NextResponse.next();
+
+	// Security headers
+	response.headers.set('X-Frame-Options', 'DENY');
+	response.headers.set('X-Content-Type-Options', 'nosniff');
+	response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
+	return response;
 }
 ```
 
 ✅ **Good**: Request rewriting
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl;
-  
-  // Rewrite old URLs to new structure
-  if (url.pathname.startsWith('/blog/')) {
-    const slug = url.pathname.replace('/blog/', '');
-    return NextResponse.rewrite(new URL(`/posts/${slug}`, request.url));
-  }
-  
-  // Mobile subdomain handling
-  if (request.headers.get('host')?.startsWith('m.')) {
-    return NextResponse.rewrite(new URL(`/mobile${url.pathname}`, request.url));
-  }
-  
-  return NextResponse.next();
+	const url = request.nextUrl;
+
+	// Rewrite old URLs to new structure
+	if (url.pathname.startsWith('/blog/')) {
+		const slug = url.pathname.replace('/blog/', '');
+		return NextResponse.rewrite(new URL(`/posts/${slug}`, request.url));
+	}
+
+	// Mobile subdomain handling
+	if (request.headers.get('host')?.startsWith('m.')) {
+		return NextResponse.rewrite(new URL(`/mobile${url.pathname}`, request.url));
+	}
+
+	return NextResponse.next();
 }
 ```
 
 ### 3.8 Edge Function Performance
 
 ✅ **Good**: Optimized Edge function
+
 ```typescript
 // app/api/fast/route.ts
 export const runtime = 'edge';
 
 export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const id = url.searchParams.get('id');
-  
-  // Fast Edge Config lookup
-  const data = await get(`item-${id}`);
-  
-  return Response.json(data, {
-    headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-    },
-  });
+	const url = new URL(request.url);
+	const id = url.searchParams.get('id');
+
+	// Fast Edge Config lookup
+	const data = await get(`item-${id}`);
+
+	return Response.json(data, {
+		headers: {
+			'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+		},
+	});
 }
 ```
 
 ❌ **Bad**: Slow database queries on Edge
+
 ```typescript
 // app/api/slow/route.ts
 export const runtime = 'edge';
 
 export async function GET() {
-  // Database in distant region = slow!
-  const response = await fetch('https://db.us-west.example.com/api/data', {
-    method: 'POST',
-    body: JSON.stringify({ complex: 'query' }),
-  });
-  
-  return Response.json(await response.json());
+	// Database in distant region = slow!
+	const response = await fetch('https://db.us-west.example.com/api/data', {
+		method: 'POST',
+		body: JSON.stringify({ complex: 'query' }),
+	});
+
+	return Response.json(await response.json());
 }
 ```
 
 ### 3.9 Edge Function Limits
 
 **Size Limits**:
+
 - 4MB total code size (Edge)
 - 50MB total code size (Node.js)
 
 **Execution Limits**:
+
 - 25s timeout (Edge, without streaming)
 - 300s timeout (Edge, with streaming)
 - 10s timeout (Node.js, Hobby)
@@ -1101,34 +1146,36 @@ export async function GET() {
 - 900s timeout (Node.js, Enterprise)
 
 **Memory Limits**:
+
 - 128MB (default)
 - 1GB, 2GB, 3GB (configurable)
 
 ✅ **Good**: Streaming for long responses
+
 ```typescript
 // app/api/stream/route.ts
 export const runtime = 'edge';
 
 export async function GET() {
-  const encoder = new TextEncoder();
-  
-  const stream = new ReadableStream({
-    async start(controller) {
-      for (let i = 0; i < 100; i++) {
-        controller.enqueue(encoder.encode(`data: ${i}\n\n`));
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      controller.close();
-    },
-  });
-  
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-    },
-  });
+	const encoder = new TextEncoder();
+
+	const stream = new ReadableStream({
+		async start(controller) {
+			for (let i = 0; i < 100; i++) {
+				controller.enqueue(encoder.encode(`data: ${i}\n\n`));
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
+			controller.close();
+		},
+	});
+
+	return new Response(stream, {
+		headers: {
+			'Content-Type': 'text/event-stream',
+			'Cache-Control': 'no-cache',
+			Connection: 'keep-alive',
+		},
+	});
 }
 ```
 
@@ -1152,7 +1199,7 @@ vercel domains add example.com
 
 ```json
 {
-  "alias": ["www.example.com", "example.com"]
+	"alias": ["www.example.com", "example.com"]
 }
 ```
 
@@ -1177,6 +1224,7 @@ TTL: 3600
 ```
 
 ✅ **Good**: Proper DNS setup
+
 ```
 # Root domain
 Type: A
@@ -1195,6 +1243,7 @@ Value: cname.vercel-dns.com
 ```
 
 ❌ **Bad**: Mixed DNS providers
+
 ```
 # Root at Cloudflare
 Type: A (proxied)
@@ -1211,47 +1260,50 @@ Value: cname.vercel-dns.com
 ### 4.3 WWW Redirects
 
 ✅ **Good**: Automatic www → non-www redirect
+
 ```json
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.example.com"
-        }
-      ],
-      "destination": "https://example.com/:path*",
-      "permanent": true
-    }
-  ]
+	"redirects": [
+		{
+			"source": "/:path*",
+			"has": [
+				{
+					"type": "host",
+					"value": "www.example.com"
+				}
+			],
+			"destination": "https://example.com/:path*",
+			"permanent": true
+		}
+	]
 }
 ```
 
 ✅ **Good**: Automatic non-www → www redirect
+
 ```json
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "example.com"
-        }
-      ],
-      "destination": "https://www.example.com/:path*",
-      "permanent": true
-    }
-  ]
+	"redirects": [
+		{
+			"source": "/:path*",
+			"has": [
+				{
+					"type": "host",
+					"value": "example.com"
+				}
+			],
+			"destination": "https://www.example.com/:path*",
+			"permanent": true
+		}
+	]
 }
 ```
 
 ❌ **Bad**: No redirect handling
+
 ```json
 {
-  "alias": ["www.example.com", "example.com"]
+	"alias": ["www.example.com", "example.com"]
 }
 ```
 
@@ -1260,12 +1312,14 @@ Value: cname.vercel-dns.com
 Vercel automatically provisions and renews SSL certificates.
 
 **Features**:
+
 - Automatic Let's Encrypt certificates
 - Auto-renewal before expiration
 - Wildcard certificates supported
 - Custom certificates (Enterprise)
 
 ✅ **Good**: Let Vercel handle SSL
+
 ```bash
 # Just add the domain
 vercel domains add example.com
@@ -1276,6 +1330,7 @@ vercel domains add example.com
 ```
 
 ❌ **Bad**: Managing SSL manually
+
 ```bash
 # Don't do this - let Vercel handle it
 certbot certonly --manual -d example.com
@@ -1299,22 +1354,21 @@ TTL: 3600
 ```
 
 ✅ **Good**: Multi-tenant SaaS setup
+
 ```typescript
 // middleware.ts
 import { NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get('host') || '';
-  const subdomain = hostname.split('.')[0];
-  
-  // Tenant-specific routing
-  if (subdomain && subdomain !== 'www') {
-    return NextResponse.rewrite(
-      new URL(`/tenants/${subdomain}${request.nextUrl.pathname}`, request.url)
-    );
-  }
-  
-  return NextResponse.next();
+	const hostname = request.headers.get('host') || '';
+	const subdomain = hostname.split('.')[0];
+
+	// Tenant-specific routing
+	if (subdomain && subdomain !== 'www') {
+		return NextResponse.rewrite(new URL(`/tenants/${subdomain}${request.nextUrl.pathname}`, request.url));
+	}
+
+	return NextResponse.next();
 }
 ```
 
@@ -1323,6 +1377,7 @@ export function middleware(request: NextRequest) {
 Vercel requires verification before using a domain:
 
 1. **TXT Record Method**:
+
 ```
 Type: TXT
 Name: _vercel
@@ -1347,6 +1402,7 @@ vercel dns import example.com
 ```
 
 ✅ **Good**: Full Vercel DNS setup
+
 ```bash
 # 1. Add domain
 vercel domains add example.com
@@ -1370,16 +1426,18 @@ https://[project]-[team].vercel.app (production)
 ```
 
 ✅ **Good**: Custom preview domain per branch
+
 ```json
 {
-  "github": {
-    "autoAlias": true,
-    "silent": false
-  }
+	"github": {
+		"autoAlias": true,
+		"silent": false
+	}
 }
 ```
 
 This generates:
+
 ```
 main → https://myapp.com
 develop → https://myapp-git-develop-team.vercel.app
@@ -1418,6 +1476,7 @@ export default function RootLayout({ children }) {
 ```
 
 ✅ **Good**: Analytics with custom events
+
 ```typescript
 'use client';
 
@@ -1429,10 +1488,10 @@ export function CheckoutButton() {
       value: 99.99,
       currency: 'USD',
     });
-    
+
     // ... checkout logic
   };
-  
+
   return <button onClick={handleCheckout}>Checkout</button>;
 }
 ```
@@ -1462,6 +1521,7 @@ export default function RootLayout({ children }) {
 ```
 
 **Metrics Tracked**:
+
 - **LCP** (Largest Contentful Paint)
 - **FID** (First Input Delay)
 - **CLS** (Cumulative Layout Shift)
@@ -1470,6 +1530,7 @@ export default function RootLayout({ children }) {
 - **INP** (Interaction to Next Paint)
 
 ✅ **Good**: Custom route monitoring
+
 ```typescript
 // app/dashboard/page.tsx
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -1503,39 +1564,45 @@ vercel logs --limit 100
 ```
 
 ✅ **Good**: Structured logging
+
 ```typescript
 // app/api/users/route.ts
 export async function GET(request: Request) {
-  console.log(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    method: request.method,
-    url: request.url,
-    userAgent: request.headers.get('user-agent'),
-  }));
-  
-  // ... handler logic
-  
-  console.log(JSON.stringify({
-    status: 200,
-    duration: 123,
-  }));
-  
-  return Response.json({ success: true });
+	console.log(
+		JSON.stringify({
+			timestamp: new Date().toISOString(),
+			method: request.method,
+			url: request.url,
+			userAgent: request.headers.get('user-agent'),
+		}),
+	);
+
+	// ... handler logic
+
+	console.log(
+		JSON.stringify({
+			status: 200,
+			duration: 123,
+		}),
+	);
+
+	return Response.json({ success: true });
 }
 ```
 
 ❌ **Bad**: Excessive logging
+
 ```typescript
 export async function GET(request: Request) {
-  console.log('Starting request');
-  console.log('Got headers');
-  console.log('Parsing body');
-  console.log('Validating');
-  console.log('Processing');
-  console.log('Sending response');
-  // Too noisy!
-  
-  return Response.json({ success: true });
+	console.log('Starting request');
+	console.log('Got headers');
+	console.log('Parsing body');
+	console.log('Validating');
+	console.log('Processing');
+	console.log('Sending response');
+	// Too noisy!
+
+	return Response.json({ success: true });
 }
 ```
 
@@ -1550,12 +1617,10 @@ Integrate with error tracking services.
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  environment: process.env.VERCEL_ENV,
-  tracesSampleRate: 1.0,
-  integrations: [
-    new Sentry.BrowserTracing(),
-  ],
+	dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+	environment: process.env.VERCEL_ENV,
+	tracesSampleRate: 1.0,
+	integrations: [new Sentry.BrowserTracing()],
 });
 ```
 
@@ -1564,36 +1629,37 @@ Sentry.init({
 import * as Sentry from '@sentry/nextjs';
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.VERCEL_ENV,
-  tracesSampleRate: 1.0,
+	dsn: process.env.SENTRY_DSN,
+	environment: process.env.VERCEL_ENV,
+	tracesSampleRate: 1.0,
 });
 ```
 
 ✅ **Good**: Custom error context
+
 ```typescript
 import * as Sentry from '@sentry/nextjs';
 
 export async function GET(request: Request) {
-  try {
-    const data = await fetchData();
-    return Response.json(data);
-  } catch (error) {
-    Sentry.captureException(error, {
-      tags: {
-        section: 'api',
-        endpoint: '/api/data',
-      },
-      contexts: {
-        request: {
-          url: request.url,
-          method: request.method,
-        },
-      },
-    });
-    
-    return Response.json({ error: 'Internal error' }, { status: 500 });
-  }
+	try {
+		const data = await fetchData();
+		return Response.json(data);
+	} catch (error) {
+		Sentry.captureException(error, {
+			tags: {
+				section: 'api',
+				endpoint: '/api/data',
+			},
+			contexts: {
+				request: {
+					url: request.url,
+					method: request.method,
+				},
+			},
+		});
+
+		return Response.json({ error: 'Internal error' }, { status: 500 });
+	}
 }
 ```
 
@@ -1604,14 +1670,14 @@ export async function GET(request: Request) {
 ```typescript
 // lib/rum.ts
 export function reportWebVitals(metric: any) {
-  const body = JSON.stringify(metric);
-  const url = '/api/analytics';
+	const body = JSON.stringify(metric);
+	const url = '/api/analytics';
 
-  if (navigator.sendBeacon) {
-    navigator.sendBeacon(url, body);
-  } else {
-    fetch(url, { body, method: 'POST', keepalive: true });
-  }
+	if (navigator.sendBeacon) {
+		navigator.sendBeacon(url, body);
+	} else {
+		fetch(url, { body, method: 'POST', keepalive: true });
+	}
 }
 ```
 
@@ -1625,22 +1691,25 @@ export { reportWebVitals };
 #### Custom Metrics
 
 ✅ **Good**: API latency monitoring
+
 ```typescript
 // app/api/users/route.ts
 export async function GET() {
-  const start = Date.now();
-  
-  const data = await db.query('SELECT * FROM users');
-  
-  const duration = Date.now() - start;
-  
-  console.log(JSON.stringify({
-    metric: 'db_query_duration',
-    value: duration,
-    query: 'users',
-  }));
-  
-  return Response.json(data);
+	const start = Date.now();
+
+	const data = await db.query('SELECT * FROM users');
+
+	const duration = Date.now() - start;
+
+	console.log(
+		JSON.stringify({
+			metric: 'db_query_duration',
+			value: duration,
+			query: 'users',
+		}),
+	);
+
+	return Response.json(data);
 }
 ```
 
@@ -1664,39 +1733,40 @@ curl -X POST https://your-monitoring.com/webhook \
 
 ```json
 {
-  "github": {
-    "silent": false,
-    "autoAlias": true,
-    "autoJobCancelation": true
-  }
+	"github": {
+		"silent": false,
+		"autoAlias": true,
+		"autoJobCancelation": true
+	}
 }
 ```
 
 ✅ **Good**: Deployment notifications
+
 ```typescript
 // app/api/deploy-hook/route.ts
 export async function POST(request: Request) {
-  const payload = await request.json();
-  
-  // Send to Slack
-  await fetch(process.env.SLACK_WEBHOOK_URL!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      text: `🚀 Deployment ${payload.deploymentStatus}`,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `*${payload.name}* deployed to production\n<${payload.deploymentUrl}|View Deployment>`,
-          },
-        },
-      ],
-    }),
-  });
-  
-  return Response.json({ success: true });
+	const payload = await request.json();
+
+	// Send to Slack
+	await fetch(process.env.SLACK_WEBHOOK_URL!, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			text: `🚀 Deployment ${payload.deploymentStatus}`,
+			blocks: [
+				{
+					type: 'section',
+					text: {
+						type: 'mrkdwn',
+						text: `*${payload.name}* deployed to production\n<${payload.deploymentUrl}|View Deployment>`,
+					},
+				},
+			],
+		}),
+	});
+
+	return Response.json({ success: true });
 }
 ```
 
@@ -1709,6 +1779,7 @@ export async function POST(request: Request) {
 Automatic deployments from GitHub:
 
 1. **Connect Repository**
+
 ```bash
 vercel link
 # or via Dashboard: New Project → Import Git Repository
@@ -1718,28 +1789,24 @@ vercel link
 
 ```json
 {
-  "github": {
-    "enabled": true,
-    "autoAlias": true,
-    "silent": false,
-    "autoJobCancelation": true
-  }
+	"github": {
+		"enabled": true,
+		"autoAlias": true,
+		"silent": false,
+		"autoJobCancelation": true
+	}
 }
 ```
 
 ✅ **Good**: Branch-based deployments
+
 ```yaml
 # .github/vercel.json
-{
-  "github": {
-    "enabled": true,
-    "autoAlias": true,
-    "autoJobCancelation": true
-  }
-}
+{ 'github': { 'enabled': true, 'autoAlias': true, 'autoJobCancelation': true } }
 ```
 
 **Behavior**:
+
 - `main` branch → Production deployment
 - Other branches → Preview deployments
 - Pull requests → Preview deployments with comments
@@ -1747,47 +1814,53 @@ vercel link
 ### 6.2 Automatic Deployments
 
 **Triggers**:
+
 - Push to any branch
 - Pull request opened/updated
 - Manual trigger via `vercel --prod`
 
 ✅ **Good**: Controlled production deployments
+
 ```json
 {
-  "github": {
-    "enabled": true,
-    "autoAlias": true,
-    "deploymentEnabled": {
-      "main": true,
-      "staging": true
-    },
-    "autoJobCancelation": true
-  }
+	"github": {
+		"enabled": true,
+		"autoAlias": true,
+		"deploymentEnabled": {
+			"main": true,
+			"staging": true
+		},
+		"autoJobCancelation": true
+	}
 }
 ```
 
 ❌ **Bad**: Every branch to production
+
 ```json
 {
-  "github": {
-    "enabled": true,
-    "autoAlias": false
-  }
+	"github": {
+		"enabled": true,
+		"autoAlias": false
+	}
 }
 ```
 
 ### 6.3 Preview Deployments
 
 Preview deployments are created for:
+
 - Every push to non-production branch
 - Every pull request
 
 ✅ **Good**: PR preview comments enabled
+
 ```
 Project Settings → Git → Pull Request Comments: ON
 ```
 
 This adds comments to PRs:
+
 ```
 ✅ Preview deployment ready!
 
@@ -1813,6 +1886,7 @@ vercel promote https://myapp-git-feature-team.vercel.app
 ```
 
 ✅ **Good**: Protected production deployments
+
 ```
 GitHub Settings → Branch Protection Rules:
 - Require pull request reviews
@@ -1830,6 +1904,7 @@ curl -X POST https://api.vercel.com/v1/integrations/deploy/HOOK_ID
 ```
 
 ✅ **Good**: CMS webhook integration
+
 ```typescript
 // Contentful webhook
 POST https://api.vercel.com/v1/integrations/deploy/HOOK_ID
@@ -1841,28 +1916,29 @@ POST https://api.vercel.com/v1/integrations/deploy/HOOK_ID
 
 ```json
 {
-  "github": {
-    "enabled": true
-  },
-  "crons": [
-    {
-      "path": "/api/rebuild",
-      "schedule": "0 0 * * *"
-    }
-  ]
+	"github": {
+		"enabled": true
+	},
+	"crons": [
+		{
+			"path": "/api/rebuild",
+			"schedule": "0 0 * * *"
+		}
+	]
 }
 ```
 
 ### 6.6 Environment-Specific Builds
 
 ✅ **Good**: Build commands per environment
+
 ```json
 {
-  "build": {
-    "env": {
-      "NEXT_PUBLIC_BUILD_ENV": "@environment"
-    }
-  }
+	"build": {
+		"env": {
+			"NEXT_PUBLIC_BUILD_ENV": "@environment"
+		}
+	}
 }
 ```
 
@@ -1871,12 +1947,12 @@ POST https://api.vercel.com/v1/integrations/deploy/HOOK_ID
 const buildEnv = process.env.NEXT_PUBLIC_BUILD_ENV;
 
 module.exports = {
-  generateBuildId: async () => {
-    return `${buildEnv}-${Date.now()}`;
-  },
-  env: {
-    BUILD_ENV: buildEnv,
-  },
+	generateBuildId: async () => {
+		return `${buildEnv}-${Date.now()}`;
+	},
+	env: {
+		BUILD_ENV: buildEnv,
+	},
 };
 ```
 
@@ -1897,10 +1973,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install Vercel CLI
         run: npm install -g vercel
-      
+
       - name: Deploy to Vercel
         run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
         env:
@@ -1909,6 +1985,7 @@ jobs:
 ```
 
 ✅ **Good**: Full CI pipeline
+
 ```yaml
 name: CI/CD
 
@@ -1928,7 +2005,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run lint
-      
+
   deploy:
     needs: test
     if: github.ref == 'refs/heads/main'
@@ -1954,6 +2031,7 @@ Project Settings → Deployment Protection
 ```
 
 ✅ **Good**: Staging environment protection
+
 ```bash
 # Password protect staging deployments
 vercel env add PASSWORD_PROTECT staging
@@ -1971,38 +2049,41 @@ Vercel's Edge Network automatically caches responses.
 #### Cache-Control Headers
 
 ✅ **Good**: Aggressive caching for static assets
+
 ```typescript
 // app/api/static/route.ts
 export async function GET() {
-  const data = { version: '1.0.0' };
-  
-  return Response.json(data, {
-    headers: {
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  });
+	const data = { version: '1.0.0' };
+
+	return Response.json(data, {
+		headers: {
+			'Cache-Control': 'public, max-age=31536000, immutable',
+		},
+	});
 }
 ```
 
 ✅ **Good**: Stale-while-revalidate for dynamic content
+
 ```typescript
 // app/api/posts/route.ts
 export async function GET() {
-  const posts = await db.posts.findMany();
-  
-  return Response.json(posts, {
-    headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-    },
-  });
+	const posts = await db.posts.findMany();
+
+	return Response.json(posts, {
+		headers: {
+			'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
+		},
+	});
 }
 ```
 
 ❌ **Bad**: No caching headers
+
 ```typescript
 export async function GET() {
-  const data = await fetchExpensiveData();
-  return Response.json(data); // No cache!
+	const data = await fetchExpensiveData();
+	return Response.json(data); // No cache!
 }
 ```
 
@@ -2024,20 +2105,21 @@ export default async function Post({ params }) {
 ```
 
 ✅ **Good**: On-demand revalidation
+
 ```typescript
 // app/api/revalidate/route.ts
 import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
-  const { path, secret } = await request.json();
-  
-  if (secret !== process.env.REVALIDATE_SECRET) {
-    return Response.json({ error: 'Invalid secret' }, { status: 401 });
-  }
-  
-  revalidatePath(path);
-  
-  return Response.json({ revalidated: true });
+	const { path, secret } = await request.json();
+
+	if (secret !== process.env.REVALIDATE_SECRET) {
+		return Response.json({ error: 'Invalid secret' }, { status: 401 });
+	}
+
+	revalidatePath(path);
+
+	return Response.json({ revalidated: true });
 }
 ```
 
@@ -2048,17 +2130,18 @@ Vercel automatically serves all content through its global CDN.
 **CDN Regions**: 16+ global edge regions
 
 ✅ **Good**: Regional optimization
+
 ```json
 {
-  "regions": ["iad1", "sfo1"],
-  "functions": {
-    "api/us/**/*.ts": {
-      "regions": ["iad1", "sfo1"]
-    },
-    "api/eu/**/*.ts": {
-      "regions": ["lhr1", "fra1"]
-    }
-  }
+	"regions": ["iad1", "sfo1"],
+	"functions": {
+		"api/us/**/*.ts": {
+			"regions": ["iad1", "sfo1"]
+		},
+		"api/eu/**/*.ts": {
+			"regions": ["lhr1", "fra1"]
+		}
+	}
 }
 ```
 
@@ -2087,6 +2170,7 @@ export function ProductImage({ src, alt }) {
 ```
 
 ✅ **Good**: Responsive images
+
 ```typescript
 <Image
   src="/hero.jpg"
@@ -2098,6 +2182,7 @@ export function ProductImage({ src, alt }) {
 ```
 
 ❌ **Bad**: Unoptimized images
+
 ```typescript
 <img src="/large-image.jpg" alt="Unoptimized" />
 ```
@@ -2130,13 +2215,14 @@ export default function RootLayout({ children }) {
 ```
 
 ✅ **Good**: Self-hosted fonts
+
 ```typescript
 import localFont from 'next/font/local';
 
 const myFont = localFont({
-  src: './my-font.woff2',
-  display: 'swap',
-  variable: '--font-custom',
+	src: './my-font.woff2',
+	display: 'swap',
+	variable: '--font-custom',
 });
 ```
 
@@ -2145,6 +2231,7 @@ const myFont = localFont({
 Next.js automatically code-splits. Optimize further:
 
 ✅ **Good**: Dynamic imports
+
 ```typescript
 // app/components/HeavyChart.tsx
 import dynamic from 'next/dynamic';
@@ -2171,11 +2258,11 @@ npm install @next/bundle-analyzer
 ```javascript
 // next.config.js
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
+	enabled: process.env.ANALYZE === 'true',
 });
 
 module.exports = withBundleAnalyzer({
-  // Next.js config
+	// Next.js config
 });
 ```
 
@@ -2185,6 +2272,7 @@ ANALYZE=true npm run build
 ```
 
 ✅ **Good**: Tree shaking
+
 ```typescript
 // Import only what you need
 import { debounce } from 'lodash-es';
@@ -2211,6 +2299,7 @@ export default function RootLayout({ children }) {
 ```
 
 ✅ **Good**: Route prefetching
+
 ```typescript
 import Link from 'next/link';
 
@@ -2243,18 +2332,19 @@ Project Settings → Firewall
 ```
 
 ✅ **Good**: Geo-blocking
+
 ```typescript
 // middleware.ts
 export function middleware(request: NextRequest) {
-  const country = request.geo?.country;
-  
-  const blockedCountries = ['XX', 'YY'];
-  
-  if (blockedCountries.includes(country || '')) {
-    return new Response('Access denied', { status: 403 });
-  }
-  
-  return NextResponse.next();
+	const country = request.geo?.country;
+
+	const blockedCountries = ['XX', 'YY'];
+
+	if (blockedCountries.includes(country || '')) {
+		return new Response('Access denied', { status: 403 });
+	}
+
+	return NextResponse.next();
 }
 ```
 
@@ -2269,50 +2359,52 @@ Project Settings → Security → Attack Challenge Mode: ON
 ### 8.4 Security Headers
 
 ✅ **Good**: Complete security headers
+
 ```typescript
 // next.config.js
 module.exports = {
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-        ],
-      },
-    ];
-  },
+	async headers() {
+		return [
+			{
+				source: '/:path*',
+				headers: [
+					{
+						key: 'X-DNS-Prefetch-Control',
+						value: 'on',
+					},
+					{
+						key: 'Strict-Transport-Security',
+						value: 'max-age=63072000; includeSubDomains; preload',
+					},
+					{
+						key: 'X-Frame-Options',
+						value: 'SAMEORIGIN',
+					},
+					{
+						key: 'X-Content-Type-Options',
+						value: 'nosniff',
+					},
+					{
+						key: 'X-XSS-Protection',
+						value: '1; mode=block',
+					},
+					{
+						key: 'Referrer-Policy',
+						value: 'strict-origin-when-cross-origin',
+					},
+					{
+						key: 'Permissions-Policy',
+						value: 'camera=(), microphone=(), geolocation=()',
+					},
+				],
+			},
+		];
+	},
 };
 ```
 
 ✅ **Good**: Content Security Policy
+
 ```typescript
 // middleware.ts
 const CSP = `
@@ -2326,18 +2418,16 @@ const CSP = `
 `;
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-  
-  response.headers.set(
-    'Content-Security-Policy',
-    CSP.replace(/\s{2,}/g, ' ').trim()
-  );
-  
-  return response;
+	const response = NextResponse.next();
+
+	response.headers.set('Content-Security-Policy', CSP.replace(/\s{2,}/g, ' ').trim());
+
+	return response;
 }
 ```
 
 ❌ **Bad**: Unsafe CSP
+
 ```typescript
 const CSP = `default-src *; script-src * 'unsafe-inline' 'unsafe-eval';`;
 ```
@@ -2345,50 +2435,52 @@ const CSP = `default-src *; script-src * 'unsafe-inline' 'unsafe-eval';`;
 ### 8.5 Authentication & Authorization
 
 ✅ **Good**: Middleware-based auth
+
 ```typescript
 // middleware.ts
 import { verifyAuth } from '@/lib/auth';
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value;
-  
-  if (!token) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
-  const isValid = await verifyAuth(token);
-  
-  if (!isValid) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
-  return NextResponse.next();
+	const token = request.cookies.get('auth-token')?.value;
+
+	if (!token) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
+
+	const isValid = await verifyAuth(token);
+
+	if (!isValid) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
+
+	return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/api/protected/:path*'],
+	matcher: ['/dashboard/:path*', '/api/protected/:path*'],
 };
 ```
 
 ✅ **Good**: Rate limiting
+
 ```typescript
 // lib/rate-limit.ts
 import { LRUCache } from 'lru-cache';
 
 const rateLimitCache = new LRUCache({
-  max: 500,
-  ttl: 60000, // 60 seconds
+	max: 500,
+	ttl: 60000, // 60 seconds
 });
 
 export function rateLimit(ip: string, limit: number = 10): boolean {
-  const tokenCount = (rateLimitCache.get(ip) as number) || 0;
-  
-  if (tokenCount >= limit) {
-    return false;
-  }
-  
-  rateLimitCache.set(ip, tokenCount + 1);
-  return true;
+	const tokenCount = (rateLimitCache.get(ip) as number) || 0;
+
+	if (tokenCount >= limit) {
+		return false;
+	}
+
+	rateLimitCache.set(ip, tokenCount + 1);
+	return true;
 }
 ```
 
@@ -2397,14 +2489,14 @@ export function rateLimit(ip: string, limit: number = 10): boolean {
 import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  
-  if (!rateLimit(ip, 10)) {
-    return Response.json({ error: 'Too many requests' }, { status: 429 });
-  }
-  
-  // Process request
-  return Response.json({ success: true });
+	const ip = request.headers.get('x-forwarded-for') || 'unknown';
+
+	if (!rateLimit(ip, 10)) {
+		return Response.json({ error: 'Too many requests' }, { status: 429 });
+	}
+
+	// Process request
+	return Response.json({ success: true });
 }
 ```
 
@@ -2415,15 +2507,16 @@ export async function POST(request: Request) {
 This Vercel deployment skill covers:
 
 ✅ **Deployment Configuration** - vercel.json, builds, monorepos, redirects, headers  
-✅ **Environment Variables** - Types, NEXT_PUBLIC_, secrets, system vars  
+✅ **Environment Variables** - Types, NEXT*PUBLIC*, secrets, system vars  
 ✅ **Edge Functions & Middleware** - Edge vs Node.js, middleware patterns, geo-routing  
 ✅ **Domains & DNS** - Custom domains, SSL, wildcards, DNS configuration  
 ✅ **Analytics & Monitoring** - Web Analytics, Speed Insights, error tracking, logs  
 ✅ **CI/CD Integration** - GitHub integration, preview deployments, deploy hooks  
 ✅ **Performance Optimization** - Caching, ISR, CDN, image/font optimization  
-✅ **Security** - DDoS protection, firewalls, security headers, CSP  
+✅ **Security** - DDoS protection, firewalls, security headers, CSP
 
 **Best Practices**:
+
 - Use Edge Functions for global low-latency responses
 - Implement proper caching strategies
 - Secure environment variables properly
@@ -2433,6 +2526,7 @@ This Vercel deployment skill covers:
 - Use ISR for dynamic static content
 
 **Resources**:
+
 - [Vercel Documentation](https://vercel.com/docs)
 - [Next.js Deployment](https://nextjs.org/docs/deployment)
 - [Edge Functions](https://vercel.com/docs/functions/runtimes/edge)

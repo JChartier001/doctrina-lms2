@@ -116,12 +116,12 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 export default clerkMiddleware();
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and static files
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+	matcher: [
+		// Skip Next.js internals and static files
+		'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+		// Always run for API routes
+		'/(api|trpc)(.*)',
+	],
 };
 ```
 
@@ -131,24 +131,19 @@ export const config = {
 // middleware.ts
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/webhooks(.*)',
-]);
+const isPublicRoute = createRouteMatcher(['/', '/sign-in(.*)', '/sign-up(.*)', '/api/webhooks(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect();
-  }
+	if (!isPublicRoute(req)) {
+		await auth.protect();
+	}
 });
 
 export const config = {
-  matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
-  ],
+	matcher: [
+		'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+		'/(api|trpc)(.*)',
+	],
 };
 ```
 
@@ -236,7 +231,7 @@ export default function CustomSignUp() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -258,7 +253,7 @@ export default function CustomSignUp() {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -313,11 +308,11 @@ export default function CustomSignUp() {
 ```typescript
 // Don't rely on client-side only validation
 const handleSubmit = async () => {
-  if (password.length < 6) {
-    alert('Password too short');
-    return;
-  }
-  // Clerk handles strong password validation automatically
+	if (password.length < 6) {
+		alert('Password too short');
+		return;
+	}
+	// Clerk handles strong password validation automatically
 };
 ```
 
@@ -421,7 +416,7 @@ export default function MagicLinkSignIn() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -520,7 +515,7 @@ export default function PhoneSignUp() {
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -537,7 +532,7 @@ export default function PhoneSignUp() {
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -605,7 +600,7 @@ export default function EnableMFA() {
 
   const verifyMFA = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const totpFactor = user?.totpList?.[0];
       await totpFactor?.attemptVerification({ code });
@@ -655,7 +650,7 @@ export default function MFASignIn() {
 
   const handleFirstStep = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -676,7 +671,7 @@ export default function MFASignIn() {
 
   const handleTOTPVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isLoaded) return;
 
     try {
@@ -744,25 +739,25 @@ Clerk's user object contains comprehensive user information:
 
 ```typescript
 interface ClerkUser {
-  id: string;
-  firstName: string | null;
-  lastName: string | null;
-  fullName: string | null;
-  username: string | null;
-  primaryEmailAddress: EmailAddress | null;
-  emailAddresses: EmailAddress[];
-  primaryPhoneNumber: PhoneNumber | null;
-  phoneNumbers: PhoneNumber[];
-  profileImageUrl: string;
-  imageUrl: string;
-  hasImage: boolean;
-  publicMetadata: Record<string, any>;
-  privateMetadata: Record<string, any>;
-  unsafeMetadata: Record<string, any>;
-  externalAccounts: ExternalAccount[];
-  createdAt: Date;
-  updatedAt: Date;
-  lastSignInAt: Date | null;
+	id: string;
+	firstName: string | null;
+	lastName: string | null;
+	fullName: string | null;
+	username: string | null;
+	primaryEmailAddress: EmailAddress | null;
+	emailAddresses: EmailAddress[];
+	primaryPhoneNumber: PhoneNumber | null;
+	phoneNumbers: PhoneNumber[];
+	profileImageUrl: string;
+	imageUrl: string;
+	hasImage: boolean;
+	publicMetadata: Record<string, any>;
+	privateMetadata: Record<string, any>;
+	unsafeMetadata: Record<string, any>;
+	externalAccounts: ExternalAccount[];
+	createdAt: Date;
+	updatedAt: Date;
+	lastSignInAt: Date | null;
 }
 ```
 
@@ -826,25 +821,25 @@ export default async function DashboardPage() {
 ```typescript
 // Public metadata - accessible on frontend, in session token
 type PublicMetadata = {
-  role: 'admin' | 'user' | 'moderator';
-  subscriptionTier: 'free' | 'pro' | 'enterprise';
-  onboardingComplete: boolean;
+	role: 'admin' | 'user' | 'moderator';
+	subscriptionTier: 'free' | 'pro' | 'enterprise';
+	onboardingComplete: boolean;
 };
 
 // Private metadata - backend only, sensitive data
 type PrivateMetadata = {
-  stripeCustomerId: string;
-  internalNotes: string;
-  lastPaymentDate: string;
+	stripeCustomerId: string;
+	internalNotes: string;
+	lastPaymentDate: string;
 };
 
 // Unsafe metadata - read/write on frontend (use sparingly)
 type UnsafeMetadata = {
-  theme: 'light' | 'dark';
-  notificationPreferences: {
-    email: boolean;
-    push: boolean;
-  };
+	theme: 'light' | 'dark';
+	notificationPreferences: {
+		email: boolean;
+		push: boolean;
+	};
 };
 ```
 
@@ -855,19 +850,16 @@ type UnsafeMetadata = {
 import { clerkClient } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) {
-  const { role } = await req.json();
+export async function PATCH(req: NextRequest, { params }: { params: { userId: string } }) {
+	const { role } = await req.json();
 
-  await clerkClient().users.updateUser(params.userId, {
-    publicMetadata: {
-      role,
-    },
-  });
+	await clerkClient().users.updateUser(params.userId, {
+		publicMetadata: {
+			role,
+		},
+	});
 
-  return NextResponse.json({ success: true });
+	return NextResponse.json({ success: true });
 }
 ```
 
@@ -906,18 +898,18 @@ export default function ThemeToggle() {
 ```typescript
 // ❌ Don't expose sensitive data in publicMetadata
 await clerkClient().users.updateUser(userId, {
-  publicMetadata: {
-    creditCardNumber: '4242424242424242', // ❌ Exposed in session token!
-    ssn: '123-45-6789', // ❌ Never store PII here
-  },
+	publicMetadata: {
+		creditCardNumber: '4242424242424242', // ❌ Exposed in session token!
+		ssn: '123-45-6789', // ❌ Never store PII here
+	},
 });
 
 // ✅ Use privateMetadata instead
 await clerkClient().users.updateUser(userId, {
-  privateMetadata: {
-    stripePaymentMethodId: 'pm_123',
-    encryptedSSN: encryptSSN('123-45-6789'),
-  },
+	privateMetadata: {
+		stripePaymentMethodId: 'pm_123',
+		encryptedSSN: encryptSSN('123-45-6789'),
+	},
 });
 ```
 
@@ -1046,25 +1038,22 @@ import { clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { userId: string } }
-) {
-  const { userId: adminId } = await auth();
-  
-  if (!adminId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+export async function DELETE(req: Request, { params }: { params: { userId: string } }) {
+	const { userId: adminId } = await auth();
 
-  // Check if admin (from publicMetadata)
-  const admin = await clerkClient().users.getUser(adminId);
-  if (admin.publicMetadata.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+	if (!adminId) {
+		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	}
 
-  await clerkClient().users.deleteUser(params.userId);
-  
-  return NextResponse.json({ success: true });
+	// Check if admin (from publicMetadata)
+	const admin = await clerkClient().users.getUser(adminId);
+	if (admin.publicMetadata.role !== 'admin') {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
+
+	await clerkClient().users.deleteUser(params.userId);
+
+	return NextResponse.json({ success: true });
 }
 ```
 
@@ -1081,25 +1070,25 @@ export async function DELETE(
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
 const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/about',
-  '/contact',
-  '/api/webhooks(.*)',
+	'/',
+	'/sign-in(.*)',
+	'/sign-up(.*)',
+	'/about',
+	'/contact',
+	'/api/webhooks(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect();
-  }
+	if (!isPublicRoute(req)) {
+		await auth.protect();
+	}
 });
 
 export const config = {
-  matcher: [
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)',
-  ],
+	matcher: [
+		'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+		'/(api|trpc)(.*)',
+	],
 };
 ```
 
@@ -1116,25 +1105,25 @@ const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 const isModeratorRoute = createRouteMatcher(['/moderator(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
+	const { userId, sessionClaims } = await auth();
 
-  if (isPublicRoute(req)) {
-    return;
-  }
+	if (isPublicRoute(req)) {
+		return;
+	}
 
-  if (!userId) {
-    return auth.redirectToSignIn();
-  }
+	if (!userId) {
+		return auth.redirectToSignIn();
+	}
 
-  const role = sessionClaims?.metadata?.role as string;
+	const role = sessionClaims?.metadata?.role as string;
 
-  if (isAdminRoute(req) && role !== 'admin') {
-    return Response.redirect(new URL('/403', req.url));
-  }
+	if (isAdminRoute(req) && role !== 'admin') {
+		return Response.redirect(new URL('/403', req.url));
+	}
 
-  if (isModeratorRoute(req) && !['admin', 'moderator'].includes(role)) {
-    return Response.redirect(new URL('/403', req.url));
-  }
+	if (isModeratorRoute(req) && !['admin', 'moderator'].includes(role)) {
+		return Response.redirect(new URL('/403', req.url));
+	}
 });
 ```
 
@@ -1144,10 +1133,10 @@ Configure in Clerk Dashboard → Sessions → Customize session token:
 
 ```json
 {
-  "metadata": {
-    "role": "{{user.public_metadata.role}}",
-    "orgRole": "{{org.role}}"
-  }
+	"metadata": {
+		"role": "{{user.public_metadata.role}}",
+		"orgRole": "{{org.role}}"
+	}
 }
 ```
 
@@ -1231,17 +1220,17 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = await auth();
+	const { userId, sessionClaims } = await auth();
 
-  if (userId && req.nextUrl.pathname === '/sign-in') {
-    const onboardingComplete = sessionClaims?.metadata?.onboardingComplete;
-    
-    if (!onboardingComplete) {
-      return NextResponse.redirect(new URL('/onboarding', req.url));
-    }
-    
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
+	if (userId && req.nextUrl.pathname === '/sign-in') {
+		const onboardingComplete = sessionClaims?.metadata?.onboardingComplete;
+
+		if (!onboardingComplete) {
+			return NextResponse.redirect(new URL('/onboarding', req.url));
+		}
+
+		return NextResponse.redirect(new URL('/dashboard', req.url));
+	}
 });
 ```
 
@@ -1255,35 +1244,32 @@ import { clerkMiddleware } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export default clerkMiddleware(async (auth, req) => {
-  // beforeAuth: Run logic before authentication
-  const ip = req.headers.get('x-forwarded-for') || 'unknown';
-  const isRateLimited = await checkRateLimit(ip);
+	// beforeAuth: Run logic before authentication
+	const ip = req.headers.get('x-forwarded-for') || 'unknown';
+	const isRateLimited = await checkRateLimit(ip);
 
-  if (isRateLimited) {
-    return NextResponse.json(
-      { error: 'Too many requests' },
-      { status: 429 }
-    );
-  }
+	if (isRateLimited) {
+		return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+	}
 
-  // Authentication happens here
-  const { userId } = await auth();
+	// Authentication happens here
+	const { userId } = await auth();
 
-  // afterAuth: Run logic after authentication
-  if (userId) {
-    await trackUserActivity(userId, req.url);
-  }
+	// afterAuth: Run logic after authentication
+	if (userId) {
+		await trackUserActivity(userId, req.url);
+	}
 
-  return NextResponse.next();
+	return NextResponse.next();
 });
 
 async function checkRateLimit(ip: string): Promise<boolean> {
-  // Implement rate limiting logic
-  return false;
+	// Implement rate limiting logic
+	return false;
 }
 
 async function trackUserActivity(userId: string, url: string) {
-  // Track user activity
+	// Track user activity
 }
 ```
 
@@ -1332,13 +1318,13 @@ Clerk generates short-lived JWT tokens for each authenticated session.
 
 ```typescript
 interface SessionClaims {
-  azp: string;           // Authorized party (origin)
-  exp: number;           // Expiration time
-  iat: number;           // Issued at
-  iss: string;           // Issuer (Clerk)
-  nbf: number;           // Not before
-  sid: string;           // Session ID
-  sub: string;           // User ID
+	azp: string; // Authorized party (origin)
+	exp: number; // Expiration time
+	iat: number; // Issued at
+	iss: string; // Issuer (Clerk)
+	nbf: number; // Not before
+	sid: string; // Session ID
+	sub: string; // User ID
 }
 ```
 
@@ -1352,17 +1338,17 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const { userId, sessionId, sessionClaims } = await auth();
+	const { userId, sessionId, sessionClaims } = await auth();
 
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+	if (!userId) {
+		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	}
 
-  return NextResponse.json({
-    userId,
-    sessionId,
-    claims: sessionClaims,
-  });
+	return NextResponse.json({
+		userId,
+		sessionId,
+		claims: sessionClaims,
+	});
 }
 ```
 
@@ -1373,18 +1359,18 @@ export async function GET() {
 import { auth } from '@clerk/nextjs/server';
 
 export async function GET() {
-  const { getToken } = await auth();
-  
-  const token = await getToken();
+	const { getToken } = await auth();
 
-  // Use token to authenticate with external API
-  const response = await fetch('https://api.example.com/data', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+	const token = await getToken();
 
-  return Response.json(await response.json());
+	// Use token to authenticate with external API
+	const response = await fetch('https://api.example.com/data', {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	return Response.json(await response.json());
 }
 ```
 
@@ -1412,7 +1398,7 @@ export default function SessionInfo() {
 
   const handleAPICall = async () => {
     const token = await getToken();
-    
+
     const response = await fetch('/api/protected', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -1464,11 +1450,11 @@ Configure in Clerk Dashboard → Sessions → Customize session token:
 
 ```json
 {
-  "role": "{{user.public_metadata.role}}",
-  "subscription": "{{user.public_metadata.subscriptionTier}}",
-  "orgId": "{{org.id}}",
-  "orgRole": "{{org_membership.role}}",
-  "permissions": "{{org_membership.permissions}}"
+	"role": "{{user.public_metadata.role}}",
+	"subscription": "{{user.public_metadata.subscriptionTier}}",
+	"orgId": "{{org.id}}",
+	"orgRole": "{{org_membership.role}}",
+	"permissions": "{{org_membership.permissions}}"
 }
 ```
 
@@ -1480,19 +1466,19 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const { sessionClaims } = await auth();
+	const { sessionClaims } = await auth();
 
-  const role = sessionClaims?.role as string;
-  const subscription = sessionClaims?.subscription as string;
+	const role = sessionClaims?.role as string;
+	const subscription = sessionClaims?.subscription as string;
 
-  if (role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+	if (role !== 'admin') {
+		return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+	}
 
-  return NextResponse.json({
-    message: 'Admin access granted',
-    subscription,
-  });
+	return NextResponse.json({
+		message: 'Admin access granted',
+		subscription,
+	});
 }
 ```
 
@@ -1613,6 +1599,7 @@ export default function CreateOrgForm() {
 ### Organization Roles and Permissions
 
 Default roles:
+
 - `org:admin` - Full organization access
 - `org:member` - Basic member access
 
@@ -1622,23 +1609,23 @@ Configure in Clerk Dashboard → Organizations → Roles:
 
 ```json
 {
-  "roles": [
-    {
-      "key": "org:admin",
-      "name": "Admin",
-      "permissions": ["org:manage", "org:delete", "org:members:manage"]
-    },
-    {
-      "key": "org:billing_manager",
-      "name": "Billing Manager",
-      "permissions": ["org:billing:manage"]
-    },
-    {
-      "key": "org:member",
-      "name": "Member",
-      "permissions": ["org:read"]
-    }
-  ]
+	"roles": [
+		{
+			"key": "org:admin",
+			"name": "Admin",
+			"permissions": ["org:manage", "org:delete", "org:members:manage"]
+		},
+		{
+			"key": "org:billing_manager",
+			"name": "Billing Manager",
+			"permissions": ["org:billing:manage"]
+		},
+		{
+			"key": "org:member",
+			"name": "Member",
+			"permissions": ["org:read"]
+		}
+	]
 }
 ```
 
@@ -1815,20 +1802,17 @@ export default function OrgList() {
 import { clerkClient } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { orgId: string } }
-) {
-  const { subscriptionTier, features } = await req.json();
+export async function PATCH(req: NextRequest, { params }: { params: { orgId: string } }) {
+	const { subscriptionTier, features } = await req.json();
 
-  await clerkClient().organizations.updateOrganization(params.orgId, {
-    publicMetadata: {
-      subscriptionTier,
-      features,
-    },
-  });
+	await clerkClient().organizations.updateOrganization(params.orgId, {
+		publicMetadata: {
+			subscriptionTier,
+			features,
+		},
+	});
 
-  return NextResponse.json({ success: true });
+	return NextResponse.json({ success: true });
 }
 ```
 
@@ -1852,11 +1836,11 @@ export default async function OrgDashboard({
   params: { orgId: string };
 }) {
   const { orgId } = await auth();
-  
+
   if (orgId !== params.orgId) {
     return <div>Access denied</div>;
   }
-  
+
   return <div>Org: {params.orgId}</div>;
 }
 ```
@@ -1870,6 +1854,7 @@ Clerk webhooks notify your application of events (user creation, updates, deleti
 ### Webhook Events
 
 Common events:
+
 - `user.created`
 - `user.updated`
 - `user.deleted`
@@ -1898,48 +1883,48 @@ import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+	const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
-  if (!WEBHOOK_SECRET) {
-    throw new Error('CLERK_WEBHOOK_SECRET is not set');
-  }
+	if (!WEBHOOK_SECRET) {
+		throw new Error('CLERK_WEBHOOK_SECRET is not set');
+	}
 
-  // Get headers
-  const headerPayload = await headers();
-  const svix_id = headerPayload.get('svix-id');
-  const svix_timestamp = headerPayload.get('svix-timestamp');
-  const svix_signature = headerPayload.get('svix-signature');
+	// Get headers
+	const headerPayload = await headers();
+	const svix_id = headerPayload.get('svix-id');
+	const svix_timestamp = headerPayload.get('svix-timestamp');
+	const svix_signature = headerPayload.get('svix-signature');
 
-  if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Missing svix headers', { status: 400 });
-  }
+	if (!svix_id || !svix_timestamp || !svix_signature) {
+		return new Response('Missing svix headers', { status: 400 });
+	}
 
-  // Get body
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
+	// Get body
+	const payload = await req.json();
+	const body = JSON.stringify(payload);
 
-  // Verify webhook
-  const wh = new Webhook(WEBHOOK_SECRET);
-  let evt: WebhookEvent;
+	// Verify webhook
+	const wh = new Webhook(WEBHOOK_SECRET);
+	let evt: WebhookEvent;
 
-  try {
-    evt = wh.verify(body, {
-      'svix-id': svix_id,
-      'svix-timestamp': svix_timestamp,
-      'svix-signature': svix_signature,
-    }) as WebhookEvent;
-  } catch (err) {
-    console.error('Webhook verification failed:', err);
-    return new Response('Verification failed', { status: 400 });
-  }
+	try {
+		evt = wh.verify(body, {
+			'svix-id': svix_id,
+			'svix-timestamp': svix_timestamp,
+			'svix-signature': svix_signature,
+		}) as WebhookEvent;
+	} catch (err) {
+		console.error('Webhook verification failed:', err);
+		return new Response('Verification failed', { status: 400 });
+	}
 
-  // Handle event
-  const { id } = evt.data;
-  const eventType = evt.type;
+	// Handle event
+	const { id } = evt.data;
+	const eventType = evt.type;
 
-  console.log(`Webhook ${eventType} for ${id}`);
+	console.log(`Webhook ${eventType} for ${id}`);
 
-  return new Response('Webhook received', { status: 200 });
+	return new Response('Webhook received', { status: 200 });
 }
 ```
 
@@ -1955,55 +1940,55 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!;
-  const headerPayload = await headers();
-  const svix_id = headerPayload.get('svix-id')!;
-  const svix_timestamp = headerPayload.get('svix-timestamp')!;
-  const svix_signature = headerPayload.get('svix-signature')!;
+	const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET!;
+	const headerPayload = await headers();
+	const svix_id = headerPayload.get('svix-id')!;
+	const svix_timestamp = headerPayload.get('svix-timestamp')!;
+	const svix_signature = headerPayload.get('svix-signature')!;
 
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
+	const payload = await req.json();
+	const body = JSON.stringify(payload);
 
-  const wh = new Webhook(WEBHOOK_SECRET);
-  const evt = wh.verify(body, {
-    'svix-id': svix_id,
-    'svix-timestamp': svix_timestamp,
-    'svix-signature': svix_signature,
-  }) as WebhookEvent;
+	const wh = new Webhook(WEBHOOK_SECRET);
+	const evt = wh.verify(body, {
+		'svix-id': svix_id,
+		'svix-timestamp': svix_timestamp,
+		'svix-signature': svix_signature,
+	}) as WebhookEvent;
 
-  switch (evt.type) {
-    case 'user.created':
-      await db.user.create({
-        data: {
-          clerkId: evt.data.id,
-          email: evt.data.email_addresses[0]?.email_address,
-          firstName: evt.data.first_name,
-          lastName: evt.data.last_name,
-          imageUrl: evt.data.image_url,
-        },
-      });
-      break;
+	switch (evt.type) {
+		case 'user.created':
+			await db.user.create({
+				data: {
+					clerkId: evt.data.id,
+					email: evt.data.email_addresses[0]?.email_address,
+					firstName: evt.data.first_name,
+					lastName: evt.data.last_name,
+					imageUrl: evt.data.image_url,
+				},
+			});
+			break;
 
-    case 'user.updated':
-      await db.user.update({
-        where: { clerkId: evt.data.id },
-        data: {
-          email: evt.data.email_addresses[0]?.email_address,
-          firstName: evt.data.first_name,
-          lastName: evt.data.last_name,
-          imageUrl: evt.data.image_url,
-        },
-      });
-      break;
+		case 'user.updated':
+			await db.user.update({
+				where: { clerkId: evt.data.id },
+				data: {
+					email: evt.data.email_addresses[0]?.email_address,
+					firstName: evt.data.first_name,
+					lastName: evt.data.last_name,
+					imageUrl: evt.data.image_url,
+				},
+			});
+			break;
 
-    case 'user.deleted':
-      await db.user.delete({
-        where: { clerkId: evt.data.id! },
-      });
-      break;
-  }
+		case 'user.deleted':
+			await db.user.delete({
+				where: { clerkId: evt.data.id! },
+			});
+			break;
+	}
 
-  return new Response('Webhook processed', { status: 200 });
+	return new Response('Webhook processed', { status: 200 });
 }
 ```
 
@@ -2011,37 +1996,37 @@ export async function POST(req: Request) {
 
 ```typescript
 switch (evt.type) {
-  case 'organization.created':
-    await db.organization.create({
-      data: {
-        clerkId: evt.data.id,
-        name: evt.data.name,
-        slug: evt.data.slug,
-        imageUrl: evt.data.image_url,
-      },
-    });
-    break;
+	case 'organization.created':
+		await db.organization.create({
+			data: {
+				clerkId: evt.data.id,
+				name: evt.data.name,
+				slug: evt.data.slug,
+				imageUrl: evt.data.image_url,
+			},
+		});
+		break;
 
-  case 'organizationMembership.created':
-    await db.organizationMember.create({
-      data: {
-        organizationId: evt.data.organization.id,
-        userId: evt.data.public_user_data.user_id,
-        role: evt.data.role,
-      },
-    });
-    break;
+	case 'organizationMembership.created':
+		await db.organizationMember.create({
+			data: {
+				organizationId: evt.data.organization.id,
+				userId: evt.data.public_user_data.user_id,
+				role: evt.data.role,
+			},
+		});
+		break;
 
-  case 'organizationMembership.deleted':
-    await db.organizationMember.delete({
-      where: {
-        organizationId_userId: {
-          organizationId: evt.data.organization.id,
-          userId: evt.data.public_user_data.user_id,
-        },
-      },
-    });
-    break;
+	case 'organizationMembership.deleted':
+		await db.organizationMember.delete({
+			where: {
+				organizationId_userId: {
+					organizationId: evt.data.organization.id,
+					userId: evt.data.public_user_data.user_id,
+				},
+			},
+		});
+		break;
 }
 ```
 
@@ -2050,12 +2035,12 @@ switch (evt.type) {
 ```typescript
 // ❌ DANGEROUS: No signature verification
 export async function POST(req: Request) {
-  const payload = await req.json();
-  
-  // Anyone can send fake webhooks!
-  await db.user.create({ data: payload.data });
-  
-  return new Response('OK');
+	const payload = await req.json();
+
+	// Anyone can send fake webhooks!
+	await db.user.create({ data: payload.data });
+
+	return new Response('OK');
 }
 
 // ✅ Always verify with Svix
@@ -2066,24 +2051,24 @@ export async function POST(req: Request) {
 ```typescript
 // ❌ Long-running operations block webhook
 export async function POST(req: Request) {
-  // Verify webhook...
-  
-  // This takes too long - webhook will timeout
-  await sendWelcomeEmail(evt.data.id);
-  await generateReport(evt.data.id);
-  await updateAnalytics(evt.data.id);
-  
-  return new Response('OK');
+	// Verify webhook...
+
+	// This takes too long - webhook will timeout
+	await sendWelcomeEmail(evt.data.id);
+	await generateReport(evt.data.id);
+	await updateAnalytics(evt.data.id);
+
+	return new Response('OK');
 }
 
 // ✅ Queue background jobs instead
 export async function POST(req: Request) {
-  // Verify webhook...
-  
-  // Queue jobs for async processing
-  await queue.add('welcome-email', { userId: evt.data.id });
-  
-  return new Response('OK', { status: 200 });
+	// Verify webhook...
+
+	// Queue jobs for async processing
+	await queue.add('welcome-email', { userId: evt.data.id });
+
+	return new Response('OK', { status: 200 });
 }
 ```
 
@@ -2221,7 +2206,7 @@ import { dark } from '@clerk/themes';
 
 export default function ThemedSignIn() {
   const { theme } = useTheme();
-  
+
   return (
     <SignIn
       appearance={{
@@ -2261,21 +2246,21 @@ const clerkPublishableKey = 'pk_live_abc123...';
 ```typescript
 // types/clerk.ts
 declare global {
-  interface CustomJwtSessionClaims {
-    metadata: {
-      role?: 'admin' | 'user' | 'moderator';
-      onboardingComplete?: boolean;
-    };
-  }
+	interface CustomJwtSessionClaims {
+		metadata: {
+			role?: 'admin' | 'user' | 'moderator';
+			onboardingComplete?: boolean;
+		};
+	}
 }
 
 export interface UserPublicMetadata {
-  role: 'admin' | 'user' | 'moderator';
-  subscriptionTier: 'free' | 'pro' | 'enterprise';
+	role: 'admin' | 'user' | 'moderator';
+	subscriptionTier: 'free' | 'pro' | 'enterprise';
 }
 
 export interface UserPrivateMetadata {
-  stripeCustomerId: string;
+	stripeCustomerId: string;
 }
 ```
 
@@ -2320,26 +2305,26 @@ import { useSignIn } from '@clerk/nextjs';
 import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
 
 export default function SignInForm() {
-  const { signIn } = useSignIn();
+	const { signIn } = useSignIn();
 
-  const handleSignIn = async (email: string, password: string) => {
-    try {
-      await signIn?.create({
-        identifier: email,
-        password,
-      });
-    } catch (err) {
-      if (isClerkAPIResponseError(err)) {
-        console.error('Clerk error:', err.errors);
-        
-        err.errors.forEach((error) => {
-          if (error.code === 'form_password_incorrect') {
-            alert('Incorrect password');
-          }
-        });
-      }
-    }
-  };
+	const handleSignIn = async (email: string, password: string) => {
+		try {
+			await signIn?.create({
+				identifier: email,
+				password,
+			});
+		} catch (err) {
+			if (isClerkAPIResponseError(err)) {
+				console.error('Clerk error:', err.errors);
+
+				err.errors.forEach(error => {
+					if (error.code === 'form_password_incorrect') {
+						alert('Incorrect password');
+					}
+				});
+			}
+		}
+	};
 }
 ```
 
