@@ -17,10 +17,10 @@
 		"formatting": "bun run prettier --check .",
 		"formatting:fix": "bun run prettier --write .",
 		"typescript": "bun run tsc --noEmit",
-		"test": "bun test",
-		"test:watch": "bun test --watch",
-		"test:ui": "bun test --ui",
-		"test:coverage": "bun test --coverage",
+		"test": "bun vitest run",
+		"test:watch": "bun vitest",
+		"test:ui": "bun vitest --ui",
+		"test:coverage": "bun vitest run --coverage",
 		"verify": "bun run formatting:fix && bun run lint:fix && bun run typescript && bun run test:coverage"
 	},
 	"dependencies": {
