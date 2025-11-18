@@ -39,3 +39,11 @@ next-env.d.ts
 *.backup.*
 *-tasks.json
 .claude-*-backup*
+
+# Droidz configuration - NEVER commit this!
+config.yml
+
+# .droidz/ - Local state and specs
+.droidz/*
+!.droidz/.gitignore
+!.droidz/specs/000-*.md
