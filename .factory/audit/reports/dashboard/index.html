@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standards Audit Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🔍 Standards Audit Dashboard</h1>
+      <p class="subtitle" id="projectInfo">Loading...</p>
+      <button id="refreshBtn" class="refresh-btn">🔄 Refresh Data</button>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Compliance Score</div>
+        <div class="stat-value score" id="complianceScore">--</div>
+        <div class="stat-trend" id="complianceTrend"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Files</div>
+        <div class="stat-value" id="totalFiles">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Violations</div>
+        <div class="stat-value" id="totalViolations">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Critical Errors</div>
+        <div class="stat-value" style="color: #ef4444;" id="errorCount">--</div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-container">
+        <h2 class="chart-title">Violations by Standard</h2>
+        <canvas id="standardsChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <h2 class="chart-title">Violations by Severity</h2>
+        <canvas id="severityChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-container full-width">
+      <h2 class="chart-title">Top 10 Violated Rules</h2>
+      <canvas id="rulesChart"></canvas>
+    </div>
+
+    <div class="violations-section">
+      <div class="section-header">
+        <h2 class="chart-title">All Violations</h2>
+        <div class="filters">
+          <select id="severityFilter" class="filter-select">
+            <option value="all">All Severities</option>
+            <option value="error">Errors Only</option>
+            <option value="warning">Warnings Only</option>
+            <option value="info">Info Only</option>
+          </select>
+          <select id="standardFilter" class="filter-select">
+            <option value="all">All Standards</option>
+            <option value="typescript">TypeScript</option>
+            <option value="react">React</option>
+            <option value="nextjs">Next.js</option>
+            <option value="security">Security</option>
+            <option value="testing">Testing</option>
+            <option value="forms">Forms</option>
+            <option value="tailwind">Tailwind</option>
+          </select>
+          <button id="exportCsvBtn" class="export-btn">📥 Export CSV</button>
+        </div>
+      </div>
+      
+      <input 
+        type="text" 
+        class="search-box" 
+        id="searchBox" 
+        placeholder="Search violations by file, message, or rule..."
+      />
+      
+      <div class="table-wrapper">
+        <table id="violationsTable">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Line</th>
+              <th>Rule</th>
+              <th>Standard</th>
+              <th>Severity</th>
+              <th>Message</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="violationsTableBody">
+            <!-- Populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="noResults" class="no-results" style="display: none;">
+        No violations match your filters
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
