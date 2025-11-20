@@ -15,17 +15,17 @@ Skills and agents automatically save important decisions and patterns here:
 ```json
 // decisions.json example
 {
-  "decisions": [
-    {
-      "timestamp": "2025-11-11T20:00:00Z",
-      "category": "architecture",
-      "title": "State Management Choice",
-      "decision": "Use Zustand for client state",
-      "rationale": "Simpler API than Redux, better TypeScript support",
-      "alternatives": ["Redux", "Jotai", "Context API"],
-      "participants": ["team"]
-    }
-  ]
+	"decisions": [
+		{
+			"timestamp": "2025-11-11T20:00:00Z",
+			"category": "architecture",
+			"title": "State Management Choice",
+			"decision": "Use Zustand for client state",
+			"rationale": "Simpler API than Redux, better TypeScript support",
+			"alternatives": ["Redux", "Jotai", "Context API"],
+			"participants": ["team"]
+		}
+	]
 }
 ```
 

@@ -11,23 +11,29 @@ Droidz empowers developers to tackle ambitious projects with confidence by orche
 ## Core Principles
 
 ### 1. Spec-Driven Development
+
 Every feature starts with a clear specification. No code is written without understanding the "why" and "how."
 
 ### 2. Parallel Execution
+
 Independent tasks run simultaneously in isolated git worktrees, dramatically reducing development time.
 
 ### 3. Specialist Expertise
+
 Each agent is a specialist in its domain (codegen, testing, infrastructure, integration, refactoring), ensuring high-quality output.
 
 ### 4. Supervised Autonomy
+
 Agents work autonomously within approval gates, combining speed with human oversight.
 
 ### 5. Standards-First
+
 All code follows documented patterns and best practices, automatically enforced across all agents.
 
 ## Product Goals
 
 ### Short Term (Q1 2025)
+
 - ✅ Initialize memory system for context persistence
 - ✅ Fix all agent configurations for Claude Code compatibility
 - ✅ Build working orchestrator with tmux-based parallel execution
@@ -36,6 +42,7 @@ All code follows documented patterns and best practices, automatically enforced 
 - 🚧 Build auto-activating skills for seamless experience
 
 ### Medium Term (Q2 2025)
+
 - Build MCP server for advanced worktree management
 - Integrate Linear for automatic ticket processing
 - Create comprehensive onboarding experience
@@ -43,6 +50,7 @@ All code follows documented patterns and best practices, automatically enforced 
 - Build spec template library for common patterns
 
 ### Long Term (2025+)
+
 - Distributed execution across multiple machines
 - AI-powered conflict resolution
 - Automatic code review and quality gates
@@ -52,20 +60,26 @@ All code follows documented patterns and best practices, automatically enforced 
 ## Target Users
 
 ### Primary
+
 **Solo Developers & Small Teams**
+
 - Building complex applications quickly
 - Need structure but want flexibility
 - Value automation but require control
 - Want to learn best practices
 
 ### Secondary
+
 **Open Source Maintainers**
+
 - Managing multiple concurrent PRs
 - Need consistent code quality
 - Want to scale contribution processing
 
 ### Tertiary
+
 **Development Agencies**
+
 - Building client projects rapidly
 - Need standardized workflows
 - Require quality assurance
@@ -98,21 +112,26 @@ All code follows documented patterns and best practices, automatically enforced 
 ## Future Possibilities
 
 ### Agent Marketplace
+
 Community-contributed specialists for niche domains (ML, blockchain, mobile, etc.)
 
 ### Cross-Project Learning
+
 Agents learn patterns from your entire codebase portfolio
 
 ### Predictive Orchestration
+
 AI predicts which tasks to parallelize based on project history
 
 ### Collaborative Agents
+
 Multiple agents working together on single complex tasks
 
 ### Visual Orchestration Dashboard
+
 Real-time monitoring of all parallel agents with rich UI
 
 ---
 
-*Last Updated: 2025-01-12*
-*Version: 1.0.0*
+_Last Updated: 2025-01-12_
+_Version: 1.0.0_

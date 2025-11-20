@@ -1,6 +1,6 @@
 ---
 description: Initialize Droidz framework in your project
-argument-hint: "[--quick | --status]"
+argument-hint: '[--quick | --status]'
 ---
 
 Initialize the Droidz development framework in this project with the following setup:

@@ -45,6 +45,7 @@ export const publicProcedure = t.procedure;
 ```
 
 ✅ **Good**: Single initialization per app
+
 ```typescript
 // server/trpc.ts
 const t = initTRPC.create();
@@ -53,6 +54,7 @@ export const publicProcedure = t.procedure;
 ```
 
 ❌ **Bad**: Multiple tRPC instances
+
 ```typescript
 // ❌ Don't do this!
 const t1 = initTRPC.create();
@@ -69,23 +71,23 @@ import { router, publicProcedure } from '../trpc';
 import { z } from 'zod';
 
 export const appRouter = router({
-  // Query: fetch data
-  greeting: publicProcedure
-    .input(z.object({ name: z.string() }))
-    .query(({ input }) => {
-      return { message: `Hello ${input.name}!` };
-    }),
+	// Query: fetch data
+	greeting: publicProcedure.input(z.object({ name: z.string() })).query(({ input }) => {
+		return { message: `Hello ${input.name}!` };
+	}),
 
-  // Mutation: modify data
-  createUser: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      name: z.string(),
-    }))
-    .mutation(async ({ input }) => {
-      // Create user in database
-      return { id: '1', ...input };
-    }),
+	// Mutation: modify data
+	createUser: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email(),
+				name: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			// Create user in database
+			return { id: '1', ...input };
+		}),
 });
 
 // Export type for client
@@ -102,60 +104,62 @@ import { router, publicProcedure } from '../trpc';
 import { z } from 'zod';
 
 export const userRouter = router({
-  getById: publicProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      return await db.user.findUnique({ where: { id: input } });
-    }),
+	getById: publicProcedure.input(z.string()).query(async ({ input }) => {
+		return await db.user.findUnique({ where: { id: input } });
+	}),
 
-  list: publicProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-    }))
-    .query(async ({ input }) => {
-      const users = await db.user.findMany({
-        take: input.limit + 1,
-        cursor: input.cursor ? { id: input.cursor } : undefined,
-      });
-      
-      let nextCursor: string | undefined;
-      if (users.length > input.limit) {
-        const nextItem = users.pop();
-        nextCursor = nextItem!.id;
-      }
+	list: publicProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).default(10),
+				cursor: z.string().optional(),
+			}),
+		)
+		.query(async ({ input }) => {
+			const users = await db.user.findMany({
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+			});
 
-      return { users, nextCursor };
-    }),
+			let nextCursor: string | undefined;
+			if (users.length > input.limit) {
+				const nextItem = users.pop();
+				nextCursor = nextItem!.id;
+			}
 
-  create: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      name: z.string().min(1),
-    }))
-    .mutation(async ({ input }) => {
-      return await db.user.create({ data: input });
-    }),
+			return { users, nextCursor };
+		}),
 
-  update: publicProcedure
-    .input(z.object({
-      id: z.string(),
-      email: z.string().email().optional(),
-      name: z.string().min(1).optional(),
-    }))
-    .mutation(async ({ input }) => {
-      const { id, ...data } = input;
-      return await db.user.update({
-        where: { id },
-        data,
-      });
-    }),
+	create: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email(),
+				name: z.string().min(1),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			return await db.user.create({ data: input });
+		}),
 
-  delete: publicProcedure
-    .input(z.string())
-    .mutation(async ({ input }) => {
-      return await db.user.delete({ where: { id: input } });
-    }),
+	update: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				email: z.string().email().optional(),
+				name: z.string().min(1).optional(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const { id, ...data } = input;
+			return await db.user.update({
+				where: { id },
+				data,
+			});
+		}),
+
+	delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+		return await db.user.delete({ where: { id: input } });
+	}),
 });
 ```
 
@@ -165,39 +169,41 @@ import { router, publicProcedure } from '../trpc';
 import { z } from 'zod';
 
 export const postRouter = router({
-  getById: publicProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      return await db.post.findUnique({
-        where: { id: input },
-        include: { author: true },
-      });
-    }),
+	getById: publicProcedure.input(z.string()).query(async ({ input }) => {
+		return await db.post.findUnique({
+			where: { id: input },
+			include: { author: true },
+		});
+	}),
 
-  list: publicProcedure
-    .input(z.object({
-      userId: z.string().optional(),
-      published: z.boolean().optional(),
-    }))
-    .query(async ({ input }) => {
-      return await db.post.findMany({
-        where: {
-          authorId: input.userId,
-          published: input.published,
-        },
-        include: { author: true },
-      });
-    }),
+	list: publicProcedure
+		.input(
+			z.object({
+				userId: z.string().optional(),
+				published: z.boolean().optional(),
+			}),
+		)
+		.query(async ({ input }) => {
+			return await db.post.findMany({
+				where: {
+					authorId: input.userId,
+					published: input.published,
+				},
+				include: { author: true },
+			});
+		}),
 
-  create: publicProcedure
-    .input(z.object({
-      title: z.string().min(1),
-      content: z.string(),
-      authorId: z.string(),
-    }))
-    .mutation(async ({ input }) => {
-      return await db.post.create({ data: input });
-    }),
+	create: publicProcedure
+		.input(
+			z.object({
+				title: z.string().min(1),
+				content: z.string(),
+				authorId: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			return await db.post.create({ data: input });
+		}),
 });
 ```
 
@@ -208,34 +214,36 @@ import { userRouter } from './user';
 import { postRouter } from './post';
 
 export const appRouter = router({
-  user: userRouter,
-  post: postRouter,
+	user: userRouter,
+	post: postRouter,
 });
 
 export type AppRouter = typeof appRouter;
 ```
 
 ✅ **Good**: Modular router organization
+
 ```typescript
 // ✅ Clean, organized structure
 const appRouter = router({
-  user: userRouter,
-  post: postRouter,
-  comment: commentRouter,
-  auth: authRouter,
+	user: userRouter,
+	post: postRouter,
+	comment: commentRouter,
+	auth: authRouter,
 });
 ```
 
 ❌ **Bad**: Monolithic router
+
 ```typescript
 // ❌ Hard to maintain
 const appRouter = router({
-  getUserById: procedure.query(/* ... */),
-  listUsers: procedure.query(/* ... */),
-  createUser: procedure.mutation(/* ... */),
-  getPostById: procedure.query(/* ... */),
-  listPosts: procedure.query(/* ... */),
-  // ... 50 more procedures
+	getUserById: procedure.query(/* ... */),
+	listUsers: procedure.query(/* ... */),
+	createUser: procedure.mutation(/* ... */),
+	getPostById: procedure.query(/* ... */),
+	listPosts: procedure.query(/* ... */),
+	// ... 50 more procedures
 });
 ```
 
@@ -250,13 +258,13 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from './auth';
 
 export async function createContext(opts: CreateNextContextOptions) {
-  const session = await getServerSession(authOptions);
+	const session = await getServerSession(authOptions);
 
-  return {
-    session,
-    req: opts.req,
-    res: opts.res,
-  };
+	return {
+		session,
+		req: opts.req,
+		res: opts.res,
+	};
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
@@ -274,15 +282,15 @@ export const publicProcedure = t.procedure;
 
 // Protected procedure (requires auth)
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
-  return next({
-    ctx: {
-      // Session is now non-nullable
-      session: ctx.session,
-    },
-  });
+	if (!ctx.session?.user) {
+		throw new TRPCError({ code: 'UNAUTHORIZED' });
+	}
+	return next({
+		ctx: {
+			// Session is now non-nullable
+			session: ctx.session,
+		},
+	});
 });
 ```
 
@@ -293,12 +301,12 @@ import { appRouter } from '@/server/routers/_app';
 import { createContext } from '@/server/context';
 
 const handler = (req: Request) =>
-  fetchRequestHandler({
-    endpoint: '/api/trpc',
-    req,
-    router: appRouter,
-    createContext,
-  });
+	fetchRequestHandler({
+		endpoint: '/api/trpc',
+		req,
+		router: appRouter,
+		createContext,
+	});
 
 export { handler as GET, handler as POST };
 ```
@@ -313,51 +321,50 @@ import { initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 
 const t = initTRPC
-  .context<Context>()
-  .meta<Meta>()
-  .create({
-    // Data transformer (serialize Date, Map, Set, etc.)
-    transformer: superjson,
+	.context<Context>()
+	.meta<Meta>()
+	.create({
+		// Data transformer (serialize Date, Map, Set, etc.)
+		transformer: superjson,
 
-    // Custom error formatting
-    errorFormatter({ shape, error }) {
-      return {
-        ...shape,
-        data: {
-          ...shape.data,
-          zodError:
-            error.cause instanceof ZodError
-              ? error.cause.flatten()
-              : null,
-        },
-      };
-    },
+		// Custom error formatting
+		errorFormatter({ shape, error }) {
+			return {
+				...shape,
+				data: {
+					...shape.data,
+					zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+				},
+			};
+		},
 
-    // Development mode (shows stack traces)
-    isDev: process.env.NODE_ENV !== 'production',
+		// Development mode (shows stack traces)
+		isDev: process.env.NODE_ENV !== 'production',
 
-    // Allow non-server environments (for testing)
-    allowOutsideOfServer: process.env.NODE_ENV === 'test',
-  });
+		// Allow non-server environments (for testing)
+		allowOutsideOfServer: process.env.NODE_ENV === 'test',
+	});
 ```
 
 ✅ **Good**: Proper configuration
+
 ```typescript
 // ✅ Data transformer for complex types
 const t = initTRPC.create({
-  transformer: superjson,
-  errorFormatter: customFormatter,
+	transformer: superjson,
+	errorFormatter: customFormatter,
 });
 ```
 
 ❌ **Bad**: No data transformer with complex types
+
 ```typescript
 // ❌ Date objects won't serialize correctly
 const t = initTRPC.create();
 
 // This will fail!
 return {
-  createdAt: new Date(), // ❌ Won't work without transformer
+	createdAt: new Date(), // ❌ Won't work without transformer
 };
 ```
 
@@ -374,81 +381,84 @@ import { publicProcedure, router } from '../trpc';
 import { z } from 'zod';
 
 export const blogRouter = router({
-  // Simple query (no input)
-  listAll: publicProcedure.query(async () => {
-    return await db.post.findMany();
-  }),
+	// Simple query (no input)
+	listAll: publicProcedure.query(async () => {
+		return await db.post.findMany();
+	}),
 
-  // Query with input validation
-  getById: publicProcedure
-    .input(z.string().uuid())
-    .query(async ({ input }) => {
-      const post = await db.post.findUnique({
-        where: { id: input },
-      });
+	// Query with input validation
+	getById: publicProcedure.input(z.string().uuid()).query(async ({ input }) => {
+		const post = await db.post.findUnique({
+			where: { id: input },
+		});
 
-      if (!post) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Post not found',
-        });
-      }
+		if (!post) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message: 'Post not found',
+			});
+		}
 
-      return post;
-    }),
+		return post;
+	}),
 
-  // Query with complex input
-  search: publicProcedure
-    .input(z.object({
-      query: z.string().min(1),
-      tags: z.array(z.string()).optional(),
-      authorId: z.string().optional(),
-      limit: z.number().min(1).max(100).default(10),
-      offset: z.number().min(0).default(0),
-    }))
-    .query(async ({ input }) => {
-      return await db.post.findMany({
-        where: {
-          OR: [
-            { title: { contains: input.query, mode: 'insensitive' } },
-            { content: { contains: input.query, mode: 'insensitive' } },
-          ],
-          tags: input.tags ? { hasSome: input.tags } : undefined,
-          authorId: input.authorId,
-        },
-        take: input.limit,
-        skip: input.offset,
-      });
-    }),
+	// Query with complex input
+	search: publicProcedure
+		.input(
+			z.object({
+				query: z.string().min(1),
+				tags: z.array(z.string()).optional(),
+				authorId: z.string().optional(),
+				limit: z.number().min(1).max(100).default(10),
+				offset: z.number().min(0).default(0),
+			}),
+		)
+		.query(async ({ input }) => {
+			return await db.post.findMany({
+				where: {
+					OR: [
+						{ title: { contains: input.query, mode: 'insensitive' } },
+						{ content: { contains: input.query, mode: 'insensitive' } },
+					],
+					tags: input.tags ? { hasSome: input.tags } : undefined,
+					authorId: input.authorId,
+				},
+				take: input.limit,
+				skip: input.offset,
+			});
+		}),
 
-  // Infinite query pattern
-  listInfinite: publicProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-    }))
-    .query(async ({ input }) => {
-      const items = await db.post.findMany({
-        take: input.limit + 1,
-        cursor: input.cursor ? { id: input.cursor } : undefined,
-        orderBy: { createdAt: 'desc' },
-      });
+	// Infinite query pattern
+	listInfinite: publicProcedure
+		.input(
+			z.object({
+				limit: z.number().min(1).max(100).default(10),
+				cursor: z.string().optional(),
+			}),
+		)
+		.query(async ({ input }) => {
+			const items = await db.post.findMany({
+				take: input.limit + 1,
+				cursor: input.cursor ? { id: input.cursor } : undefined,
+				orderBy: { createdAt: 'desc' },
+			});
 
-      let nextCursor: string | undefined;
-      if (items.length > input.limit) {
-        const nextItem = items.pop();
-        nextCursor = nextItem!.id;
-      }
+			let nextCursor: string | undefined;
+			if (items.length > input.limit) {
+				const nextItem = items.pop();
+				nextCursor = nextItem!.id;
+			}
 
-      return {
-        items,
-        nextCursor,
-      };
-    }),
+			return {
+				items,
+				nextCursor,
+			};
+		}),
 });
 ```
 
 ✅ **Good**: Proper query design
+
 ```typescript
 // ✅ Query has no side effects
 getUser: publicProcedure
@@ -459,6 +469,7 @@ getUser: publicProcedure
 ```
 
 ❌ **Bad**: Query with side effects
+
 ```typescript
 // ❌ Don't modify data in queries!
 getUser: publicProcedure
@@ -479,91 +490,95 @@ Mutations are for creating, updating, or deleting data:
 
 ```typescript
 export const userRouter = router({
-  // Create mutation
-  create: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      name: z.string().min(1),
-      password: z.string().min(8),
-    }))
-    .mutation(async ({ input }) => {
-      const hashedPassword = await hash(input.password);
+	// Create mutation
+	create: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email(),
+				name: z.string().min(1),
+				password: z.string().min(8),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const hashedPassword = await hash(input.password);
 
-      const user = await db.user.create({
-        data: {
-          email: input.email,
-          name: input.name,
-          password: hashedPassword,
-        },
-      });
+			const user = await db.user.create({
+				data: {
+					email: input.email,
+					name: input.name,
+					password: hashedPassword,
+				},
+			});
 
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      };
-    }),
+			return {
+				id: user.id,
+				email: user.email,
+				name: user.name,
+			};
+		}),
 
-  // Update mutation
-  update: publicProcedure
-    .input(z.object({
-      id: z.string(),
-      name: z.string().min(1).optional(),
-      bio: z.string().optional(),
-    }))
-    .mutation(async ({ input, ctx }) => {
-      if (!ctx.session?.user) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+	// Update mutation
+	update: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				name: z.string().min(1).optional(),
+				bio: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			if (!ctx.session?.user) {
+				throw new TRPCError({ code: 'UNAUTHORIZED' });
+			}
 
-      const { id, ...data } = input;
+			const { id, ...data } = input;
 
-      return await db.user.update({
-        where: { id },
-        data,
-      });
-    }),
+			return await db.user.update({
+				where: { id },
+				data,
+			});
+		}),
 
-  // Delete mutation
-  delete: publicProcedure
-    .input(z.string())
-    .mutation(async ({ input, ctx }) => {
-      if (!ctx.session?.user) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+	// Delete mutation
+	delete: publicProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+		if (!ctx.session?.user) {
+			throw new TRPCError({ code: 'UNAUTHORIZED' });
+		}
 
-      await db.user.delete({ where: { id: input } });
+		await db.user.delete({ where: { id: input } });
 
-      return { success: true };
-    }),
+		return { success: true };
+	}),
 
-  // Complex mutation with transaction
-  transferOwnership: publicProcedure
-    .input(z.object({
-      postId: z.string(),
-      newOwnerId: z.string(),
-    }))
-    .mutation(async ({ input, ctx }) => {
-      return await db.$transaction(async (tx) => {
-        // Update post ownership
-        const post = await tx.post.update({
-          where: { id: input.postId },
-          data: { authorId: input.newOwnerId },
-        });
+	// Complex mutation with transaction
+	transferOwnership: publicProcedure
+		.input(
+			z.object({
+				postId: z.string(),
+				newOwnerId: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			return await db.$transaction(async tx => {
+				// Update post ownership
+				const post = await tx.post.update({
+					where: { id: input.postId },
+					data: { authorId: input.newOwnerId },
+				});
 
-        // Create activity log
-        await tx.activity.create({
-          data: {
-            type: 'OWNERSHIP_TRANSFER',
-            postId: input.postId,
-            fromUserId: ctx.session!.user.id,
-            toUserId: input.newOwnerId,
-          },
-        });
+				// Create activity log
+				await tx.activity.create({
+					data: {
+						type: 'OWNERSHIP_TRANSFER',
+						postId: input.postId,
+						fromUserId: ctx.session!.user.id,
+						toUserId: input.newOwnerId,
+					},
+				});
 
-        return post;
-      });
-    }),
+				return post;
+			});
+		}),
 });
 ```
 
@@ -575,76 +590,87 @@ tRPC uses Zod for runtime validation:
 import { z } from 'zod';
 
 export const formRouter = router({
-  // Basic types
-  submitBasic: publicProcedure
-    .input(z.object({
-      string: z.string(),
-      number: z.number(),
-      boolean: z.boolean(),
-      date: z.date(),
-    }))
-    .mutation(({ input }) => input),
+	// Basic types
+	submitBasic: publicProcedure
+		.input(
+			z.object({
+				string: z.string(),
+				number: z.number(),
+				boolean: z.boolean(),
+				date: z.date(),
+			}),
+		)
+		.mutation(({ input }) => input),
 
-  // Advanced validation
-  submitAdvanced: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      url: z.string().url(),
-      uuid: z.string().uuid(),
-      age: z.number().min(18).max(120),
-      password: z.string().min(8).regex(/[A-Z]/).regex(/[0-9]/),
-      enum: z.enum(['ADMIN', 'USER', 'GUEST']),
-    }))
-    .mutation(({ input }) => input),
+	// Advanced validation
+	submitAdvanced: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email(),
+				url: z.string().url(),
+				uuid: z.string().uuid(),
+				age: z.number().min(18).max(120),
+				password: z.string().min(8).regex(/[A-Z]/).regex(/[0-9]/),
+				enum: z.enum(['ADMIN', 'USER', 'GUEST']),
+			}),
+		)
+		.mutation(({ input }) => input),
 
-  // Optional and nullable
-  submitOptional: publicProcedure
-    .input(z.object({
-      required: z.string(),
-      optional: z.string().optional(),
-      nullable: z.string().nullable(),
-      withDefault: z.string().default('default value'),
-    }))
-    .mutation(({ input }) => input),
+	// Optional and nullable
+	submitOptional: publicProcedure
+		.input(
+			z.object({
+				required: z.string(),
+				optional: z.string().optional(),
+				nullable: z.string().nullable(),
+				withDefault: z.string().default('default value'),
+			}),
+		)
+		.mutation(({ input }) => input),
 
-  // Arrays and objects
-  submitComplex: publicProcedure
-    .input(z.object({
-      tags: z.array(z.string()),
-      metadata: z.record(z.string()),
-      nested: z.object({
-        deep: z.object({
-          value: z.number(),
-        }),
-      }),
-    }))
-    .mutation(({ input }) => input),
+	// Arrays and objects
+	submitComplex: publicProcedure
+		.input(
+			z.object({
+				tags: z.array(z.string()),
+				metadata: z.record(z.string()),
+				nested: z.object({
+					deep: z.object({
+						value: z.number(),
+					}),
+				}),
+			}),
+		)
+		.mutation(({ input }) => input),
 
-  // Discriminated unions
-  submitUnion: publicProcedure
-    .input(z.discriminatedUnion('type', [
-      z.object({
-        type: z.literal('email'),
-        email: z.string().email(),
-      }),
-      z.object({
-        type: z.literal('phone'),
-        phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
-      }),
-    ]))
-    .mutation(({ input }) => {
-      if (input.type === 'email') {
-        // input.email is available
-        return { method: 'email', value: input.email };
-      } else {
-        // input.phone is available
-        return { method: 'phone', value: input.phone };
-      }
-    }),
+	// Discriminated unions
+	submitUnion: publicProcedure
+		.input(
+			z.discriminatedUnion('type', [
+				z.object({
+					type: z.literal('email'),
+					email: z.string().email(),
+				}),
+				z.object({
+					type: z.literal('phone'),
+					phone: z.string().regex(/^\+?[1-9]\d{1,14}$/),
+				}),
+			]),
+		)
+		.mutation(({ input }) => {
+			if (input.type === 'email') {
+				// input.email is available
+				return { method: 'email', value: input.email };
+			} else {
+				// input.phone is available
+				return { method: 'phone', value: input.phone };
+			}
+		}),
 });
 ```
 
 ✅ **Good**: Strong input validation
+
 ```typescript
 // ✅ Validates email format, length, etc.
 createUser: publicProcedure
@@ -659,6 +685,7 @@ createUser: publicProcedure
 ```
 
 ❌ **Bad**: No input validation
+
 ```typescript
 // ❌ No validation, accepts anything
 createUser: publicProcedure
@@ -674,32 +701,34 @@ Validate procedure output to ensure consistency:
 
 ```typescript
 export const apiRouter = router({
-  // Output validation with Zod
-  getUser: publicProcedure
-    .input(z.string())
-    .output(z.object({
-      id: z.string(),
-      email: z.string().email(),
-      name: z.string(),
-      createdAt: z.date(),
-    }))
-    .query(async ({ input }) => {
-      const user = await db.user.findUnique({
-        where: { id: input },
-      });
+	// Output validation with Zod
+	getUser: publicProcedure
+		.input(z.string())
+		.output(
+			z.object({
+				id: z.string(),
+				email: z.string().email(),
+				name: z.string(),
+				createdAt: z.date(),
+			}),
+		)
+		.query(async ({ input }) => {
+			const user = await db.user.findUnique({
+				where: { id: input },
+			});
 
-      if (!user) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
-      }
+			if (!user) {
+				throw new TRPCError({ code: 'NOT_FOUND' });
+			}
 
-      // Output must match schema
-      return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        createdAt: user.createdAt,
-      };
-    }),
+			// Output must match schema
+			return {
+				id: user.id,
+				email: user.email,
+				name: user.name,
+				createdAt: user.createdAt,
+			};
+		}),
 });
 ```
 
@@ -723,38 +752,38 @@ export const publicProcedure = t.procedure;
 
 // Protected procedure (requires auth)
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You must be logged in',
-    });
-  }
+	if (!ctx.session?.user) {
+		throw new TRPCError({
+			code: 'UNAUTHORIZED',
+			message: 'You must be logged in',
+		});
+	}
 
-  return next({
-    ctx: {
-      // User is now non-nullable
-      session: {
-        ...ctx.session,
-        user: ctx.session.user,
-      },
-    },
-  });
+	return next({
+		ctx: {
+			// User is now non-nullable
+			session: {
+				...ctx.session,
+				user: ctx.session.user,
+			},
+		},
+	});
 });
 
 // Admin procedure (requires admin role)
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  if (ctx.session.user.role !== 'ADMIN') {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: 'You must be an admin',
-    });
-  }
+	if (ctx.session.user.role !== 'ADMIN') {
+		throw new TRPCError({
+			code: 'FORBIDDEN',
+			message: 'You must be an admin',
+		});
+	}
 
-  return next({
-    ctx: {
-      session: ctx.session,
-    },
-  });
+	return next({
+		ctx: {
+			session: ctx.session,
+		},
+	});
 });
 ```
 
@@ -765,51 +794,53 @@ Check permissions for specific resources:
 ```typescript
 // Check if user owns a resource
 export const ownershipProcedure = protectedProcedure
-  .input(z.object({ postId: z.string() }))
-  .use(async ({ ctx, input, next }) => {
-    const post = await db.post.findUnique({
-      where: { id: input.postId },
-    });
+	.input(z.object({ postId: z.string() }))
+	.use(async ({ ctx, input, next }) => {
+		const post = await db.post.findUnique({
+			where: { id: input.postId },
+		});
 
-    if (!post) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Post not found',
-      });
-    }
+		if (!post) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message: 'Post not found',
+			});
+		}
 
-    if (post.authorId !== ctx.session.user.id) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'You do not own this post',
-      });
-    }
+		if (post.authorId !== ctx.session.user.id) {
+			throw new TRPCError({
+				code: 'FORBIDDEN',
+				message: 'You do not own this post',
+			});
+		}
 
-    return next({
-      ctx: {
-        post, // Add post to context
-      },
-    });
-  });
+		return next({
+			ctx: {
+				post, // Add post to context
+			},
+		});
+	});
 
 // Usage
 export const postRouter = router({
-  update: ownershipProcedure
-    .input(z.object({
-      postId: z.string(),
-      title: z.string().optional(),
-      content: z.string().optional(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      // ctx.post is available and ownership is verified
-      return await db.post.update({
-        where: { id: input.postId },
-        data: {
-          title: input.title,
-          content: input.content,
-        },
-      });
-    }),
+	update: ownershipProcedure
+		.input(
+			z.object({
+				postId: z.string(),
+				title: z.string().optional(),
+				content: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// ctx.post is available and ownership is verified
+			return await db.post.update({
+				where: { id: input.postId },
+				data: {
+					title: input.title,
+					content: input.content,
+				},
+			});
+		}),
 });
 ```
 
@@ -819,49 +850,51 @@ Verify user belongs to an organization:
 
 ```typescript
 export const organizationProcedure = protectedProcedure
-  .input(z.object({ organizationId: z.string() }))
-  .use(async ({ ctx, input, next }) => {
-    const membership = await db.membership.findFirst({
-      where: {
-        organizationId: input.organizationId,
-        userId: ctx.session.user.id,
-      },
-      include: {
-        organization: true,
-      },
-    });
+	.input(z.object({ organizationId: z.string() }))
+	.use(async ({ ctx, input, next }) => {
+		const membership = await db.membership.findFirst({
+			where: {
+				organizationId: input.organizationId,
+				userId: ctx.session.user.id,
+			},
+			include: {
+				organization: true,
+			},
+		});
 
-    if (!membership) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'You are not a member of this organization',
-      });
-    }
+		if (!membership) {
+			throw new TRPCError({
+				code: 'FORBIDDEN',
+				message: 'You are not a member of this organization',
+			});
+		}
 
-    return next({
-      ctx: {
-        organization: membership.organization,
-        membership,
-      },
-    });
-  });
+		return next({
+			ctx: {
+				organization: membership.organization,
+				membership,
+			},
+		});
+	});
 
 // Usage
 export const orgRouter = router({
-  createProject: organizationProcedure
-    .input(z.object({
-      organizationId: z.string(),
-      name: z.string(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      // Organization membership verified
-      return await db.project.create({
-        data: {
-          name: input.name,
-          organizationId: ctx.organization.id,
-        },
-      });
-    }),
+	createProject: organizationProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				name: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Organization membership verified
+			return await db.project.create({
+				data: {
+					name: input.name,
+					organizationId: ctx.organization.id,
+				},
+			});
+		}),
 });
 ```
 
@@ -872,21 +905,21 @@ Track request timing and errors:
 ```typescript
 // server/trpc.ts
 export const loggedProcedure = publicProcedure.use(async ({ path, type, next }) => {
-  const start = Date.now();
+	const start = Date.now();
 
-  console.log(`📥 ${type.toUpperCase()} ${path} - Started`);
+	console.log(`📥 ${type.toUpperCase()} ${path} - Started`);
 
-  const result = await next();
+	const result = await next();
 
-  const duration = Date.now() - start;
+	const duration = Date.now() - start;
 
-  if (result.ok) {
-    console.log(`✅ ${type.toUpperCase()} ${path} - ${duration}ms`);
-  } else {
-    console.error(`❌ ${type.toUpperCase()} ${path} - ${duration}ms - Error: ${result.error.message}`);
-  }
+	if (result.ok) {
+		console.log(`✅ ${type.toUpperCase()} ${path} - ${duration}ms`);
+	} else {
+		console.error(`❌ ${type.toUpperCase()} ${path} - ${duration}ms - Error: ${result.error.message}`);
+	}
 
-  return result;
+	return result;
 });
 ```
 
@@ -899,30 +932,30 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
 const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(10, '10 s'),
+	redis: Redis.fromEnv(),
+	limiter: Ratelimit.slidingWindow(10, '10 s'),
 });
 
 export const rateLimitedProcedure = publicProcedure.use(async ({ ctx, next }) => {
-  if (!ctx.req) {
-    throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
-  }
+	if (!ctx.req) {
+		throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+	}
 
-  const ip = ctx.req.headers.get('x-forwarded-for') ?? 'unknown';
-  const { success, remaining } = await ratelimit.limit(ip);
+	const ip = ctx.req.headers.get('x-forwarded-for') ?? 'unknown';
+	const { success, remaining } = await ratelimit.limit(ip);
 
-  if (!success) {
-    throw new TRPCError({
-      code: 'TOO_MANY_REQUESTS',
-      message: 'Rate limit exceeded',
-    });
-  }
+	if (!success) {
+		throw new TRPCError({
+			code: 'TOO_MANY_REQUESTS',
+			message: 'Rate limit exceeded',
+		});
+	}
 
-  return next({
-    ctx: {
-      rateLimit: { remaining },
-    },
-  });
+	return next({
+		ctx: {
+			rateLimit: { remaining },
+		},
+	});
 });
 ```
 
@@ -933,21 +966,21 @@ Add data to context through middleware:
 ```typescript
 // Add database to context
 export const dbProcedure = publicProcedure.use(({ next }) => {
-  return next({
-    ctx: {
-      db: prisma,
-    },
-  });
+	return next({
+		ctx: {
+			db: prisma,
+		},
+	});
 });
 
 // Add request metadata
 export const metaProcedure = publicProcedure.use(({ ctx, next }) => {
-  return next({
-    ctx: {
-      requestTime: new Date(),
-      userAgent: ctx.req?.headers.get('user-agent'),
-    },
-  });
+	return next({
+		ctx: {
+			requestTime: new Date(),
+			userAgent: ctx.req?.headers.get('user-agent'),
+		},
+	});
 });
 ```
 
@@ -957,25 +990,21 @@ Combine multiple middleware:
 
 ```typescript
 // Combine logging + auth + rate limiting
-export const protectedApiProcedure = publicProcedure
-  .use(loggerMiddleware)
-  .use(rateLimitMiddleware)
-  .use(authMiddleware);
+export const protectedApiProcedure = publicProcedure.use(loggerMiddleware).use(rateLimitMiddleware).use(authMiddleware);
 
 // Usage
 export const apiRouter = router({
-  sensitiveAction: protectedApiProcedure
-    .input(z.string())
-    .mutation(async ({ input, ctx }) => {
-      // All middleware have run:
-      // - Request is logged
-      // - Rate limit checked
-      // - User authenticated
-    }),
+	sensitiveAction: protectedApiProcedure.input(z.string()).mutation(async ({ input, ctx }) => {
+		// All middleware have run:
+		// - Request is logged
+		// - Rate limit checked
+		// - User authenticated
+	}),
 });
 ```
 
 ✅ **Good**: Reusable middleware
+
 ```typescript
 // ✅ Create reusable base procedures
 export const authedProcedure = publicProcedure.use(authMiddleware);
@@ -983,6 +1012,7 @@ export const adminProcedure = authedProcedure.use(adminMiddleware);
 ```
 
 ❌ **Bad**: Repeated middleware logic
+
 ```typescript
 // ❌ Don't repeat auth checks everywhere
 getUserData: publicProcedure.query(({ ctx }) => {
@@ -1011,15 +1041,15 @@ import { getServerSession } from 'next-auth';
 import { prisma } from './db';
 
 export async function createContext(opts: CreateNextContextOptions) {
-  // Get session from Next-Auth
-  const session = await getServerSession(authOptions);
+	// Get session from Next-Auth
+	const session = await getServerSession(authOptions);
 
-  return {
-    session,
-    prisma,
-    req: opts.req,
-    res: opts.res,
-  };
+	return {
+		session,
+		prisma,
+		req: opts.req,
+		res: opts.res,
+	};
 }
 
 export type Context = Awaited<ReturnType<typeof createContext>>;
@@ -1031,31 +1061,33 @@ Access context data in any procedure:
 
 ```typescript
 export const userRouter = router({
-  getCurrentUser: publicProcedure.query(async ({ ctx }) => {
-    if (!ctx.session?.user) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
+	getCurrentUser: publicProcedure.query(async ({ ctx }) => {
+		if (!ctx.session?.user) {
+			throw new TRPCError({ code: 'UNAUTHORIZED' });
+		}
 
-    return await ctx.prisma.user.findUnique({
-      where: { id: ctx.session.user.id },
-    });
-  }),
+		return await ctx.prisma.user.findUnique({
+			where: { id: ctx.session.user.id },
+		});
+	}),
 
-  updateProfile: publicProcedure
-    .input(z.object({
-      name: z.string(),
-      bio: z.string(),
-    }))
-    .mutation(async ({ ctx, input }) => {
-      if (!ctx.session?.user) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+	updateProfile: publicProcedure
+		.input(
+			z.object({
+				name: z.string(),
+				bio: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (!ctx.session?.user) {
+				throw new TRPCError({ code: 'UNAUTHORIZED' });
+			}
 
-      return await ctx.prisma.user.update({
-        where: { id: ctx.session.user.id },
-        data: input,
-      });
-    }),
+			return await ctx.prisma.user.update({
+				where: { id: ctx.session.user.id },
+				data: input,
+			});
+		}),
 });
 ```
 
@@ -1068,23 +1100,23 @@ Separate request-independent and request-dependent context:
 
 // Inner context: request-independent (for testing/SSR)
 export async function createContextInner(opts?: { session: Session | null }) {
-  return {
-    session: opts?.session ?? null,
-    prisma,
-  };
+	return {
+		session: opts?.session ?? null,
+		prisma,
+	};
 }
 
 // Outer context: request-dependent
 export async function createContext(opts: CreateNextContextOptions) {
-  const session = await getServerSession(authOptions);
+	const session = await getServerSession(authOptions);
 
-  const innerCtx = await createContextInner({ session });
+	const innerCtx = await createContextInner({ session });
 
-  return {
-    ...innerCtx,
-    req: opts.req,
-    res: opts.res,
-  };
+	return {
+		...innerCtx,
+		req: opts.req,
+		res: opts.res,
+	};
 }
 
 // Type from inner context (always available)
@@ -1100,23 +1132,23 @@ Provide database access to all procedures:
 import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as {
-  prisma: PrismaClient | undefined;
+	prisma: PrismaClient | undefined;
 };
 
 export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
+	globalForPrisma.prisma ??
+	new PrismaClient({
+		log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+	});
 
 if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+	globalForPrisma.prisma = prisma;
 }
 
 export async function createContext() {
-  return {
-    prisma,
-  };
+	return {
+		prisma,
+	};
 }
 ```
 
@@ -1126,54 +1158,56 @@ Access raw request/response objects:
 
 ```typescript
 export async function createContext(opts: CreateNextContextOptions) {
-  return {
-    req: opts.req,
-    res: opts.res,
-  };
+	return {
+		req: opts.req,
+		res: opts.res,
+	};
 }
 
 // Use in procedures
 export const cookieRouter = router({
-  setCookie: publicProcedure
-    .input(z.object({
-      name: z.string(),
-      value: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      ctx.res.setHeader('Set-Cookie', `${input.name}=${input.value}; Path=/`);
-      return { success: true };
-    }),
+	setCookie: publicProcedure
+		.input(
+			z.object({
+				name: z.string(),
+				value: z.string(),
+			}),
+		)
+		.mutation(({ ctx, input }) => {
+			ctx.res.setHeader('Set-Cookie', `${input.name}=${input.value}; Path=/`);
+			return { success: true };
+		}),
 
-  getCookie: publicProcedure
-    .input(z.string())
-    .query(({ ctx, input }) => {
-      const cookies = ctx.req.headers.cookie ?? '';
-      const value = cookies
-        .split('; ')
-        .find(row => row.startsWith(`${input}=`))
-        ?.split('=')[1];
-      return value;
-    }),
+	getCookie: publicProcedure.input(z.string()).query(({ ctx, input }) => {
+		const cookies = ctx.req.headers.cookie ?? '';
+		const value = cookies
+			.split('; ')
+			.find(row => row.startsWith(`${input}=`))
+			?.split('=')[1];
+		return value;
+	}),
 });
 ```
 
 ✅ **Good**: Shared resources in context
+
 ```typescript
 // ✅ Database, session in context
 export async function createContext() {
-  return {
-    prisma,
-    session: await getSession(),
-  };
+	return {
+		prisma,
+		session: await getSession(),
+	};
 }
 ```
 
 ❌ **Bad**: Creating DB connection per procedure
+
 ```typescript
 // ❌ Don't create connections in procedures
 getUserById: publicProcedure.query(async () => {
-  const prisma = new PrismaClient(); // ❌ Wasteful!
-  return await prisma.user.findFirst();
+	const prisma = new PrismaClient(); // ❌ Wasteful!
+	return await prisma.user.findFirst();
 });
 ```
 
@@ -1292,7 +1326,7 @@ export function CreateUserForm() {
     onSuccess(data) {
       // Invalidate and refetch
       utils.user.list.invalidate();
-      
+
       // Or update cache directly
       utils.user.getById.setData(data.id, data);
     },
@@ -1418,6 +1452,7 @@ export function InfinitePostList() {
 ```
 
 ✅ **Good**: Proper client setup
+
 ```typescript
 // ✅ Batching requests
 links: [
@@ -1428,6 +1463,7 @@ links: [
 ```
 
 ❌ **Bad**: No batching
+
 ```typescript
 // ❌ Each request is separate (slower)
 links: [
@@ -1450,50 +1486,50 @@ import { TRPCError } from '@trpc/server';
 
 // UNAUTHORIZED - User not authenticated
 throw new TRPCError({
-  code: 'UNAUTHORIZED',
-  message: 'You must be logged in',
+	code: 'UNAUTHORIZED',
+	message: 'You must be logged in',
 });
 
 // FORBIDDEN - User not authorized
 throw new TRPCError({
-  code: 'FORBIDDEN',
-  message: 'You do not have permission',
+	code: 'FORBIDDEN',
+	message: 'You do not have permission',
 });
 
 // NOT_FOUND - Resource not found
 throw new TRPCError({
-  code: 'NOT_FOUND',
-  message: 'User not found',
+	code: 'NOT_FOUND',
+	message: 'User not found',
 });
 
 // BAD_REQUEST - Invalid input
 throw new TRPCError({
-  code: 'BAD_REQUEST',
-  message: 'Invalid email format',
+	code: 'BAD_REQUEST',
+	message: 'Invalid email format',
 });
 
 // CONFLICT - Resource conflict
 throw new TRPCError({
-  code: 'CONFLICT',
-  message: 'Email already exists',
+	code: 'CONFLICT',
+	message: 'Email already exists',
 });
 
 // INTERNAL_SERVER_ERROR - Server error
 throw new TRPCError({
-  code: 'INTERNAL_SERVER_ERROR',
-  message: 'Something went wrong',
+	code: 'INTERNAL_SERVER_ERROR',
+	message: 'Something went wrong',
 });
 
 // TOO_MANY_REQUESTS - Rate limit exceeded
 throw new TRPCError({
-  code: 'TOO_MANY_REQUESTS',
-  message: 'Rate limit exceeded',
+	code: 'TOO_MANY_REQUESTS',
+	message: 'Rate limit exceeded',
 });
 
 // TIMEOUT - Request timeout
 throw new TRPCError({
-  code: 'TIMEOUT',
-  message: 'Request took too long',
+	code: 'TIMEOUT',
+	message: 'Request took too long',
 });
 ```
 
@@ -1503,29 +1539,31 @@ Add custom data to errors:
 
 ```typescript
 export const userRouter = router({
-  create: publicProcedure
-    .input(z.object({
-      email: z.string().email(),
-      name: z.string(),
-    }))
-    .mutation(async ({ input }) => {
-      const existing = await db.user.findUnique({
-        where: { email: input.email },
-      });
+	create: publicProcedure
+		.input(
+			z.object({
+				email: z.string().email(),
+				name: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const existing = await db.user.findUnique({
+				where: { email: input.email },
+			});
 
-      if (existing) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'User already exists',
-          cause: {
-            field: 'email',
-            value: input.email,
-          },
-        });
-      }
+			if (existing) {
+				throw new TRPCError({
+					code: 'CONFLICT',
+					message: 'User already exists',
+					cause: {
+						field: 'email',
+						value: input.email,
+					},
+				});
+			}
 
-      return await db.user.create({ data: input });
-    }),
+			return await db.user.create({ data: input });
+		}),
 });
 ```
 
@@ -1539,19 +1577,16 @@ import { initTRPC } from '@trpc/server';
 import { ZodError } from 'zod';
 
 const t = initTRPC.create({
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError
-            ? error.cause.flatten()
-            : null,
-        customField: 'custom data',
-      },
-    };
-  },
+	errorFormatter({ shape, error }) {
+		return {
+			...shape,
+			data: {
+				...shape.data,
+				zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+				customField: 'custom data',
+			},
+		};
+	},
 });
 ```
 
@@ -1597,21 +1632,23 @@ export function UserForm() {
 ```
 
 ✅ **Good**: Specific error codes
+
 ```typescript
 // ✅ Clear error codes
 if (!user) {
-  throw new TRPCError({
-    code: 'NOT_FOUND',
-    message: 'User not found',
-  });
+	throw new TRPCError({
+		code: 'NOT_FOUND',
+		message: 'User not found',
+	});
 }
 ```
 
 ❌ **Bad**: Generic errors
+
 ```typescript
 // ❌ Unclear error
 if (!user) {
-  throw new Error('Not found');
+	throw new Error('Not found');
 }
 ```
 
@@ -1626,19 +1663,17 @@ tRPC infers types automatically:
 ```typescript
 // server/routers/user.ts
 export const userRouter = router({
-  getById: publicProcedure
-    .input(z.string())
-    .query(async ({ input }) => {
-      return await db.user.findUnique({
-        where: { id: input },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          createdAt: true,
-        },
-      });
-    }),
+	getById: publicProcedure.input(z.string()).query(async ({ input }) => {
+		return await db.user.findUnique({
+			where: { id: input },
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				createdAt: true,
+			},
+		});
+	}),
 });
 ```
 
@@ -1648,10 +1683,10 @@ import { trpc } from '@/app/providers';
 
 export function UserProfile({ userId }: { userId: string }) {
   const { data } = trpc.user.getById.useQuery(userId);
-  
+
   // TypeScript knows exact shape:
   // data: { id: string; name: string; email: string; createdAt: Date } | undefined
-  
+
   return <div>{data?.name}</div>; // ✅ Autocomplete works!
 }
 ```
@@ -1667,8 +1702,8 @@ import { userRouter } from './user';
 import { postRouter } from './post';
 
 export const appRouter = router({
-  user: userRouter,
-  post: postRouter,
+	user: userRouter,
+	post: postRouter,
 });
 
 // ⚠️ CRITICAL: Export only the TYPE, not the implementation
@@ -1693,9 +1728,9 @@ Reuse validation schemas between server and client:
 import { z } from 'zod';
 
 export const createUserSchema = z.object({
-  email: z.string().email('Invalid email'),
-  name: z.string().min(1, 'Name required'),
-  password: z.string().min(8, 'Password must be 8+ characters'),
+	email: z.string().email('Invalid email'),
+	name: z.string().min(1, 'Name required'),
+	password: z.string().min(8, 'Password must be 8+ characters'),
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
@@ -1706,12 +1741,10 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 import { createUserSchema } from '@/shared/schemas/user';
 
 export const userRouter = router({
-  create: publicProcedure
-    .input(createUserSchema)
-    .mutation(async ({ input }) => {
-      // input is typed as CreateUserInput
-      return await db.user.create({ data: input });
-    }),
+	create: publicProcedure.input(createUserSchema).mutation(async ({ input }) => {
+		// input is typed as CreateUserInput
+		return await db.user.create({ data: input });
+	}),
 });
 ```
 
@@ -1752,14 +1785,15 @@ type User = inferProcedureOutput<AppRouter['user']['getById']>;
 
 // Use in your code
 const user: User = {
-  id: '1',
-  name: 'John',
-  email: 'john@example.com',
-  createdAt: new Date(),
+	id: '1',
+	name: 'John',
+	email: 'john@example.com',
+	createdAt: new Date(),
 };
 ```
 
 ✅ **Good**: Full type safety
+
 ```typescript
 // ✅ Types flow automatically
 const { data } = trpc.user.getById.useQuery(userId);
@@ -1767,6 +1801,7 @@ data?.name; // TypeScript knows this exists
 ```
 
 ❌ **Bad**: Type assertions
+
 ```typescript
 // ❌ Don't use 'any' or assertions
 const { data } = trpc.user.getById.useQuery(userId) as any;

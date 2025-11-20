@@ -11,6 +11,7 @@
 ## Database Branching
 
 ### ✅ Good: Create Branch for Development
+
 ```bash
 # Install Neon CLI
 npm install -g neonctl
@@ -32,6 +33,7 @@ neonctl branches delete dev/feature-auth
 ```
 
 ### ✅ Good: Preview Environment per PR
+
 ```typescript
 // .github/workflows/preview.yml
 name: Deploy Preview
@@ -45,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Create Neon Branch
         id: create-branch
         run: |
@@ -55,12 +57,12 @@ jobs:
           echo "DATABASE_URL=$CONNECTION_STRING" >> $GITHUB_OUTPUT
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-      
+
       - name: Run Migrations
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ steps.create-branch.outputs.DATABASE_URL }}
-      
+
       - name: Deploy to Vercel
         run: vercel deploy --build-env DATABASE_URL="${{ steps.create-branch.outputs.DATABASE_URL }}"
 ```
@@ -68,6 +70,7 @@ jobs:
 ## Serverless Driver Usage
 
 ### ✅ Good: Neon Serverless Driver Setup
+
 ```typescript
 // lib/db.ts
 import { neon, neonConfig, Pool } from '@neondatabase/serverless';
@@ -75,16 +78,16 @@ import ws from 'ws';
 
 // Configure for local development
 if (process.env.NODE_ENV === 'development') {
-  // Use local Neon proxy for development
-  const connectionString = 'postgres://postgres:postgres@db.localtest.me:5432/main';
-  
-  neonConfig.fetchEndpoint = (host) => {
-    const [protocol, port] = host === 'db.localtest.me' ? ['http', 4444] : ['https', 443];
-    return `${protocol}://${host}:${port}/sql`;
-  };
-  
-  neonConfig.useSecureWebSocket = connectionString.hostname !== 'db.localtest.me';
-  neonConfig.wsProxy = (host) => (host === 'db.localtest.me' ? `${host}:4444/v2` : `${host}/v2`);
+	// Use local Neon proxy for development
+	const connectionString = 'postgres://postgres:postgres@db.localtest.me:5432/main';
+
+	neonConfig.fetchEndpoint = host => {
+		const [protocol, port] = host === 'db.localtest.me' ? ['http', 4444] : ['https', 443];
+		return `${protocol}://${host}:${port}/sql`;
+	};
+
+	neonConfig.useSecureWebSocket = connectionString.hostname !== 'db.localtest.me';
+	neonConfig.wsProxy = host => (host === 'db.localtest.me' ? `${host}:4444/v2` : `${host}/v2`);
 }
 
 // For environments without WebSocket support (like Node.js)
@@ -98,74 +101,74 @@ export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 ```
 
 ### ✅ Good: Query with HTTP Client
+
 ```typescript
 // Best for: Serverless functions, Edge Runtime, one-off queries
 import { sql } from '@/lib/db';
 
 export async function getUsers() {
-  // SQL template tag prevents SQL injection
-  const users = await sql`
+	// SQL template tag prevents SQL injection
+	const users = await sql`
     SELECT id, name, email 
     FROM users 
     WHERE active = ${true}
     ORDER BY created_at DESC
     LIMIT 10
   `;
-  
-  return users;
+
+	return users;
 }
 
 // Dynamic WHERE clause
 export async function searchUsers(query: string) {
-  const users = await sql`
+	const users = await sql`
     SELECT id, name, email
     FROM users
     WHERE name ILIKE ${'%' + query + '%'}
        OR email ILIKE ${'%' + query + '%'}
   `;
-  
-  return users;
+
+	return users;
 }
 ```
 
 ### ✅ Good: Connection Pool Client
+
 ```typescript
 // Best for: Long-running servers, multiple sequential queries
 import { pool } from '@/lib/db';
 
 export async function createUserWithProfile(email: string, name: string) {
-  const client = await pool.connect();
-  
-  try {
-    await client.query('BEGIN');
-    
-    const userResult = await client.query(
-      'INSERT INTO users (email, name) VALUES ($1, $2) RETURNING id',
-      [email, name]
-    );
-    
-    const userId = userResult.rows[0].id;
-    
-    await client.query(
-      'INSERT INTO profiles (user_id, bio) VALUES ($1, $2)',
-      [userId, 'New user']
-    );
-    
-    await client.query('COMMIT');
-    
-    return userId;
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
+	const client = await pool.connect();
+
+	try {
+		await client.query('BEGIN');
+
+		const userResult = await client.query('INSERT INTO users (email, name) VALUES ($1, $2) RETURNING id', [
+			email,
+			name,
+		]);
+
+		const userId = userResult.rows[0].id;
+
+		await client.query('INSERT INTO profiles (user_id, bio) VALUES ($1, $2)', [userId, 'New user']);
+
+		await client.query('COMMIT');
+
+		return userId;
+	} catch (error) {
+		await client.query('ROLLBACK');
+		throw error;
+	} finally {
+		client.release();
+	}
 }
 ```
 
 ## With Prisma
 
 ### ✅ Good: Prisma with Neon Serverless
+
 ```typescript
 // lib/prisma.ts
 import { PrismaClient } from '@prisma/client';
@@ -185,14 +188,15 @@ export const prisma = new PrismaClient({ adapter });
 
 // Usage
 const users = await prisma.user.findMany({
-  where: { active: true },
-  include: { posts: true }
+	where: { active: true },
+	include: { posts: true },
 });
 ```
 
 ## With Drizzle ORM
 
 ### ✅ Good: Drizzle with Neon
+
 ```typescript
 // lib/db.ts
 import { drizzle } from 'drizzle-orm/neon-http';
@@ -205,11 +209,11 @@ export const db = drizzle(sql);
 import { pgTable, serial, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  email: text('email').notNull().unique(),
-  name: text('name').notNull(),
-  active: boolean('active').default(true).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull()
+	id: serial('id').primaryKey(),
+	email: text('email').notNull().unique(),
+	name: text('name').notNull(),
+	active: boolean('active').default(true).notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // queries.ts
@@ -218,28 +222,22 @@ import { users } from './schema';
 import { eq } from 'drizzle-orm';
 
 export async function getUser(id: number) {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, id))
-    .limit(1);
-  
-  return user;
+	const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
+
+	return user;
 }
 
 export async function createUser(email: string, name: string) {
-  const [user] = await db
-    .insert(users)
-    .values({ email, name })
-    .returning();
-  
-  return user;
+	const [user] = await db.insert(users).values({ email, name }).returning();
+
+	return user;
 }
 ```
 
 ## Local Development
 
 ### ✅ Good: Docker Compose for Local Neon
+
 ```yaml
 # docker-compose.yml
 services:
@@ -285,6 +283,7 @@ docker-compose up -d
 ## Branching Workflows
 
 ### ✅ Good: Branch per Feature
+
 ```bash
 #!/bin/bash
 # scripts/create-dev-branch.sh
@@ -315,6 +314,7 @@ echo "  neonctl branches delete $BRANCH_NAME"
 ```
 
 ### ✅ Good: Schema-only Branch
+
 ```bash
 # Create branch with schema but no data
 neonctl branches create \
@@ -331,6 +331,7 @@ npx prisma migrate deploy
 ## Preview Environments with Vercel Integration
 
 ### ✅ Good: Automatic Branch per PR (GitHub Actions)
+
 ```yaml
 # .github/workflows/preview.yml
 name: Create Preview Environment
@@ -344,7 +345,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create Neon Branch
         id: create-branch
         uses: neondatabase/create-branch-action@v5
@@ -353,14 +354,14 @@ jobs:
           branch_name: preview/pr-${{ github.event.pull_request.number }}
           api_key: ${{ secrets.NEON_API_KEY }}
           username: ${{ secrets.NEON_DB_USER }}
-      
+
       - name: Run Migrations
         run: |
           npm install
           npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ steps.create-branch.outputs.db_url_with_pooler }}
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -368,7 +369,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--build-env DATABASE_URL="${{ steps.create-branch.outputs.db_url_with_pooler }}"'
-      
+
       - name: Comment PR with Preview URL
         uses: actions/github-script@v7
         with:
@@ -382,6 +383,7 @@ jobs:
 ```
 
 ### ✅ Good: Cleanup on PR Close
+
 ```yaml
 # .github/workflows/cleanup-preview.yml
 name: Delete Preview Environment
@@ -400,7 +402,7 @@ jobs:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           branch: preview/pr-${{ github.event.pull_request.number }}
           api_key: ${{ secrets.NEON_API_KEY }}
-      
+
       - name: Comment PR
         uses: actions/github-script@v7
         with:
@@ -414,35 +416,38 @@ jobs:
 ```
 
 ### ✅ Good: Vercel + Neon Integration (vercel.json)
+
 ```json
 {
-  "build": {
-    "env": {
-      "DATABASE_URL": "@database_url"
-    }
-  },
-  "env": {
-    "DATABASE_URL": "@database_url"
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
-  }
+	"build": {
+		"env": {
+			"DATABASE_URL": "@database_url"
+		}
+	},
+	"env": {
+		"DATABASE_URL": "@database_url"
+	},
+	"git": {
+		"deploymentEnabled": {
+			"main": true
+		}
+	}
 }
 ```
 
 ### ❌ Bad: Shared Database for All Previews
+
 ```yaml
 # ❌ WRONG - All preview environments share production database
 - name: Deploy to Vercel
   env:
-    DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}  # Dangerous!
+    DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }} # Dangerous!
 ```
 
 ## Schema Diff & Comparison
 
 ### ✅ Good: Compare Schemas Between Branches
+
 ```bash
 # Install Neon CLI
 npm install -g neonctl
@@ -460,6 +465,7 @@ neonctl branches schema-diff \
 ```
 
 ### ✅ Good: Schema Diff in CI (GitHub Actions)
+
 ```yaml
 # .github/workflows/schema-diff.yml
 name: Schema Diff on PR
@@ -473,7 +479,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Get Schema Diff
         uses: neondatabase/schema-diff-action@v1
         id: schema-diff
@@ -482,7 +488,7 @@ jobs:
           branch: preview/pr-${{ github.event.pull_request.number }}
           compare_to: main
           api_key: ${{ secrets.NEON_API_KEY }}
-      
+
       - name: Comment Schema Changes
         uses: actions/github-script@v7
         with:
@@ -496,48 +502,49 @@ jobs:
 ```
 
 ### ✅ Good: Detect Schema Drift
+
 ```typescript
 // scripts/check-schema-drift.ts
 import { neon } from '@neondatabase/serverless';
 
 async function checkSchemaDrift() {
-  const mainDb = neon(process.env.MAIN_DATABASE_URL!);
-  const branchDb = neon(process.env.BRANCH_DATABASE_URL!);
+	const mainDb = neon(process.env.MAIN_DATABASE_URL!);
+	const branchDb = neon(process.env.BRANCH_DATABASE_URL!);
 
-  // Get table names from both databases
-  const mainTables = await mainDb`
+	// Get table names from both databases
+	const mainTables = await mainDb`
     SELECT tablename 
     FROM pg_tables 
     WHERE schemaname = 'public'
     ORDER BY tablename
   `;
 
-  const branchTables = await branchDb`
+	const branchTables = await branchDb`
     SELECT tablename 
     FROM pg_tables 
     WHERE schemaname = 'public'
     ORDER BY tablename
   `;
 
-  const mainTableNames = mainTables.map(t => t.tablename);
-  const branchTableNames = branchTables.map(t => t.tablename);
+	const mainTableNames = mainTables.map(t => t.tablename);
+	const branchTableNames = branchTables.map(t => t.tablename);
 
-  // Find differences
-  const addedTables = branchTableNames.filter(t => !mainTableNames.includes(t));
-  const removedTables = mainTableNames.filter(t => !branchTableNames.includes(t));
+	// Find differences
+	const addedTables = branchTableNames.filter(t => !mainTableNames.includes(t));
+	const removedTables = mainTableNames.filter(t => !branchTableNames.includes(t));
 
-  if (addedTables.length > 0 || removedTables.length > 0) {
-    console.log('⚠️ Schema drift detected!');
-    if (addedTables.length > 0) {
-      console.log('Added tables:', addedTables);
-    }
-    if (removedTables.length > 0) {
-      console.log('Removed tables:', removedTables);
-    }
-    process.exit(1);
-  }
+	if (addedTables.length > 0 || removedTables.length > 0) {
+		console.log('⚠️ Schema drift detected!');
+		if (addedTables.length > 0) {
+			console.log('Added tables:', addedTables);
+		}
+		if (removedTables.length > 0) {
+			console.log('Removed tables:', removedTables);
+		}
+		process.exit(1);
+	}
 
-  console.log('✅ No schema drift detected');
+	console.log('✅ No schema drift detected');
 }
 
 checkSchemaDrift().catch(console.error);
@@ -546,6 +553,7 @@ checkSchemaDrift().catch(console.error);
 ## Migration Workflows with Branching
 
 ### ✅ Good: Test Migrations on Branch First
+
 ```bash
 #!/bin/bash
 # scripts/safe-migration.sh
@@ -569,7 +577,7 @@ DATABASE_URL=$TEST_DB npm test
 if [ $? -eq 0 ]; then
   echo "✅ Migrations successful! Applying to main..."
   DATABASE_URL=$MAIN_DB npx prisma migrate deploy
-  
+
   # 6. Cleanup test branch
   neonctl branches delete test/migration-$(date +%s)
 else
@@ -579,45 +587,47 @@ fi
 ```
 
 ### ✅ Good: Zero-Downtime Migration Strategy
+
 ```typescript
 // migrations/add-email-verified.ts
 import { neon } from '@neondatabase/serverless';
 
 async function migrateWithZeroDowntime() {
-  const sql = neon(process.env.DATABASE_URL!);
+	const sql = neon(process.env.DATABASE_URL!);
 
-  // Step 1: Add column as nullable
-  await sql`
+	// Step 1: Add column as nullable
+	await sql`
     ALTER TABLE users 
     ADD COLUMN IF NOT EXISTS email_verified BOOLEAN
   `;
 
-  // Step 2: Backfill data
-  await sql`
+	// Step 2: Backfill data
+	await sql`
     UPDATE users 
     SET email_verified = (email IS NOT NULL)
     WHERE email_verified IS NULL
   `;
 
-  // Step 3: Make NOT NULL after backfill
-  await sql`
+	// Step 3: Make NOT NULL after backfill
+	await sql`
     ALTER TABLE users 
     ALTER COLUMN email_verified SET NOT NULL
   `;
 
-  // Step 4: Add default for new rows
-  await sql`
+	// Step 4: Add default for new rows
+	await sql`
     ALTER TABLE users 
     ALTER COLUMN email_verified SET DEFAULT false
   `;
 
-  console.log('✅ Migration complete with zero downtime');
+	console.log('✅ Migration complete with zero downtime');
 }
 
 migrateWithZeroDowntime().catch(console.error);
 ```
 
 ### ❌ Bad: Risky Direct Migration on Production
+
 ```bash
 # ❌ WRONG - No testing, direct to production
 DATABASE_URL=$PRODUCTION_DB npx prisma migrate deploy
@@ -627,6 +637,7 @@ DATABASE_URL=$PRODUCTION_DB npx prisma migrate deploy
 ## Rollback Strategies
 
 ### ✅ Good: Point-in-Time Recovery (PITR)
+
 ```bash
 # Restore database to specific timestamp
 neonctl branches restore \
@@ -642,6 +653,7 @@ neonctl branches restore \
 ```
 
 ### ✅ Good: Create Backup Branch Before Migration
+
 ```bash
 # Before risky migration, create backup
 neonctl branches create \
@@ -656,6 +668,7 @@ neonctl branches reset main --parent backup/before-migration-*
 ```
 
 ### ✅ Good: Blue-Green Deployment with Branches
+
 ```bash
 # Current production: main
 # Create new "green" branch
@@ -674,6 +687,7 @@ DATABASE_URL=$(neonctl connection-string green) npm test
 ## CI/CD Complete Workflows
 
 ### ✅ Good: Full CI/CD Pipeline with Neon
+
 ```yaml
 # .github/workflows/ci-cd.yml
 name: CI/CD Pipeline
@@ -690,11 +704,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      
+
       - name: Create Test Database Branch
         id: create-test-db
         uses: neondatabase/create-branch-action@v5
@@ -702,20 +716,20 @@ jobs:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           branch_name: test/pr-${{ github.event.pull_request.number }}
           api_key: ${{ secrets.NEON_API_KEY }}
-      
+
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Run Migrations
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ steps.create-test-db.outputs.db_url }}
-      
+
       - name: Run Tests
         run: npm test
         env:
           DATABASE_URL: ${{ steps.create-test-db.outputs.db_url }}
-      
+
       - name: Cleanup Test Branch
         if: always()
         uses: neondatabase/delete-branch-action@v3
@@ -730,19 +744,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      
+
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Run Migrations on Production
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -755,6 +769,7 @@ jobs:
 ## Connection Management
 
 ### ✅ Good: Connection String Format
+
 ```bash
 # Pooled connection (uses PgBouncer - for serverless)
 DATABASE_URL="postgres://user:pass@ep-xxx.region.aws.neon.tech/db?sslmode=require&pgbouncer=true"
@@ -769,6 +784,7 @@ DATABASE_URL="postgres://user:pass@ep-xxx.region.aws.neon.tech/db?sslmode=requir
 ## Performance Optimization
 
 ### ✅ Good: Efficient Queries
+
 ```typescript
 // Use projection to fetch only needed columns
 const users = await sql`
@@ -798,6 +814,7 @@ CREATE INDEX idx_posts_published_created ON posts(published, created_at) WHERE p
 ## Autoscaling & Cost Optimization
 
 ### ✅ Good: Scale to Zero for Dev
+
 ```bash
 # Configure branch to scale to zero after 5 minutes
 neonctl branches set-default \
@@ -813,6 +830,7 @@ neonctl branches set-default \
 ## Migrations
 
 ### ✅ Good: Run Migrations on Branch
+
 ```bash
 # Create migration locally
 npx prisma migrate dev --name add_users_table
@@ -830,36 +848,38 @@ DATABASE_URL=$(neonctl connection-string main) \
 ## Error Handling
 
 ### ✅ Good: Handle Connection Errors
+
 ```typescript
 import { sql } from '@/lib/db';
 
 export async function getUsers() {
-  try {
-    const users = await sql`SELECT * FROM users`;
-    return users;
-  } catch (error) {
-    // Handle specific Postgres errors
-    if (error.code === '42P01') {
-      throw new Error('Users table does not exist');
-    }
-    
-    if (error.code === '57014') {
-      throw new Error('Query was cancelled (timeout)');
-    }
-    
-    // Connection error
-    if (error.message?.includes('connection')) {
-      throw new Error('Database connection failed');
-    }
-    
-    throw error;
-  }
+	try {
+		const users = await sql`SELECT * FROM users`;
+		return users;
+	} catch (error) {
+		// Handle specific Postgres errors
+		if (error.code === '42P01') {
+			throw new Error('Users table does not exist');
+		}
+
+		if (error.code === '57014') {
+			throw new Error('Query was cancelled (timeout)');
+		}
+
+		// Connection error
+		if (error.message?.includes('connection')) {
+			throw new Error('Database connection failed');
+		}
+
+		throw error;
+	}
 }
 ```
 
 ## Advanced Performance Optimization
 
 ### ✅ Good: Query Optimization with Indexes
+
 ```sql
 -- Analyze query performance
 EXPLAIN ANALYZE
@@ -874,7 +894,7 @@ CREATE INDEX idx_posts_created_at ON posts(created_at DESC);
 CREATE INDEX idx_posts_user_created ON posts(user_id, created_at DESC);
 
 -- Partial index for specific conditions
-CREATE INDEX idx_posts_published ON posts(published_at) 
+CREATE INDEX idx_posts_published ON posts(published_at)
 WHERE published = true;
 
 -- Full-text search index
@@ -882,6 +902,7 @@ CREATE INDEX idx_posts_search ON posts USING GIN(to_tsvector('english', title ||
 ```
 
 ### ✅ Good: Connection Pooling Best Practices
+
 ```typescript
 // For serverless functions - use pooled connection
 const DATABASE_URL = process.env.DATABASE_URL + '?pgbouncer=true&connection_limit=1';
@@ -892,55 +913,57 @@ export const sql = neon(DATABASE_URL);
 import { Pool } from '@neondatabase/serverless';
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: 10,  // Maximum pool size
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+	connectionString: process.env.DATABASE_URL,
+	max: 10, // Maximum pool size
+	idleTimeoutMillis: 30000,
+	connectionTimeoutMillis: 2000,
 });
 ```
 
 ### ✅ Good: Batch Operations
+
 ```typescript
 // Efficient batch insert
 import { neon } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL!);
 
-async function batchInsertUsers(users: Array<{email: string, name: string}>) {
-  // Single query with multiple values
-  const values = users.map(u => `('${u.email}', '${u.name}')`).join(',');
-  
-  await sql`
+async function batchInsertUsers(users: Array<{ email: string; name: string }>) {
+	// Single query with multiple values
+	const values = users.map(u => `('${u.email}', '${u.name}')`).join(',');
+
+	await sql`
     INSERT INTO users (email, name)
     VALUES ${sql.unsafe(values)}
   `;
 }
 
 // Better: Use Prisma createMany for type safety
-async function batchInsertWithPrisma(users: Array<{email: string, name: string}>) {
-  await prisma.user.createMany({
-    data: users,
-    skipDuplicates: true,
-  });
+async function batchInsertWithPrisma(users: Array<{ email: string; name: string }>) {
+	await prisma.user.createMany({
+		data: users,
+		skipDuplicates: true,
+	});
 }
 ```
 
 ### ❌ Bad: N+1 Query Problem
+
 ```typescript
 // ❌ WRONG - Makes N+1 queries
 async function getUsersWithPosts() {
-  const users = await sql`SELECT * FROM users`;
-  
-  for (const user of users) {
-    user.posts = await sql`SELECT * FROM posts WHERE user_id = ${user.id}`;
-  }
-  
-  return users;
+	const users = await sql`SELECT * FROM users`;
+
+	for (const user of users) {
+		user.posts = await sql`SELECT * FROM posts WHERE user_id = ${user.id}`;
+	}
+
+	return users;
 }
 
 // ✅ GOOD - Single query with JOIN
 async function getUsersWithPostsOptimized() {
-  const result = await sql`
+	const result = await sql`
     SELECT 
       u.id, u.name, u.email,
       json_agg(json_build_object('id', p.id, 'title', p.title)) as posts
@@ -948,12 +971,13 @@ async function getUsersWithPostsOptimized() {
     LEFT JOIN posts p ON p.user_id = u.id
     GROUP BY u.id, u.name, u.email
   `;
-  
-  return result;
+
+	return result;
 }
 ```
 
 ### ✅ Good: Query Caching Strategies
+
 ```typescript
 // App-level caching with React Query
 import { useQuery } from '@tanstack/react-query';
@@ -986,6 +1010,7 @@ REFRESH MATERIALIZED VIEW popular_posts;
 ## Branch Management Best Practices
 
 ### ✅ Good: Branch Naming Conventions
+
 ```bash
 # Production
 main
@@ -1012,13 +1037,14 @@ backup/pre-deploy-2024-01-15
 ```
 
 ### ✅ Good: Automated Branch Cleanup
+
 ```yaml
 # .github/workflows/cleanup-stale-branches.yml
 name: Cleanup Stale Neon Branches
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Weekly on Sunday
+    - cron: '0 0 * * 0' # Weekly on Sunday
 
 jobs:
   cleanup:
@@ -1031,7 +1057,7 @@ jobs:
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
-      
+
       - name: Delete Stale Preview Branches
         run: |
           # Delete preview branches older than 7 days
@@ -1049,103 +1075,102 @@ jobs:
 ```
 
 ### ✅ Good: Branch Quotas and Limits
+
 ```typescript
 // Monitor branch count and clean up automatically
 import { NeonClient } from '@neondatabase/api-client';
 
 const client = new NeonClient({
-  apiKey: process.env.NEON_API_KEY!,
+	apiKey: process.env.NEON_API_KEY!,
 });
 
 async function checkBranchLimits() {
-  const project = await client.projects.get(process.env.NEON_PROJECT_ID!);
-  const branches = await client.branches.list(process.env.NEON_PROJECT_ID!);
+	const project = await client.projects.get(process.env.NEON_PROJECT_ID!);
+	const branches = await client.branches.list(process.env.NEON_PROJECT_ID!);
 
-  console.log(`Branches: ${branches.length} / ${project.quotas.max_branches}`);
+	console.log(`Branches: ${branches.length} / ${project.quotas.max_branches}`);
 
-  if (branches.length >= project.quotas.max_branches * 0.9) {
-    console.warn('⚠️ Approaching branch limit! Consider cleanup.');
-    
-    // Auto-delete oldest preview branches
-    const previewBranches = branches
-      .filter(b => b.name.startsWith('preview/'))
-      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-    
-    for (const branch of previewBranches.slice(0, 5)) {
-      await client.branches.delete(process.env.NEON_PROJECT_ID!, branch.id);
-      console.log(`Deleted old preview branch: ${branch.name}`);
-    }
-  }
+	if (branches.length >= project.quotas.max_branches * 0.9) {
+		console.warn('⚠️ Approaching branch limit! Consider cleanup.');
+
+		// Auto-delete oldest preview branches
+		const previewBranches = branches
+			.filter(b => b.name.startsWith('preview/'))
+			.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+		for (const branch of previewBranches.slice(0, 5)) {
+			await client.branches.delete(process.env.NEON_PROJECT_ID!, branch.id);
+			console.log(`Deleted old preview branch: ${branch.name}`);
+		}
+	}
 }
 ```
 
 ## Troubleshooting Common Issues
 
 ### ✅ Good: Handle Connection Timeouts
+
 ```typescript
 import { neon, NeonDbError } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL!, {
-  fetchConnectionCache: true,
-  fullResults: true,
+	fetchConnectionCache: true,
+	fullResults: true,
 });
 
-async function queryWithRetry<T>(
-  query: () => Promise<T>,
-  maxRetries = 3
-): Promise<T> {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await query();
-    } catch (error) {
-      if (error instanceof NeonDbError && error.code === 'ECONNREFUSED') {
-        console.warn(`Connection failed, retrying... (${i + 1}/${maxRetries})`);
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-        continue;
-      }
-      throw error;
-    }
-  }
-  throw new Error('Max retries exceeded');
+async function queryWithRetry<T>(query: () => Promise<T>, maxRetries = 3): Promise<T> {
+	for (let i = 0; i < maxRetries; i++) {
+		try {
+			return await query();
+		} catch (error) {
+			if (error instanceof NeonDbError && error.code === 'ECONNREFUSED') {
+				console.warn(`Connection failed, retrying... (${i + 1}/${maxRetries})`);
+				await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+				continue;
+			}
+			throw error;
+		}
+	}
+	throw new Error('Max retries exceeded');
 }
 
 // Usage
-const users = await queryWithRetry(() => 
-  sql`SELECT * FROM users WHERE active = true`
-);
+const users = await queryWithRetry(() => sql`SELECT * FROM users WHERE active = true`);
 ```
 
 ### ✅ Good: Debug Query Performance
+
 ```typescript
 // Enable query logging
 import { neon } from '@neondatabase/serverless';
 
 const sql = neon(process.env.DATABASE_URL!, {
-  fullResults: true,
+	fullResults: true,
 });
 
 async function debugQuery() {
-  const start = Date.now();
-  
-  const result = await sql`
+	const start = Date.now();
+
+	const result = await sql`
     SELECT * FROM users 
     WHERE email ILIKE '%@example.com%'
   `;
-  
-  const duration = Date.now() - start;
-  
-  console.log(`Query took ${duration}ms`);
-  console.log(`Rows returned: ${result.length}`);
-  
-  if (duration > 1000) {
-    console.warn('⚠️ Slow query detected! Consider adding an index.');
-  }
-  
-  return result;
+
+	const duration = Date.now() - start;
+
+	console.log(`Query took ${duration}ms`);
+	console.log(`Rows returned: ${result.length}`);
+
+	if (duration > 1000) {
+		console.warn('⚠️ Slow query detected! Consider adding an index.');
+	}
+
+	return result;
 }
 ```
 
 ### ✅ Good: Handle Migration Conflicts
+
 ```bash
 # If migration fails due to conflict
 # 1. Check current schema state
@@ -1167,6 +1192,7 @@ DATABASE_URL=$(neonctl connection-string test/fixed-migration) \
 ```
 
 ### ✅ Good: Monitor Database Size and Limits
+
 ```typescript
 // Check database size
 import { neon } from '@neondatabase/serverless';
@@ -1174,21 +1200,22 @@ import { neon } from '@neondatabase/serverless';
 const sql = neon(process.env.DATABASE_URL!);
 
 async function checkDatabaseSize() {
-  const result = await sql`
+	const result = await sql`
     SELECT 
       pg_size_pretty(pg_database_size(current_database())) as size,
       pg_database_size(current_database()) as bytes
   `;
-  
-  console.log(`Database size: ${result[0].size}`);
-  
-  const sizeGB = result[0].bytes / (1024 ** 3);
-  if (sizeGB > 9) {  // Assuming 10GB limit
-    console.warn('⚠️ Approaching storage limit!');
-  }
-  
-  // Check table sizes
-  const tableSizes = await sql`
+
+	console.log(`Database size: ${result[0].size}`);
+
+	const sizeGB = result[0].bytes / 1024 ** 3;
+	if (sizeGB > 9) {
+		// Assuming 10GB limit
+		console.warn('⚠️ Approaching storage limit!');
+	}
+
+	// Check table sizes
+	const tableSizes = await sql`
     SELECT 
       schemaname,
       tablename,
@@ -1198,38 +1225,43 @@ async function checkDatabaseSize() {
     ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
     LIMIT 10
   `;
-  
-  console.table(tableSizes);
+
+	console.table(tableSizes);
 }
 ```
 
 ### ❌ Bad: Ignoring Error Codes
+
 ```typescript
 // ❌ WRONG - Generic error handling
 try {
-  await sql`INSERT INTO users (email) VALUES (${email})`;
+	await sql`INSERT INTO users (email) VALUES (${email})`;
 } catch (error) {
-  console.error('Error:', error);  // Not helpful!
+	console.error('Error:', error); // Not helpful!
 }
 
 // ✅ GOOD - Handle specific errors
 try {
-  await sql`INSERT INTO users (email) VALUES (${email})`;
+	await sql`INSERT INTO users (email) VALUES (${email})`;
 } catch (error) {
-  if (error.code === '23505') {  // Unique constraint violation
-    throw new Error('Email already exists');
-  } else if (error.code === '23502') {  // NOT NULL violation
-    throw new Error('Required field missing');
-  } else if (error.code === '42P01') {  // Table doesn't exist
-    throw new Error('Database table not found - run migrations');
-  }
-  throw error;
+	if (error.code === '23505') {
+		// Unique constraint violation
+		throw new Error('Email already exists');
+	} else if (error.code === '23502') {
+		// NOT NULL violation
+		throw new Error('Required field missing');
+	} else if (error.code === '42P01') {
+		// Table doesn't exist
+		throw new Error('Database table not found - run migrations');
+	}
+	throw error;
 }
 ```
 
 ## Cost Optimization Strategies
 
 ### ✅ Good: Configure Auto-suspend for Dev Branches
+
 ```bash
 # Set suspend timeout for development branches
 neonctl branches update \
@@ -1245,6 +1277,7 @@ neonctl branches update \
 ```
 
 ### ✅ Good: Use Pooled Connections in Serverless
+
 ```typescript
 // Always use ?pgbouncer=true for serverless to reduce connection overhead
 const DATABASE_URL = process.env.DATABASE_URL + '?pgbouncer=true&connection_limit=1';
@@ -1253,6 +1286,7 @@ const DATABASE_URL = process.env.DATABASE_URL + '?pgbouncer=true&connection_limi
 ```
 
 ### ✅ Good: Delete Unused Branches Regularly
+
 ```bash
 # List all branches
 neonctl branches list --project-id $PROJECT_ID
@@ -1266,6 +1300,7 @@ neonctl branches delete dev/old-feature --project-id $PROJECT_ID
 ## Security Best Practices with Neon
 
 ### ✅ Good: Rotate Database Passwords
+
 ```bash
 # Generate new password
 neonctl branches password-reset \
@@ -1277,6 +1312,7 @@ neonctl branches password-reset \
 ```
 
 ### ✅ Good: Use Read-Only Connections for Analytics
+
 ```typescript
 // Create read-only user in migration
 await sql`
@@ -1293,6 +1329,7 @@ const ANALYTICS_DATABASE_URL = process.env.ANALYTICS_DATABASE_URL;
 ```
 
 ### ✅ Good: Enable SSL/TLS
+
 ```typescript
 // Neon enforces SSL by default
 const DATABASE_URL = process.env.DATABASE_URL + '?sslmode=require';

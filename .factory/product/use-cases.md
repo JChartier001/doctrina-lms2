@@ -9,6 +9,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Solo developer needs to add authentication to an existing web app.
 
 **Traditional Approach** (Sequential):
+
 1. Design auth API endpoints (1 hour)
 2. Implement backend auth logic (4 hours)
 3. Build login/register UI (3 hours)
@@ -29,6 +30,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 ```
 
 **Parallel Tasks**:
+
 - **Task 1** (droidz-codegen): Backend API - 4 hours
 - **Task 2** (droidz-codegen): Frontend UI - 3 hours
 - **Task 3** (droidz-test): Test suite - 3 hours
@@ -45,6 +47,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Team has 12 tickets ready for development in the current sprint.
 
 **Traditional Approach**:
+
 - Developer picks ticket
 - Creates branch
 - Implements feature
@@ -64,6 +67,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 ```
 
 **Result**:
+
 - 12 tickets → 12 worktrees
 - 4-5 can be worked on simultaneously
 - Completion time reduced from weeks to days
@@ -75,6 +79,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Refactor legacy codebase to use new architecture pattern across 50+ files.
 
 **Challenge**:
+
 - Complex interdependencies
 - Can't break existing functionality
 - Need comprehensive testing
@@ -93,6 +98,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 ```
 
 **Tasks** (8 parallel):
+
 1. **droidz-refactor**: Update data models
 2. **droidz-refactor**: Refactor API layer
 3. **droidz-refactor**: Update UI components
@@ -111,6 +117,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Building a new microservice with API, database, tests, and deployment.
 
 **Components Needed**:
+
 - REST API with 10 endpoints
 - Database schema and migrations
 - Unit tests
@@ -123,33 +130,33 @@ Real-world scenarios where Droidz delivers exceptional value.
 
 ```json
 {
-  "tasks": [
-    {
-      "key": "SVC-API",
-      "title": "REST API Implementation",
-      "specialist": "droidz-codegen"
-    },
-    {
-      "key": "SVC-DB",
-      "title": "Database Schema & Migrations",
-      "specialist": "droidz-codegen"
-    },
-    {
-      "key": "SVC-TESTS",
-      "title": "Test Suite",
-      "specialist": "droidz-test"
-    },
-    {
-      "key": "SVC-DOCKER",
-      "title": "Docker & Deployment",
-      "specialist": "droidz-infra"
-    },
-    {
-      "key": "SVC-DOCS",
-      "title": "API Documentation",
-      "specialist": "droidz-generalist"
-    }
-  ]
+	"tasks": [
+		{
+			"key": "SVC-API",
+			"title": "REST API Implementation",
+			"specialist": "droidz-codegen"
+		},
+		{
+			"key": "SVC-DB",
+			"title": "Database Schema & Migrations",
+			"specialist": "droidz-codegen"
+		},
+		{
+			"key": "SVC-TESTS",
+			"title": "Test Suite",
+			"specialist": "droidz-test"
+		},
+		{
+			"key": "SVC-DOCKER",
+			"title": "Docker & Deployment",
+			"specialist": "droidz-infra"
+		},
+		{
+			"key": "SVC-DOCS",
+			"title": "API Documentation",
+			"specialist": "droidz-generalist"
+		}
+	]
 }
 ```
 
@@ -162,6 +169,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Team dedicates sprint to fixing accumulated bugs and tech debt.
 
 **Traditional Approach**:
+
 - Prioritize bugs
 - Assign to developers
 - Fix one at a time
@@ -178,6 +186,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 ```
 
 **Advantages**:
+
 - All bugs tackled simultaneously
 - Isolated worktrees prevent conflicts
 - Fast feedback loop
@@ -190,6 +199,7 @@ Real-world scenarios where Droidz delivers exceptional value.
 **Scenario**: Building app with React frontend, Python backend, and mobile app.
 
 **Challenges**:
+
 - Different tech stacks
 - Different specialists needed
 - Complex coordination
@@ -198,31 +208,31 @@ Real-world scenarios where Droidz delivers exceptional value.
 
 ```json
 {
-  "tasks": [
-    {
-      "key": "APP-WEB",
-      "title": "React Web Application",
-      "specialist": "droidz-codegen",
-      "standards": ["react", "typescript", "tailwind"]
-    },
-    {
-      "key": "APP-API",
-      "title": "Python FastAPI Backend",
-      "specialist": "droidz-codegen",
-      "standards": ["python", "fastapi"]
-    },
-    {
-      "key": "APP-MOBILE",
-      "title": "React Native Mobile App",
-      "specialist": "droidz-codegen",
-      "standards": ["react-native", "typescript"]
-    },
-    {
-      "key": "APP-INFRA",
-      "title": "Shared Infrastructure",
-      "specialist": "droidz-infra"
-    }
-  ]
+	"tasks": [
+		{
+			"key": "APP-WEB",
+			"title": "React Web Application",
+			"specialist": "droidz-codegen",
+			"standards": ["react", "typescript", "tailwind"]
+		},
+		{
+			"key": "APP-API",
+			"title": "Python FastAPI Backend",
+			"specialist": "droidz-codegen",
+			"standards": ["python", "fastapi"]
+		},
+		{
+			"key": "APP-MOBILE",
+			"title": "React Native Mobile App",
+			"specialist": "droidz-codegen",
+			"standards": ["react-native", "typescript"]
+		},
+		{
+			"key": "APP-INFRA",
+			"title": "Shared Infrastructure",
+			"specialist": "droidz-infra"
+		}
+	]
 }
 ```
 
@@ -235,6 +245,7 @@ Each specialist works with appropriate standards template.
 **Scenario**: Integrate 5 different third-party services (Stripe, SendGrid, Twilio, AWS S3, Auth0).
 
 **Complexity**:
+
 - Different APIs
 - Different authentication patterns
 - Need error handling
@@ -248,6 +259,7 @@ Each specialist works with appropriate standards template.
 ```
 
 5 parallel workspaces, each handling one integration:
+
 - **droidz-integration** specialist for each
 - Standards enforce: no hardcoded secrets, proper error handling
 - Tests verify each integration
@@ -262,6 +274,7 @@ Each specialist works with appropriate standards template.
 **Scenario**: Improve code quality across entire codebase.
 
 **Goals**:
+
 - Increase test coverage
 - Reduce code duplication
 - Improve type safety
@@ -275,6 +288,7 @@ Each specialist works with appropriate standards template.
 ```
 
 **Parallel Tasks**:
+
 1. **droidz-test**: Add tests to untested modules
 2. **droidz-refactor**: Extract duplicated code
 3. **droidz-codegen**: Add TypeScript types
@@ -290,6 +304,7 @@ Each task in isolated worktree, merged when quality gates pass.
 **Scenario**: Critical bug in production, need urgent fix across multiple services.
 
 **Challenge**:
+
 - Time-sensitive
 - Multiple components affected
 - Need thorough testing
@@ -304,32 +319,32 @@ Each task in isolated worktree, merged when quality gates pass.
 
 ```json
 {
-  "tasks": [
-    {
-      "key": "HOTFIX-API",
-      "title": "Fix API Bug",
-      "specialist": "droidz-codegen",
-      "priority": 1
-    },
-    {
-      "key": "HOTFIX-UI",
-      "title": "Fix UI Issue",
-      "specialist": "droidz-codegen",
-      "priority": 1
-    },
-    {
-      "key": "HOTFIX-TESTS",
-      "title": "Regression Tests",
-      "specialist": "droidz-test",
-      "priority": 1
-    },
-    {
-      "key": "HOTFIX-DEPLOY",
-      "title": "Emergency Deployment",
-      "specialist": "droidz-infra",
-      "priority": 2
-    }
-  ]
+	"tasks": [
+		{
+			"key": "HOTFIX-API",
+			"title": "Fix API Bug",
+			"specialist": "droidz-codegen",
+			"priority": 1
+		},
+		{
+			"key": "HOTFIX-UI",
+			"title": "Fix UI Issue",
+			"specialist": "droidz-codegen",
+			"priority": 1
+		},
+		{
+			"key": "HOTFIX-TESTS",
+			"title": "Regression Tests",
+			"specialist": "droidz-test",
+			"priority": 1
+		},
+		{
+			"key": "HOTFIX-DEPLOY",
+			"title": "Emergency Deployment",
+			"specialist": "droidz-infra",
+			"priority": 2
+		}
+	]
 }
 ```
 
@@ -342,6 +357,7 @@ Each task in isolated worktree, merged when quality gates pass.
 **Scenario**: Developer learning new framework, wants to build example projects.
 
 **Traditional Approach**:
+
 - Read docs
 - Follow tutorial
 - Build one example
@@ -356,26 +372,26 @@ Each task in isolated worktree, merged when quality gates pass.
 
 ```json
 {
-  "tasks": [
-    {
-      "key": "LEARN-TODO",
-      "title": "Build Todo App",
-      "specialist": "droidz-codegen",
-      "description": "Classic todo app with CRUD"
-    },
-    {
-      "key": "LEARN-BLOG",
-      "title": "Build Blog Platform",
-      "specialist": "droidz-codegen",
-      "description": "Multi-author blog with auth"
-    },
-    {
-      "key": "LEARN-ECOM",
-      "title": "Build E-commerce Store",
-      "specialist": "droidz-codegen",
-      "description": "Product catalog with cart"
-    }
-  ]
+	"tasks": [
+		{
+			"key": "LEARN-TODO",
+			"title": "Build Todo App",
+			"specialist": "droidz-codegen",
+			"description": "Classic todo app with CRUD"
+		},
+		{
+			"key": "LEARN-BLOG",
+			"title": "Build Blog Platform",
+			"specialist": "droidz-codegen",
+			"description": "Multi-author blog with auth"
+		},
+		{
+			"key": "LEARN-ECOM",
+			"title": "Build E-commerce Store",
+			"specialist": "droidz-codegen",
+			"description": "Product catalog with cart"
+		}
+	]
 }
 ```
 
@@ -386,6 +402,7 @@ Each task in isolated worktree, merged when quality gates pass.
 ## Common Patterns
 
 ### Pattern 1: Parallel Feature Branches
+
 ```
 Main Branch
 ├── worktree/FEAT-001 (frontend)
@@ -395,6 +412,7 @@ Main Branch
 ```
 
 ### Pattern 2: Specialist Assignment
+
 - Complex logic → droidz-codegen
 - Test coverage → droidz-test
 - API integration → droidz-integration
@@ -403,6 +421,7 @@ Main Branch
 - Misc tasks → droidz-generalist
 
 ### Pattern 3: Supervised Gates
+
 1. Spec creation & review
 2. Orchestration plan approval
 3. Parallel execution
@@ -415,21 +434,24 @@ Main Branch
 ## Anti-Patterns (What NOT to Do)
 
 ### ❌ Over-Parallelization
+
 Don't parallelize dependent tasks.
 
 **Bad**:
+
 ```json
 {
-  "tasks": [
-    {"key": "DB-SCHEMA", "title": "Create schema"},
-    {"key": "DB-QUERIES", "title": "Write queries using schema"}
-  ]
+	"tasks": [
+		{ "key": "DB-SCHEMA", "title": "Create schema" },
+		{ "key": "DB-QUERIES", "title": "Write queries using schema" }
+	]
 }
 ```
 
 Queries depend on schema. Run sequentially.
 
 ### ❌ Under-Specification
+
 Don't orchestrate without clear specs.
 
 **Bad**: "Build authentication" (too vague)
@@ -437,11 +459,13 @@ Don't orchestrate without clear specs.
 **Good**: Detailed spec with requirements, acceptance criteria, architecture decisions.
 
 ### ❌ Ignoring Conflicts
+
 Don't merge worktrees with conflicts blindly.
 
 **Solution**: Review each worktree, test integration before merging.
 
 ### ❌ Wrong Specialist
+
 Don't assign specialists incorrectly.
 
 **Bad**: droidz-test for feature implementation
@@ -450,5 +474,5 @@ Don't assign specialists incorrectly.
 
 ---
 
-*Last Updated: 2025-01-12*
-*Version: 1.0.0*
+_Last Updated: 2025-01-12_
+_Version: 1.0.0_

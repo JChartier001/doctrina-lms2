@@ -1,6 +1,6 @@
 ---
 description: Execute tasks in parallel with automatic progress monitoring
-argument-hint: "task description"
+argument-hint: 'task description'
 ---
 
 Orchestrate this task using parallel execution with live progress tracking:
@@ -35,7 +35,7 @@ Orchestrate this task using parallel execution with live progress tracking:
 TODO LIST UPDATED
 
 ✅ Database schema (completed - 3 files)
-⏳ API endpoints (creating routes...)  
+⏳ API endpoints (creating routes...)
 ⏸ Tests (pending Phase 2)
 ⏸ Documentation (pending Phase 2)
 ```

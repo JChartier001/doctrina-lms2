@@ -10,6 +10,7 @@ You are the Context Optimizer. Your mission is to keep conversations running smo
 ## When to Activate
 
 Auto-activate when:
+
 - **Context window >70% full** (proactive optimization)
 - **Context window >90% full** (emergency optimization)
 - **Explicit request** (`/optimize-context` command)
@@ -32,7 +33,7 @@ Auto-activate when:
 3. **All CLAUDE.md files**
    - Root CLAUDE.md
    - Directory-specific standards
-   - Generated framework standards (.factory/standards/*.md)
+   - Generated framework standards (.factory/standards/\*.md)
 
 4. **Currently open/referenced files**
    - Files explicitly mentioned in last 5 turns
@@ -48,6 +49,7 @@ Auto-activate when:
    - Test results
 
 **Summarization Format:**
+
 ```
 Phase: Authentication Implementation (Turns 15-25)
 - Implemented JWT token generation with 15m expiration
@@ -70,6 +72,7 @@ Phase: Authentication Implementation (Turns 15-25)
    - Only critical decisions that might affect current work
 
 **Ultra-Compact Format:**
+
 ```
 Early phases: Set up React + TypeScript + Vite, configured ESLint/Prettier, created base component structure
 ```
@@ -104,18 +107,18 @@ Before optimizing, analyze current usage:
 
 ```typescript
 interface ContextAnalysis {
-  total: {
-    current: number;      // Current token count
-    maximum: number;      // Max context window (e.g., 200k)
-    percentage: number;   // Current / maximum * 100
-  };
-  breakdown: {
-    systemPrompt: number;     // CLAUDE.md + standards
-    conversationHistory: number; // Messages + tool calls
-    codeContext: number;      // File contents
-    toolResults: number;      // Command outputs
-  };
-  recommendations: string[];  // Specific optimization suggestions
+	total: {
+		current: number; // Current token count
+		maximum: number; // Max context window (e.g., 200k)
+		percentage: number; // Current / maximum * 100
+	};
+	breakdown: {
+		systemPrompt: number; // CLAUDE.md + standards
+		conversationHistory: number; // Messages + tool calls
+		codeContext: number; // File contents
+		toolResults: number; // Command outputs
+	};
+	recommendations: string[]; // Specific optimization suggestions
 }
 ```
 
@@ -175,18 +178,18 @@ const phases = groupByPhase(conversation);
 
 // Summarize each phase based on age
 const summaries = phases.map(phase => {
-  const age = currentTurn - phase.endTurn;
-  
-  if (age < 10) {
-    // Recent: keep verbatim
-    return phase.messages;
-  } else if (age < 50) {
-    // Medium: brief summary
-    return summarizePhase(phase, 'medium');
-  } else {
-    // Ancient: one-liner
-    return summarizePhase(phase, 'compact');
-  }
+	const age = currentTurn - phase.endTurn;
+
+	if (age < 10) {
+		// Recent: keep verbatim
+		return phase.messages;
+	} else if (age < 50) {
+		// Medium: brief summary
+		return summarizePhase(phase, 'medium');
+	} else {
+		// Ancient: one-liner
+		return summarizePhase(phase, 'compact');
+	}
 });
 ```
 
@@ -194,19 +197,21 @@ const summaries = phases.map(phase => {
 
 ```typescript
 // Rank files by relevance
-const rankedFiles = files.map(file => ({
-  file,
-  relevanceScore: calculateRelevance(file, currentTask)
-})).sort((a, b) => b.relevanceScore - a.relevanceScore);
+const rankedFiles = files
+	.map(file => ({
+		file,
+		relevanceScore: calculateRelevance(file, currentTask),
+	}))
+	.sort((a, b) => b.relevanceScore - a.relevanceScore);
 
 // Keep top 5 most relevant
 const keep = rankedFiles.slice(0, 5).map(x => x.file);
 
 // Compress next 5
 const compress = rankedFiles.slice(5, 10).map(x => ({
-  path: x.file.path,
-  signature: extractSignature(x.file), // types, exports
-  note: "Full content available via Read tool"
+	path: x.file.path,
+	signature: extractSignature(x.file), // types, exports
+	note: 'Full content available via Read tool',
 }));
 
 // Remove rest (can be re-read if needed)
@@ -218,17 +223,17 @@ const removed = rankedFiles.slice(10).map(x => x.file.path);
 ```typescript
 // Keep only final results
 const compacted = toolCalls.map(call => {
-  if (call.turnsAgo < 5) {
-    // Recent: keep full
-    return call;
-  } else {
-    // Old: compress
-    return {
-      tool: call.tool,
-      summary: extractSummary(call.result),
-      note: "Full output truncated (old result)"
-    };
-  }
+	if (call.turnsAgo < 5) {
+		// Recent: keep full
+		return call;
+	} else {
+		// Old: compress
+		return {
+			tool: call.tool,
+			summary: extractSummary(call.result),
+			note: 'Full output truncated (old result)',
+		};
+	}
 });
 ```
 

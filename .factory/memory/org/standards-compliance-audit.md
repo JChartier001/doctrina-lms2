@@ -14,12 +14,14 @@
 The Doctrina LMS codebase demonstrates **strong adherence** to several key standards (TypeScript, testing, Convex patterns) but has **significant gaps** in React best practices, particularly around form handling and state management patterns.
 
 **Key Strengths:**
+
 - ✅ 100% TypeScript strict mode compliance (0 errors)
 - ✅ 100% test coverage on Convex backend functions
 - ✅ Proper 'use client' directive usage (113+ client components identified)
 - ✅ Convex reactive queries (useQuery/useMutation) correctly used
 
 **Critical Issues:**
+
 - ❌ **Extensive useState usage** in pages (should use Convex reactive queries)
 - ❌ **Inconsistent form pattern** (some use FormProvider+Controller, most don't)
 - ⚠️ **Default exports** found in 2 files (should use named exports)
@@ -34,12 +36,14 @@ The Doctrina LMS codebase demonstrates **strong adherence** to several key stand
 **Standard Location:** `.factory/standards/templates/nextjs.md`
 
 #### ✅ Strengths
+
 - **App Router structure:** Properly using `app/` directory with route groups
 - **Server Components:** Default usage is correct (RSC by default)
 - **'use client' directive:** Appropriately placed in 113+ client components
 - **File-based routing:** Follows Next.js conventions (`[id]/page.tsx`, etc.)
 
 #### 📊 Evidence
+
 ```
 Route Groups Found:
 - app/(auth)/ - Authentication pages
@@ -51,6 +55,7 @@ Server Components: Default in app/ directory pages
 ```
 
 #### ⚠️ Minor Issues
+
 - Some pages could be Server Components but are marked 'use client' unnecessarily
   - Example: `app/settings/page.tsx` - could be SC with client islands
 
@@ -91,6 +96,7 @@ app/search/page.tsx:
 ```
 
 **Files with useState violations:**
+
 1. `app/settings/page.tsx` - 8 useState calls
 2. `app/search/page.tsx` - 4 useState calls
 3. `app/notifications/page.tsx` - 3 useState calls
@@ -128,6 +134,7 @@ app/dashboard/page.tsx:
 #### 📊 Compliance Score: **32% (12/37 pages)**
 
 **Recommendation:**
+
 1. **Refactor 25 pages** to use Convex queries instead of useState for server data
 2. Keep useState only for UI state (form inputs, toggles, local UI)
 3. Use `useQuery` for reading data
@@ -163,7 +170,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 export function BasicInfoStep() {
   const { control } = useFormContext<CreateCourseWizardType>();
-  
+
   return (
     <Controller
       control={control}
@@ -193,7 +200,7 @@ export function BasicInfoStep() {
 const [emailNotifications, setEmailNotifications] = useState({...});
 const [currentPassword, setCurrentPassword] = useState('');
 
-<Input 
+<Input
   value={currentPassword}
   onChange={(e) => setCurrentPassword(e.target.value)}
 />
@@ -201,6 +208,7 @@ const [currentPassword, setCurrentPassword] = useState('');
 ```
 
 **Forms found:**
+
 - ✅ Course wizard: Uses FormProvider + Controller ✓
 - ❌ Settings page: Direct useState (should use RHF)
 - ❌ Checkout page: Direct useState (should use RHF)
@@ -211,6 +219,7 @@ const [currentPassword, setCurrentPassword] = useState('');
 #### 📊 Compliance Score: **~20% (1/5 major forms)**
 
 **Recommendation:**
+
 1. Refactor all forms to use FormProvider + Controller pattern
 2. Add Zod validation schemas for all forms
 3. Use zodResolver for form validation
@@ -223,6 +232,7 @@ const [currentPassword, setCurrentPassword] = useState('');
 **Standard:** TypeScript strict mode enabled, all types explicit
 
 #### ✅ Test Results:
+
 ```bash
 $ bun typescript
 ✓ No TypeScript errors
@@ -231,14 +241,15 @@ $ bun typescript
 ```
 
 **Configuration Verified:**
+
 ```json
 // tsconfig.json
 {
-  "compilerOptions": {
-    "strict": true,
-    "target": "ES6",
-    "skipLibCheck": true
-  }
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES6",
+		"skipLibCheck": true
+	}
 }
 ```
 
@@ -270,12 +281,14 @@ All files          | 100% | 100% | 100% | 100% |
 #### ❌ **Frontend Tests: MISSING**
 
 **No test files found for:**
+
 - ❌ `components/` (0 test files)
 - ❌ `app/` pages (0 test files)
 - ❌ `hooks/` (0 test files)
 - ❌ `lib/` utilities (0 test files)
 
 **Expected test files:**
+
 - `components/**/*.test.tsx` - Component tests
 - `hooks/**/*.test.ts` - Custom hook tests
 - `app/**/*.test.tsx` - Page integration tests
@@ -283,6 +296,7 @@ All files          | 100% | 100% | 100% | 100% |
 #### 📊 Compliance Score: **50% (backend only)**
 
 **Recommendation:**
+
 1. Add React Testing Library tests for components
 2. Add tests for custom hooks
 3. Add integration tests for critical user flows
@@ -295,6 +309,7 @@ All files          | 100% | 100% | 100% | 100% |
 **Standard:** Zero warnings policy (--max-warnings 0)
 
 #### ✅ Test Results:
+
 ```bash
 $ bun lint
 ✓ ESLint passed with 0 warnings
@@ -302,6 +317,7 @@ $ bun lint
 ```
 
 **Configuration:**
+
 - ESLint 9.39.1 ✓
 - eslint-config-next 16.0.1 ✓
 - eslint-config-prettier 10.1.8 ✓
@@ -347,6 +363,7 @@ components/course-wizard/section-structure.tsx:
 #### ✅ **Convex Validation: EXCELLENT**
 
 All Convex functions use `v` validators:
+
 ```tsx
 export const create = mutation({
   args: {
@@ -368,14 +385,15 @@ export const create = mutation({
 **Unable to verify:** No auth checks found in app/ pages using `auth()` from Clerk.
 
 **Expected pattern:**
+
 ```tsx
 // app/protected/page.tsx
 import { auth } from '@clerk/nextjs/server';
 
 export default async function ProtectedPage() {
-  const { userId } = await auth();
-  if (!userId) redirect('/sign-in');
-  // ...
+	const { userId } = await auth();
+	if (!userId) redirect('/sign-in');
+	// ...
 }
 ```
 
@@ -387,18 +405,18 @@ export default async function ProtectedPage() {
 
 ## Summary Scorecard
 
-| Standard | Score | Status | Priority |
-|----------|-------|--------|----------|
-| Next.js App Router | 95% | ✅ Compliant | Low |
-| TypeScript Strict | 100% | ✅ Compliant | ✅ Done |
-| ESLint Zero Warnings | 100% | ✅ Compliant | ✅ Done |
-| Convex Backend Tests | 100% | ✅ Compliant | ✅ Done |
-| Convex Validation | 100% | ✅ Compliant | ✅ Done |
-| React + Convex Patterns | 32% | ❌ Poor | 🔴 Critical |
-| Form Patterns (RHF) | 20% | ❌ Poor | 🔴 Critical |
-| Named Exports | 99% | ✅ Compliant | Low |
-| Frontend Tests | 0% | ❌ Missing | 🟡 High |
-| Security (Auth) | 75% | 🟡 Partial | 🟡 High |
+| Standard                | Score | Status       | Priority    |
+| ----------------------- | ----- | ------------ | ----------- |
+| Next.js App Router      | 95%   | ✅ Compliant | Low         |
+| TypeScript Strict       | 100%  | ✅ Compliant | ✅ Done     |
+| ESLint Zero Warnings    | 100%  | ✅ Compliant | ✅ Done     |
+| Convex Backend Tests    | 100%  | ✅ Compliant | ✅ Done     |
+| Convex Validation       | 100%  | ✅ Compliant | ✅ Done     |
+| React + Convex Patterns | 32%   | ❌ Poor      | 🔴 Critical |
+| Form Patterns (RHF)     | 20%   | ❌ Poor      | 🔴 Critical |
+| Named Exports           | 99%   | ✅ Compliant | Low         |
+| Frontend Tests          | 0%    | ❌ Missing   | 🟡 High     |
+| Security (Auth)         | 75%   | 🟡 Partial   | 🟡 High     |
 
 **Overall Score: 70%** (Moderate Compliance)
 
@@ -448,9 +466,11 @@ export default async function ProtectedPage() {
 ## Compliance Improvement Plan
 
 ### Phase 1: Critical Fixes (Week 1)
+
 **Goal:** Fix core architectural patterns
 
 **Tasks:**
+
 1. Create Convex queries for all data fetching currently using useState
 2. Refactor 25 pages to use Convex reactive patterns
 3. Standardize form handling with FormProvider + Controller
@@ -459,9 +479,11 @@ export default async function ProtectedPage() {
 **Impact:** Improves score from 70% → 85%
 
 ### Phase 2: Testing & Security (Week 2)
+
 **Goal:** Add test coverage and security hardening
 
 **Tasks:**
+
 1. Add React Testing Library tests for components
 2. Add custom hook tests
 3. Add integration tests for critical flows
@@ -471,9 +493,11 @@ export default async function ProtectedPage() {
 **Impact:** Improves score from 85% → 95%
 
 ### Phase 3: Polish (Week 3)
+
 **Goal:** Minor improvements
 
 **Tasks:**
+
 1. Convert default exports to named exports
 2. Optimize 'use client' usage
 3. Add any remaining documentation
@@ -486,16 +510,19 @@ export default async function ProtectedPage() {
 ## Tools & Resources
 
 ### For Refactoring:
+
 - **useState → useQuery Migration Guide:** See `.factory/standards/templates/react.md`
 - **Form Pattern Examples:** See `components/course-wizard/basic-info-step.tsx`
 - **Convex Patterns:** See `.factory/standards/templates/convex.md`
 
 ### For Testing:
+
 - **Vitest:** Already configured ✓
 - **React Testing Library:** Need to add
 - **Convex Testing:** Already excellent (use as reference)
 
 ### For Validation:
+
 ```bash
 # Run before committing
 bun verify  # Runs: format + lint + typecheck + test coverage
@@ -512,6 +539,7 @@ The Doctrina LMS codebase has a **solid foundation** with excellent TypeScript c
 ---
 
 **Next Steps:**
+
 1. Review this report with the team
 2. Prioritize Critical fixes (Phase 1)
 3. Create tickets for each action item

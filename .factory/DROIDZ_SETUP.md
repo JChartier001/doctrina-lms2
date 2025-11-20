@@ -15,6 +15,7 @@ The Droidz development framework has been successfully initialized for your proj
 ## ✅ What Was Set Up
 
 ### 1. Directory Structure
+
 ```
 .factory/
 ├── memory/
@@ -44,6 +45,7 @@ The Droidz development framework has been successfully initialized for your proj
 ### 2. Tech Stack Detection
 
 ✅ **Analyzed and documented:**
+
 - **Frontend:** Next.js 16.0.1 + React 19.2.0
 - **Backend:** Convex 1.28.2 (realtime database)
 - **Auth:** Clerk 6.34.5
@@ -58,12 +60,14 @@ Full details saved to: `.factory/memory/org/tech-stack.json`
 ### 3. Research & Best Practices
 
 ✅ **Researched using:**
+
 - MCP Documentation Search (Next.js, Convex)
 - Web Search for 2025 best practices
 - Next.js 16 official documentation
 - Convex realtime patterns
 
 **Key Findings Applied:**
+
 - Next.js 16 Partial Pre-Rendering (PPR) for caching
 - Turbopack stable (5-10x faster Fast Refresh)
 - React 19 Server Components patterns
@@ -75,21 +79,22 @@ Full details saved to: `.factory/memory/org/tech-stack.json`
 
 ✅ **7 Specialist Droids Ready:**
 
-| Droid | Purpose | Auto-Invokes When |
-|-------|---------|-------------------|
-| **droidz-orchestrator** | Parallel execution coordinator | 3+ independent tasks, "build [system]", complex features |
-| **codegen** | Feature implementation with tests | "implement feature", "add functionality" |
-| **test** | Testing specialist | "write tests", "fix test failures", "increase coverage" |
-| **infra** | CI/CD and deployment | "setup CI", "configure deployment", "Docker" |
-| **integration** | External API integration | "integrate API", "add webhook", "third-party service" |
-| **refactor** | Code quality improvements | "refactor code", "reduce duplication", "improve structure" |
-| **generalist** | General purpose fallback | Unclear or mixed tasks |
+| Droid                   | Purpose                           | Auto-Invokes When                                          |
+| ----------------------- | --------------------------------- | ---------------------------------------------------------- |
+| **droidz-orchestrator** | Parallel execution coordinator    | 3+ independent tasks, "build [system]", complex features   |
+| **codegen**             | Feature implementation with tests | "implement feature", "add functionality"                   |
+| **test**                | Testing specialist                | "write tests", "fix test failures", "increase coverage"    |
+| **infra**               | CI/CD and deployment              | "setup CI", "configure deployment", "Docker"               |
+| **integration**         | External API integration          | "integrate API", "add webhook", "third-party service"      |
+| **refactor**            | Code quality improvements         | "refactor code", "reduce duplication", "improve structure" |
+| **generalist**          | General purpose fallback          | Unclear or mixed tasks                                     |
 
 ### 5. Example Spec Created
 
 ✅ **Created:** `.factory/specs/examples/feature-authentication-enhancement.md`
 
 Demonstrates:
+
 - Proper spec format
 - Task breakdown for orchestration
 - Parallel vs sequential execution
@@ -235,6 +240,7 @@ bun convex:logs            # View logs
 ## 📚 Key Files & Documentation
 
 ### Standards (Auto-Enforced)
+
 - `.factory/standards/nextjs.md` - Next.js 16 App Router patterns
 - `.factory/standards/react-convex.md` - Convex reactive patterns
 - `.factory/standards/typescript.md` - TypeScript strict mode
@@ -243,12 +249,14 @@ bun convex:logs            # View logs
 - `.factory/standards/forms.md` - FormProvider + Controller pattern
 
 ### Memory System
+
 - `.factory/memory/org/tech-stack.json` - Tech stack analysis
 - `.factory/specs/examples/` - Example specs
 - `.factory/specs/active/` - Active feature specs
 - `.factory/specs/archived/` - Completed specs
 
 ### Droids
+
 - `.factory/droids/` - All droid configurations
 - `.factory/scripts/orchestrator.sh` - Orchestration script
 
@@ -257,18 +265,21 @@ bun convex:logs            # View logs
 ## 🔍 Environment Check Results
 
 ### ✅ Dependencies Available
+
 - **Git:** 2.51.0 ✓
 - **Bun:** 1.3.2 ✓
 - **Node:** 24.10.0 (via Volta) ✓
 - **Disk Space:** 1.68 TB free ✓
 
 ### ⚠️ Optional Dependencies (Windows)
+
 - **jq:** Not available (JSON processing - Windows alternative: PowerShell)
 - **tmux:** Not available (Linux/Mac terminal multiplexer - not needed on Windows)
 
 **Note:** Windows doesn't have native `jq` or `tmux`, but Droidz works without them using PowerShell equivalents.
 
 ### Git Worktrees
+
 - **Status:** Available (git worktree list works)
 - **Current:** Single worktree (main working tree)
 - **Usage:** Can create parallel worktrees for isolated development
@@ -296,15 +307,19 @@ Based on research and tech stack analysis:
 ### Immediate Actions
 
 1. **Try the orchestrator:**
+
    ```
    "Build a dashboard feature with charts and data visualization"
    ```
+
    Watch Claude Code auto-invoke orchestrator and parallelize work!
 
 2. **Review the example spec:**
+
    ```
    Open: .factory/specs/examples/feature-authentication-enhancement.md
    ```
+
    See how to structure specs for optimal orchestration.
 
 3. **Check your tech stack analysis:**
@@ -319,32 +334,40 @@ Based on research and tech stack analysis:
 # .factory/specs/active/my-feature.md
 
 ## Overview
+
 Brief description of the feature
 
 ## Task Breakdown
 
 ### Phase 1: Foundation (Sequential)
+
 - [ ] Analyze existing code
 - [ ] Define interfaces
 
 ### Phase 2: Parallel Implementation
+
 #### Stream A: Backend (droidz-codegen)
+
 - [ ] Task 1
 - [ ] Task 2
 
 #### Stream B: Frontend (droidz-codegen)
+
 - [ ] Task 1
 - [ ] Task 2
 
 #### Stream C: Tests (droidz-test)
+
 - [ ] Test 1
 - [ ] Test 2
 
 ### Phase 3: Integration (Sequential)
+
 - [ ] Merge streams
 - [ ] Create PR
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 ```
@@ -356,30 +379,40 @@ Then: **"Implement my-feature.md using orchestrator"**
 ## 💡 Tips for Maximum Productivity
 
 ### 1. Let Auto-Invocation Work
+
 Don't micromanage - Claude Code knows when to use orchestration:
+
 - ✅ "Build X" → Auto-detects complexity
 - ❌ "Use orchestrator to maybe possibly build X" → Unnecessary
 
 ### 2. Write Good Specs
+
 Clear specs = better orchestration:
+
 - Break into parallel streams
 - Define clear interfaces
 - List acceptance criteria
 
 ### 3. Trust the Standards
+
 All droids automatically follow `.factory/standards/`:
+
 - No need to repeat "use TypeScript strict mode"
 - No need to say "write tests"
 - Standards are auto-enforced
 
 ### 4. Check Progress Proactively
+
 When orchestrator runs agents:
+
 - Ask "How's it going?" to check file changes
 - Agents work silently - you control when to check
 - Progress visible via git status and file timestamps
 
 ### 5. Use Verification
+
 Before committing:
+
 ```bash
 bun verify  # Runs: format + lint + typecheck + test coverage
 ```
@@ -392,7 +425,8 @@ bun verify  # Runs: format + lint + typecheck + test coverage
 
 **Cause:** Task not complex enough (single file, simple change)
 
-**Solution:** 
+**Solution:**
+
 - Explicitly request: "Use orchestrator to..."
 - OR let Claude Code handle directly (might be faster for simple tasks)
 
@@ -401,6 +435,7 @@ bun verify  # Runs: format + lint + typecheck + test coverage
 **Cause:** Standards file missing or unclear
 
 **Solution:**
+
 - Check `.factory/standards/` directory
 - Add/update relevant standard
 - Re-run task
@@ -410,6 +445,7 @@ bun verify  # Runs: format + lint + typecheck + test coverage
 **Cause:** Multiple worktrees editing same files
 
 **Solution:**
+
 - Use feature-based worktrees (isolated features)
 - Coordinate file ownership between streams
 
@@ -418,12 +454,14 @@ bun verify  # Runs: format + lint + typecheck + test coverage
 ## 📞 Getting Help
 
 ### Resources
+
 1. **Example Spec:** `.factory/specs/examples/feature-authentication-enhancement.md`
 2. **Tech Stack:** `.factory/memory/org/tech-stack.json`
 3. **Standards:** `.factory/standards/`
 4. **Droids:** `.factory/droids/`
 
 ### Commands
+
 ```bash
 # Check setup status
 "Show Droidz status"
@@ -445,6 +483,7 @@ bun verify  # Runs: format + lint + typecheck + test coverage
 Your Doctrina LMS project is now equipped with the Droidz framework for **3-5x faster parallel development**.
 
 **Try it now:**
+
 ```
 "Build a progress tracking dashboard with charts and user analytics"
 ```

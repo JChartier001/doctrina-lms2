@@ -12,15 +12,15 @@
 
 ## Violations by Standard
 
-| Standard | Violations | Severity |
-|----------|------------|----------|
-| Typescript | 45 | 🔴 High |
-| React | 32 | 🔴 High |
-| Nextjs | 28 | 🟡 Medium |
-| Security | 15 | 🟢 Low |
-| Testing | 12 | 🟢 Low |
-| Forms | 7 | 🟢 Low |
-| Tailwind | 3 | 🟢 Low |
+| Standard   | Violations | Severity  |
+| ---------- | ---------- | --------- |
+| Typescript | 45         | 🔴 High   |
+| React      | 32         | 🔴 High   |
+| Nextjs     | 28         | 🟡 Medium |
+| Security   | 15         | 🟢 Low    |
+| Testing    | 12         | 🟢 Low    |
+| Forms      | 7          | 🟢 Low    |
+| Tailwind   | 3          | 🟢 Low    |
 
 ## Violations by Severity
 

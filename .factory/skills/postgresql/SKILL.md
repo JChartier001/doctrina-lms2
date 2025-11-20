@@ -17,6 +17,7 @@
 ### Data Types
 
 #### ✅ Good: Use Appropriate Data Types
+
 ```sql
 -- Use specific data types for better storage and performance
 CREATE TABLE users (
@@ -53,6 +54,7 @@ CREATE TABLE orders (
 ```
 
 #### ❌ Bad: Inappropriate Data Types
+
 ```sql
 -- ❌ Using TEXT for everything (wastes storage, slower comparisons)
 CREATE TABLE users (
@@ -83,6 +85,7 @@ CREATE TABLE events (
 ### Primary Keys and Foreign Keys
 
 #### ✅ Good: Proper Primary and Foreign Keys
+
 ```sql
 -- Use BIGSERIAL for auto-incrementing IDs
 CREATE TABLE customers (
@@ -98,7 +101,7 @@ CREATE TABLE orders (
   customer_id BIGINT NOT NULL,
   total NUMERIC(10, 2) NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  
+
   -- Foreign key with ON DELETE CASCADE (delete orders when customer is deleted)
   CONSTRAINT fk_customer
     FOREIGN KEY (customer_id)
@@ -113,9 +116,9 @@ CREATE TABLE order_items (
   product_id BIGINT NOT NULL,
   quantity INTEGER NOT NULL CHECK (quantity > 0),
   price NUMERIC(10, 2) NOT NULL,
-  
+
   PRIMARY KEY (order_id, product_id),
-  
+
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
@@ -136,6 +139,7 @@ CREATE TABLE tenant_users (
 ```
 
 #### ❌ Bad: Missing or Improper Keys
+
 ```sql
 -- ❌ No primary key
 CREATE TABLE logs (
@@ -166,6 +170,7 @@ CREATE TABLE events (
 ### Constraints
 
 #### ✅ Good: Comprehensive Constraints
+
 ```sql
 CREATE TABLE products (
   id BIGSERIAL PRIMARY KEY,
@@ -179,7 +184,7 @@ CREATE TABLE products (
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  
+
   -- Table-level constraint
   CONSTRAINT price_greater_than_cost CHECK (price >= cost)
 );
@@ -188,7 +193,7 @@ CREATE TABLE products (
 CREATE TABLE subscribers (
   id BIGSERIAL PRIMARY KEY,
   email VARCHAR(255) NOT NULL UNIQUE,
-  
+
   CONSTRAINT email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
 
@@ -198,7 +203,7 @@ CREATE TABLE bookings (
   room_id BIGINT NOT NULL REFERENCES rooms(id),
   check_in DATE NOT NULL,
   check_out DATE NOT NULL,
-  
+
   CONSTRAINT valid_date_range CHECK (check_out > check_in)
 );
 
@@ -208,7 +213,7 @@ CREATE TABLE payments (
   amount NUMERIC(10, 2) NOT NULL,
   credit_card_id BIGINT REFERENCES credit_cards(id),
   paypal_email VARCHAR(255),
-  
+
   -- Ensure exactly one payment method is provided
   CONSTRAINT one_payment_method CHECK (
     (credit_card_id IS NOT NULL AND paypal_email IS NULL) OR
@@ -218,6 +223,7 @@ CREATE TABLE payments (
 ```
 
 #### ❌ Bad: Missing or Weak Constraints
+
 ```sql
 -- ❌ No constraints, allows invalid data
 CREATE TABLE products (
@@ -243,6 +249,7 @@ CREATE TABLE orders (
 ### Normalization
 
 #### ✅ Good: Properly Normalized Schema (3NF)
+
 ```sql
 -- Third Normal Form (3NF): No transitive dependencies
 
@@ -299,12 +306,13 @@ CREATE TABLE order_items (
   product_id BIGINT NOT NULL REFERENCES products(id),
   quantity INTEGER NOT NULL CHECK (quantity > 0),
   price NUMERIC(10, 2) NOT NULL,  -- Snapshot price at order time
-  
+
   PRIMARY KEY (order_id, product_id)
 );
 ```
 
 #### ❌ Bad: Denormalized Schema with Redundancy
+
 ```sql
 -- ❌ First Normal Form violation (repeating groups)
 CREATE TABLE orders_bad (
@@ -325,7 +333,7 @@ CREATE TABLE order_items_bad (
   customer_name VARCHAR(255),     -- ❌ Depends on order_id, not full key
   product_name VARCHAR(255),      -- ❌ Depends on product_id, not full key
   quantity INTEGER,
-  
+
   PRIMARY KEY (order_id, product_id)
 );
 
@@ -342,19 +350,20 @@ CREATE TABLE employees_bad (
 ### Strategic Denormalization
 
 #### ✅ Good: Denormalization for Performance
+
 ```sql
 -- Add calculated/cached columns for frequently accessed data
 CREATE TABLE orders (
   id BIGSERIAL PRIMARY KEY,
   customer_id BIGINT NOT NULL REFERENCES customers(id),
-  
+
   -- Denormalized: cache customer name for faster queries
   customer_name VARCHAR(255) NOT NULL,
-  
+
   -- Denormalized: cache total to avoid SUM on order_items
   item_count INTEGER NOT NULL DEFAULT 0,
   total NUMERIC(10, 2) NOT NULL DEFAULT 0,
-  
+
   status order_status DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -364,11 +373,11 @@ CREATE OR REPLACE FUNCTION update_order_totals()
 RETURNS TRIGGER AS $$
 BEGIN
   UPDATE orders
-  SET 
+  SET
     item_count = (SELECT COUNT(*) FROM order_items WHERE order_id = NEW.order_id),
     total = (SELECT COALESCE(SUM(quantity * price), 0) FROM order_items WHERE order_id = NEW.order_id)
   WHERE id = NEW.order_id;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -380,7 +389,7 @@ EXECUTE FUNCTION update_order_totals();
 
 -- Materialized views for complex aggregations
 CREATE MATERIALIZED VIEW product_sales_summary AS
-SELECT 
+SELECT
   p.id,
   p.name,
   p.category_id,
@@ -399,6 +408,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY product_sales_summary;
 ```
 
 #### ❌ Bad: Over-Denormalization
+
 ```sql
 -- ❌ Too much denormalization, hard to maintain consistency
 CREATE TABLE orders_bad (
@@ -419,6 +429,7 @@ CREATE TABLE orders_bad (
 ### B-Tree Indexes (Default)
 
 #### ✅ Good: B-Tree Index Usage
+
 ```sql
 -- Single-column index for equality and range queries
 CREATE INDEX idx_users_email ON users(email);
@@ -459,6 +470,7 @@ SELECT customer_id, total, created_at FROM orders WHERE customer_id = 123;
 ```
 
 #### ❌ Bad: Inefficient B-Tree Index Usage
+
 ```sql
 -- ❌ Index on low-cardinality column (few distinct values)
 CREATE INDEX idx_users_is_active ON users(is_active);  -- Only 2 values: true/false
@@ -487,6 +499,7 @@ CREATE INDEX idx5 ON products(created_at);
 ### GIN Indexes (Arrays, JSONB, Full-Text Search)
 
 #### ✅ Good: GIN Index for JSONB and Arrays
+
 ```sql
 -- GIN index on JSONB column
 CREATE TABLE products (
@@ -536,7 +549,7 @@ CREATE INDEX idx_articles_search ON articles USING GIN (search_vector);
 SELECT * FROM articles WHERE search_vector @@ to_tsquery('english', 'postgresql & performance');
 
 -- Rank results by relevance
-SELECT 
+SELECT
   id,
   title,
   ts_rank(search_vector, to_tsquery('english', 'postgresql & performance')) AS rank
@@ -546,6 +559,7 @@ ORDER BY rank DESC;
 ```
 
 #### ❌ Bad: Missing or Improper GIN Indexes
+
 ```sql
 -- ❌ No GIN index on JSONB column
 CREATE TABLE products (
@@ -570,6 +584,7 @@ SELECT * FROM posts WHERE tags @> ARRAY['postgresql'];  -- Slow
 ### GiST Indexes (Geometric, Range Types)
 
 #### ✅ Good: GiST Index for Spatial and Range Data
+
 ```sql
 -- GiST for geometric data (requires PostGIS extension)
 CREATE EXTENSION IF NOT EXISTS postgis;
@@ -583,7 +598,7 @@ CREATE TABLE locations (
 CREATE INDEX idx_locations_coords ON locations USING GIST (coordinates);
 
 -- ✅ Efficient spatial queries
-SELECT * FROM locations 
+SELECT * FROM locations
 WHERE ST_DWithin(coordinates, ST_MakePoint(-122.4194, 37.7749)::geography, 5000);  -- Within 5km
 
 -- GiST for range types
@@ -603,11 +618,12 @@ INSERT INTO reservations (room_id, period)
 VALUES (1, '[2024-01-01 15:00, 2024-01-01 17:00)');  -- ERROR: conflicting key
 
 -- Query overlapping ranges
-SELECT * FROM reservations 
+SELECT * FROM reservations
 WHERE room_id = 1 AND period && '[2024-01-01, 2024-01-02)'::tstzrange;
 ```
 
 #### ❌ Bad: Missing GiST for Range Data
+
 ```sql
 -- ❌ No exclusion constraint, allows double-booking
 CREATE TABLE reservations (
@@ -623,6 +639,7 @@ CREATE TABLE reservations (
 ### Hash Indexes
 
 #### ✅ Good: Hash Index for Equality Queries
+
 ```sql
 -- Hash index for exact equality (since PostgreSQL 10: crash-safe, replicable)
 CREATE TABLE sessions (
@@ -642,6 +659,7 @@ CREATE INDEX idx_files_hash ON files USING HASH (sha256_hash);
 ```
 
 #### ❌ Bad: Hash Index Misuse
+
 ```sql
 -- ❌ Hash index doesn't support range queries
 CREATE INDEX idx_users_created ON users USING HASH (created_at);
@@ -656,6 +674,7 @@ CREATE INDEX idx_users_active ON users USING HASH (is_active);  -- Use B-tree or
 ### Index Maintenance
 
 #### ✅ Good: Regular Index Maintenance
+
 ```sql
 -- Reindex to rebuild bloated indexes (offline operation)
 REINDEX INDEX idx_users_email;
@@ -670,7 +689,7 @@ VACUUM ANALYZE users;  -- Vacuum and update stats
 VACUUM FULL users;     -- Aggressive vacuum (locks table)
 
 -- Monitor index usage
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -682,7 +701,7 @@ WHERE schemaname = 'public'
 ORDER BY idx_scan ASC;  -- Find unused indexes
 
 -- Drop unused indexes
-SELECT 
+SELECT
   schemaname || '.' || tablename AS table,
   indexname,
   pg_size_pretty(pg_relation_size(indexrelid)) AS size
@@ -692,7 +711,7 @@ WHERE idx_scan = 0
 ORDER BY pg_relation_size(indexrelid) DESC;
 
 -- Check index bloat
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -711,6 +730,7 @@ ORDER BY pg_relation_size(indexrelid) DESC;
 ```
 
 #### ❌ Bad: No Index Maintenance
+
 ```sql
 -- ❌ Never reindexing or vacuuming
 -- Results in:
@@ -728,6 +748,7 @@ ALTER TABLE large_table SET (autovacuum_enabled = false);  -- ❌ Don't do this
 ### EXPLAIN and EXPLAIN ANALYZE
 
 #### ✅ Good: Using EXPLAIN ANALYZE
+
 ```sql
 -- EXPLAIN shows the query plan (doesn't execute)
 EXPLAIN
@@ -741,15 +762,15 @@ Index Scan using idx_users_email on users  (cost=0.42..8.44 rows=1 width=100)
 
 -- EXPLAIN ANALYZE executes and shows actual performance
 EXPLAIN ANALYZE
-SELECT * FROM orders 
-WHERE customer_id = 123 
+SELECT * FROM orders
+WHERE customer_id = 123
   AND created_at > '2024-01-01'
 ORDER BY created_at DESC;
 
 /*
 Output:
-Index Scan using idx_orders_customer_created on orders  
-  (cost=0.42..123.45 rows=50 width=100) 
+Index Scan using idx_orders_customer_created on orders
+  (cost=0.42..123.45 rows=50 width=100)
   (actual time=0.012..0.234 rows=42 loops=1)
   Index Cond: ((customer_id = 123) AND (created_at > '2024-01-01'))
 Planning Time: 0.123 ms
@@ -758,7 +779,7 @@ Execution Time: 0.456 ms
 
 -- EXPLAIN with additional options
 EXPLAIN (ANALYZE, BUFFERS, VERBOSE, COSTS, TIMING)
-SELECT 
+SELECT
   o.id,
   o.total,
   c.name
@@ -775,9 +796,10 @@ WHERE o.created_at > NOW() - INTERVAL '30 days';
 ```
 
 #### ❌ Bad: Ignoring Query Plans
+
 ```sql
 -- ❌ Writing queries without checking execution plan
-SELECT * FROM orders WHERE EXTRACT(YEAR FROM created_at) = 2024;  
+SELECT * FROM orders WHERE EXTRACT(YEAR FROM created_at) = 2024;
 -- ❌ Function on column prevents index usage
 
 -- ✅ Better: Use range query
@@ -791,6 +813,7 @@ SELECT * FROM large_table WHERE status = 'active';  -- Seq scan on 10M rows
 ### Reading Query Plans
 
 #### ✅ Good: Understanding Scan Types
+
 ```sql
 -- Sequential Scan (reads entire table)
 EXPLAIN ANALYZE
@@ -823,7 +846,7 @@ Index Only Scan using idx_users_email on users  (cost=0.42..12.34 rows=10 width=
 
 -- Bitmap Index Scan (combines multiple indexes)
 EXPLAIN ANALYZE
-SELECT * FROM products 
+SELECT * FROM products
 WHERE category_id = 5 AND price > 100;
 /*
 Bitmap Heap Scan on products  (cost=12.34..234.56 rows=50 width=100)
@@ -836,12 +859,13 @@ Bitmap Heap Scan on products  (cost=12.34..234.56 rows=50 width=100)
 ```
 
 #### ❌ Bad: Ignoring Plan Warnings
+
 ```sql
 -- ❌ Large estimated vs actual row mismatch (outdated statistics)
 EXPLAIN ANALYZE
 SELECT * FROM orders WHERE status = 'pending';
 /*
-Seq Scan on orders  (cost=0.00..1234.56 rows=100 width=100) 
+Seq Scan on orders  (cost=0.00..1234.56 rows=100 width=100)
                     (actual time=0.123..45.678 rows=50000 loops=1)
 -- ❌ Estimated 100 rows, actual 50000! Run ANALYZE
 */
@@ -863,10 +887,11 @@ Seq Scan on users  (cost=0.00..1234.56 rows=1 width=100)
 ### Join Optimization
 
 #### ✅ Good: Efficient Joins
+
 ```sql
 -- Nested Loop Join (small result sets, indexed join column)
 EXPLAIN ANALYZE
-SELECT 
+SELECT
   o.id,
   c.name,
   o.total
@@ -882,7 +907,7 @@ Nested Loop  (cost=0.42..123.45 rows=10 width=100)
 
 -- Hash Join (large result sets, equality conditions)
 EXPLAIN ANALYZE
-SELECT 
+SELECT
   o.id,
   c.name,
   SUM(oi.quantity * oi.price) AS total
@@ -902,7 +927,7 @@ Hash Join  (cost=1234.56..5678.90 rows=1000 width=100)
 
 -- Merge Join (both inputs sorted, equality conditions)
 EXPLAIN ANALYZE
-SELECT 
+SELECT
   a.id,
   b.value
 FROM large_table_a a
@@ -918,7 +943,7 @@ Merge Join  (cost=1234.56..5678.90 rows=10000 width=100)
 
 -- Use JOIN instead of subquery for better optimization
 -- ✅ Good: JOIN
-SELECT 
+SELECT
   c.name,
   COUNT(o.id) AS order_count
 FROM customers c
@@ -926,13 +951,14 @@ LEFT JOIN orders o ON c.id = o.customer_id
 GROUP BY c.id, c.name;
 
 -- ❌ Bad: Correlated subquery (executes once per row)
-SELECT 
+SELECT
   c.name,
   (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS order_count
 FROM customers c;
 ```
 
 #### ❌ Bad: Inefficient Joins
+
 ```sql
 -- ❌ Cross join (Cartesian product)
 SELECT * FROM customers, orders;  -- ❌ Returns customers * orders rows
@@ -944,7 +970,7 @@ WHERE c.id = 123;
 
 -- ❌ Join on non-indexed column
 SELECT * FROM orders o
-JOIN customers c ON LOWER(o.customer_email) = LOWER(c.email);  
+JOIN customers c ON LOWER(o.customer_email) = LOWER(c.email);
 -- ❌ Function prevents index usage
 
 -- ✅ Better: Index expression
@@ -954,6 +980,7 @@ CREATE INDEX idx_customers_email_lower ON customers(LOWER(email));
 ### Subqueries vs CTEs vs JOINs
 
 #### ✅ Good: Choosing the Right Approach
+
 ```sql
 -- ✅ CTE for readability and reuse
 WITH active_customers AS (
@@ -967,7 +994,7 @@ recent_orders AS (
   WHERE created_at > NOW() - INTERVAL '30 days'
   GROUP BY customer_id
 )
-SELECT 
+SELECT
   ac.name,
   ac.email,
   COALESCE(ro.order_count, 0) AS order_count,
@@ -977,7 +1004,7 @@ LEFT JOIN recent_orders ro ON ac.id = ro.customer_id
 ORDER BY ro.total_spent DESC NULLS LAST;
 
 -- ✅ JOIN for simple relationships
-SELECT 
+SELECT
   o.id,
   c.name,
   o.total
@@ -1011,9 +1038,9 @@ WITH RECURSIVE org_chart AS (
   SELECT id, name, manager_id, 1 AS level
   FROM employees
   WHERE manager_id IS NULL
-  
+
   UNION ALL
-  
+
   -- Recursive case: employees under managers
   SELECT e.id, e.name, e.manager_id, oc.level + 1
   FROM employees e
@@ -1023,16 +1050,17 @@ SELECT * FROM org_chart ORDER BY level, name;
 ```
 
 #### ❌ Bad: Inefficient Subqueries
+
 ```sql
 -- ❌ Correlated subquery in SELECT (executes for each row)
-SELECT 
+SELECT
   c.name,
   (SELECT COUNT(*) FROM orders WHERE customer_id = c.id) AS order_count,
   (SELECT SUM(total) FROM orders WHERE customer_id = c.id) AS total_spent
 FROM customers c;
 
 -- ✅ Better: Single JOIN
-SELECT 
+SELECT
   c.name,
   COUNT(o.id) AS order_count,
   COALESCE(SUM(o.total), 0) AS total_spent
@@ -1042,7 +1070,7 @@ GROUP BY c.id, c.name;
 
 -- ❌ NOT IN with nullable column (performance issue + wrong results)
 SELECT * FROM customers
-WHERE id NOT IN (SELECT customer_id FROM orders);  
+WHERE id NOT IN (SELECT customer_id FROM orders);
 -- ❌ Returns no rows if any customer_id IS NULL
 
 -- ✅ Better: NOT EXISTS or LEFT JOIN
@@ -1056,6 +1084,7 @@ WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id);
 ### ACID Properties
 
 #### ✅ Good: Understanding ACID
+
 ```sql
 -- Atomicity: All or nothing
 BEGIN;
@@ -1070,7 +1099,7 @@ COMMIT;  -- Or ROLLBACK if error
 -- Consistency: Constraints enforced
 BEGIN;
 
-INSERT INTO orders (customer_id, total) 
+INSERT INTO orders (customer_id, total)
 VALUES (999, -100);  -- ❌ Violates CHECK constraint
 
 -- Transaction automatically rolled back on error
@@ -1083,6 +1112,7 @@ VALUES (999, -100);  -- ❌ Violates CHECK constraint
 ### Transaction Isolation Levels
 
 #### ✅ Good: Choosing the Right Isolation Level
+
 ```sql
 -- Read Committed (PostgreSQL default)
 -- - Prevents dirty reads
@@ -1129,6 +1159,7 @@ COMMIT;  -- May fail with serialization error
 ```
 
 #### ❌ Bad: Wrong Isolation Level
+
 ```sql
 -- ❌ Using Read Committed for financial transactions (race conditions)
 BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
@@ -1157,6 +1188,7 @@ COMMIT;
 ### MVCC (Multi-Version Concurrency Control)
 
 #### ✅ Good: Understanding MVCC
+
 ```sql
 -- PostgreSQL creates new row versions instead of locking
 -- Each transaction sees a snapshot of data
@@ -1184,6 +1216,7 @@ VACUUM products;  -- Reclaims space from old row versions
 ```
 
 #### ❌ Bad: Ignoring MVCC Implications
+
 ```sql
 -- ❌ Long-running transactions prevent VACUUM
 BEGIN;
@@ -1201,16 +1234,17 @@ COMMIT;
 ### Locking
 
 #### ✅ Good: Explicit Locking When Needed
+
 ```sql
 -- SELECT FOR UPDATE (locks rows for update)
 BEGIN;
 
-SELECT * FROM inventory 
-WHERE product_id = 123 
+SELECT * FROM inventory
+WHERE product_id = 123
 FOR UPDATE;  -- Locks row, prevents other updates
 
 -- Check stock
-UPDATE inventory SET quantity = quantity - 1 
+UPDATE inventory SET quantity = quantity - 1
 WHERE product_id = 123 AND quantity > 0;
 
 COMMIT;
@@ -1227,10 +1261,10 @@ COMMIT;
 -- SKIP LOCKED (skip locked rows, useful for job queues)
 BEGIN;
 
-SELECT * FROM jobs 
-WHERE status = 'pending' 
-ORDER BY created_at 
-LIMIT 1 
+SELECT * FROM jobs
+WHERE status = 'pending'
+ORDER BY created_at
+LIMIT 1
 FOR UPDATE SKIP LOCKED;  -- Skip if locked by another worker
 
 -- Process job
@@ -1259,6 +1293,7 @@ SELECT pg_try_advisory_lock(12345);  -- Returns true/false
 ```
 
 #### ❌ Bad: Deadlocks and Lock Contention
+
 ```sql
 -- ❌ Deadlock scenario
 
@@ -1289,6 +1324,7 @@ LOCK TABLE products IN EXCLUSIVE MODE;  -- ❌ Locks entire table
 ### Best Practices
 
 #### ✅ Good: Transaction Best Practices
+
 ```sql
 -- ✅ Keep transactions short
 BEGIN;
@@ -1354,10 +1390,11 @@ COMMIT;
 ### Common Table Expressions (CTEs)
 
 #### ✅ Good: Using CTEs Effectively
+
 ```sql
 -- Basic CTE for readability
 WITH high_value_customers AS (
-  SELECT 
+  SELECT
     customer_id,
     SUM(total) AS total_spent
   FROM orders
@@ -1365,7 +1402,7 @@ WITH high_value_customers AS (
   GROUP BY customer_id
   HAVING SUM(total) > 10000
 )
-SELECT 
+SELECT
   c.name,
   c.email,
   hvc.total_spent
@@ -1374,9 +1411,9 @@ JOIN customers c ON hvc.customer_id = c.id
 ORDER BY hvc.total_spent DESC;
 
 -- Multiple CTEs
-WITH 
+WITH
 category_sales AS (
-  SELECT 
+  SELECT
     c.id AS category_id,
     c.name AS category_name,
     COUNT(DISTINCT o.id) AS order_count,
@@ -1394,7 +1431,7 @@ top_categories AS (
   ORDER BY revenue DESC
   LIMIT 5
 )
-SELECT 
+SELECT
   cs.category_name,
   cs.order_count,
   cs.revenue
@@ -1405,7 +1442,7 @@ ORDER BY cs.revenue DESC;
 -- Recursive CTE for hierarchical data
 WITH RECURSIVE category_tree AS (
   -- Base: top-level categories
-  SELECT 
+  SELECT
     id,
     name,
     parent_id,
@@ -1413,11 +1450,11 @@ WITH RECURSIVE category_tree AS (
     name::TEXT AS path
   FROM categories
   WHERE parent_id IS NULL
-  
+
   UNION ALL
-  
+
   -- Recursive: child categories
-  SELECT 
+  SELECT
     c.id,
     c.name,
     c.parent_id,
@@ -1426,7 +1463,7 @@ WITH RECURSIVE category_tree AS (
   FROM categories c
   JOIN category_tree ct ON c.parent_id = ct.id
 )
-SELECT 
+SELECT
   id,
   REPEAT('  ', level - 1) || name AS indented_name,
   level,
@@ -1437,17 +1474,17 @@ ORDER BY path;
 -- Recursive CTE for graph traversal (find all dependencies)
 WITH RECURSIVE dependency_tree AS (
   -- Base: direct dependencies
-  SELECT 
+  SELECT
     package_id,
     dependency_id,
     1 AS depth
   FROM package_dependencies
   WHERE package_id = 123
-  
+
   UNION ALL
-  
+
   -- Recursive: transitive dependencies
-  SELECT 
+  SELECT
     pd.package_id,
     pd.dependency_id,
     dt.depth + 1
@@ -1464,6 +1501,7 @@ ORDER BY dt.depth, p.name;
 ```
 
 #### ❌ Bad: CTE Misuse
+
 ```sql
 -- ❌ Unnecessary CTE (adds overhead)
 WITH all_users AS (
@@ -1487,9 +1525,10 @@ SELECT COUNT(*) FROM orders WHERE created_at > NOW() - INTERVAL '7 days';
 ### Window Functions
 
 #### ✅ Good: Window Function Patterns
+
 ```sql
 -- ROW_NUMBER: Assign unique sequential numbers
-SELECT 
+SELECT
   customer_id,
   order_id,
   total,
@@ -1497,7 +1536,7 @@ SELECT
 FROM orders;
 
 -- RANK and DENSE_RANK: Handle ties
-SELECT 
+SELECT
   name,
   score,
   RANK() OVER (ORDER BY score DESC) AS rank,        -- 1, 2, 2, 4
@@ -1505,7 +1544,7 @@ SELECT
 FROM students;
 
 -- LAG and LEAD: Access previous/next row
-SELECT 
+SELECT
   date,
   revenue,
   LAG(revenue, 1) OVER (ORDER BY date) AS prev_day_revenue,
@@ -1515,20 +1554,20 @@ FROM daily_sales
 ORDER BY date;
 
 -- FIRST_VALUE and LAST_VALUE
-SELECT 
+SELECT
   product_id,
   date,
   price,
   FIRST_VALUE(price) OVER (PARTITION BY product_id ORDER BY date) AS initial_price,
   LAST_VALUE(price) OVER (
-    PARTITION BY product_id 
-    ORDER BY date 
+    PARTITION BY product_id
+    ORDER BY date
     ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
   ) AS final_price
 FROM price_history;
 
 -- Running totals and moving averages
-SELECT 
+SELECT
   date,
   revenue,
   SUM(revenue) OVER (ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_revenue,
@@ -1537,7 +1576,7 @@ FROM daily_sales
 ORDER BY date;
 
 -- Percentiles and NTile
-SELECT 
+SELECT
   name,
   salary,
   NTILE(4) OVER (ORDER BY salary) AS quartile,
@@ -1548,7 +1587,7 @@ FROM employees;
 -- Top N per group
 SELECT *
 FROM (
-  SELECT 
+  SELECT
     category_id,
     product_id,
     name,
@@ -1560,22 +1599,23 @@ WHERE rank <= 3;  -- Top 3 products per category
 ```
 
 #### ❌ Bad: Window Function Misuse
+
 ```sql
 -- ❌ Using window function when simple aggregate suffices
-SELECT 
+SELECT
   customer_id,
   SUM(total) OVER (PARTITION BY customer_id) AS total_spent
 FROM orders;
 
 -- ✅ Better: GROUP BY
-SELECT 
+SELECT
   customer_id,
   SUM(total) AS total_spent
 FROM orders
 GROUP BY customer_id;
 
 -- ❌ Missing PARTITION BY (operates on entire result set)
-SELECT 
+SELECT
   product_id,
   date,
   price,
@@ -1583,7 +1623,7 @@ SELECT
 FROM prices;
 
 -- ✅ Better: Add PARTITION BY
-SELECT 
+SELECT
   product_id,
   date,
   price,
@@ -1594,6 +1634,7 @@ FROM prices;
 ### JSONB Operations
 
 #### ✅ Good: Working with JSONB
+
 ```sql
 CREATE TABLE events (
   id BIGSERIAL PRIMARY KEY,
@@ -1615,7 +1656,7 @@ SELECT * FROM events WHERE data ? 'product_id';          -- Key exists
 SELECT * FROM events WHERE data ->> 'page' = '/products';  -- Extract text
 
 -- Extract JSONB values
-SELECT 
+SELECT
   id,
   data -> 'user_id' AS user_id_json,        -- Returns JSONB
   data ->> 'user_id' AS user_id_text,       -- Returns text
@@ -1642,7 +1683,7 @@ WHERE id = 1;
 SELECT * FROM events WHERE data -> 'tags' @> '["urgent"]';  -- Array contains
 
 -- Aggregate JSONB
-SELECT 
+SELECT
   event_type,
   jsonb_agg(data) AS all_events,
   jsonb_object_agg(id::text, data) AS events_by_id
@@ -1653,6 +1694,7 @@ GROUP BY event_type;
 ### Array Operations
 
 #### ✅ Good: Working with Arrays
+
 ```sql
 CREATE TABLE products (
   id BIGSERIAL PRIMARY KEY,
@@ -1673,7 +1715,7 @@ SELECT * FROM products WHERE tags @> ARRAY['electronics'];     -- Contains all
 SELECT * FROM products WHERE tags && ARRAY['computers', 'mobile'];  -- Overlaps
 
 -- Array functions
-SELECT 
+SELECT
   name,
   array_length(tags, 1) AS tag_count,
   array_upper(prices, 1) AS price_count,
@@ -1682,14 +1724,14 @@ SELECT
 FROM products;
 
 -- Unnest array to rows
-SELECT 
+SELECT
   p.id,
   p.name,
   unnest(p.tags) AS tag
 FROM products p;
 
 -- Array aggregation
-SELECT 
+SELECT
   category_id,
   array_agg(name ORDER BY name) AS product_names,
   array_agg(DISTINCT tag) AS all_tags
@@ -1703,6 +1745,7 @@ GROUP BY category_id;
 ### Connection Pooling
 
 #### ✅ Good: PgBouncer Configuration
+
 ```ini
 # /etc/pgbouncer/pgbouncer.ini
 
@@ -1736,6 +1779,7 @@ const DATABASE_URL = 'postgresql://user:password@localhost:6432/mydb';
 ```
 
 #### ✅ Good: Supavisor (Supabase Connection Pooler)
+
 ```typescript
 // Transaction mode (recommended for serverless)
 const DATABASE_URL = 'postgresql://postgres.xxxxx.supabase.co:6543/postgres';
@@ -1745,33 +1789,35 @@ const DATABASE_URL = 'postgresql://postgres.xxxxx.supabase.co:5432/postgres';
 ```
 
 #### ❌ Bad: No Connection Pooling
+
 ```typescript
 // ❌ Each request creates new connection (slow, exhausts connections)
 async function handler(req, res) {
-  const client = new Client({
-    connectionString: 'postgresql://localhost:5432/mydb'
-  });
-  await client.connect();  // ❌ Expensive operation
-  const result = await client.query('SELECT * FROM users');
-  await client.end();
-  res.json(result.rows);
+	const client = new Client({
+		connectionString: 'postgresql://localhost:5432/mydb',
+	});
+	await client.connect(); // ❌ Expensive operation
+	const result = await client.query('SELECT * FROM users');
+	await client.end();
+	res.json(result.rows);
 }
 
 // ✅ Better: Use connection pool
 const pool = new Pool({
-  connectionString: 'postgresql://localhost:6432/mydb',  // PgBouncer
-  max: 20  // Application-side pool
+	connectionString: 'postgresql://localhost:6432/mydb', // PgBouncer
+	max: 20, // Application-side pool
 });
 
 async function handler(req, res) {
-  const result = await pool.query('SELECT * FROM users');
-  res.json(result.rows);
+	const result = await pool.query('SELECT * FROM users');
+	res.json(result.rows);
 }
 ```
 
 ### PostgreSQL Configuration
 
 #### ✅ Good: Performance-Oriented postgresql.conf
+
 ```ini
 # Memory Configuration
 shared_buffers = 4GB             # 25% of RAM for dedicated server
@@ -1801,6 +1847,7 @@ max_connections = 200
 ```
 
 #### ❌ Bad: Default Configuration for Production
+
 ```ini
 # ❌ Default settings (designed for minimal systems)
 shared_buffers = 128MB           # ❌ Too small for production
@@ -1812,12 +1859,13 @@ random_page_cost = 4.0           # ❌ Wrong for SSD
 ### Monitoring and Analysis
 
 #### ✅ Good: Essential Monitoring Queries
+
 ```sql
 -- Enable pg_stat_statements extension
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 -- Top 10 slowest queries
-SELECT 
+SELECT
   query,
   calls,
   total_exec_time,
@@ -1829,7 +1877,7 @@ ORDER BY mean_exec_time DESC
 LIMIT 10;
 
 -- Most frequently executed queries
-SELECT 
+SELECT
   query,
   calls,
   total_exec_time,
@@ -1839,7 +1887,7 @@ ORDER BY calls DESC
 LIMIT 10;
 
 -- Table sizes
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname || '.' || tablename)) AS total_size,
@@ -1850,7 +1898,7 @@ WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname || '.' || tablename) DESC;
 
 -- Index usage statistics
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -1863,18 +1911,18 @@ WHERE schemaname = 'public'
 ORDER BY idx_scan ASC;
 
 -- Cache hit ratio (should be > 99%)
-SELECT 
+SELECT
   'index hit rate' AS name,
   (sum(idx_blks_hit)) / nullif(sum(idx_blks_hit + idx_blks_read),0) AS ratio
 FROM pg_statio_user_indexes
 UNION ALL
-SELECT 
+SELECT
   'table hit rate' AS name,
   sum(heap_blks_hit) / nullif(sum(heap_blks_hit) + sum(heap_blks_read),0) AS ratio
 FROM pg_statio_user_tables;
 
 -- Long-running queries
-SELECT 
+SELECT
   pid,
   now() - query_start AS duration,
   state,
@@ -1885,7 +1933,7 @@ WHERE state != 'idle'
 ORDER BY duration DESC;
 
 -- Blocking queries
-SELECT 
+SELECT
   blocked_locks.pid AS blocked_pid,
   blocked_activity.usename AS blocked_user,
   blocking_locks.pid AS blocking_pid,
@@ -1894,7 +1942,7 @@ SELECT
   blocking_activity.query AS blocking_statement
 FROM pg_catalog.pg_locks blocked_locks
 JOIN pg_catalog.pg_stat_activity blocked_activity ON blocked_activity.pid = blocked_locks.pid
-JOIN pg_catalog.pg_locks blocking_locks 
+JOIN pg_catalog.pg_locks blocking_locks
   ON blocking_locks.locktype = blocked_locks.locktype
   AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database
   AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation
@@ -1915,6 +1963,7 @@ WHERE NOT blocked_locks.granted;
 ### Naming Conventions
 
 #### ✅ Good: Consistent Naming
+
 ```sql
 -- Tables: plural, snake_case
 CREATE TABLE customers (...);
@@ -1935,18 +1984,19 @@ CREATE INDEX idx_users_email ON users(email_address);
 CREATE INDEX idx_orders_customer_created ON orders(customer_id, created_at);
 
 -- Foreign keys: fk_table_referenced_table
-ALTER TABLE orders ADD CONSTRAINT fk_orders_customers 
+ALTER TABLE orders ADD CONSTRAINT fk_orders_customers
   FOREIGN KEY (customer_id) REFERENCES customers(id);
 
 -- Unique constraints: uq_table_column(s)
 ALTER TABLE users ADD CONSTRAINT uq_users_email UNIQUE (email_address);
 
 -- Check constraints: ck_table_description
-ALTER TABLE products ADD CONSTRAINT ck_products_price_positive 
+ALTER TABLE products ADD CONSTRAINT ck_products_price_positive
   CHECK (price >= 0);
 ```
 
 #### ❌ Bad: Inconsistent Naming
+
 ```sql
 -- ❌ Mixed naming conventions
 CREATE TABLE Customer (...);           -- ❌ Uppercase
@@ -1960,6 +2010,7 @@ CREATE TABLE usr (id BIGINT, nm VARCHAR(100), em VARCHAR(255));
 ### Migration Strategies
 
 #### ✅ Good: Safe Migrations
+
 ```sql
 -- Add column with default (safe in PostgreSQL 11+)
 ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' NOT NULL;
@@ -1968,9 +2019,9 @@ ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' NOT NULL;
 CREATE INDEX CONCURRENTLY idx_users_status ON users(status);
 
 -- Add constraint with NOT VALID (fast), then validate (can be interrupted)
-ALTER TABLE orders ADD CONSTRAINT ck_orders_total_positive 
+ALTER TABLE orders ADD CONSTRAINT ck_orders_total_positive
   CHECK (total >= 0) NOT VALID;
-  
+
 ALTER TABLE orders VALIDATE CONSTRAINT ck_orders_total_positive;
 
 -- Rename column (atomic, but breaks dependent code)
@@ -1990,16 +2041,17 @@ BEGIN
     SET normalized_name = LOWER(name)
     WHERE normalized_name IS NULL
     LIMIT batch_size;
-    
+
     GET DIAGNOSTICS rows_updated = ROW_COUNT;
     EXIT WHEN rows_updated = 0;
-    
+
     COMMIT;  -- Release locks between batches
   END LOOP;
 END $$;
 ```
 
 #### ❌ Bad: Dangerous Migrations
+
 ```sql
 -- ❌ Adding NOT NULL without default (locks table, fails if NULLs exist)
 ALTER TABLE users ADD COLUMN status VARCHAR(20) NOT NULL;
@@ -2014,6 +2066,7 @@ ALTER TABLE users ALTER COLUMN id TYPE BIGINT;  -- ❌ Long lock
 ### Security
 
 #### ✅ Good: Row-Level Security (RLS)
+
 ```sql
 -- Enable RLS on table
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
@@ -2048,6 +2101,7 @@ $$ LANGUAGE SQL STABLE;
 ```
 
 #### ❌ Bad: No Access Control
+
 ```sql
 -- ❌ No RLS, relying on application code
 CREATE TABLE documents (
@@ -2062,6 +2116,7 @@ CREATE TABLE documents (
 ### Backup and Recovery
 
 #### ✅ Good: Regular Backups
+
 ```bash
 # Logical backup (pg_dump)
 pg_dump -h localhost -U postgres -d mydb -F c -f mydb_backup.dump

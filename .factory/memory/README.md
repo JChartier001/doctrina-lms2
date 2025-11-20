@@ -13,6 +13,7 @@ memory/
 ## Purpose
 
 The memory system stores:
+
 - **Tech Stack Analysis** - Detected technologies, versions, patterns
 - **Architectural Decisions** - Key choices and rationale
 - **Best Practices** - Research findings and recommendations
@@ -36,6 +37,7 @@ Comprehensive analysis of your project's technology stack including:
 ## Usage
 
 Droids automatically reference this memory when:
+
 - Generating code (follows detected patterns)
 - Making architectural decisions (aligns with existing choices)
 - Implementing features (uses correct versions and APIs)
@@ -43,6 +45,7 @@ Droids automatically reference this memory when:
 ## Maintenance
 
 Update `tech-stack.json` when:
+
 - Upgrading major dependencies
 - Adding new frameworks/libraries
 - Changing architectural patterns

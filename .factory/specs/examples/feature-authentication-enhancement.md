@@ -16,6 +16,7 @@ Enhance the existing Clerk authentication system with two-factor authentication 
 ## Problem Statement
 
 Current authentication system uses Clerk for basic email/password login. Users need:
+
 - Two-factor authentication for enhanced security
 - Session management to view/revoke active sessions
 - Login history and audit trail
@@ -83,6 +84,7 @@ Database Schema Changes
 ## Task Breakdown
 
 ### Phase 1: Foundation (Sequential - 5 min)
+
 - [ ] Analyze existing Clerk integration
 - [ ] Review security standards in `.factory/standards/security.md`
 - [ ] Install dependencies: `speakeasy` (TOTP), `qrcode` (QR generation)
@@ -90,6 +92,7 @@ Database Schema Changes
 ### Phase 2: Parallel Implementation (3 agents - 20-25 min)
 
 #### Stream A: Backend 2FA & Sessions (droidz-codegen)
+
 - [ ] Create `convex/auth2fa.ts`
   - [ ] `generateSecret` mutation - Create TOTP secret
   - [ ] `verifyAndEnable` mutation - Validate OTP and enable 2FA
@@ -104,6 +107,7 @@ Database Schema Changes
   - [ ] Add `loginHistory` table
 
 #### Stream B: Frontend UI (droidz-codegen)
+
 - [ ] Create `app/settings/security/page.tsx`
   - [ ] Server Component layout
   - [ ] Security settings section
@@ -121,6 +125,7 @@ Database Schema Changes
   - [ ] Revoke session button
 
 #### Stream C: Tests (droidz-test)
+
 - [ ] Create `convex/__test__/auth2fa.test.ts`
   - [ ] Test secret generation
   - [ ] Test OTP verification (valid/invalid)
@@ -137,6 +142,7 @@ Database Schema Changes
   - [ ] Test revoke action
 
 ### Phase 3: Integration (Sequential - 5 min)
+
 - [ ] Integrate 2FA check into Clerk auth flow
 - [ ] Test end-to-end: enrollment → login with OTP → session management
 - [ ] Update documentation
@@ -160,11 +166,13 @@ Database Schema Changes
 ## Dependencies
 
 **NPM Packages:**
+
 - `speakeasy` - TOTP generation/verification
 - `qrcode.react` - QR code generation
 - (Already installed: Clerk, Convex)
 
 **Standards:**
+
 - `.factory/standards/security.md` - Security best practices
 - `.factory/standards/react-convex.md` - Convex patterns
 - `.factory/standards/testing.md` - Test requirements
@@ -176,9 +184,11 @@ Database Schema Changes
 This spec demonstrates the **parallel execution pattern** for Droidz:
 
 **Sequential Approach:** 45-60 minutes
+
 1. Backend (20-25 min) → Frontend (20-25 min) → Tests (15-20 min)
 
 **Parallel Approach:** 20-25 minutes (3x speedup)
+
 1. Foundation (5 min) →
 2. **3 Agents in Parallel:**
    - Backend: 20-25 min
@@ -187,12 +197,14 @@ This spec demonstrates the **parallel execution pattern** for Droidz:
 3. → Integration (5 min)
 
 **Why Parallel Works Here:**
+
 - ✅ Backend and Frontend are independent (Frontend mocks backend during dev)
 - ✅ Tests can be written based on spec (don't need implemented code)
 - ✅ Clear interfaces defined (API contracts)
 - ✅ No blocking dependencies between streams
 
 **When to Use Orchestrator:**
+
 - 3+ independent work streams
 - 5+ files to create/modify
 - Multi-domain feature (frontend + backend + tests)
@@ -200,6 +212,7 @@ This spec demonstrates the **parallel execution pattern** for Droidz:
 - Explicit user request for parallel execution
 
 **When NOT to Use:**
+
 - Single file modifications
 - Simple bug fixes
 - Documentation-only changes
@@ -223,6 +236,7 @@ To implement this spec with Droidz orchestration:
 ```
 
 The orchestrator will:
+
 1. Read this spec
 2. Spawn 3 agents (codegen, codegen, test)
 3. Provide progress updates (file creation observable via git status)

@@ -1,6 +1,6 @@
 ---
 description: AI spec generator - transform ideas into execution-ready specifications
-argument-hint: "feature description"
+argument-hint: 'feature description'
 ---
 
 Generate a comprehensive, executable specification for this feature:

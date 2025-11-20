@@ -64,7 +64,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: str
-    
+
     @validator('password')
     def password_strength(cls, v):
         if len(v) < 8:
@@ -111,7 +111,7 @@ match result:
 # ✅ Good: Custom exceptions
 class UserNotFoundError(Exception):
     """Raised when user cannot be found."""
-    
+
     def __init__(self, user_id: int):
         self.user_id = user_id
         super().__init__(f"User {user_id} not found")
@@ -297,7 +297,7 @@ class Settings(BaseSettings):
     database_url: str
     secret_key: str
     api_key: str
-    
+
     class Config:
         env_file = ".env"
 

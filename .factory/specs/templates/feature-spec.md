@@ -10,14 +10,17 @@
 ## Overview
 
 ### Purpose
+
 <!-- What is this feature and why are we building it? -->
 
 ### User Story
+
 As a [type of user],
 I want to [perform some action],
 So that [achieve some goal/benefit].
 
 ### Business Value
+
 <!-- What problem does this solve? What value does it provide? -->
 
 ---
@@ -25,6 +28,7 @@ So that [achieve some goal/benefit].
 ## Requirements
 
 ### Functional Requirements
+
 <!-- What must this feature do? -->
 
 - [ ] Requirement 1
@@ -32,6 +36,7 @@ So that [achieve some goal/benefit].
 - [ ] Requirement 3
 
 ### Non-Functional Requirements
+
 <!-- Performance, security, scalability, etc. -->
 
 - [ ] Performance: [specific metrics]
@@ -40,6 +45,7 @@ So that [achieve some goal/benefit].
 - [ ] Browser support: [browsers and versions]
 
 ### Constraints
+
 <!-- Technical or business constraints -->
 
 - Constraint 1
@@ -50,23 +56,28 @@ So that [achieve some goal/benefit].
 ## Architecture
 
 ### Technical Approach
+
 <!-- High-level architecture and technology choices -->
 
 **Frontend**:
+
 - Framework: [React, Vue, etc.]
 - Key libraries: [list]
 - State management: [approach]
 
 **Backend**:
+
 - Language/framework: [Node.js, Python, etc.]
 - Database: [PostgreSQL, MongoDB, etc.]
 - API style: [REST, GraphQL, etc.]
 
 **Infrastructure**:
+
 - Hosting: [AWS, Vercel, etc.]
 - CI/CD: [GitHub Actions, etc.]
 
 ### Key Components
+
 <!-- Major components and their responsibilities -->
 
 1. **Component A**: [description]
@@ -74,6 +85,7 @@ So that [achieve some goal/benefit].
 3. **Component C**: [description]
 
 ### Data Model
+
 <!-- Database schema or data structures -->
 
 ```
@@ -81,6 +93,7 @@ So that [achieve some goal/benefit].
 ```
 
 ### API Endpoints
+
 <!-- If applicable, list key endpoints -->
 
 - `GET /api/resource` - [description]
@@ -89,6 +102,7 @@ So that [achieve some goal/benefit].
 - `DELETE /api/resource/:id` - [description]
 
 ### Architecture Decisions
+
 <!-- Key decisions and trade-offs -->
 
 **Decision**: [What was decided]
@@ -101,6 +115,7 @@ So that [achieve some goal/benefit].
 ## User Experience
 
 ### User Flow
+
 <!-- Step-by-step user journey -->
 
 1. User action 1
@@ -110,6 +125,7 @@ So that [achieve some goal/benefit].
 5. Final outcome
 
 ### UI/UX Requirements
+
 <!-- Visual and interaction requirements -->
 
 - Layout: [description]
@@ -118,6 +134,7 @@ So that [achieve some goal/benefit].
 - Accessibility: [requirements]
 
 ### Wireframes/Mockups
+
 <!-- Link to designs or embed images -->
 
 [Link to Figma/Design file]
@@ -127,43 +144,50 @@ So that [achieve some goal/benefit].
 ## Implementation Plan
 
 ### Task Breakdown
+
 <!-- High-level tasks for orchestration -->
 
 #### Task 1: [Backend API]
+
 - **Specialist**: droidz-codegen
 - **Estimated effort**: [hours/days]
 - **Dependencies**: []
 - **Description**: [detailed task description]
 
 #### Task 2: [Frontend Components]
+
 - **Specialist**: droidz-codegen
 - **Estimated effort**: [hours/days]
 - **Dependencies**: [Task 1]
 - **Description**: [detailed task description]
 
 #### Task 3: [Testing]
+
 - **Specialist**: droidz-test
 - **Estimated effort**: [hours/days]
 - **Dependencies**: [Task 1, Task 2]
 - **Description**: [detailed task description]
 
 #### Task 4: [Documentation]
+
 - **Specialist**: droidz-generalist
 - **Estimated effort**: [hours/days]
 - **Dependencies**: [Task 1, Task 2]
 - **Description**: [detailed task description]
 
 ### Dependencies
+
 <!-- External dependencies -->
 
 - [ ] Dependency 1: [description]
 - [ ] Dependency 2: [description]
 
 ### Risks & Mitigation
+
 <!-- Potential risks and how to handle them -->
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
+| Risk               | Likelihood   | Impact       | Mitigation        |
+| ------------------ | ------------ | ------------ | ----------------- |
 | [Risk description] | Low/Med/High | Low/Med/High | [How to mitigate] |
 
 ---
@@ -171,6 +195,7 @@ So that [achieve some goal/benefit].
 ## Acceptance Criteria
 
 ### Core Functionality
+
 <!-- Must-have criteria for feature to be considered complete -->
 
 - [ ] Criterion 1: [specific, testable requirement]
@@ -178,6 +203,7 @@ So that [achieve some goal/benefit].
 - [ ] Criterion 3: [specific, testable requirement]
 
 ### Quality Gates
+
 <!-- Standards that must be met -->
 
 - [ ] All tests pass (unit, integration, e2e)
@@ -189,6 +215,7 @@ So that [achieve some goal/benefit].
 - [ ] Documentation complete
 
 ### Definition of Done
+
 <!-- When is this feature truly complete? -->
 
 - [ ] Code merged to main
@@ -202,6 +229,7 @@ So that [achieve some goal/benefit].
 ## Testing Strategy
 
 ### Unit Tests
+
 <!-- What needs unit testing? -->
 
 - Component A: [test scenarios]
@@ -209,6 +237,7 @@ So that [achieve some goal/benefit].
 - Utility functions: [test scenarios]
 
 ### Integration Tests
+
 <!-- How components work together -->
 
 - API integration: [scenarios]
@@ -216,6 +245,7 @@ So that [achieve some goal/benefit].
 - Third-party services: [scenarios]
 
 ### End-to-End Tests
+
 <!-- User journey testing -->
 
 - Happy path: [scenario]
@@ -223,6 +253,7 @@ So that [achieve some goal/benefit].
 - Edge cases: [scenarios]
 
 ### Performance Tests
+
 <!-- Load and performance testing -->
 
 - Target metrics: [specific numbers]
@@ -233,6 +264,7 @@ So that [achieve some goal/benefit].
 ## Deployment
 
 ### Deployment Strategy
+
 <!-- How will this be deployed? -->
 
 - [ ] Feature flag enabled
@@ -242,6 +274,7 @@ So that [achieve some goal/benefit].
 - [ ] Cache invalidation (if needed)
 
 ### Rollback Plan
+
 <!-- How to roll back if something goes wrong -->
 
 1. Step 1
@@ -249,6 +282,7 @@ So that [achieve some goal/benefit].
 3. Step 3
 
 ### Monitoring
+
 <!-- What to monitor post-deployment -->
 
 - Metrics: [list key metrics]
@@ -260,6 +294,7 @@ So that [achieve some goal/benefit].
 ## Documentation
 
 ### User Documentation
+
 <!-- What documentation is needed? -->
 
 - [ ] User guide
@@ -268,6 +303,7 @@ So that [achieve some goal/benefit].
 - [ ] Video demo
 
 ### Developer Documentation
+
 <!-- Technical documentation -->
 
 - [ ] API documentation
@@ -280,12 +316,14 @@ So that [achieve some goal/benefit].
 ## Timeline
 
 ### Estimated Timeline
+
 - **Spec creation**: [date range]
 - **Implementation**: [date range]
 - **Testing**: [date range]
 - **Deployment**: [target date]
 
 ### Milestones
+
 - [ ] Milestone 1: [description] - [date]
 - [ ] Milestone 2: [description] - [date]
 - [ ] Milestone 3: [description] - [date]
@@ -309,9 +347,11 @@ So that [achieve some goal/benefit].
 ## Change Log
 
 ### [YYYY-MM-DD] - Version 1.1
+
 - Change description
 
 ### [YYYY-MM-DD] - Version 1.0
+
 - Initial spec creation
 
 ---
@@ -319,12 +359,14 @@ So that [achieve some goal/benefit].
 ## Appendix
 
 ### References
+
 <!-- Links to related documents, discussions, etc. -->
 
 - [Link 1]
 - [Link 2]
 
 ### Related Specs
+
 <!-- Links to related specifications -->
 
 - [Related Spec 1]

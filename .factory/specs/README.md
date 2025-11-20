@@ -21,25 +21,33 @@ Specifications define **what you're building next** with detailed implementation
 ## Spec Types
 
 ### Feature Spec
+
 For new features or enhancements.
+
 - **Use when**: Adding new functionality
 - **Template**: `templates/feature-spec.md`
 - **Command**: `/create-spec feature feature-name`
 
 ### Epic Spec
+
 For large initiatives spanning multiple features.
+
 - **Use when**: Complex projects with multiple components
 - **Template**: `templates/epic-spec.md`
 - **Command**: `/create-spec epic epic-name`
 
 ### Refactor Spec
+
 For code restructuring and improvements.
+
 - **Use when**: Improving code quality without changing behavior
 - **Template**: `templates/refactor-spec.md`
 - **Command**: `/create-spec refactor refactor-name`
 
 ### Integration Spec
+
 For third-party service integrations.
+
 - **Use when**: Adding external APIs or services
 - **Template**: `templates/integration-spec.md`
 - **Command**: `/create-spec integration service-name`
@@ -47,6 +55,7 @@ For third-party service integrations.
 ## Workflow
 
 ### 1. Create Spec
+
 ```bash
 # From template
 /create-spec feature auth-system
@@ -55,7 +64,9 @@ For third-party service integrations.
 ```
 
 ### 2. Write Specification
+
 Fill in all sections:
+
 - Overview & goals
 - Requirements
 - Architecture decisions
@@ -63,28 +74,33 @@ Fill in all sections:
 - Implementation plan
 
 ### 3. Validate Spec
+
 ```bash
 /validate-spec .factory/specs/active/auth-system.md
 ```
 
 Checks for:
+
 - ✅ All required sections present
 - ✅ Clear acceptance criteria
 - ✅ Realistic implementation plan
 - ✅ Dependencies identified
 
 ### 4. Convert to Tasks
+
 ```bash
 /spec-to-tasks .factory/specs/active/auth-system.md
 ```
 
 Generates `auth-system-tasks.json` with:
+
 - Task breakdown
 - Specialist assignments
 - Priority ordering
 - Dependencies mapped
 
 ### 5. Orchestrate
+
 ```bash
 /orchestrate file:auth-system-tasks.json
 ```
@@ -92,7 +108,9 @@ Generates `auth-system-tasks.json` with:
 Creates parallel worktrees and executes.
 
 ### 6. Archive
+
 After completion:
+
 ```bash
 /archive-spec .factory/specs/active/auth-system.md
 ```
@@ -104,15 +122,19 @@ Moves to `.factory/specs/archive/auth-system.md` with metadata.
 ### ✅ Good Specs
 
 **Clear Purpose**
+
 ```markdown
 ## Purpose
+
 Enable users to securely authenticate using email/password, supporting
 password reset and remember-me functionality.
 ```
 
 **Measurable Criteria**
+
 ```markdown
 ## Acceptance Criteria
+
 - [ ] User can register with email/password
 - [ ] Password requirements: 8+ chars, 1 uppercase, 1 number
 - [ ] Password reset email sent within 30 seconds
@@ -121,8 +143,10 @@ password reset and remember-me functionality.
 ```
 
 **Detailed Architecture**
+
 ```markdown
 ## Architecture Decisions
+
 - Use JWT for stateless authentication
 - bcrypt for password hashing (cost factor: 12)
 - Redis for session storage
@@ -132,21 +156,27 @@ password reset and remember-me functionality.
 ### ❌ Bad Specs
 
 **Vague Purpose**
+
 ```markdown
 ## Purpose
+
 Add login stuff
 ```
 
 **Unmeasurable Criteria**
+
 ```markdown
 ## Acceptance Criteria
+
 - Should work well
 - Users should be happy
 ```
 
 **No Architecture**
+
 ```markdown
 ## Architecture
+
 We'll figure it out during implementation
 ```
 
@@ -162,6 +192,7 @@ We'll figure it out during implementation
 ## Integration with Orchestrator
 
 The orchestrator reads specs to:
+
 - **Decompose** - Break into parallel tasks
 - **Assign** - Match tasks to specialists
 - **Coordinate** - Handle dependencies
@@ -171,10 +202,12 @@ The orchestrator reads specs to:
 ## Example: Feature Spec → Orchestration
 
 ### Input: auth-system.md
+
 ```markdown
 # Feature Spec: Authentication System
 
 ## Tasks
+
 1. Backend API endpoints
 2. Frontend login/register forms
 3. Password reset flow
@@ -183,30 +216,32 @@ The orchestrator reads specs to:
 ```
 
 ### Output: auth-system-tasks.json
+
 ```json
 {
-  "spec": "auth-system",
-  "tasks": [
-    {
-      "key": "AUTH-API",
-      "specialist": "droidz-codegen",
-      "priority": 1
-    },
-    {
-      "key": "AUTH-UI",
-      "specialist": "droidz-codegen",
-      "priority": 1
-    },
-    {
-      "key": "AUTH-TESTS",
-      "specialist": "droidz-test",
-      "priority": 2
-    }
-  ]
+	"spec": "auth-system",
+	"tasks": [
+		{
+			"key": "AUTH-API",
+			"specialist": "droidz-codegen",
+			"priority": 1
+		},
+		{
+			"key": "AUTH-UI",
+			"specialist": "droidz-codegen",
+			"priority": 1
+		},
+		{
+			"key": "AUTH-TESTS",
+			"specialist": "droidz-test",
+			"priority": 2
+		}
+	]
 }
 ```
 
 ### Result: Parallel Execution
+
 ```
 .runs/AUTH-API/    ← droidz-codegen (tmux: droidz-AUTH-API)
 .runs/AUTH-UI/     ← droidz-codegen (tmux: droidz-AUTH-UI)
@@ -218,30 +253,38 @@ The orchestrator reads specs to:
 ## Best Practices
 
 ### Start with Why
+
 Always explain the business value and user benefit.
 
 ### Be Specific
+
 "Fast response time" → "< 200ms P95 latency"
 
 ### List Dependencies
+
 Identify what must exist before implementation.
 
 ### Define Success
+
 Clear, testable acceptance criteria.
 
 ### Plan Implementation
+
 Break down into concrete tasks.
 
 ### Document Decisions
+
 Explain architectural choices and trade-offs.
 
 ### Keep Updated
+
 Modify spec as requirements evolve.
 
 ### Archive When Done
+
 Preserve as historical documentation.
 
 ---
 
-*Last Updated: 2025-01-12*
-*Version: 1.0.0*
+_Last Updated: 2025-01-12_
+_Version: 1.0.0_

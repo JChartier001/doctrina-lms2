@@ -12,34 +12,30 @@ The memory-manager skill automatically remembers your preferences:
 
 ```json
 {
-  "preferences": {
-    "codeStyle": {
-      "functionStyle": "arrow-functions",
-      "componentStyle": "functional",
-      "importOrganization": "absolute-first"
-    },
-    "testing": {
-      "approach": "tdd",
-      "framework": "vitest",
-      "coverageThreshold": 80
-    },
-    "git": {
-      "commitStyle": "conventional-commits",
-      "branchNaming": "feature/{ticket}-{description}"
-    }
-  },
-  "workHistory": {
-    "commonPatterns": [
-      "Prefers custom hooks over inline logic",
-      "Uses Zod for all input validation",
-      "Follows Repository pattern for data access"
-    ],
-    "frequentlyUsedTools": [
-      "React Query",
-      "Tailwind CSS",
-      "Zod"
-    ]
-  }
+	"preferences": {
+		"codeStyle": {
+			"functionStyle": "arrow-functions",
+			"componentStyle": "functional",
+			"importOrganization": "absolute-first"
+		},
+		"testing": {
+			"approach": "tdd",
+			"framework": "vitest",
+			"coverageThreshold": 80
+		},
+		"git": {
+			"commitStyle": "conventional-commits",
+			"branchNaming": "feature/{ticket}-{description}"
+		}
+	},
+	"workHistory": {
+		"commonPatterns": [
+			"Prefers custom hooks over inline logic",
+			"Uses Zod for all input validation",
+			"Follows Repository pattern for data access"
+		],
+		"frequentlyUsedTools": ["React Query", "Tailwind CSS", "Zod"]
+	}
 }
 ```
 

@@ -10,21 +10,21 @@ import { api } from '@/lib/api';
 
 // ✅ Good: Server Component (async, data fetching at build/request time)
 export default async function DashboardPage() {
-  const data = await api.getDashboardData();
-  
-  return (
-    <div>
-      <h1>{data.title}</h1>
-      <DashboardClient initialData={data} />
-    </div>
-  );
+	const data = await api.getDashboardData();
+
+	return (
+		<div>
+			<h1>{data.title}</h1>
+			<DashboardClient initialData={data} />
+		</div>
+	);
 }
 
 // ❌ Bad: Don't use hooks or browser APIs in Server Components
 export default function BadDashboardPage() {
-  const [data, setData] = useState(); // ERROR: Can't use hooks
-  useEffect(() => {}); // ERROR: Can't use useEffect
-  return <div>...</div>;
+	const [data, setData] = useState(); // ERROR: Can't use hooks
+	useEffect(() => {}); // ERROR: Can't use useEffect
+	return <div>...</div>;
 }
 ```
 
@@ -38,13 +38,9 @@ import { useState } from 'react';
 
 // ✅ Good: Client Component for interactivity
 export function InteractiveButton() {
-  const [count, setCount] = useState(0);
-  
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      Clicked {count} times
-    </button>
-  );
+	const [count, setCount] = useState(0);
+
+	return <button onClick={() => setCount(count + 1)}>Clicked {count} times</button>;
 }
 ```
 
@@ -58,44 +54,44 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function createPost(formData: FormData) {
-  const title = formData.get('title') as string;
-  const content = formData.get('content') as string;
-  
-  // Validate
-  if (!title || !content) {
-    return { error: 'Title and content are required' };
-  }
-  
-  // Mutate data
-  await db.posts.create({ title, content });
-  
-  // Revalidate cache
-  revalidatePath('/posts');
-  
-  // Redirect
-  redirect('/posts');
+	const title = formData.get('title') as string;
+	const content = formData.get('content') as string;
+
+	// Validate
+	if (!title || !content) {
+		return { error: 'Title and content are required' };
+	}
+
+	// Mutate data
+	await db.posts.create({ title, content });
+
+	// Revalidate cache
+	revalidatePath('/posts');
+
+	// Redirect
+	redirect('/posts');
 }
 
 // ✅ Good: Form component using Server Action
 // app/components/post-form.tsx
-'use client';
+('use client');
 
 import { useActionState } from 'react';
 import { createPost } from '@/app/actions';
 
 export function PostForm() {
-  const [state, formAction, isPending] = useActionState(createPost, {});
-  
-  return (
-    <form action={formAction}>
-      <input type="text" name="title" required />
-      <textarea name="content" required />
-      <button type="submit" disabled={isPending}>
-        {isPending ? 'Creating...' : 'Create Post'}
-      </button>
-      {state?.error && <p className="error">{state.error}</p>}
-    </form>
-  );
+	const [state, formAction, isPending] = useActionState(createPost, {});
+
+	return (
+		<form action={formAction}>
+			<input type="text" name="title" required />
+			<textarea name="content" required />
+			<button type="submit" disabled={isPending}>
+				{isPending ? 'Creating...' : 'Create Post'}
+			</button>
+			{state?.error && <p className="error">{state.error}</p>}
+		</form>
+	);
 }
 ```
 
@@ -106,14 +102,14 @@ export function PostForm() {
 ```tsx
 // ✅ Good: Fetch data in parallel
 export default async function Page() {
-  // Initiate both requests in parallel
-  const userPromise = fetch('/api/user').then(r => r.json());
-  const postsPromise = fetch('/api/posts').then(r => r.json());
-  
-  // Wait for both
-  const [user, posts] = await Promise.all([userPromise, postsPromise]);
-  
-  return <div>{/* Use user and posts */}</div>;
+	// Initiate both requests in parallel
+	const userPromise = fetch('/api/user').then(r => r.json());
+	const postsPromise = fetch('/api/posts').then(r => r.json());
+
+	// Wait for both
+	const [user, posts] = await Promise.all([userPromise, postsPromise]);
+
+	return <div>{/* Use user and posts */}</div>;
 }
 ```
 
@@ -124,22 +120,22 @@ export default async function Page() {
 import { Suspense } from 'react';
 
 export default function Page() {
-  return (
-    <div>
-      <h1>My Dashboard</h1>
-      <Suspense fallback={<LoadingSkeleton />}>
-        <SlowComponent />
-      </Suspense>
-      <Suspense fallback={<div>Loading charts...</div>}>
-        <ChartComponent />
-      </Suspense>
-    </div>
-  );
+	return (
+		<div>
+			<h1>My Dashboard</h1>
+			<Suspense fallback={<LoadingSkeleton />}>
+				<SlowComponent />
+			</Suspense>
+			<Suspense fallback={<div>Loading charts...</div>}>
+				<ChartComponent />
+			</Suspense>
+		</div>
+	);
 }
 
 async function SlowComponent() {
-  const data = await fetchSlowData();
-  return <div>{data.content}</div>;
+	const data = await fetchSlowData();
+	return <div>{data.content}</div>;
 }
 ```
 
@@ -179,23 +175,23 @@ app/
 ```tsx
 // app/posts/[slug]/page.tsx
 interface PageProps {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+	params: Promise<{ slug: string }>;
+	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 // ✅ Good: Await params in Next.js 15+
 export default async function PostPage({ params, searchParams }: PageProps) {
-  const { slug } = await params;
-  const { query } = await searchParams;
-  
-  const post = await getPost(slug);
-  return <article>{post.content}</article>;
+	const { slug } = await params;
+	const { query } = await searchParams;
+
+	const post = await getPost(slug);
+	return <article>{post.content}</article>;
 }
 
 // Generate static params at build time
 export async function generateStaticParams() {
-  const posts = await getPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+	const posts = await getPosts();
+	return posts.map(post => ({ slug: post.slug }));
 }
 ```
 
@@ -206,14 +202,14 @@ export async function generateStaticParams() {
 // Intercepts /photo/[id] when navigated from /photos
 
 export default async function PhotoModal({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const photo = await getPhoto(id);
-  
-  return (
-    <div className="modal">
-      <img src={photo.url} alt={photo.title} />
-    </div>
-  );
+	const { id } = await params;
+	const photo = await getPhoto(id);
+
+	return (
+		<div className="modal">
+			<img src={photo.url} alt={photo.title} />
+		</div>
+	);
 }
 ```
 
@@ -222,37 +218,37 @@ export default async function PhotoModal({ params }: { params: Promise<{ id: str
 ```tsx
 // ✅ Good: Configure caching per request
 export async function fetchPosts() {
-  const res = await fetch('https://api.example.com/posts', {
-    next: { 
-      revalidate: 3600, // Revalidate every hour
-      tags: ['posts']   // Tag for on-demand revalidation
-    }
-  });
-  return res.json();
+	const res = await fetch('https://api.example.com/posts', {
+		next: {
+			revalidate: 3600, // Revalidate every hour
+			tags: ['posts'], // Tag for on-demand revalidation
+		},
+	});
+	return res.json();
 }
 
 // On-demand revalidation
 // app/actions.ts
-'use server';
+('use server');
 
 import { revalidateTag, revalidatePath } from 'next/cache';
 
 export async function updatePost(id: string) {
-  await db.posts.update(id);
-  
-  // Revalidate specific tag
-  revalidateTag('posts');
-  
-  // Or revalidate specific path
-  revalidatePath('/posts');
+	await db.posts.update(id);
+
+	// Revalidate specific tag
+	revalidateTag('posts');
+
+	// Or revalidate specific path
+	revalidatePath('/posts');
 }
 
 // ✅ Good: Disable caching when needed
 export async function fetchDynamicData() {
-  const res = await fetch('https://api.example.com/data', {
-    cache: 'no-store' // Always fetch fresh data
-  });
-  return res.json();
+	const res = await fetch('https://api.example.com/data', {
+		cache: 'no-store', // Always fetch fresh data
+	});
+	return res.json();
 }
 ```
 
@@ -264,25 +260,25 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Authentication check
-  const token = request.cookies.get('token');
-  
-  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  
-  // Add custom header
-  const response = NextResponse.next();
-  response.headers.set('x-custom-header', 'value');
-  
-  return response;
+	// Authentication check
+	const token = request.cookies.get('token');
+
+	if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {
+		return NextResponse.redirect(new URL('/login', request.url));
+	}
+
+	// Add custom header
+	const response = NextResponse.next();
+	response.headers.set('x-custom-header', 'value');
+
+	return response;
 }
 
 export const config = {
-  matcher: [
-    // Match all request paths except static files
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+	matcher: [
+		// Match all request paths except static files
+		'/((?!api|_next/static|_next/image|favicon.ico).*)',
+	],
 };
 ```
 
@@ -293,30 +289,30 @@ export const config = {
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: {
-    default: 'My App',
-    template: '%s | My App', // "Page Title | My App"
-  },
-  description: 'Welcome to my app',
-  openGraph: {
-    title: 'My App',
-    description: 'Welcome to my app',
-    images: ['/og-image.jpg'],
-  },
+	title: {
+		default: 'My App',
+		template: '%s | My App', // "Page Title | My App"
+	},
+	description: 'Welcome to my app',
+	openGraph: {
+		title: 'My App',
+		description: 'Welcome to my app',
+		images: ['/og-image.jpg'],
+	},
 };
 
 // app/posts/[slug]/page.tsx
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getPost(slug);
-  
-  return {
-    title: post.title,
-    description: post.excerpt,
-    openGraph: {
-      images: [post.image],
-    },
-  };
+	const { slug } = await params;
+	const post = await getPost(slug);
+
+	return {
+		title: post.title,
+		description: post.excerpt,
+		openGraph: {
+			images: [post.image],
+		},
+	};
 }
 ```
 
@@ -327,23 +323,23 @@ import Image from 'next/image';
 
 // ✅ Good: Use Next.js Image component
 export function ProductImage({ src, alt }: { src: string; alt: string }) {
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      width={600}
-      height={400}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      priority={false} // Set true for above-the-fold images
-      placeholder="blur"
-      blurDataURL="data:image/..." // Or use static import
-    />
-  );
+	return (
+		<Image
+			src={src}
+			alt={alt}
+			width={600}
+			height={400}
+			sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+			priority={false} // Set true for above-the-fold images
+			placeholder="blur"
+			blurDataURL="data:image/..." // Or use static import
+		/>
+	);
 }
 
 // ❌ Bad: Don't use regular <img> tag
 export function BadImage() {
-  return <img src="/photo.jpg" alt="Photo" />; // No optimization!
+	return <img src="/photo.jpg" alt="Photo" />; // No optimization!
 }
 ```
 
@@ -352,36 +348,30 @@ export function BadImage() {
 ```tsx
 // app/dashboard/loading.tsx
 export default function Loading() {
-  return <div>Loading dashboard...</div>;
+	return <div>Loading dashboard...</div>;
 }
 
 // app/dashboard/error.tsx
-'use client';
+('use client');
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <p>{error.message}</p>
-      <button onClick={() => reset()}>Try again</button>
-    </div>
-  );
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+	return (
+		<div>
+			<h2>Something went wrong!</h2>
+			<p>{error.message}</p>
+			<button onClick={() => reset()}>Try again</button>
+		</div>
+	);
 }
 
 // app/dashboard/not-found.tsx
 export default function NotFound() {
-  return (
-    <div>
-      <h2>Dashboard Not Found</h2>
-      <p>The dashboard you're looking for doesn't exist.</p>
-    </div>
-  );
+	return (
+		<div>
+			<h2>Dashboard Not Found</h2>
+			<p>The dashboard you're looking for doesn't exist.</p>
+		</div>
+	);
 }
 ```
 
@@ -392,16 +382,16 @@ export default function NotFound() {
 import dynamic from 'next/dynamic';
 
 const HeavyComponent = dynamic(() => import('./heavy-component'), {
-  loading: () => <p>Loading...</p>,
-  ssr: false, // Disable SSR for this component if needed
+	loading: () => <p>Loading...</p>,
+	ssr: false, // Disable SSR for this component if needed
 });
 
 // ✅ Good: Preload critical resources
 import { preload } from 'react-dom';
 
 function Component() {
-  preload('/api/data', { as: 'fetch' });
-  return <div>...</div>;
+	preload('/api/data', { as: 'fetch' });
+	return <div>...</div>;
 }
 ```
 
@@ -414,22 +404,22 @@ function Component() {
 import { z } from 'zod';
 
 const userSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+	email: z.string().email(),
+	password: z.string().min(8),
 });
 
 export async function createUser(formData: FormData) {
-  const validated = userSchema.safeParse({
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
-  
-  if (!validated.success) {
-    return { error: validated.error.errors };
-  }
-  
-  // Safe to use validated.data
-  await db.users.create(validated.data);
+	const validated = userSchema.safeParse({
+		email: formData.get('email'),
+		password: formData.get('password'),
+	});
+
+	if (!validated.success) {
+		return { error: validated.error.errors };
+	}
+
+	// Safe to use validated.data
+	await db.users.create(validated.data);
 }
 
 // ✅ Good: Use environment variables properly
@@ -446,21 +436,21 @@ import { render, screen } from '@testing-library/react';
 import Page from '@/app/page';
 
 describe('Page', () => {
-  it('renders correctly', () => {
-    render(<Page />);
-    expect(screen.getByText('Welcome')).toBeInTheDocument();
-  });
+	it('renders correctly', () => {
+		render(<Page />);
+		expect(screen.getByText('Welcome')).toBeInTheDocument();
+	});
 });
 
 // For Server Components, test the rendered output
 import { use } from 'react';
 
 describe('ServerComponent', () => {
-  it('renders data correctly', async () => {
-    const Component = await ServerComponent();
-    const { container } = render(Component);
-    expect(container).toHaveTextContent('Expected content');
-  });
+	it('renders data correctly', async () => {
+		const Component = await ServerComponent();
+		const { container } = render(Component);
+		expect(container).toHaveTextContent('Expected content');
+	});
 });
 ```
 

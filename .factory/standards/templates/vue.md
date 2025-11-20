@@ -13,20 +13,20 @@ const count = ref(0);
 const doubled = computed(() => count.value * 2);
 
 const increment = () => {
-  count.value++;
+	count.value++;
 };
 
 onMounted(() => {
-  console.log('Component mounted');
+	console.log('Component mounted');
 });
 </script>
 
 <template>
-  <div>
-    <p>Count: {{ count }}</p>
-    <p>Doubled: {{ doubled }}</p>
-    <button @click="increment">Increment</button>
-  </div>
+	<div>
+		<p>Count: {{ count }}</p>
+		<p>Doubled: {{ doubled }}</p>
+		<button @click="increment">Increment</button>
+	</div>
 </template>
 ```
 
@@ -40,31 +40,29 @@ import type { User } from '@/types';
 
 // 2. Props
 const props = defineProps<{
-  userId: string;
+	userId: string;
 }>();
 
 // 3. Emits
 const emit = defineEmits<{
-  update: [user: User];
+	update: [user: User];
 }>();
 
 // 4. State
 const user = ref<User | null>(null);
 
 // 5. Computed
-const displayName = computed(() => 
-  user.value ? `${user.value.firstName} ${user.value.lastName}` : ''
-);
+const displayName = computed(() => (user.value ? `${user.value.firstName} ${user.value.lastName}` : ''));
 
 // 6. Methods
 const loadUser = async () => {
-  user.value = await fetchUser(props.userId);
-  emit('update', user.value);
+	user.value = await fetchUser(props.userId);
+	emit('update', user.value);
 };
 
 // 7. Lifecycle
 onMounted(() => {
-  loadUser();
+	loadUser();
 });
 </script>
 ```
@@ -81,10 +79,10 @@ export const useUserStore = defineStore('user', () => {
   // State
   const user = ref<User | null>(null);
   const loading = ref(false);
-  
+
   // Getters
   const isAuthenticated = computed(() => user.value !== null);
-  
+
   // Actions
   async function login(email: string, password: string) {
     loading.value = true;
@@ -94,7 +92,7 @@ export const useUserStore = defineStore('user', () => {
       loading.value = false;
     }
   }
-  
+
   return { user, loading, isAuthenticated, login };
 });
 
@@ -134,11 +132,11 @@ export function useUser(userId: Ref<string>) {
   const user = ref<User | null>(null);
   const loading = ref(true);
   const error = ref<Error | null>(null);
-  
+
   const fetchUser = async () => {
     loading.value = true;
     error.value = null;
-    
+
     try {
       user.value = await api.getUser(userId.value);
     } catch (e) {
@@ -147,9 +145,9 @@ export function useUser(userId: Ref<string>) {
       loading.value = false;
     }
   };
-  
+
   watch(userId, fetchUser, { immediate: true });
-  
+
   return { user, loading, error, refetch: fetchUser };
 }
 
@@ -170,8 +168,8 @@ const items = ref<Item[]>([]);
 
 // ✅ Good: Reactive objects
 const state = reactive({
-  count: 0,
-  user: null as User | null
+	count: 0,
+	user: null as User | null,
 });
 
 // ❌ Bad: Destructuring loses reactivity
@@ -190,22 +188,22 @@ import { describe, it, expect } from 'vitest';
 import UserProfile from '@/components/UserProfile.vue';
 
 describe('UserProfile', () => {
-  it('renders user name', () => {
-    const wrapper = mount(UserProfile, {
-      props: {
-        user: { name: 'John Doe' }
-      }
-    });
-    
-    expect(wrapper.text()).toContain('John Doe');
-  });
-  
-  it('emits update event on button click', async () => {
-    const wrapper = mount(UserProfile);
-    await wrapper.find('button').trigger('click');
-    
-    expect(wrapper.emitted('update')).toBeTruthy();
-  });
+	it('renders user name', () => {
+		const wrapper = mount(UserProfile, {
+			props: {
+				user: { name: 'John Doe' },
+			},
+		});
+
+		expect(wrapper.text()).toContain('John Doe');
+	});
+
+	it('emits update event on button click', async () => {
+		const wrapper = mount(UserProfile);
+		await wrapper.find('button').trigger('click');
+
+		expect(wrapper.emitted('update')).toBeTruthy();
+	});
 });
 ```
 
@@ -224,12 +222,7 @@ describe('UserProfile', () => {
 </div>
 
 <!-- ✅ Good: Lazy loading routes -->
-const routes = [
-  {
-    path: '/dashboard',
-    component: () => import('./views/Dashboard.vue')
-  }
-];
+const routes = [ { path: '/dashboard', component: () => import('./views/Dashboard.vue') } ];
 ```
 
 ## Never

@@ -12,6 +12,7 @@
 This directory contains executable specifications for fixing critical standards compliance issues identified in the audit report (`.factory/memory/org/standards-compliance-audit.md`) **PLUS** performance optimizations discovered from convex-helpers analysis.
 
 All specs are:
+
 - ✅ **Research-backed** (MCP docs, web search, best practices, convex-helpers patterns)
 - ✅ **Executable** (complete task breakdowns with code examples)
 - ✅ **Parallelizable** (optimized for Droidz orchestrator)
@@ -24,6 +25,7 @@ All specs are:
 ## Specifications by Priority
 
 ### 📊 **Categories**
+
 - **Standards Compliance:** Specs 001-004 (from audit report)
 - **Performance Optimization:** Specs 005-006 (from convex-helpers analysis) ⚡ **NEW**
 
@@ -32,6 +34,7 @@ All specs are:
 ### 🔴 **CRITICAL (Highest Priority)**
 
 #### **001: Migrate useState to Convex Reactive Patterns** ⚡ **ENHANCED**
+
 - **File:** `001-convex-reactive-migration.md`
 - **Addendum:** `001-ADDENDUM-convex-helpers-patterns.md` ⚡ **NEW - Better Patterns!**
 - **Priority:** 🔴 CRITICAL #1
@@ -42,17 +45,20 @@ All specs are:
 - **Bonus:** Use convex-helpers@0.1.104 for superior DX (already installed!)
 
 **Why Critical:**
+
 - Violates fundamental architecture pattern: "Use Convex reactive queries, NOT useState for server data"
 - 25+ pages affected (highest volume)
 - Eliminates stale data, manual state management, race conditions
 - Enables real-time reactivity across application
 
 **What You'll Fix:**
+
 - ❌ 50+ useState calls for server data → ✅ useQuery/useMutation
 - ❌ Manual loading states → ✅ Convex automatic loading
 - ❌ No real-time updates → ✅ Real-time reactive data
 
 **Parallel Execution:**
+
 - 4 streams: Notifications/Certs, Profile/Settings, Search/Courses, Admin/Checkout
 - 4 agents working simultaneously
 - 4x faster completion
@@ -60,6 +66,7 @@ All specs are:
 ---
 
 #### **002: Standardize Forms with React Hook Form + Controller**
+
 - **File:** `002-form-standardization.md`
 - **Priority:** 🔴 CRITICAL #2
 - **Impact:** Form handling consistency, validation, UX
@@ -68,18 +75,21 @@ All specs are:
 - **Compliance Gain:** 20% → 100% (Form patterns)
 
 **Why Critical:**
+
 - Only 1 out of 5+ forms follows the required pattern
 - Manual useState + onChange for every field (massive boilerplate)
 - No centralized validation, no type safety
 - Poor UX (no field-level errors, no accessibility)
 
 **What You'll Fix:**
+
 - ❌ Manual useState per field → ✅ FormProvider + Controller
 - ❌ Custom validation → ✅ Zod schemas
 - ❌ No type safety → ✅ TypeScript inference from Zod
 - ❌ Poor accessibility → ✅ WCAG 2.1 AA compliant
 
 **Parallel Execution:**
+
 - 3 streams: Settings/Profile, Checkout, Instructor/Admin
 - 3 agents working simultaneously
 - 3x faster completion
@@ -89,6 +99,7 @@ All specs are:
 ### 🟡 **HIGH PRIORITY**
 
 #### **003: Implement Frontend Testing Infrastructure**
+
 - **File:** `003-frontend-testing.md`
 - **Priority:** 🟡 HIGH #3
 - **Impact:** Code quality, regression prevention, deployment confidence
@@ -97,12 +108,14 @@ All specs are:
 - **Compliance Gain:** 0% → 80%+ (Frontend testing)
 
 **Why High Priority:**
+
 - Currently 0% frontend test coverage (0 test files)
 - Backend has 100% coverage (excellent reference)
 - High risk: changes can break UI without detection
 - No regression protection
 
 **What You'll Build:**
+
 - ✅ React Testing Library setup
 - ✅ 40-60 component unit tests
 - ✅ 5-10 custom hook tests
@@ -110,6 +123,7 @@ All specs are:
 - ✅ CI/CD pipeline with coverage enforcement
 
 **Parallel Execution:**
+
 - 3 streams: UI Components, Form Components, Hooks/Pages
 - 3 agents working simultaneously
 - 3x faster completion
@@ -119,6 +133,7 @@ All specs are:
 ### 🟡 **MEDIUM PRIORITY**
 
 #### **004: Audit and Implement Auth Protection**
+
 - **File:** `004-auth-protection.md`
 - **Priority:** 🟡 MEDIUM #4
 - **Impact:** Security, access control, data protection
@@ -127,12 +142,14 @@ All specs are:
 - **Compliance Gain:** Unknown → 100% (Auth protection)
 
 **Why Medium Priority:**
+
 - Security critical but backend already protected (Convex auth)
 - Unknown frontend route protection coverage
 - Relatively quick fix with clear patterns
 - Smaller scope than other specs
 
 **What You'll Implement:**
+
 - ✅ Auth checks in all protected Server Components
 - ✅ Clerk middleware for route groups
 - ✅ Role-based access control (instructor, admin)
@@ -140,6 +157,7 @@ All specs are:
 - ✅ Reusable auth utilities
 
 **Parallel Execution:**
+
 - 2 streams: Server Component auth checks, Middleware config
 - 2 agents working simultaneously
 - 2x faster completion
@@ -149,6 +167,7 @@ All specs are:
 ## Execution Order Recommendations
 
 ### Option 1: Sequential by Priority (Safest)
+
 ```
 Week 1: Spec 001 (Convex migration)
 Week 2: Spec 002 (Form standardization)
@@ -159,8 +178,9 @@ Total: ~4 weeks
 ```
 
 ### Option 2: Parallel (Fastest) ⚡ **RECOMMENDED**
+
 ```
-Week 1: 
+Week 1:
   - Spec 001 (4 agents) - 8-10 hours
   - Spec 002 (3 agents) - 6-8 hours
   Total: ~16-18 hours (2-3 days)
@@ -174,6 +194,7 @@ Total: ~4-5 days (vs 4 weeks sequential)
 ```
 
 ### Option 3: Hybrid (Balanced)
+
 ```
 Week 1: Spec 001 (parallel execution) - 2 days
 Week 2: Spec 002 + 004 (parallel) - 2 days
@@ -186,13 +207,13 @@ Total: ~2 weeks
 
 ## Compliance Impact Summary
 
-| Metric | Before | After Spec 001 | After Spec 002 | After Spec 003 | After Spec 004 | Final |
-|--------|--------|----------------|----------------|----------------|----------------|-------|
-| React + Convex Patterns | 32% | ✅ 100% | 100% | 100% | 100% | **100%** |
-| Form Patterns | 20% | 20% | ✅ 100% | 100% | 100% | **100%** |
-| Frontend Tests | 0% | 0% | 0% | ✅ 80%+ | 80%+ | **80%+** |
-| Auth Protection | ❓ Unknown | Unknown | Unknown | Unknown | ✅ 100% | **100%** |
-| **Overall Compliance** | **70%** | **78%** | **85%** | **92%** | **95%+** | **95%+** |
+| Metric                  | Before     | After Spec 001 | After Spec 002 | After Spec 003 | After Spec 004 | Final    |
+| ----------------------- | ---------- | -------------- | -------------- | -------------- | -------------- | -------- |
+| React + Convex Patterns | 32%        | ✅ 100%        | 100%           | 100%           | 100%           | **100%** |
+| Form Patterns           | 20%        | 20%            | ✅ 100%        | 100%           | 100%           | **100%** |
+| Frontend Tests          | 0%         | 0%             | 0%             | ✅ 80%+        | 80%+           | **80%+** |
+| Auth Protection         | ❓ Unknown | Unknown        | Unknown        | Unknown        | ✅ 100%        | **100%** |
+| **Overall Compliance**  | **70%**    | **78%**        | **85%**        | **92%**        | **95%+**       | **95%+** |
 
 ---
 
@@ -201,11 +222,13 @@ Total: ~2 weeks
 ### Using Droidz Orchestrator (Recommended)
 
 **Execute All Specs in Parallel:**
+
 ```bash
 "Use orchestrator to implement all active specs in .factory/specs/active/ directory"
 ```
 
 **Execute Single Spec:**
+
 ```bash
 "Use orchestrator to implement Spec 001 (Convex reactive migration)"
 "Use orchestrator to implement Spec 002 (Form standardization)"
@@ -214,6 +237,7 @@ Total: ~2 weeks
 ```
 
 **Review Spec First:**
+
 ```bash
 "Show me the execution plan for Spec 001"
 "What tasks are in Spec 002?"
@@ -235,7 +259,7 @@ graph LR
     A[Spec 001: Convex] -.->|Optional| B[Spec 002: Forms]
     B -.->|Optional| C[Spec 003: Testing]
     D[Spec 004: Auth] -.->|Independent| A
-    
+
     style A fill:#ffcccc
     style B fill:#ffcccc
     style C fill:#ffffcc
@@ -243,10 +267,12 @@ graph LR
 ```
 
 **Key:**
+
 - **Solid lines:** Hard dependency (must run after)
 - **Dotted lines:** Soft dependency (better UX if ordered, but can run independently)
 
 **Execution Flexibility:**
+
 - ✅ Specs 001, 003, 004 can run in parallel (no dependencies)
 - ✅ Spec 002 works best after Spec 001 (forms will use Convex mutations)
 - ✅ Spec 003 can run anytime (tests verify other specs)
@@ -256,6 +282,7 @@ graph LR
 ## Success Criteria
 
 **All Specs Complete When:**
+
 - [ ] All 4 spec acceptance criteria met
 - [ ] Overall compliance: 95%+
 - [ ] `bun verify` passes (format + lint + typecheck + test coverage)
@@ -272,6 +299,7 @@ graph LR
 ## Research & Validation
 
 All specs were created using:
+
 - ✅ MCP Documentation Search (Next.js, Convex, React Hook Form, Clerk)
 - ✅ Web Search (2025 best practices, modern patterns)
 - ✅ Existing codebase analysis (standards, working examples)
@@ -279,6 +307,7 @@ All specs were created using:
 - ✅ WCAG accessibility standards
 
 **Research Sources:**
+
 - Convex React Docs
 - React Hook Form official docs
 - React Testing Library guides
@@ -291,14 +320,17 @@ All specs were created using:
 ## Questions?
 
 **For Spec Details:**
+
 - Read the individual spec markdown files
 - Each spec has complete architecture diagrams, code examples, edge cases
 
 **For Execution Help:**
+
 - See `.factory/DROIDZ_SETUP.md` for orchestrator usage
 - See `.factory/memory/org/standards-compliance-audit.md` for audit context
 
 **For Implementation:**
+
 - Use Droidz orchestrator for parallel execution (fastest)
 - Or execute manually with your team
 - Follow testing strategies in each spec
@@ -332,12 +364,14 @@ ls .factory/specs/active/
 **Impact:** 2-10x performance improvement on complex queries
 
 **Found 15+ N+1 Patterns:**
+
 - `enrollments.ts`: 4 instances (571 queries → ~100 for 10 enrollments!)
 - `courses.ts`: 2 instances
 - `analytics.ts`: 2 instances
 - `recommendations.ts`, `favorites.ts`, `notifications.ts`: 1 each
 
 **Solution:** Use relationship helpers from convex-helpers:
+
 - `asyncMap` for clearer parallel operations
 - `getManyFrom` for one-to-many relationships
 - Batch reading for better performance
@@ -353,11 +387,13 @@ ls .factory/specs/active/
 **Impact:** 75% code reduction, DRY principle, better maintainability
 
 **Found Repetitive Auth Pattern in 10+ Files:**
+
 - Same auth logic copy-pasted everywhere
 - 200+ lines of boilerplate
 - Change auth = update 10+ files
 
 **Solution:** Custom query/mutation builders:
+
 - `queryWithUser` - optional auth
 - `queryWithAuthUser` - required auth
 - `mutationWithUser` - required auth
@@ -370,11 +406,13 @@ ls .factory/specs/active/
 ## Updated Execution Plan
 
 **All 6 Specs Together:**
+
 - **Sequential:** 12-15 days
 - **Parallel (Orchestrated):** 35-45 hours
 - **Speedup:** 3-4x faster ⚡
 
 **Recommended Order:**
+
 1. **Spec 001** (Critical - useState → Convex)
 2. **Spec 005** (High - N+1 optimization) ← Can run in parallel with 001!
 3. **Spec 002** (Critical - Forms)
@@ -384,4 +422,4 @@ ls .factory/specs/active/
 
 ---
 
-*All 6 specs are research-backed, executable, and optimized for parallel execution. Total estimated time: 12-15 days sequential → 35-45 hours parallel (3-4x speedup).*
+_All 6 specs are research-backed, executable, and optimized for parallel execution. Total estimated time: 12-15 days sequential → 35-45 hours parallel (3-4x speedup)._

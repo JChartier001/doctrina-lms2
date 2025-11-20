@@ -29,15 +29,18 @@ stop-parallel-monitor.sh
 ### Components
 
 #### 1. `parallel-agent-monitor.sh`
+
 **Main monitoring script** that runs in the background and reports progress every 30 seconds.
 
 **What it monitors:**
+
 - Modified files (git status)
 - New files created
 - Staged changes
 - Agent activity patterns (frontend, backend, tests, config)
 
 **Output format:**
+
 ```
 ⏱️  Progress Update (2m 30s elapsed)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -60,6 +63,7 @@ stop-parallel-monitor.sh
 ```
 
 #### 2. `start-parallel-monitor.sh`
+
 **PreToolUse:Task hook** that starts the monitor when Task tool is invoked.
 
 - Checks if Task tool is being used
@@ -68,6 +72,7 @@ stop-parallel-monitor.sh
 - Detaches process so it continues
 
 #### 3. `stop-parallel-monitor.sh`
+
 **PostToolUse:Task hook** that stops the monitor when agents complete.
 
 - Reads PID from file
@@ -81,34 +86,34 @@ stop-parallel-monitor.sh
 
 ```json
 {
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "name": "start-parallel-monitor",
-            "type": "command",
-            "command": "$DROID_PROJECT_DIR/.factory/hooks/start-parallel-monitor.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "name": "stop-parallel-monitor",
-            "type": "command",
-            "command": "$DROID_PROJECT_DIR/.factory/hooks/stop-parallel-monitor.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ]
-  }
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Task",
+				"hooks": [
+					{
+						"name": "start-parallel-monitor",
+						"type": "command",
+						"command": "$DROID_PROJECT_DIR/.factory/hooks/start-parallel-monitor.sh",
+						"timeout": 5
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Task",
+				"hooks": [
+					{
+						"name": "stop-parallel-monitor",
+						"type": "command",
+						"command": "$DROID_PROJECT_DIR/.factory/hooks/stop-parallel-monitor.sh",
+						"timeout": 5
+					}
+				]
+			}
+		]
+	}
 }
 ```
 
@@ -129,6 +134,7 @@ Use the Task tool with subagent_type "droidz-codegen" to build the authenticatio
 ```
 
 **You'll see:**
+
 ```
 🔔 Starting automatic progress monitoring...
    Updates will appear every 30 seconds
@@ -137,6 +143,7 @@ Use the Task tool with subagent_type "droidz-codegen" to build the authenticatio
 ```
 
 **Then every 30 seconds:**
+
 ```
 ⏱️  Progress Update (0m 30s elapsed)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -146,6 +153,7 @@ Use the Task tool with subagent_type "droidz-codegen" to build the authenticatio
 ```
 
 **When agents complete:**
+
 ```
 🛑 Stopping automatic progress monitoring...
 ✅ Monitor stopped
@@ -176,35 +184,40 @@ export PARALLEL_MONITOR_INTERVAL=10
 ## What Gets Monitored
 
 ### File Changes
+
 - **Modified files** - Tracked files with changes
 - **New files** - Untracked files created by agents
 - **Staged files** - Files ready to commit
 
 ### Agent Activity Patterns
+
 The monitor detects common patterns to indicate which agents are working:
 
-| Pattern | Detection | Agent Hint |
-|---------|-----------|------------|
-| `*.tsx`, `*.jsx` | Frontend files | React/TypeScript agent |
-| `api/`, `lib/` | Backend files | API/server agent |
-| `*.test.*`, `*.spec.*` | Test files | Test agent |
-| `*.yml`, `*.json` | Config files | Infrastructure agent |
+| Pattern                | Detection      | Agent Hint             |
+| ---------------------- | -------------- | ---------------------- |
+| `*.tsx`, `*.jsx`       | Frontend files | React/TypeScript agent |
+| `api/`, `lib/`         | Backend files  | API/server agent       |
+| `*.test.*`, `*.spec.*` | Test files     | Test agent             |
+| `*.yml`, `*.json`      | Config files   | Infrastructure agent   |
 
 ### Progress Indicators
+
 - ⏳ **Initializing** - No changes yet
 - 🔄 **Actively working** - New changes detected
-- ⏸️  **Processing** - No new changes (may be thinking/compiling)
+- ⏸️ **Processing** - No new changes (may be thinking/compiling)
 
 ## Logs
 
 Full logs are saved to `/tmp/droidz-parallel-monitor-<PID>.log`
 
 **View logs:**
+
 ```bash
 tail -f /tmp/droidz-parallel-monitor-*.log
 ```
 
 **Clean up old logs:**
+
 ```bash
 rm /tmp/droidz-parallel-monitor-*.log
 ```
@@ -214,17 +227,20 @@ rm /tmp/droidz-parallel-monitor-*.log
 ### Monitor doesn't start
 
 **Check if hooks are enabled:**
+
 ```bash
 cat .factory/settings.json | jq '.hooks.PreToolUse'
 ```
 
 **Check if script is executable:**
+
 ```bash
 ls -la .factory/hooks/*.sh
 # Should show: -rwxr-xr-x
 ```
 
 **Fix permissions:**
+
 ```bash
 chmod +x .factory/hooks/*.sh
 ```
@@ -232,6 +248,7 @@ chmod +x .factory/hooks/*.sh
 ### Monitor doesn't stop
 
 **Manually kill it:**
+
 ```bash
 pkill -f parallel-agent-monitor
 rm /tmp/droidz-parallel-monitor.pid
@@ -240,11 +257,13 @@ rm /tmp/droidz-parallel-monitor.pid
 ### No updates showing
 
 **Check if monitor is running:**
+
 ```bash
 ps aux | grep parallel-agent-monitor
 ```
 
 **Check logs:**
+
 ```bash
 tail -f /tmp/droidz-parallel-monitor-*.log
 ```
@@ -252,6 +271,7 @@ tail -f /tmp/droidz-parallel-monitor-*.log
 ### False positives
 
 The monitor may show "no changes" if:
+
 - Agents are still analyzing/planning
 - Agents are waiting for dependencies
 - Agents are running tests (no file changes)
@@ -261,21 +281,25 @@ This is normal! Agents don't always change files immediately.
 ## Benefits
 
 ### ✅ **Automatic** - No manual intervention needed
+
 - Starts when you spawn agents
 - Stops when agents complete
 - No user action required
 
 ### ⏱️ **Real-time Updates** - Know what's happening
+
 - File changes every 30 seconds
 - Activity indicators per agent type
 - Elapsed time tracking
 
 ### 📊 **Clear Progress** - Understand agent work
+
 - Modified vs new files
 - Frontend vs backend vs tests
 - Active vs idle agents
 
 ### 🎯 **UX Friendly** - Clean, readable output
+
 - Emoji indicators
 - Formatted sections
 - Not overwhelming
@@ -283,6 +307,7 @@ This is normal! Agents don't always change files immediately.
 ## Comparison: Manual vs Automatic
 
 ### Before (Manual Checks)
+
 ```
 USER: "How's it going?"
 YOU: [Check git status, report]
@@ -295,6 +320,7 @@ YOU: [Check again]
 ```
 
 ### After (Automatic Monitoring)
+
 ```
 [Agents spawn]
 🔔 Starting automatic progress monitoring...
@@ -318,6 +344,7 @@ YOU: [Check again]
 ## Future Enhancements
 
 Possible improvements:
+
 - [ ] Estimate completion based on file change velocity
 - [ ] Send desktop notifications on major milestones
 - [ ] Integrate with Linear to update ticket status
