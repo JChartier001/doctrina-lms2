@@ -55,55 +55,56 @@ Factory.ai automatically loads **production-ready coding standards** based on yo
 
 #### **Framework & Integration Skills (21)**
 
-| Skill | Lines | Coverage |
-|-------|-------|----------|
-| **Vercel** | 2,443 | Deployment, Edge Functions, Analytics |
-| **Clerk** | 2,361 | Auth, Organizations, Webhooks |
-| **Security** | 2,337 | OWASP Top 10, Vulnerabilities |
-| **React** | 2,232 | Hooks, Server Components, Performance |
-| **PostgreSQL** | 2,089 | Indexing, Optimization, Advanced SQL |
-| **Prisma** | 2,072 | Migrations, Relations, TypeScript |
-| **Drizzle ORM** | 1,992 | Type-safe Queries, Migrations |
-| **Cloudflare** | 1,927 | Workers, KV, Durable Objects, R2 |
-| **tRPC** | 1,815 | Type Safety, Routers, Middleware |
-| **Tanstack Query** | 1,729 | Caching, Mutations, Pagination |
-| **Stripe** | 1,686 | Payments, Webhooks, Subscriptions |
-| **Neon** | 1,304 | Database Branching, Serverless |
-| **Design** | 1,297 | Accessibility, Design Systems |
-| **Next.js 16** | 1,053 | App Router, Async APIs |
-| **Supabase** | 963 | RLS, Realtime, Auth |
-| **Tailwind v4** | 963 | CSS-first, Container Queries |
-| **TypeScript** | 871 | Generics, Utility Types |
-| **Convex** | 818 | Realtime, Functions |
-| **+ 3 Utility** | 1,344 | Stack Analyzer, Standards |
+| Skill              | Lines | Coverage                              |
+| ------------------ | ----- | ------------------------------------- |
+| **Vercel**         | 2,443 | Deployment, Edge Functions, Analytics |
+| **Clerk**          | 2,361 | Auth, Organizations, Webhooks         |
+| **Security**       | 2,337 | OWASP Top 10, Vulnerabilities         |
+| **React**          | 2,232 | Hooks, Server Components, Performance |
+| **PostgreSQL**     | 2,089 | Indexing, Optimization, Advanced SQL  |
+| **Prisma**         | 2,072 | Migrations, Relations, TypeScript     |
+| **Drizzle ORM**    | 1,992 | Type-safe Queries, Migrations         |
+| **Cloudflare**     | 1,927 | Workers, KV, Durable Objects, R2      |
+| **tRPC**           | 1,815 | Type Safety, Routers, Middleware      |
+| **Tanstack Query** | 1,729 | Caching, Mutations, Pagination        |
+| **Stripe**         | 1,686 | Payments, Webhooks, Subscriptions     |
+| **Neon**           | 1,304 | Database Branching, Serverless        |
+| **Design**         | 1,297 | Accessibility, Design Systems         |
+| **Next.js 16**     | 1,053 | App Router, Async APIs                |
+| **Supabase**       | 963   | RLS, Realtime, Auth                   |
+| **Tailwind v4**    | 963   | CSS-first, Container Queries          |
+| **TypeScript**     | 871   | Generics, Utility Types               |
+| **Convex**         | 818   | Realtime, Functions                   |
+| **+ 3 Utility**    | 1,344 | Stack Analyzer, Standards             |
 
 #### **Workflow & Process Skills (19)**
 
-| Skill | Category | Focus |
-|-------|----------|-------|
-| **test-driven-development** | Testing | RED-GREEN-REFACTOR cycle |
-| **systematic-debugging** | Testing | 4-phase debugging framework |
-| **verification-before-completion** | Quality | Pre-completion checklist |
-| **defense-in-depth** | Testing | Multi-layer validation |
-| **testing-anti-patterns** | Testing | Common mistakes to avoid |
-| **brainstorming** | Collaboration | Design through questions |
-| **writing-skills** | Meta | Creating new skills |
-| **executing-plans** | Collaboration | Following plans step-by-step |
-| **requesting-code-review** | Collaboration | Pre-review checklist |
-| **receiving-code-review** | Collaboration | Responding to feedback |
-| **root-cause-tracing** | Development | Backward tracing technique |
-| **subagent-driven-development** | Development | Task-by-task with fresh agents |
-| **finishing-a-development-branch** | Development | Completion checklist |
-| **using-git-worktrees** | Development | Parallel work branches |
-| **condition-based-waiting** | Development | Replace arbitrary timeouts |
-| **dispatching-parallel-agents** | Advanced | Spawning multiple agents |
-| **testing-skills-with-subagents** | Meta | Validating skill quality |
-| **sharing-skills** | Meta | Publishing skills |
-| **using-droidz** | Meta | How to use this system |
+| Skill                              | Category      | Focus                          |
+| ---------------------------------- | ------------- | ------------------------------ |
+| **test-driven-development**        | Testing       | RED-GREEN-REFACTOR cycle       |
+| **systematic-debugging**           | Testing       | 4-phase debugging framework    |
+| **verification-before-completion** | Quality       | Pre-completion checklist       |
+| **defense-in-depth**               | Testing       | Multi-layer validation         |
+| **testing-anti-patterns**          | Testing       | Common mistakes to avoid       |
+| **brainstorming**                  | Collaboration | Design through questions       |
+| **writing-skills**                 | Meta          | Creating new skills            |
+| **executing-plans**                | Collaboration | Following plans step-by-step   |
+| **requesting-code-review**         | Collaboration | Pre-review checklist           |
+| **receiving-code-review**          | Collaboration | Responding to feedback         |
+| **root-cause-tracing**             | Development   | Backward tracing technique     |
+| **subagent-driven-development**    | Development   | Task-by-task with fresh agents |
+| **finishing-a-development-branch** | Development   | Completion checklist           |
+| **using-git-worktrees**            | Development   | Parallel work branches         |
+| **condition-based-waiting**        | Development   | Replace arbitrary timeouts     |
+| **dispatching-parallel-agents**    | Advanced      | Spawning multiple agents       |
+| **testing-skills-with-subagents**  | Meta          | Validating skill quality       |
+| **sharing-skills**                 | Meta          | Publishing skills              |
+| **using-droidz**                   | Meta          | How to use this system         |
 
 **TOTAL:** **40 Skills, 35,552 Lines** (All based on official documentation)
 
 **How it works:**
+
 - Write Next.js code → Next.js 16 skill auto-loads (1,053 lines of guidance)
 - Write Supabase queries → Supabase skill auto-loads (963 lines of RLS, Auth patterns)
 - Write Tailwind classes → Tailwind v4 skill auto-loads (963 lines of modern CSS)
@@ -131,18 +132,18 @@ Droid: 🔍 I'll create a spec. To make it comprehensive:
 You: Email/password, JWT, existing Next.js
 
 Droid: ✅ Saved: .droidz/specs/001-user-authentication.md
-       
+
        📊 Summary:
        - Tasks: 6 (3 parallel Phase 1, 3 parallel Phase 2)
        - Time: 8-12h sequential → 2.5-4h parallel (3x speedup)
-       
+
        Includes:
        ✅ bcrypt password hashing (10+ salt rounds)
        ✅ Rate limiting (5 attempts/15min)
        ✅ OWASP Top 10 compliance checklist
        ✅ Edge cases (expired tokens, concurrent sessions)
        ✅ Full test coverage plan (80%+)
-       
+
        Execute in parallel? (spawns 3 agents)
 ```
 
@@ -157,6 +158,7 @@ Droid: ✅ Saved: .droidz/specs/001-user-authentication.md
 **Command:** `/droidz-build "feature description"`
 
 **What it does:**
+
 - 🔍 Asks clarifying questions for vague requests
 - 📚 Researches best practices via exa-code & ref MCP
 - 📝 Generates comprehensive XML-structured specs with:
@@ -168,12 +170,14 @@ Droid: ✅ Saved: .droidz/specs/001-user-authentication.md
   - Ready-to-execute task prompts
 
 **Benefits:**
+
 - 80% less time writing specs manually
 - 70% fewer "forgot to consider X" issues
 - 3-5x execution speedup via parallel tasks
 - Zero missing security requirements
 
 **Example specs:**
+
 ```bash
 /droidz-build "add dark mode toggle"
 → Simple: 2 tasks, ~45 minutes
@@ -190,6 +194,7 @@ Droid: ✅ Saved: .droidz/specs/001-user-authentication.md
 **Command:** `/auto-parallel "task description"`
 
 **How it works:**
+
 1. Analyzes complexity and breaks into subtasks
 2. Identifies what can run in parallel
 3. Spawns specialist droids for each task
@@ -197,6 +202,7 @@ Droid: ✅ Saved: .droidz/specs/001-user-authentication.md
 5. Synthesizes results when complete
 
 **Example:**
+
 ```bash
 /auto-parallel "build authentication system"
 
@@ -219,6 +225,7 @@ TODO LIST UPDATED
 Factory.ai automatically loads production-ready coding standards from `.factory/skills/`:
 
 #### **1. Next.js 16 Skill (1,053 lines)**
+
 - ✅ **CRITICAL**: Async request APIs - `await params`, `await searchParams`, `await cookies()`, `await headers()`
 - ✅ Server Components (default), Client Components (when needed)
 - ✅ Server Actions with Zod validation
@@ -229,6 +236,7 @@ Factory.ai automatically loads production-ready coding standards from `.factory/
 - ✅ Migration guide from Next.js 15 → 16
 
 #### **2. Supabase Skill (963 lines)**
+
 - ✅ RLS: Complete guide with performance optimization
 - ✅ Realtime: Broadcast, Presence, Postgres Changes with authorization
 - ✅ Authentication: Email/Password, OAuth, Magic Links, SSR for Next.js
@@ -237,6 +245,7 @@ Factory.ai automatically loads production-ready coding standards from `.factory/
 - ✅ Database: Typed queries, transactions, pagination, full-text search
 
 #### **3. Tailwind v4 Skill (963 lines)**
+
 - ✅ CSS-first configuration with `@theme`
 - ✅ Oxide engine (10x faster builds, 100x faster incremental)
 - ✅ Container queries (built-in, no plugin)
@@ -247,6 +256,7 @@ Factory.ai automatically loads production-ready coding standards from `.factory/
 - ✅ Modern oklch colors (P3 wide gamut)
 
 #### **4. TypeScript Skill (871 lines)**
+
 - ✅ Strict mode configuration
 - ✅ Avoiding `any` (use `unknown`, generics)
 - ✅ Generics (functions, classes, interfaces, constraints)
@@ -256,6 +266,7 @@ Factory.ai automatically loads production-ready coding standards from `.factory/
 - ✅ Result type pattern for error handling
 
 #### **5. Convex Skill (818 lines)**
+
 - ✅ Official rules from convex.link/convex_rules.txt
 - ✅ New function syntax (args, returns, handler)
 - ✅ All validators, pagination, file storage
@@ -263,10 +274,11 @@ Factory.ai automatically loads production-ready coding standards from `.factory/
 - ✅ TypeScript best practices
 
 **How it works:**
+
 ```typescript
 // You write Next.js code...
 export default async function Page({ params }) {
-  const { id } = await params  // Next.js 16 skill auto-loads!
+	const { id } = await params; // Next.js 16 skill auto-loads!
 }
 
 // Droid knows:
@@ -277,6 +289,7 @@ export default async function Page({ params }) {
 ```
 
 **Add your own skills:**
+
 ```bash
 # Create custom skill in .factory/skills/
 vim .factory/skills/your-framework.md
@@ -288,11 +301,11 @@ vim .factory/skills/your-framework.md
 
 ## 📋 All Commands
 
-| Command | Description | Example |
-|---------|-------------|---------|
-| `/droidz-build` | 🆕 Generate production-ready specs | `/droidz-build "add payment processing"` |
-| `/auto-parallel` | Execute tasks in parallel with live monitoring | `/auto-parallel "build REST API"` |
-| `/gh-helper` | GitHub CLI helpers (PR checks, status) | `/gh-helper pr-status 10` |
+| Command          | Description                                    | Example                                  |
+| ---------------- | ---------------------------------------------- | ---------------------------------------- |
+| `/droidz-build`  | 🆕 Generate production-ready specs             | `/droidz-build "add payment processing"` |
+| `/auto-parallel` | Execute tasks in parallel with live monitoring | `/auto-parallel "build REST API"`        |
+| `/gh-helper`     | GitHub CLI helpers (PR checks, status)         | `/gh-helper pr-status 10`                |
 
 **That's it!** Simple and powerful. 🎯
 
@@ -302,15 +315,15 @@ vim .factory/skills/your-framework.md
 
 Droidz includes 7 specialist droids that handle different types of work:
 
-| Droid | Specialty | When Used |
-|-------|-----------|-----------|
+| Droid                   | Specialty                               | When Used                   |
+| ----------------------- | --------------------------------------- | --------------------------- |
 | **droidz-orchestrator** | Task decomposition & parallel execution | Complex multi-step features |
-| **droidz-codegen** | Feature implementation & bug fixes | Building new functionality |
-| **droidz-test** | Writing & fixing tests | Test coverage & validation |
-| **droidz-refactor** | Code improvements & cleanup | Improving code structure |
-| **droidz-integration** | External APIs & services | Third-party integrations |
-| **droidz-infra** | CI/CD, builds, deployment | Infrastructure changes |
-| **droidz-generalist** | Miscellaneous tasks | General-purpose work |
+| **droidz-codegen**      | Feature implementation & bug fixes      | Building new functionality  |
+| **droidz-test**         | Writing & fixing tests                  | Test coverage & validation  |
+| **droidz-refactor**     | Code improvements & cleanup             | Improving code structure    |
+| **droidz-integration**  | External APIs & services                | Third-party integrations    |
+| **droidz-infra**        | CI/CD, builds, deployment               | Infrastructure changes      |
+| **droidz-generalist**   | Miscellaneous tasks                     | General-purpose work        |
 
 **You don't call these directly** - the orchestrator assigns tasks to the right specialist automatically.
 
@@ -319,6 +332,7 @@ Droidz includes 7 specialist droids that handle different types of work:
 ## 📚 Documentation
 
 ### Quick References
+
 - **Example Spec:** `.droidz/specs/000-example-contact-form.md` (6,000+ line reference)
 - **CHANGELOG:** See [CHANGELOG.md](CHANGELOG.md) for version history
 - **Skills Guide:** See [SKILLS.md](SKILLS.md) for details on skills system
@@ -375,7 +389,7 @@ When you use `/droidz-build`, specs are saved to `.droidz/specs/NNN-feature-name
 
 # Droid breaks it down and executes
 ✓ Task 1: Database schema
-✓ Task 2: CRUD endpoints  
+✓ Task 2: CRUD endpoints
 ✓ Task 3: Tests
 ```
 
@@ -479,6 +493,7 @@ vim .factory/skills/typescript.md
 **Problem:** `/droidz-build` or `/auto-parallel` not recognized
 
 **Solution:**
+
 ```bash
 # In droid chat:
 /settings → Enable "Custom Commands" → Restart droid
@@ -492,6 +507,7 @@ vim .factory/skills/typescript.md
 **Problem:** Specialist droids not available
 
 **Solution:**
+
 ```bash
 # In droid chat:
 /settings → Enable "Custom Droids" → Restart droid
@@ -505,6 +521,7 @@ vim .factory/skills/typescript.md
 **Problem:** `/droidz-build` generates incomplete specs
 
 **Solution:**
+
 - Provide more context in your request
 - Answer clarifying questions thoroughly
 - Check that exa-code and ref MCP are available
@@ -514,6 +531,7 @@ vim .factory/skills/typescript.md
 **Problem:** Tasks spawn but don't make progress
 
 **Solution:**
+
 ```bash
 # Check droid is responding
 /commands  # Should list commands
@@ -526,11 +544,11 @@ Choose option 3 (Execute sequentially) when prompted
 
 ## 📊 Performance Benchmarks
 
-| Task Complexity | Sequential Time | Parallel Time | Speedup |
-|----------------|-----------------|---------------|---------|
-| Simple (2 tasks) | 45 min | 30 min | 1.5x |
-| Moderate (3-5 tasks) | 3 hours | 1 hour | 3x |
-| Complex (6+ tasks) | 12 hours | 3 hours | 4x |
+| Task Complexity      | Sequential Time | Parallel Time | Speedup |
+| -------------------- | --------------- | ------------- | ------- |
+| Simple (2 tasks)     | 45 min          | 30 min        | 1.5x    |
+| Moderate (3-5 tasks) | 3 hours         | 1 hour        | 3x      |
+| Complex (6+ tasks)   | 12 hours        | 3 hours       | 4x      |
 
 **Average:** 3-5x faster with parallel execution
 
@@ -569,17 +587,20 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## 🎓 Learning Path
 
 ### Beginner (Day 1)
+
 1. Install Droidz
 2. Try `/droidz-build "add contact form"`
 3. Review the generated spec
 4. Execute it
 
 ### Intermediate (Week 1)
+
 1. Use `/auto-parallel` for direct execution
 2. Explore specialist droids
 3. Customize skills for your tech stack
 
 ### Advanced (Month 1)
+
 1. Create custom specifications
 2. Share specs with your team
 3. Build your own droids (see AGENTS.md.template)
@@ -604,12 +625,14 @@ MIT License - see [LICENSE](LICENSE) file for details
 ## 📈 Roadmap
 
 ### v0.3.0 (Coming Soon)
+
 - [ ] `/droidz-init` - Smart project initialization
 - [ ] `/droidz-status` - Resume conversations with state tracking
 - [ ] Spec execution tracking (`.droidz/tasks/`)
 - [ ] Community spec library
 
 ### v0.4.0 (Future)
+
 - [ ] Template system for common specs
 - [ ] Droid marketplace
 - [ ] Team collaboration features
@@ -636,6 +659,7 @@ We've created **5 massive, production-ready skills** based on official documenta
 5. **Convex** (818 lines) - Official rules from Convex team
 
 **Every skill includes:**
+
 - ✅ Clear ✅ Good / ❌ Bad examples for every concept
 - ✅ Performance optimization tips
 - ✅ Migration guides (Next.js 15→16, Tailwind v3→v4)
@@ -643,11 +667,13 @@ We've created **5 massive, production-ready skills** based on official documenta
 - ✅ Real-world usage examples
 
 **Research Method:**
+
 - Used exa-code MCP for latest documentation
 - Used ref MCP for official API references
 - All patterns verified against official docs
 
 **Impact:**
+
 - 10x more comprehensive than v0.2.0
 - Production-ready guidance
 - Auto-loads based on code context

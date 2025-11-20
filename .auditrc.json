@@ -1,0 +1,68 @@
+{
+	"$schema": "https://json-schema.org/draft-07/schema#",
+	"standards": ["typescript", "react", "nextjs", "security", "testing", "forms", "tailwind"],
+	"severity": {
+		"ts-001": "error",
+		"ts-any": "error",
+		"react-005": "warning",
+		"nextjs-001": "error",
+		"nextjs-use-client": "error",
+		"security-hardcoded-secret": "error",
+		"security-xss": "error",
+		"no-console": "warning",
+		"default-export": "warning"
+	},
+	"ignore": [
+		"node_modules/**",
+		".next/**",
+		".runs/**",
+		"convex/_generated/**",
+		"*.config.ts",
+		"*.config.js",
+		"*.config.mjs",
+		"*.d.ts",
+		".backup/**",
+		"coverage/**",
+		"dist/**",
+		"build/**"
+	],
+	"autoFix": {
+		"enabled": true,
+		"safe": ["use-client", "exports", "console"],
+		"requireManual": ["types", "security", "refactoring"],
+		"backup": true,
+		"backupDir": ".backup"
+	},
+	"reports": {
+		"html": true,
+		"json": true,
+		"markdown": true,
+		"outputDir": ".audit-reports",
+		"includeCodeSnippets": true,
+		"maxSnippetLines": 10
+	},
+	"ci": {
+		"enabled": true,
+		"failOnError": true,
+		"failOnWarning": false,
+		"threshold": 90,
+		"commentOnPR": true,
+		"uploadArtifacts": true,
+		"incrementalOnPR": true
+	},
+	"performance": {
+		"parallel": true,
+		"maxWorkers": 4,
+		"timeout": 60000,
+		"cache": true,
+		"cacheDir": ".cache/audit"
+	},
+	"rules": {
+		"custom": []
+	},
+	"notifications": {
+		"onComplete": true,
+		"onFailure": true,
+		"showProgress": true
+	}
+}

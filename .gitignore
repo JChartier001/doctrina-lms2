@@ -47,3 +47,8 @@ config.yml
 .droidz/*
 !.droidz/.gitignore
 !.droidz/specs/000-*.md
+
+# Dependency artifacts
+node_modules/
+
+bun.lockb
