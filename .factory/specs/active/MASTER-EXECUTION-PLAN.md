@@ -115,11 +115,11 @@ graph TD
 
 ## 📋 Master Dependency Table
 
-| Spec ID                                  | Name                   | Priority    | Dependencies | Blocks            | Can Parallel With      |
-| ---------------------------------------- | ---------------------- | ----------- | ------------ | ----------------- | ---------------------- |
+| Spec ID                                  | Name                   | Priority    | Dependencies | Blocks            | Can Parallel With      | Status |
+| ---------------------------------------- | ---------------------- | ----------- | ------------ | ----------------- | ---------------------- | ------ |
 | **WAVE 1: Foundation (No Dependencies)** |                        |             |              |                   |
-| D002                                     | TypeScript Config      | 🔴 CRITICAL | None         | All (type safety) | D003, D004, F001, F002 |
-| D003                                     | Security Headers       | 🔴 CRITICAL | None         | None              | D002, D004, F001, F002 |
+| D002                                     | TypeScript Config      | 🔴 CRITICAL | None         | All (type safety) | D003, D004, F001, F002 | DONE   |
+| D003                                     | Security Headers       | 🔴 CRITICAL | None         | None              | D002, D004, F001, F002 | DONE   |
 | D004                                     | Image Optimization     | 🟡 HIGH     | None         | None              | D002, D003, F001, F002 |
 | F001                                     | Convex Migration       | 🔴 CRITICAL | None         | None              | D002, D003, D004, F002 |
 | F002                                     | Form Standardization   | 🔴 CRITICAL | None         | None              | D002, D003, D004, F001 |

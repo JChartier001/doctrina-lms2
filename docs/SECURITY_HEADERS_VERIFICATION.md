@@ -14,11 +14,13 @@ This document outlines the security headers implemented in `next.config.mjs` and
 ## Headers Implemented
 
 ### 1. X-DNS-Prefetch-Control: `on`
+
 **Purpose:** Enable DNS prefetching for improved performance  
 **Security Impact:** Low  
 **Browser Support:** All modern browsers
 
 ### 2. Strict-Transport-Security (HSTS)
+
 **Value:** `max-age=63072000; includeSubDomains; preload`  
 **Purpose:** Force HTTPS connections for 2 years (63072000 seconds)  
 **Security Impact:** HIGH - Prevents downgrade attacks, MITM attacks  
@@ -26,38 +28,46 @@ This document outlines the security headers implemented in `next.config.mjs` and
 **Note:** Only effective when served over HTTPS
 
 ### 3. X-Frame-Options: `SAMEORIGIN`
+
 **Purpose:** Prevent clickjacking attacks  
 **Security Impact:** HIGH - Blocks embedding site in iframes from other origins  
 **OWASP:** A05:2021 - Security Misconfiguration  
 **Allows:** Framing from same origin only
 
 ### 4. X-Content-Type-Options: `nosniff`
+
 **Purpose:** Prevent MIME-sniffing attacks  
 **Security Impact:** MEDIUM - Stops browsers from interpreting files as different MIME types  
 **OWASP:** A05:2021 - Security Misconfiguration
 
 ### 5. X-XSS-Protection: `1; mode=block`
+
 **Purpose:** Legacy XSS protection for older browsers  
 **Security Impact:** MEDIUM - Enables browser's XSS filter  
 **Note:** Deprecated in modern browsers (CSP is preferred), but harmless to include
 
 ### 6. Referrer-Policy: `strict-origin-when-cross-origin`
+
 **Purpose:** Control how much referrer information is sent  
 **Security Impact:** MEDIUM - Prevents leaking sensitive URLs  
 **Behavior:**
+
 - Same-origin: Full URL
 - Cross-origin HTTPS→HTTPS: Origin only
 - Cross-origin HTTPS→HTTP: No referrer
 
 ### 7. Permissions-Policy: `camera=(), microphone=(), geolocation=()`
+
 **Purpose:** Disable unnecessary browser features  
 **Security Impact:** MEDIUM - Reduces attack surface  
 **Features Disabled:**
+
 - Camera access
 - Microphone access
 - Geolocation access
 
 ### 8. Content-Security-Policy (CSP)
+
 **Purpose:** Prevent XSS attacks, data injection attacks  
 **Security Impact:** CRITICAL - Primary defense against XSS  
 **OWASP:** A03:2021 - Injection
@@ -77,18 +87,19 @@ worker-src 'self' blob:
 
 **Directive Breakdown:**
 
-| Directive | Value | Purpose |
-|-----------|-------|---------|
-| `default-src` | `'self'` | Default policy: only same-origin resources |
-| `script-src` | `'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com *.convex.cloud` | Allow scripts from app, Clerk FAPI, Cloudflare bot protection, Convex. `unsafe-eval` needed for Next.js, `unsafe-inline` for Clerk |
-| `style-src` | `'self' 'unsafe-inline'` | Allow styles from app. `unsafe-inline` required for Tailwind CSS and shadcn/ui |
-| `img-src` | `'self' data: blob: https://img.clerk.com` | Allow images from app, data URIs, blobs, and Clerk CDN |
-| `font-src` | `'self' data:` | Allow fonts from app and data URIs |
-| `connect-src` | `'self' https://*.clerk.accounts.dev https://clerk-telemetry.com *.convex.cloud wss://*.convex.cloud` | Allow fetch/XHR to app, Clerk FAPI, Clerk telemetry, Convex (including WebSocket) |
-| `frame-src` | `'self' https://challenges.cloudflare.com` | Allow iframes from app and Cloudflare bot protection |
-| `worker-src` | `'self' blob:` | Allow web workers from app and blob URIs |
+| Directive     | Value                                                                                                                | Purpose                                                                                                                            |
+| ------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `default-src` | `'self'`                                                                                                             | Default policy: only same-origin resources                                                                                         |
+| `script-src`  | `'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com *.convex.cloud` | Allow scripts from app, Clerk FAPI, Cloudflare bot protection, Convex. `unsafe-eval` needed for Next.js, `unsafe-inline` for Clerk |
+| `style-src`   | `'self' 'unsafe-inline'`                                                                                             | Allow styles from app. `unsafe-inline` required for Tailwind CSS and shadcn/ui                                                     |
+| `img-src`     | `'self' data: blob: https://img.clerk.com`                                                                           | Allow images from app, data URIs, blobs, and Clerk CDN                                                                             |
+| `font-src`    | `'self' data:`                                                                                                       | Allow fonts from app and data URIs                                                                                                 |
+| `connect-src` | `'self' https://*.clerk.accounts.dev https://clerk-telemetry.com *.convex.cloud wss://*.convex.cloud`                | Allow fetch/XHR to app, Clerk FAPI, Clerk telemetry, Convex (including WebSocket)                                                  |
+| `frame-src`   | `'self' https://challenges.cloudflare.com`                                                                           | Allow iframes from app and Cloudflare bot protection                                                                               |
+| `worker-src`  | `'self' blob:`                                                                                                       | Allow web workers from app and blob URIs                                                                                           |
 
 **Why `unsafe-eval` and `unsafe-inline`?**
+
 - `unsafe-eval`: Required by Next.js dynamic imports and Clerk SDK
 - `unsafe-inline`: Required by Tailwind CSS, shadcn/ui components, and Clerk authentication UI
 
@@ -134,6 +145,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'un
 3. **Expected:** Zero CSP violation messages
 
 **Common CSP Violations (should NOT appear):**
+
 - ❌ "Refused to load the script"
 - ❌ "Refused to load the stylesheet"
 - ❌ "Refused to connect to"
@@ -142,6 +154,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'un
 ### Step 4: Test Critical Functionality
 
 #### 4.1 Clerk Authentication
+
 - [ ] Navigate to sign-in page
 - [ ] Sign in with credentials
 - [ ] Verify Clerk iframe loads
@@ -149,18 +162,21 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'un
 - [ ] **Expected:** No CSP errors, auth works normally
 
 #### 4.2 Convex Real-Time Queries
+
 - [ ] Navigate to a page with Convex queries
 - [ ] Verify data loads
 - [ ] Check Network tab for WebSocket connection to `wss://*.convex.cloud`
 - [ ] **Expected:** Real-time updates work, no CSP errors
 
 #### 4.3 UI Components (shadcn/ui)
+
 - [ ] Navigate to pages with UI components
 - [ ] Verify styles load correctly
 - [ ] Check for any unstyled components
 - [ ] **Expected:** All components styled properly
 
 #### 4.4 Images
+
 - [ ] Verify images from Clerk (profile pictures) load
 - [ ] Verify local images load
 - [ ] **Expected:** All images display correctly
@@ -195,10 +211,12 @@ Use online security header scanners:
 ### Development vs Production
 
 **Development (HTTP):**
+
 - HSTS not enforced (requires HTTPS)
 - Some security scanners may give lower scores
 
 **Production (HTTPS):**
+
 - All headers fully effective
 - HSTS will enforce HTTPS for 2 years
 - Higher security scanner scores expected
@@ -210,13 +228,13 @@ The CSP includes `unsafe-eval` and `unsafe-inline` which are not ideal from a st
 1. **`unsafe-eval`:**
    - Next.js dynamic imports
    - Clerk SDK runtime evaluation
-   
 2. **`unsafe-inline`:**
    - Tailwind CSS utility classes
    - shadcn/ui component styles
    - Clerk authentication UI
 
 **Future Improvements:**
+
 - Consider nonce-based CSP for inline scripts (complex, requires server-side changes)
 - Evaluate if `unsafe-eval` can be removed after Next.js/Clerk updates
 
@@ -228,6 +246,7 @@ The CSP includes `unsafe-eval` and `unsafe-inline` which are not ideal from a st
 
 **Symptom:** Clerk iframe doesn't load, console shows CSP violation or `ClerkRuntimeError: Failed to load Clerk`  
 **Solution:** Verify the following domains are in CSP:
+
 - `script-src`: `https://*.clerk.accounts.dev` and `https://challenges.cloudflare.com`
 - `connect-src`: `https://*.clerk.accounts.dev` and `https://clerk-telemetry.com`
 - `frame-src`: `https://challenges.cloudflare.com`
@@ -261,6 +280,7 @@ The CSP includes `unsafe-eval` and `unsafe-inline` which are not ideal from a st
 **Applies To:** All routes (`/:path*`)
 
 **Code Location:**
+
 ```javascript
 // next.config.mjs, lines 9-58
 async headers() {
