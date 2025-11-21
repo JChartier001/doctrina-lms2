@@ -9,6 +9,7 @@
  */
 
 import type * as analytics from "../analytics.js";
+import type * as authHelpers from "../authHelpers.js";
 import type * as certificates from "../certificates.js";
 import type * as courseModules from "../courseModules.js";
 import type * as courses from "../courses.js";
@@ -23,6 +24,7 @@ import type * as liveSessions from "../liveSessions.js";
 import type * as notifications from "../notifications.js";
 import type * as payments from "../payments.js";
 import type * as purchases from "../purchases.js";
+import type * as quizzes from "../quizzes.js";
 import type * as recommendations from "../recommendations.js";
 import type * as resources from "../resources.js";
 import type * as search from "../search.js";
@@ -38,16 +40,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 
-/**
- * A utility for referencing Convex functions in your app's API.
- *
- * Usage:
- * ```js
- * const myFunctionReference = api.myModule.myFunction;
- * ```
- */
 declare const fullApi: ApiFromModules<{
   analytics: typeof analytics;
+  authHelpers: typeof authHelpers;
   certificates: typeof certificates;
   courseModules: typeof courseModules;
   courses: typeof courses;
@@ -62,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   payments: typeof payments;
   purchases: typeof purchases;
+  quizzes: typeof quizzes;
   recommendations: typeof recommendations;
   resources: typeof resources;
   search: typeof search;
@@ -71,14 +67,30 @@ declare const fullApi: ApiFromModules<{
   triggers: typeof triggers;
   users: typeof users;
 }>;
-declare const fullApiWithMounts: typeof fullApi;
 
+/**
+ * A utility for referencing Convex functions in your app's public API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = api.myModule.myFunction;
+ * ```
+ */
 export declare const api: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "public">
 >;
+
+/**
+ * A utility for referencing Convex functions in your app's internal API.
+ *
+ * Usage:
+ * ```js
+ * const myFunctionReference = internal.myModule.myFunction;
+ * ```
+ */
 export declare const internal: FilterApi<
-  typeof fullApiWithMounts,
+  typeof fullApi,
   FunctionReference<any, "internal">
 >;
 
