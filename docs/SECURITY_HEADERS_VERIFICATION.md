@@ -66,12 +66,13 @@ This document outlines the security headers implemented in `next.config.mjs` and
 
 ```
 default-src 'self'
-script-src 'self' 'unsafe-eval' 'unsafe-inline' *.clerk.com *.convex.cloud
+script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com *.convex.cloud
 style-src 'self' 'unsafe-inline'
-img-src 'self' data: blob: *.clerk.com
+img-src 'self' data: blob: https://img.clerk.com
 font-src 'self' data:
-connect-src 'self' *.clerk.com *.convex.cloud wss://*.convex.cloud
-frame-src 'self' *.clerk.com
+connect-src 'self' https://*.clerk.accounts.dev https://clerk-telemetry.com *.convex.cloud wss://*.convex.cloud
+frame-src 'self' https://challenges.cloudflare.com
+worker-src 'self' blob:
 ```
 
 **Directive Breakdown:**
@@ -79,12 +80,13 @@ frame-src 'self' *.clerk.com
 | Directive | Value | Purpose |
 |-----------|-------|---------|
 | `default-src` | `'self'` | Default policy: only same-origin resources |
-| `script-src` | `'self' 'unsafe-eval' 'unsafe-inline' *.clerk.com *.convex.cloud` | Allow scripts from app, Clerk, Convex. `unsafe-eval` needed for Next.js, `unsafe-inline` for Clerk |
+| `script-src` | `'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com *.convex.cloud` | Allow scripts from app, Clerk FAPI, Cloudflare bot protection, Convex. `unsafe-eval` needed for Next.js, `unsafe-inline` for Clerk |
 | `style-src` | `'self' 'unsafe-inline'` | Allow styles from app. `unsafe-inline` required for Tailwind CSS and shadcn/ui |
-| `img-src` | `'self' data: blob: *.clerk.com` | Allow images from app, data URIs, blobs, and Clerk |
+| `img-src` | `'self' data: blob: https://img.clerk.com` | Allow images from app, data URIs, blobs, and Clerk CDN |
 | `font-src` | `'self' data:` | Allow fonts from app and data URIs |
-| `connect-src` | `'self' *.clerk.com *.convex.cloud wss://*.convex.cloud` | Allow fetch/XHR to app, Clerk, Convex (including WebSocket) |
-| `frame-src` | `'self' *.clerk.com` | Allow iframes from app and Clerk (for auth flows) |
+| `connect-src` | `'self' https://*.clerk.accounts.dev https://clerk-telemetry.com *.convex.cloud wss://*.convex.cloud` | Allow fetch/XHR to app, Clerk FAPI, Clerk telemetry, Convex (including WebSocket) |
+| `frame-src` | `'self' https://challenges.cloudflare.com` | Allow iframes from app and Cloudflare bot protection |
+| `worker-src` | `'self' blob:` | Allow web workers from app and blob URIs |
 
 **Why `unsafe-eval` and `unsafe-inline`?**
 - `unsafe-eval`: Required by Next.js dynamic imports and Clerk SDK
@@ -224,8 +226,15 @@ The CSP includes `unsafe-eval` and `unsafe-inline` which are not ideal from a st
 
 ### Issue: CSP blocks Clerk authentication
 
-**Symptom:** Clerk iframe doesn't load, console shows CSP violation  
-**Solution:** Verify `*.clerk.com` is in `script-src`, `connect-src`, and `frame-src`
+**Symptom:** Clerk iframe doesn't load, console shows CSP violation or `ClerkRuntimeError: Failed to load Clerk`  
+**Solution:** Verify the following domains are in CSP:
+- `script-src`: `https://*.clerk.accounts.dev` and `https://challenges.cloudflare.com`
+- `connect-src`: `https://*.clerk.accounts.dev` and `https://clerk-telemetry.com`
+- `frame-src`: `https://challenges.cloudflare.com`
+- `img-src`: `https://img.clerk.com`
+- `worker-src`: `'self' blob:`
+
+**Note:** Clerk requires its FAPI (Frontend API) domain `*.clerk.accounts.dev`, not just `*.clerk.com`
 
 ### Issue: CSP blocks Convex queries
 
@@ -308,4 +317,5 @@ After verification:
 ---
 
 **Last Updated:** 2025-11-21  
-**Status:** ✅ Implementation Complete - Awaiting Manual Verification
+**Status:** ✅ Implementation Complete - CSP Fixed for Clerk Compatibility  
+**Revision:** 2 (Fixed Clerk FAPI domains)
