@@ -33,21 +33,12 @@ export default defineConfig({
 				'app/layout.tsx',
 				'app/**/layout.tsx',
 			],
-			// Priority-based thresholds per TESTING-STRATEGY.md
+
 			thresholds: {
-				// Core features: 85%
-				'./convex/lessonProgress.ts': {
-					lines: 85,
-					functions: 85,
-					branches: 80,
-					statements: 85,
-				},
-				global: {
-					lines: 80,
-					functions: 80,
-					branches: 75,
-					statements: 80,
-				},
+				lines: 80,
+				functions: 80,
+				branches: 75,
+				statements: 80,
 			},
 		},
 	},

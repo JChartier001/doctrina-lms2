@@ -8,18 +8,18 @@
 
 ## Summary
 
-| Epic | EPICS.md Claims | Actual Status | Verified |
-|------|----------------|---------------|----------|
-| EPIC-110 | 🔴 Not Started | ✅ **COMPLETED** | ✅ |
-| EPIC-101 | 🔴 Not Started | ✅ **COMPLETED** | ✅ |
-| EPIC-102 | 🔴 Not Started | 🟡 **PARTIALLY COMPLETE** (40%) | ✅ |
-| EPIC-109 | 🔴 Not Started | 🟡 **PARTIALLY COMPLETE** (75%) | ✅ |
-| EPIC-103 | 🔴 Not Started | 🔴 **NOT STARTED** | ✅ |
-| EPIC-104 | 🔴 Not Started | 🔴 **NOT STARTED** | ✅ |
-| EPIC-105 | 🔴 Not Started | 🔴 **NOT STARTED** | ✅ |
-| EPIC-106 | 🔴 Not Started | 🔴 **NOT STARTED** (Deferred) | ✅ |
-| EPIC-107 | 🔴 Not Started | 🔴 **NOT STARTED** (Deferred) | ✅ |
-| EPIC-108 | 🔴 Not Started | 🔴 **NOT STARTED** (Deferred) | ✅ |
+| Epic     | EPICS.md Claims | Actual Status                   | Verified |
+| -------- | --------------- | ------------------------------- | -------- |
+| EPIC-110 | 🔴 Not Started  | ✅ **COMPLETED**                | ✅       |
+| EPIC-101 | 🔴 Not Started  | ✅ **COMPLETED**                | ✅       |
+| EPIC-102 | 🔴 Not Started  | 🟡 **PARTIALLY COMPLETE** (40%) | ✅       |
+| EPIC-109 | 🔴 Not Started  | 🟡 **PARTIALLY COMPLETE** (75%) | ✅       |
+| EPIC-103 | 🔴 Not Started  | 🔴 **NOT STARTED**              | ✅       |
+| EPIC-104 | 🔴 Not Started  | 🔴 **NOT STARTED**              | ✅       |
+| EPIC-105 | 🔴 Not Started  | 🔴 **NOT STARTED**              | ✅       |
+| EPIC-106 | 🔴 Not Started  | 🔴 **NOT STARTED** (Deferred)   | ✅       |
+| EPIC-107 | 🔴 Not Started  | 🔴 **NOT STARTED** (Deferred)   | ✅       |
+| EPIC-108 | 🔴 Not Started  | 🔴 **NOT STARTED** (Deferred)   | ✅       |
 
 ---
 
@@ -30,6 +30,7 @@
 **Evidence:**
 
 ### Test Files Found (21 total):
+
 ```
 ✅ convex/__test__/analytics.test.ts
 ✅ convex/__test__/certificates.test.ts
@@ -55,6 +56,7 @@
 ```
 
 ### Test Coverage Results:
+
 ```
 Test Files: 21 passed (21)
 Tests: 594 passed (594)
@@ -73,6 +75,7 @@ Coverage: 100% on all Convex backend files
 **Evidence:**
 
 ### Backend Implementation (`convex/lessonProgress.ts`):
+
 ```
 ✅ markComplete() - Mark lesson as complete
 ✅ recalculateProgress() - Recalculate course progress
@@ -81,6 +84,7 @@ Coverage: 100% on all Convex backend files
 ```
 
 ### Test Coverage (`convex/__test__/lessonProgress.test.ts`):
+
 ```
 ✅ 25 tests written
 ✅ 100% coverage
@@ -88,6 +92,7 @@ Coverage: 100% on all Convex backend files
 ```
 
 ### UI Integration:
+
 ```
 ✅ /courses/[id]/learn - Uses lessonProgress.markComplete()
 ✅ /dashboard - Uses lessonProgress.getUserProgress()
@@ -105,7 +110,9 @@ Coverage: 100% on all Convex backend files
 **Evidence:**
 
 ### ✅ Completed - Story 102.1 (Quiz Creation):
+
 Backend file `convex/quizzes.ts` exists with:
+
 ```
 ✅ create() - Create quiz
 ✅ addQuestions() - Add questions to quiz
@@ -115,6 +122,7 @@ Backend file `convex/quizzes.ts` exists with:
 ```
 
 Test coverage:
+
 ```
 ✅ convex/__test__/quizzes.test.ts exists
 ✅ 29 tests written
@@ -122,6 +130,7 @@ Test coverage:
 ```
 
 ### ❌ Missing - Story 102.2 (Submission & Grading):
+
 ```
 ❌ submit() mutation - Grade quiz automatically
 ❌ getBestAttempt() query - Retrieve best score
@@ -129,6 +138,7 @@ Test coverage:
 ```
 
 ### ❌ Missing - Story 102.3 (Quiz Management):
+
 ```
 ❌ update() mutation - Update quiz details
 ❌ remove() mutation - Soft delete quiz
@@ -137,6 +147,7 @@ Test coverage:
 ```
 
 ### ❌ Missing - Story 102.4 (UI):
+
 ```
 ❌ Quiz taking interface
 ❌ Results display with explanations
@@ -156,6 +167,7 @@ Test coverage:
 **Evidence:**
 
 ### ✅ Converted to Convex (6/8 files):
+
 ```
 ✅ /courses/[id]/learn/page.tsx - Uses api.courses.getWithCurriculum()
 ✅ /checkout/[courseId]/page.tsx - Uses api.courses.get()
@@ -166,6 +178,7 @@ Test coverage:
 ```
 
 ### ❌ Still Using Mock Data (2/8 files):
+
 ```
 ❌ /dashboard/progress/page.tsx - 22 mock data references
    - Mock learning goals
@@ -179,11 +192,13 @@ Test coverage:
 ```
 
 ### 🗑️ Deleted (No Longer Exists):
+
 ```
 ✅ /lib/course-migration.ts - File deleted (no longer needed)
 ```
 
 ### ❌ Not Checked (1 file):
+
 ```
 ? /profile/page.tsx - 1 mock reference (need to investigate)
 ```
@@ -275,6 +290,7 @@ Test coverage:
 ## Updated Sprint Planning
 
 ### Current State:
+
 - ✅ Sprint 1 Complete (Course Structure, Enrollments, Checkout)
 - ✅ Testing Infrastructure Complete (594 tests, 100% coverage)
 - ✅ Progress Tracking Complete (EPIC-101)
@@ -282,9 +298,11 @@ Test coverage:
 - 🟡 Mock Data Removal 75% Complete (EPIC-109)
 
 ### Recommended Sprint 2:
+
 **Goal:** Complete Quiz System and Reviews
 
 **Tasks:**
+
 1. EPIC-102 (Quiz System - remaining) - 15 pts
 2. EPIC-103 (Course Reviews) - 8 pts
 3. EPIC-109 (Progress Page Mock Removal) - 8 pts

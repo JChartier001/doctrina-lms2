@@ -1,6 +1,6 @@
-import { fireEvent,render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { afterEach,beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ImageUpload } from '@/components/image-upload';
 import { Id } from '@/convex/_generated/dataModel';
@@ -14,14 +14,8 @@ vi.mock('convex/react', () => ({
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
 	default: ({ src, alt, className, onError, ...props }: any) => (
-		<img
-			src={src}
-			alt={alt}
-			className={className}
-			onError={onError}
-			{...props}
-			data-testid="next-image"
-		/>
+		// eslint-disable-next-line @next/next/no-img-element
+		<img src={src} alt={alt} className={className} onError={onError} {...props} data-testid="next-image" />
 	),
 }));
 
@@ -58,12 +52,7 @@ function TestWrapper({ children, defaultValues = {} }: any) {
 }
 
 // Helper function to create mock files
-const createMockFile = (
-	name: string,
-	type: string,
-	size: number,
-	content = 'mock image content',
-): File => {
+const createMockFile = (name: string, type: string, size: number, content = 'mock image content'): File => {
 	const file = new File([content], name, { type });
 	Object.defineProperty(file, 'size', { value: size });
 	return file;
@@ -220,9 +209,7 @@ describe('ImageUpload Component - With Image Optimization', () => {
 			fireEvent.change(fileInput, { target: { files: [invalidFile] } });
 
 			await waitFor(() => {
-				expect(toast.error).toHaveBeenCalledWith(
-					expect.stringContaining('Invalid file type'),
-				);
+				expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Invalid file type'));
 			});
 		});
 
@@ -284,11 +271,13 @@ describe('ImageUpload Component - With Image Optimization', () => {
 				const methods = useForm({
 					defaultValues: { images: [] },
 				});
+				// eslint-disable-next-line react-hooks/incompatible-library
+				const images = methods.watch('images');
 
 				return (
 					<FormProvider {...methods}>
 						<ImageUpload />
-						<div data-testid="form-value">{JSON.stringify(methods.watch('images'))}</div>
+						<div data-testid="form-value">{JSON.stringify(images)}</div>
 					</FormProvider>
 				);
 			};
@@ -335,9 +324,7 @@ describe('ImageUpload Component - With Image Optimization', () => {
 			fireEvent.change(fileInput, { target: { files } });
 
 			await waitFor(() => {
-				expect(toast.error).toHaveBeenCalledWith(
-					expect.stringContaining('Maximum 3 images allowed'),
-				);
+				expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Maximum 3 images allowed'));
 			});
 
 			await waitFor(() => {
@@ -415,11 +402,13 @@ describe('ImageUpload Component - With Image Optimization', () => {
 				const methods = useForm({
 					defaultValues: { images: ['kg2abc123' as Id<'_storage'>] },
 				});
+				// eslint-disable-next-line react-hooks/incompatible-library
+				const images = methods.watch('images');
 
 				return (
 					<FormProvider {...methods}>
 						<ImageUpload />
-						<div data-testid="image-count">{methods.watch('images').length}</div>
+						<div data-testid="image-count">{images.length}</div>
 					</FormProvider>
 				);
 			};
@@ -442,11 +431,7 @@ describe('ImageUpload Component - With Image Optimization', () => {
 		it('displays multiple image previews', async () => {
 			mockGetImageUrl.mockResolvedValue('https://mock-image.url/preview.jpg');
 
-			const images = [
-				'kg2abc123' as Id<'_storage'>,
-				'kg2abc124' as Id<'_storage'>,
-				'kg2abc125' as Id<'_storage'>,
-			];
+			const images = ['kg2abc123' as Id<'_storage'>, 'kg2abc124' as Id<'_storage'>, 'kg2abc125' as Id<'_storage'>];
 
 			render(
 				<TestWrapper defaultValues={{ images }}>
@@ -475,9 +460,7 @@ describe('ImageUpload Component - With Image Optimization', () => {
 			fireEvent.change(fileInput, { target: { files: [svgFile] } });
 
 			await waitFor(() => {
-				expect(toast.error).toHaveBeenCalledWith(
-					expect.stringContaining('Invalid file type'),
-				);
+				expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Invalid file type'));
 			});
 		});
 
@@ -598,11 +581,13 @@ describe('ImageUpload Component - With Image Optimization', () => {
 				const methods = useForm({
 					defaultValues: { images: [] },
 				});
+				// eslint-disable-next-line react-hooks/incompatible-library
+				const images = methods.watch('images');
 
 				return (
 					<FormProvider {...methods}>
 						<ImageUpload />
-						<div data-testid="storage-ids">{JSON.stringify(methods.watch('images'))}</div>
+						<div data-testid="storage-ids">{JSON.stringify(images)}</div>
 					</FormProvider>
 				);
 			};

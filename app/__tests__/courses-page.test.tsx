@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CoursesPage from '@/app/courses/page';
 
@@ -13,15 +13,8 @@ vi.mock('next/navigation', () => ({
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
 	default: ({ src, alt, className, width, height, ...props }: any) => (
-		<img
-			src={src}
-			alt={alt}
-			className={className}
-			width={width}
-			height={height}
-			data-testid="next-image"
-			{...props}
-		/>
+		// eslint-disable-next-line @next/next/no-img-element
+		<img src={src} alt={alt} className={className} width={width} height={height} data-testid="next-image" {...props} />
 	),
 }));
 
@@ -97,7 +90,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				// Verify that all images have Convex storage URLs
 				images.forEach(image => {
 					const src = image.getAttribute('src');
@@ -115,11 +108,11 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					// Verify image has src attribute
 					expect(image).toHaveAttribute('src');
-					
+
 					// Verify src is not empty
 					const src = image.getAttribute('src');
 					expect(src).toBeTruthy();
@@ -135,16 +128,16 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					// Check that width and height are specified
 					expect(image).toHaveAttribute('width');
 					expect(image).toHaveAttribute('height');
-					
+
 					// Verify dimensions are reasonable
 					const width = parseInt(image.getAttribute('width') || '0');
 					const height = parseInt(image.getAttribute('height') || '0');
-					
+
 					expect(width).toBeGreaterThan(0);
 					expect(height).toBeGreaterThan(0);
 				});
@@ -179,7 +172,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 			await waitFor(() => {
 				const image = screen.getByAltText(coursesWithoutThumbnails[0].title);
 				expect(image).toBeInTheDocument();
-				
+
 				// Should have placeholder
 				expect(image.getAttribute('src')).toContain('placeholder.svg');
 			});
@@ -192,7 +185,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					// Check for object-cover class (image optimization)
 					expect(image.className).toContain('object-cover');
@@ -209,10 +202,10 @@ describe('Courses Page - Image Optimization Integration', () => {
 				mockCourses.forEach(course => {
 					// Check course title
 					expect(screen.getByText(course.title)).toBeInTheDocument();
-					
+
 					// Check course image
 					expect(screen.getByAltText(course.title)).toBeInTheDocument();
-					
+
 					// Check course description
 					expect(screen.getByText(course.description)).toBeInTheDocument();
 				});
@@ -279,11 +272,11 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					const width = parseInt(image.getAttribute('width') || '0');
 					const height = parseInt(image.getAttribute('height') || '0');
-					
+
 					// Check that dimensions are optimized (300x200 as per component)
 					expect(width).toBe(300);
 					expect(height).toBe(200);
@@ -298,7 +291,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					expect(image.className).toMatch(/object-cover/);
 				});
@@ -350,7 +343,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					// Check that image is within a card structure
 					const card = image.closest('.overflow-hidden');
@@ -374,11 +367,9 @@ describe('Courses Page - Image Optimization Integration', () => {
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
 				expect(images).toHaveLength(coursesWithMissingThumbnails.length);
-				
+
 				// Check that placeholder is used for missing thumbnail
-				const placeholderImages = images.filter(img => 
-					img.getAttribute('src')?.includes('placeholder.svg')
-				);
+				const placeholderImages = images.filter(img => img.getAttribute('src')?.includes('placeholder.svg'));
 				expect(placeholderImages.length).toBeGreaterThan(0);
 			});
 		});
@@ -390,7 +381,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					const src = image.getAttribute('src');
 					expect(src).toBeTruthy();
@@ -411,7 +402,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 				// Initial render - all images should be present
 				const images = screen.getAllByTestId('next-image');
 				expect(images).toHaveLength(mockCourses.length);
-				
+
 				// Verify all images have valid sources
 				images.forEach((image, index) => {
 					const expectedSrc = mockCourses[index].thumbnailUrl || expect.stringContaining('placeholder');
@@ -427,7 +418,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					expect(image.getAttribute('width')).toBe('300');
 					expect(image.getAttribute('height')).toBe('200');
@@ -458,7 +449,7 @@ describe('Courses Page - Image Optimization Integration', () => {
 
 			await waitFor(() => {
 				const images = screen.getAllByTestId('next-image');
-				
+
 				images.forEach(image => {
 					const alt = image.getAttribute('alt');
 					expect(alt).toBeTruthy();
