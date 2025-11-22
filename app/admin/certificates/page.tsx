@@ -1,8 +1,8 @@
 'use client';
 
+import { useMutation, useQuery } from 'convex/react';
 import { Eye, MoreHorizontal, Search, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { CertificateDisplay } from '@/components/certificate-display';
@@ -25,128 +25,44 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Id } from '@/convex/_generated/dataModel';
+import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
-import {
-	type Certificate,
-	type CertificateTemplate,
-	// getAllCertificateTemplates,
-	useRemoveCertificate,
-} from '@/lib/certificate-service';
-
-// Mock function to get all certificates (admin only)
-function getAllCertificates(): Certificate[] {
-	return [] as Certificate[];
-	// In a real app, this would fetch from an API
-	// return [
-	// 	{
-	// 		id: 'cert-1',
-	// 		userId: '3', // student user ID
-	// 		userName: 'Michael Chen',
-	// 		courseId: '1',
-	// 		courseName: 'Advanced Botox Techniques',
-	// 		instructorId: '2',
-	// 		instructorName: 'Dr. Sarah Johnson',
-	// 		issueDate: '2023-04-15',
-	// 		verificationCode: 'DOCTRINA-ABC123',
-	// 		templateId: 'template-1',
-	// 	},
-	// 	{
-	// 		id: 'cert-2',
-	// 		userId: '3', // student user ID
-	// 		userName: 'Michael Chen',
-	// 		courseId: '2',
-	// 		courseName: 'Dermal Fillers Masterclass',
-	// 		instructorId: '2',
-	// 		instructorName: 'Dr. Sarah Johnson',
-	// 		issueDate: '2023-05-20',
-	// 		verificationCode: 'DOCTRINA-DEF456',
-	// 		templateId: 'template-2',
-	// 	},
-	// 	{
-	// 		id: 'cert-3',
-	// 		userId: '4',
-	// 		userName: 'Emily Rodriguez',
-	// 		courseId: '1',
-	// 		courseName: 'Advanced Botox Techniques',
-	// 		instructorId: '2',
-	// 		instructorName: 'Dr. Sarah Johnson',
-	// 		issueDate: '2023-06-10',
-	// 		verificationCode: 'DOCTRINA-GHI789',
-	// 		templateId: 'template-1',
-	// 	},
-	// ];
-}
 
 export default function AdminCertificatesPage() {
 	const { user, isLoading } = useAuth();
-	const router = useRouter();
+
+	// Convex queries for certificates and templates
+	const certificates = useQuery(api.certificates.listAll);
+	const templates = useQuery(api.certificates.listTemplates);
 
 	// Convex mutation for removing certificates
-	const removeCertificateMutation = useRemoveCertificate();
+	const removeCertificateMutation = useMutation(api.certificates.remove);
 
-	const [certificates, setCertificates] = useState<Certificate[]>([]);
-	const [filteredCertificates, setFilteredCertificates] = useState<Certificate[]>([]);
+	// UI state only
 	const [searchQuery, setSearchQuery] = useState('');
-	const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
-	const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
+	const [selectedCertificate, setSelectedCertificate] = useState<NonNullable<typeof certificates>[number] | null>(null);
 
-	const loadData = useEffectEvent(() => {
-		const allCertificates = getAllCertificates();
-		setCertificates(allCertificates);
-		setFilteredCertificates(allCertificates);
+	// Derived state: filter certificates based on search query
+	const filteredCertificates = useMemo(() => {
+		if (!certificates) return [];
 
-		const allTemplates = [] as CertificateTemplate[];
-		// getAllCertificateTemplates();
-		setTemplates(allTemplates as CertificateTemplate[]);
-	});
-
-	const performFilter = useEffectEvent(() => {
 		const query = searchQuery.trim().toLowerCase();
+		if (query === '') return certificates;
 
-		if (query === '') {
-			setFilteredCertificates(certificates);
-			return;
-		}
-
-		const filtered = certificates.filter(
+		return certificates.filter(
 			cert =>
 				cert.userName.toLowerCase().includes(query) ||
 				cert.courseName.toLowerCase().includes(query) ||
 				cert.verificationCode.toLowerCase().includes(query),
 		);
-		setFilteredCertificates(filtered);
-	});
+	}, [certificates, searchQuery]);
 
-	useEffect(() => {
-		if (isLoading) return;
-
-		if (certificates.length === 0) {
-			loadData();
-		}
-	}, [user, isLoading, router, loadData]);
-
-	useEffect(() => {
-		performFilter();
-	}, [searchQuery, performFilter]);
-
-	const handleDeleteCertificate = async (certId: string) => {
+	const handleDeleteCertificate = async (certId: Id<'certificates'>) => {
 		try {
-			await removeCertificateMutation({ id: certId as Id<'certificates'> });
-
-			// Update the certificates list
-			const updatedCertificates = certificates.filter(cert => cert._id !== certId);
-			setCertificates(updatedCertificates);
-			setFilteredCertificates(
-				updatedCertificates.filter(
-					cert =>
-						cert.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						cert.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-						cert.verificationCode.toLowerCase().includes(searchQuery.toLowerCase()),
-				),
-			);
-
+			await removeCertificateMutation({ id: certId });
 			toast.success('Certificate Deleted. The certificate has been deleted successfully.');
 		} catch (error) {
 			console.error('Failed to delete certificate:', error);
@@ -156,6 +72,19 @@ export default function AdminCertificatesPage() {
 
 	if (isLoading || !user || !user.isAdmin) {
 		return null;
+	}
+
+	// Show loading skeleton while data is being fetched
+	if (certificates === undefined || templates === undefined) {
+		return (
+			<div className="container py-10">
+				<h1 className="text-3xl font-bold mb-6">Certificate Management</h1>
+				<div className="space-y-4">
+					<Skeleton className="h-10 w-full max-w-sm" />
+					<Skeleton className="h-[400px] w-full" />
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -269,23 +198,26 @@ export default function AdminCertificatesPage() {
 					<CardDescription>Manage certificate templates used for different course types</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						{templates.map(template => (
-							<Card key={template.id} className="overflow-hidden">
-								<div
-									className="aspect-[1.414/1] bg-cover bg-center"
-									style={{
-										backgroundImage: `url(${template.imageUrl})`,
-										backgroundColor: `${template.primaryColor}22`,
-									}}
-								></div>
-								<CardContent className="p-4">
-									<h3 className="font-medium">{template.name}</h3>
-									<p className="text-sm text-muted-foreground">{template.description}</p>
-								</CardContent>
-							</Card>
-						))}
-					</div>
+					{templates.length === 0 ? (
+						<p className="text-muted-foreground text-center py-8">No templates available</p>
+					) : (
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+							{templates.map(template => (
+								<Card key={template.id} className="overflow-hidden">
+									<div
+										className="aspect-[1.414/1] bg-cover bg-center bg-muted"
+										style={{
+											backgroundImage: `url(${template.previewUrl})`,
+										}}
+									></div>
+									<CardContent className="p-4">
+										<h3 className="font-medium">{template.name}</h3>
+										<p className="text-sm text-muted-foreground">{template.description}</p>
+									</CardContent>
+								</Card>
+							))}
+						</div>
+					)}
 				</CardContent>
 			</Card>
 		</div>
