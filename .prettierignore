@@ -3,5 +3,7 @@ convex/generated
 bmad/**
 .claude/**
 .github/**
+.factory/**
+.droidz/**
 convex/seedData.ts
 convex/seedCurrentUser.ts

@@ -355,4 +355,98 @@ describe('Certificates', () => {
 			expect(deletedId).toBe(testCertificateId);
 		});
 	});
+
+	describe('listAll() - Admin Query', () => {
+		it('returns all certificates in the system', async () => {
+			const allCertificates = await t.query(api.certificates.listAll);
+
+			expect(allCertificates).toHaveLength(1);
+			expect(allCertificates[0]._id).toBe(testCertificateId);
+		});
+
+		it('returns multiple certificates when multiple users have certificates', async () => {
+			// Create another user
+			const user2Id = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('users', {
+					firstName: 'Student',
+					lastName: 'Two',
+					email: 'student2@test.com',
+					externalId: 'student2-clerk-id',
+					isInstructor: false,
+					isAdmin: false,
+				});
+			});
+
+			// Create another course
+			const course2Id = await t.run(async (ctx: TestCtx) => {
+				return await ctx.db.insert('courses', {
+					title: 'Course 2',
+					description: 'Second course',
+					instructorId: testInstructorId,
+					price: 19900,
+					createdAt: Date.now(),
+					updatedAt: Date.now(),
+				});
+			});
+
+			// Generate certificate for second user
+			await t.mutation(api.certificates.generate, {
+				userId: user2Id,
+				userName: 'Student Two',
+				courseId: course2Id,
+				courseName: 'Course 2',
+				instructorId: testInstructorId,
+				instructorName: 'Dr. Instructor',
+				templateId: 'modern-blue',
+			});
+
+			const allCertificates = await t.query(api.certificates.listAll);
+
+			expect(allCertificates).toHaveLength(2);
+		});
+
+		it('returns empty array when no certificates exist', async () => {
+			// Delete the existing certificate
+			await t.mutation(api.certificates.remove, {
+				id: testCertificateId,
+			});
+
+			const allCertificates = await t.query(api.certificates.listAll);
+
+			expect(allCertificates).toHaveLength(0);
+		});
+	});
+
+	describe('listTemplates()', () => {
+		it('returns all available certificate templates', async () => {
+			const templates = await t.query(api.certificates.listTemplates);
+
+			expect(templates).toBeDefined();
+			expect(templates.length).toBeGreaterThan(0);
+		});
+
+		it('returns templates with required fields', async () => {
+			const templates = await t.query(api.certificates.listTemplates);
+
+			templates.forEach((template: any) => {
+				expect(template).toHaveProperty('id');
+				expect(template).toHaveProperty('name');
+				expect(template).toHaveProperty('description');
+				expect(template).toHaveProperty('previewUrl');
+				expect(typeof template.id).toBe('string');
+				expect(typeof template.name).toBe('string');
+				expect(typeof template.description).toBe('string');
+				expect(typeof template.previewUrl).toBe('string');
+			});
+		});
+
+		it('returns expected template IDs', async () => {
+			const templates = await t.query(api.certificates.listTemplates);
+
+			const templateIds = templates.map((t: any) => t.id);
+			expect(templateIds).toContain('modern-blue');
+			expect(templateIds).toContain('classic-gold');
+			expect(templateIds).toContain('minimalist');
+		});
+	});
 });

@@ -1,5 +1,7 @@
 import { v } from 'convex/values';
 
+// TODO: Uncomment when implementing authentication
+// import { api } from './_generated/api';
 import { mutation, query } from './_generated/server';
 
 export const listForUser = query({
@@ -24,6 +26,57 @@ export const verify = query({
 			.query('certificates')
 			.withIndex('by_verification', q => q.eq('verificationCode', code))
 			.first();
+	},
+});
+
+/**
+ * List all certificates (admin only)
+ * Returns all certificates in the system with user and course information
+ */
+export const listAll = query({
+	args: {},
+	handler: async ctx => {
+		// TODO: Add authentication check in production
+		// const identity = await ctx.auth.getUserIdentity();
+		// if (!identity) throw new Error('Unauthorized: Must be logged in');
+
+		// TODO: Add admin role check in production
+		// const user = await ctx.runQuery(api.users.getByExternalId, { externalId: identity.subject });
+		// if (!user?.isAdmin) throw new Error('Forbidden: Admin access required');
+
+		return await ctx.db.query('certificates').collect();
+	},
+});
+
+/**
+ * List certificate templates
+ * Returns available certificate template configurations
+ */
+export const listTemplates = query({
+	args: {},
+	handler: async _ctx => {
+		// Certificate templates - these would typically come from a database table
+		// For now, returning a static list of available templates
+		return [
+			{
+				id: 'modern-blue',
+				name: 'Modern Blue',
+				description: 'Clean and professional blue design',
+				previewUrl: '/templates/modern-blue-preview.png',
+			},
+			{
+				id: 'classic-gold',
+				name: 'Classic Gold',
+				description: 'Traditional certificate with gold accents',
+				previewUrl: '/templates/classic-gold-preview.png',
+			},
+			{
+				id: 'minimalist',
+				name: 'Minimalist',
+				description: 'Simple and elegant design',
+				previewUrl: '/templates/minimalist-preview.png',
+			},
+		];
 	},
 });
 

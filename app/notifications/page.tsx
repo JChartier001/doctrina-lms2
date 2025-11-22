@@ -1,15 +1,10 @@
 'use client';
 
+import { useMutation, useQuery } from 'convex/react';
 import { Bell, CheckCircle, Filter, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import {
-	deleteUserNotification,
-	fetchUserNotifications,
-	markAllNotificationsAsRead,
-	markNotificationAsRead,
-} from '@/app/actions/notifications';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -23,44 +18,25 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
 import { dayjs } from '@/lib/dayjs';
-import { type Notification } from '@/lib/notification-service';
 
 export default function NotificationsPage() {
 	const { user } = useAuth();
-	const [notifications, setNotifications] = useState<Notification[]>([]);
-	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('all');
 	const router = useRouter();
 
-	useEffect(() => {
-		if (user) {
-			loadNotifications();
-		}
-	}, [user]);
+	// Convex queries and mutations
+	const notifications = useQuery(api.notifications.listForUser, user?.id ? { userId: user.id as Id<'users'> } : 'skip');
+	const markAsReadMutation = useMutation(api.notifications.markAsRead);
+	const markAllAsReadMutation = useMutation(api.notifications.markAllAsRead);
+	const deleteNotificationMutation = useMutation(api.notifications.deleteNotification);
 
-	const loadNotifications = async () => {
-		if (!user) return;
-
-		setLoading(true);
+	const handleMarkAsRead = async (id: Id<'notifications'>) => {
 		try {
-			const userNotifications = await fetchUserNotifications(user.id as Id<'users'>);
-			setNotifications(userNotifications as unknown as Notification[]);
-		} catch (error) {
-			console.error('Failed to fetch notifications:', error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const handleMarkAsRead = async (id: string) => {
-		try {
-			await markNotificationAsRead(id as Id<'notifications'>);
-			setNotifications(
-				notifications.map(notification => (notification._id === id ? { ...notification, read: true } : notification)),
-			);
+			await markAsReadMutation({ id });
 		} catch (error) {
 			console.error('Failed to mark notification as read:', error);
 		}
@@ -70,23 +46,21 @@ export default function NotificationsPage() {
 		if (!user) return;
 
 		try {
-			await markAllNotificationsAsRead(user.id as Id<'users'>);
-			setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+			await markAllAsReadMutation({ userId: user.id as Id<'users'> });
 		} catch (error) {
 			console.error('Failed to mark all notifications as read:', error);
 		}
 	};
 
-	const handleDeleteNotification = async (id: string) => {
+	const handleDeleteNotification = async (id: Id<'notifications'>) => {
 		try {
-			await deleteUserNotification(id as Id<'notifications'>);
-			setNotifications(notifications.filter(notification => notification._id !== id));
+			await deleteNotificationMutation({ id });
 		} catch (error) {
 			console.error('Failed to delete notification:', error);
 		}
 	};
 
-	const handleNotificationClick = (notification: Notification) => {
+	const handleNotificationClick = (notification: NonNullable<typeof notifications>[number]) => {
 		if (!notification.read) {
 			handleMarkAsRead(notification._id);
 		}
@@ -95,6 +69,36 @@ export default function NotificationsPage() {
 			router.push(notification.link);
 		}
 	};
+
+	// Automatic loading state - if undefined, still loading
+	if (notifications === undefined) {
+		return (
+			<div className="container py-10">
+				<div className="mb-6 flex items-center justify-between">
+					<h1 className="text-3xl font-bold">Notifications</h1>
+				</div>
+				<Card>
+					<CardHeader>
+						<Skeleton className="h-10 w-full" />
+					</CardHeader>
+					<CardContent>
+						<div className="space-y-4">
+							{[1, 2, 3, 4, 5].map(i => (
+								<div key={i} className="flex items-start gap-4 p-4 border-b">
+									<Skeleton className="h-10 w-10 rounded-full" />
+									<div className="flex-1 space-y-2">
+										<Skeleton className="h-5 w-3/4" />
+										<Skeleton className="h-4 w-full" />
+										<Skeleton className="h-4 w-1/4" />
+									</div>
+								</div>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
 
 	const filteredNotifications = notifications.filter(notification => {
 		if (activeTab === 'all') return true;
@@ -437,20 +441,7 @@ export default function NotificationsPage() {
 					</Tabs>
 				</CardHeader>
 				<CardContent>
-					{loading ? (
-						<div className="space-y-4">
-							{[1, 2, 3, 4, 5].map(i => (
-								<div key={i} className="flex items-start gap-4 p-4 border-b">
-									<Skeleton className="h-10 w-10 rounded-full" />
-									<div className="flex-1 space-y-2">
-										<Skeleton className="h-5 w-3/4" />
-										<Skeleton className="h-4 w-full" />
-										<Skeleton className="h-4 w-1/4" />
-									</div>
-								</div>
-							))}
-						</div>
-					) : filteredNotifications.length > 0 ? (
+					{filteredNotifications.length > 0 ? (
 						<div className="divide-y">
 							{filteredNotifications.map(notification => (
 								<div

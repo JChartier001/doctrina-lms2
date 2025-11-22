@@ -203,7 +203,10 @@ export default defineSchema({
 		.index('by_user_resource', ['userId', 'resourceId'])
 		.index('by_resource', ['resourceId']),
 
-	notifications: defineTable(notificationSchema).index('by_user_created', ['userId', 'createdAt']),
+	notifications: defineTable(notificationSchema)
+		.index('by_user', ['userId'])
+		.index('by_user_read', ['userId', 'read'])
+		.index('by_user_created', ['userId', 'createdAt']),
 
 	liveSessions: defineTable(liveSessionSchema).index('by_status', ['status']).index('by_instructor', ['instructorId']),
 
