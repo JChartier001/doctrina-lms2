@@ -1,0 +1,198 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>109</epicId>
+    <storyId>2</storyId>
+    <title>Integrate Real Progress Tracking in Dashboard</title>
+    <status>Draft</status>
+    <generatedAt>2025-11-07</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/stories/story-109.2.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>student</asA>
+    <iWant>see my actual course progress in the dashboard</iWant>
+    <soThat>I can track my learning journey and know which courses to continue</soThat>
+    <tasks>
+      <task id="1" ac="AC1,AC2">Update Progress Dashboard Page
+        <subtask id="1.1">Replace mock data imports with Convex queries</subtask>
+        <subtask id="1.2">Update component to handle real data structure</subtask>
+        <subtask id="1.3">Implement "Continue Learning" with real query</subtask>
+      </task>
+      <task id="2" ac="AC3">Simplify Page Content
+        <subtask id="2.1">Remove mock goals section</subtask>
+        <subtask id="2.2">Remove mock achievements section</subtask>
+        <subtask id="2.3">Simplify page layout</subtask>
+      </task>
+      <task id="3" ac="AC4">Loading and Error States
+        <subtask id="3.1">Add skeleton loaders</subtask>
+        <subtask id="3.2">Handle empty states</subtask>
+        <subtask id="3.3">Error handling</subtask>
+      </task>
+      <task id="4" ac="AC5,AC6">Type Safety and Code Quality
+        <subtask id="4.1">Update TypeScript types</subtask>
+        <subtask id="4.2">Code cleanup</subtask>
+        <subtask id="4.3">Testing</subtask>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Progress dashboard displays real course progress from Convex
+      - Replaces mock data with useQuery(api.lessonProgress.getUserProgress)
+      - Shows actual progress percentages from backend
+      - Displays correct completed/total lesson counts
+      - Real-time updates when student completes lessons</criterion>
+    <criterion id="AC2">Enrolled courses list shows accurate progress
+      - Each enrolled course shows real progress percentage
+      - Progress bars reflect actual completion
+      - "Continue Learning" navigates to correct lesson using getNextIncompleteLesson()
+      - Handles loading and error states properly</criterion>
+    <criterion id="AC3">Remove or simplify mock goals/achievements sections
+      - Remove hardcoded "Weekly Goals" section (not implemented in backend)
+      - Remove hardcoded "Achievements" section (post-MVP feature)
+      - Simplify page to focus on course progress only
+      - Clean up unused mock data imports</criterion>
+    <criterion id="AC4">Loading and error states handled gracefully
+      - Show skeleton loaders while queries load
+      - Handle case when student has no enrollments
+      - Handle case when progress data unavailable
+      - Display friendly error messages if queries fail</criterion>
+    <criterion id="AC5">TypeScript types match Convex schema
+      - Import proper types from convex/_generated/dataModel
+      - Remove mock type definitions
+      - No TypeScript errors or warnings
+      - Full type safety maintained</criterion>
+    <criterion id="AC6">No user-facing regressions
+      - Page layout and styling unchanged
+      - Navigation works correctly
+      - Mobile responsive maintained
+      - Performance equivalent or better</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/epics.md"
+           title="Epic Planning Document"
+           section="EPIC-109: Replace Mock Data with Real Convex Queries">
+        Epic describes Phase 2 mock replacement after progress implementation. Specifies using lessonProgress.getUserProgress() in progress dashboard and simplifying the progress page by removing goals/achievements mock. Part of Sprint 2-3 mock data cleanup effort. Story 109-2 focuses on /app/dashboard/progress/page.tsx (8 story points).
+      </doc>
+      <doc path="docs/PRD.md"
+           title="Product Requirements Document"
+           section="F11: Student Dashboard">
+        Student dashboard functional requirements (lines 1031-1074). Dashboard must show enrolled courses with progress percentages, "Continue Learning" button that resumes where left off, and course thumbnails/titles. Progress must be accurate and persistent across sessions.
+      </doc>
+      <doc path="docs/ARCHITECTURE.md"
+           title="Technical Architecture"
+           section="Real-Time Data Pattern">
+        Architecture pattern for real-time data display (lines 315-327). Use useQuery for reactive data subscriptions. Components auto-update when database changes. Handle undefined state while loading. No manual refresh needed with Convex.
+      </doc>
+      <doc path="docs/TESTING-STRATEGY.md"
+           title="Testing Strategy"
+           section="UI Components Testing">
+        UI components should have 70% coverage target (Priority 3). Test main rendering paths and data display, skip visual variations. Use @testing-library/react for component tests. Mock Convex useQuery to test loading/loaded/empty states.
+      </doc>
+      <doc path="docs/tech-spec-epic-101.md"
+           title="Technical Specification: Lesson Progress Tracking System"
+           section="APIs and Interfaces">
+        getUserProgress query interface (lines 152-172). Returns object with enrollmentId, total, completed, percent, and completedLessonIds array. Returns null if not enrolled. Only returns data for authenticated user (row-level security).
+      </doc>
+    </docs>
+
+    <code>
+      <artifact path="app/dashboard/progress/page.tsx"
+                kind="nextjs-client-component"
+                symbol="StudentProgressDashboard"
+                lines="1-414"
+                reason="Primary file to refactor. Currently uses mockData object (lines 20-139) with hardcoded progress, enrolledCourses, goals, achievements. Need to replace with real Convex queries for enrollments and progress. Remove goals/achievements tabs. Implement loading states."/>
+      <artifact path="convex/lessonProgress.ts"
+                kind="convex-query"
+                symbol="getUserProgress"
+                lines="158-213"
+                reason="Backend query to fetch real progress data. Returns {enrollmentId, total, completed, percent, completedLessonIds}. Must be used in dashboard to replace mockData.enrolledCourses progress values. Already implemented and tested."/>
+      <artifact path="convex/lessonProgress.ts"
+                kind="convex-query"
+                symbol="getNextIncompleteLesson"
+                lines="222-279"
+                reason="Backend query for Continue Learning functionality. Returns next incomplete lesson ID or first lesson if all complete. Replaces mockData.enrolledCourses.nextLesson. Used to navigate user to correct lesson."/>
+      <artifact path="components/course-progress-card.tsx"
+                kind="react-component"
+                symbol="CourseProgressCard"
+                reason="Component used to display individual course progress (line 281). Currently receives mock course data. May need prop type updates to match real Convex data structure. Check if component expects specific data shape."/>
+      <artifact path="components/ui/progress.tsx"
+                kind="shadcn-component"
+                symbol="Progress"
+                reason="Radix UI progress bar component (line 196). Used to display visual progress. Takes value prop (0-100). No changes needed, but verify usage with real percentages."/>
+      <artifact path="lib/convex.ts"
+                kind="utility-module"
+                symbol="useQueryWithStatus"
+                reason="CREATE THIS FILE. Initialize richer useQuery helper using makeUseQueryWithStatus from convex-helpers. This provides cleaner loading/error state handling with discriminated unions instead of undefined checks. Export useQueryWithStatus for use across the application."/>
+    </code>
+
+    <dependencies>
+      <node>
+        <package name="convex" version="^1.28.2">Convex real-time database - provides useQuery hook and useQueries for batching</package>
+        <package name="convex-helpers" version="^0.1.104">Convex helper utilities - provides makeUseQueryWithStatus for richer state handling (ALREADY INSTALLED)</package>
+        <package name="next" version="16.0.1">Next.js App Router - client component with 'use client' directive</package>
+        <package name="react" version="^19.2.0">React for component logic and hooks</package>
+        <package name="@radix-ui/react-progress" version="^1.1.8">Progress bar UI component</package>
+        <package name="lucide-react" version="^0.553.0">Icon components (BookOpen, Award, etc.)</package>
+      </node>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="real-time-reactivity">Must use Convex useQuery for automatic real-time updates. Dashboard should reflect progress changes immediately when student completes lessons in another tab. No manual refresh required.</constraint>
+    <constraint type="backward-compatibility">Page layout, styling, and navigation must remain unchanged. Only data source changes from mock to real. No visual regressions allowed.</constraint>
+    <constraint type="loading-states">Must implement richer useQuery pattern using makeUseQueryWithStatus from convex-helpers. Handle three states via discriminated union: pending (isPending), error (isError + error object), success (isSuccess + data). This is cleaner than checking undefined and provides better TypeScript narrowing.</constraint>
+    <constraint type="convex-helpers-pattern">Follow convex-helpers best practice: Create lib/convex.ts to initialize useQueryWithStatus once, then import across components. This avoids re-creating the helper in every component.</constraint>
+    <constraint type="type-safety">All Convex data must use generated types from convex/_generated/dataModel. Remove mock type definitions. TypeScript strict mode must pass with no errors.</constraint>
+    <constraint type="mobile-responsive">Mobile layout must continue to work. Test on mobile viewport. Progress cards should stack correctly on small screens.</constraint>
+    <constraint type="simplification">Remove features not implemented in backend: Weekly/Monthly Goals, Skills Proficiency, Learning Goals, Achievements. Focus page on enrolled courses and actual progress only.</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface name="lessonProgress.getUserProgress"
+               kind="convex-query"
+               signature="query({ args: { courseId: Id&lt;'courses'&gt; }, handler: async (ctx, { courseId }) => { enrollmentId, total, completed, percent, completedLessonIds } | null })"
+               path="convex/lessonProgress.ts:158-213">
+      Returns progress summary for authenticated user in a specific course. Returns null if not authenticated or not enrolled. Response shape: {enrollmentId: Id, total: number, completed: number, percent: number (0-100), completedLessonIds: string[]}. Use this to replace mockData progress values. IMPORTANT: Use with useQueryWithStatus for clean state handling.
+    </interface>
+    <interface name="makeUseQueryWithStatus"
+               kind="convex-helpers-hook"
+               signature="makeUseQueryWithStatus(useQueries) => useQueryWithStatus"
+               path="node_modules/convex-helpers/react">
+      Creates enhanced useQuery hook that returns discriminated union: {status: 'pending'|'success'|'error', data, error, isPending, isSuccess, isError}. Initialize once in lib/convex.ts and export. Provides cleaner loading/error handling than standard useQuery undefined checks. See: https://github.com/get-convex/convex-helpers/blob/main/packages/convex-helpers/README.md#richer-usequery
+    </interface>
+    <interface name="lessonProgress.getNextIncompleteLesson"
+               kind="convex-query"
+               signature="query({ args: { courseId: Id&lt;'courses'&gt; }, handler: async (ctx, { courseId }) => Id&lt;'lessons'&gt; | null })"
+               path="convex/lessonProgress.ts:222-279">
+      Returns ID of next incomplete lesson for Continue Learning functionality. Returns null if not authenticated. Returns first lesson if all complete. Use to build Continue Learning navigation link: /courses/{courseId}/learn?lesson={lessonId}.
+    </interface>
+    <interface name="enrollments.getMyEnrollments"
+               kind="convex-query"
+               signature="query({ args: {}, handler: async (ctx) => Enrollment[] })"
+               path="convex/enrollments.ts">
+      Expected query to fetch all enrollments for authenticated user. Returns array of enrollment objects with courseId. Use to get list of enrolled courses, then query getUserProgress for each courseId.
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      UI components should target 70% test coverage (TESTING-STRATEGY.md Priority 3). Use Vitest with @testing-library/react for component tests. Mock Convex useQuery to test loading/loaded/empty states. Test main rendering paths and data display, skip visual variations. Tests should verify correct data fetching, loading states, empty states, and error handling.
+    </standards>
+    <locations>
+      <location>app/dashboard/progress/__tests__/page.test.tsx (create if needed)</location>
+      <location>components/__tests__/course-progress-card.test.tsx (if component tests needed)</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1,AC2">Component test: Mock useQuery to return progress data, verify CourseProgressCard receives correct props with real percentages and lesson counts</idea>
+      <idea ac="AC1">Component test: Mock useQuery with real data structure, assert progress bars display correct values (50%, 75%, 100%)</idea>
+      <idea ac="AC2">Component test: Mock getNextIncompleteLesson returning lesson ID, verify Continue Learning button links to /courses/{id}/learn?lesson={lessonId}</idea>
+      <idea ac="AC4">Component test: Mock useQuery returning undefined, verify skeleton loader displays. Mock returning empty array, verify empty state message displays.</idea>
+      <idea ac="AC5">Integration test: Import types from convex/_generated/dataModel, verify no TypeScript errors. Run `yarn typescript` to validate.</idea>
+      <idea ac="AC6">Visual regression test (manual): Compare before/after screenshots on desktop and mobile. Verify layout identical, only data values changed.</idea>
+    </ideas>
+  </tests>
+</story-context>
