@@ -78,8 +78,10 @@ const eslintConfig = defineConfig([
 		'build/**',
 		'next-env.d.ts',
 		'bmad/**',
-		'claude/**',
-		'github/**',
+		'.claude/**',
+		'.github/**',
+		'.factory/**',
+		'.droidz/**',
 
 		// Additional ignores
 		'node_modules/**',

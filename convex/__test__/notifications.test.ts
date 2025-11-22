@@ -251,7 +251,7 @@ describe('Notifications', () => {
 			});
 
 			// Mark one as read
-			await t.mutation(api.notifications.markRead, { id: readId });
+			await t.mutation(api.notifications.markAsRead, { id: readId });
 
 			const notifications = await t.query(api.notifications.listForUser, {
 				userId: testUserId,
@@ -279,7 +279,7 @@ describe('Notifications', () => {
 			expect(notification?.read).toBe(false);
 
 			// Mark as read
-			const returnedId = await t.mutation(api.notifications.markRead, {
+			const returnedId = await t.mutation(api.notifications.markAsRead, {
 				id: notificationId,
 			});
 
@@ -300,7 +300,7 @@ describe('Notifications', () => {
 				type: 'message',
 			});
 
-			const returnedId = await t.mutation(api.notifications.markRead, {
+			const returnedId = await t.mutation(api.notifications.markAsRead, {
 				id: notificationId,
 			});
 
@@ -316,14 +316,34 @@ describe('Notifications', () => {
 			});
 
 			// Mark as read twice
-			await t.mutation(api.notifications.markRead, { id: notificationId });
-			await t.mutation(api.notifications.markRead, { id: notificationId });
+			await t.mutation(api.notifications.markAsRead, { id: notificationId });
+			await t.mutation(api.notifications.markAsRead, { id: notificationId });
 
 			const notification = await t.run(async (ctx: TestCtx) => {
 				return await ctx.db.get(notificationId);
 			});
 
 			expect(notification?.read).toBe(true);
+		});
+
+		it('throws error when notification not found', async () => {
+			// Create a valid ID then delete it to test error handling
+			const nonExistentId = await t.run(async (ctx: TestCtx) => {
+				const id = await ctx.db.insert('notifications', {
+					userId: testUserId,
+					title: 'To Delete',
+					description: 'Test',
+					type: 'message',
+					read: false,
+					createdAt: Date.now(),
+				});
+				await ctx.db.delete(id);
+				return id;
+			});
+
+			await expect(t.mutation(api.notifications.markAsRead, { id: nonExistentId })).rejects.toThrow(
+				'Notification not found',
+			);
 		});
 	});
 
@@ -442,7 +462,7 @@ describe('Notifications', () => {
 			});
 
 			// Mark one as read already
-			await t.mutation(api.notifications.markRead, { id: id1 });
+			await t.mutation(api.notifications.markAsRead, { id: id1 });
 
 			// Mark all as read
 			const count = await t.mutation(api.notifications.markAllRead, {
@@ -477,7 +497,7 @@ describe('Notifications', () => {
 			expect(notification).toBeDefined();
 
 			// Delete
-			const returnedId = await t.mutation(api.notifications.remove, {
+			const returnedId = await t.mutation(api.notifications.deleteNotification, {
 				id: notificationId,
 			});
 
@@ -498,7 +518,7 @@ describe('Notifications', () => {
 				type: 'message',
 			});
 
-			const returnedId = await t.mutation(api.notifications.remove, {
+			const returnedId = await t.mutation(api.notifications.deleteNotification, {
 				id: notificationId,
 			});
 
@@ -521,7 +541,7 @@ describe('Notifications', () => {
 			});
 
 			// Delete one
-			await t.mutation(api.notifications.remove, { id: id2 });
+			await t.mutation(api.notifications.deleteNotification, { id: id2 });
 
 			// Verify other still exists
 			const remaining = await t.run(async (ctx: TestCtx) => {
@@ -530,6 +550,26 @@ describe('Notifications', () => {
 
 			expect(remaining).toBeDefined();
 			expect(remaining?.title).toBe('Keep');
+		});
+
+		it('throws error when notification not found', async () => {
+			// Create a valid ID then delete it to test error handling
+			const nonExistentId = await t.run(async (ctx: TestCtx) => {
+				const id = await ctx.db.insert('notifications', {
+					userId: testUserId,
+					title: 'To Delete',
+					description: 'Test',
+					type: 'message',
+					read: false,
+					createdAt: Date.now(),
+				});
+				await ctx.db.delete(id);
+				return id;
+			});
+
+			await expect(t.mutation(api.notifications.deleteNotification, { id: nonExistentId })).rejects.toThrow(
+				'Notification not found',
+			);
 		});
 	});
 });
