@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { Bell, CheckCircle, Filter, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -21,6 +21,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
 import { useAuth } from '@/lib/auth';
+import { useQueryWithStatus } from '@/lib/convex';
 import { dayjs } from '@/lib/dayjs';
 
 export default function NotificationsPage() {
@@ -28,8 +29,11 @@ export default function NotificationsPage() {
 	const [activeTab, setActiveTab] = useState('all');
 	const router = useRouter();
 
-	// Convex queries and mutations
-	const notifications = useQuery(api.notifications.listForUser, user?.id ? { userId: user.id as Id<'users'> } : 'skip');
+	// Convex queries and mutations - using useQueryWithStatus for better type safety
+	const { isPending, isError, error, data: notifications } = useQueryWithStatus(
+		api.notifications.listForUser,
+		user?.id ? { userId: user.id as Id<'users'> } : 'skip'
+	);
 	const markAsReadMutation = useMutation(api.notifications.markAsRead);
 	const markAllAsReadMutation = useMutation(api.notifications.markAllAsRead);
 	const deleteNotificationMutation = useMutation(api.notifications.deleteNotification);
@@ -70,8 +74,21 @@ export default function NotificationsPage() {
 		}
 	};
 
-	// Automatic loading state - if undefined, still loading
-	if (notifications === undefined) {
+	// Guard clauses for loading and error states
+	if (!user) {
+		return (
+			<div className="container py-10">
+				<Card>
+					<CardHeader>
+						<CardTitle>Notifications</CardTitle>
+						<CardDescription>You need to be logged in to view notifications.</CardDescription>
+					</CardHeader>
+				</Card>
+			</div>
+		);
+	}
+
+	if (isPending) {
 		return (
 			<div className="container py-10">
 				<div className="mb-6 flex items-center justify-between">
@@ -94,6 +111,24 @@ export default function NotificationsPage() {
 								</div>
 							))}
 						</div>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="container py-10">
+				<Card>
+					<CardHeader>
+						<CardTitle>Error Loading Notifications</CardTitle>
+						<CardDescription>
+							Failed to load notifications: {error?.message || 'Unknown error'}
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<Button onClick={() => window.location.reload()}>Retry</Button>
 					</CardContent>
 				</Card>
 			</div>
@@ -281,19 +316,7 @@ export default function NotificationsPage() {
 		}
 	};
 
-	if (!user) {
-		return (
-			<div className="container py-10">
-				<Card>
-					<CardHeader>
-						<CardTitle>Notifications</CardTitle>
-						<CardDescription>You need to be logged in to view notifications.</CardDescription>
-					</CardHeader>
-				</Card>
-			</div>
-		);
-	}
-
+	// TypeScript now knows notifications is defined due to guard clauses above
 	return (
 		<div className="container py-10">
 			<div className="mb-6 flex items-center justify-between">
