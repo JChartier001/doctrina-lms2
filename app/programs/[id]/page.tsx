@@ -257,11 +257,14 @@ export default function ProgramDetailPage({ params: _params }: { params: { id: s
 							</div>
 						</div>
 
-						<Image
-							src={programData.image || '/placeholder.svg'}
-							alt={programData.title}
-							className="w-full rounded-lg object-cover aspect-video mt-6"
-						/>
+						<div className="relative w-full rounded-lg aspect-video mt-6 overflow-hidden">
+							<Image
+								src={programData.image || '/placeholder.svg'}
+								alt={programData.title}
+								fill
+								className="object-cover"
+							/>
+						</div>
 					</div>
 				</div>
 

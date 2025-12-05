@@ -143,12 +143,8 @@ export default function ProgramsPage() {
 									Featured Program
 								</div>
 							)}
-							<CardHeader className="p-0">
-								<Image
-									src={program.image || '/placeholder.svg'}
-									alt={program.title}
-									className="w-full aspect-video object-cover"
-								/>
+							<CardHeader className="p-0 relative aspect-video">
+								<Image src={program.image || '/placeholder.svg'} alt={program.title} fill className="object-cover" />
 							</CardHeader>
 							<CardContent className="p-6">
 								<div className="flex flex-wrap gap-2 mb-3">
