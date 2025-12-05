@@ -23,7 +23,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run Tests with Coverage
-        run: bun run test:coverage
+        run: bun test:coverage
 
       - name: Post Coverage Results to Pull Request
         if: github.actor != 'dependabot[bot]'
