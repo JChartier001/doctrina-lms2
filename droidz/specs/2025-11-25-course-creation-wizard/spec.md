@@ -17,6 +17,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 ### 1.2 Current State
 
 **Existing Components:**
+
 - ✅ 5-step wizard UI: Basic Info, Structure, Content, Pricing, Review
 - ✅ Form components using React Hook Form
 - ✅ Convex backend tables: `courses`, `courseModules`, `lessons`
@@ -24,6 +25,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 - ✅ Wizard page at `app/instructor/courses/wizard/page.tsx`
 
 **Missing Implementation:**
+
 - ❌ Backend mutations (commented out in wizard page)
 - ❌ Save draft functionality
 - ❌ Course status management (draft/published/archived)
@@ -65,6 +67,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 **So that** I can organize my content in a structured way
 
 **Acceptance Criteria:**
+
 - Can access wizard from instructor dashboard
 - Can fill in basic info (title, description, category, thumbnail)
 - Can create course structure (modules and lessons)
@@ -78,6 +81,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 **So that** I can continue editing it later without losing progress
 
 **Acceptance Criteria:**
+
 - "Save Draft" button available at every step
 - Draft saves the current step number
 - Draft saves all form data entered so far
@@ -91,6 +95,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 **So that** students can discover and enroll in it
 
 **Acceptance Criteria:**
+
 - Can only publish if minimum requirements met:
   - At least 1 module
   - At least 1 lesson
@@ -106,6 +111,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 **So that** I can see how students will see it
 
 **Acceptance Criteria:**
+
 - "Preview" button available at any step
 - Opens course landing page in new tab/modal
 - Shows: title, description, pricing, curriculum, requirements
@@ -117,6 +123,7 @@ The Course Creation Wizard enables instructors to create and publish courses thr
 **So that** I can keep content up-to-date
 
 **Acceptance Criteria:**
+
 - Can access wizard for published course
 - Can update all fields
 - Changes save immediately
@@ -138,7 +145,7 @@ const courseSchema = {
   title: v.string(),
   description: v.string(),
   instructorId: v.id('users'),
-  
+
   // NEW: Course lifecycle status
   status: v.union(
     v.literal('draft'),
@@ -146,27 +153,27 @@ const courseSchema = {
     v.literal('archived'),
     v.optional(v.literal('unpublished')) // Optional: was published, now hidden
   ),
-  
+
   // NEW: Track wizard progress
   currentStep: v.optional(v.number()), // 0-4 (which step instructor is on)
-  
+
   level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
   duration: v.optional(v.string()),
   price: v.optional(v.number()),
   thumbnailUrl: v.optional(v.string()),
-  
+
   // NEW: Video hosting metadata
   bunnyLibraryId: v.optional(v.string()), // Bunny.net Stream library ID
-  
+
   rating: v.optional(v.number()),
   reviewCount: v.optional(v.number()),
   tags: v.optional(v.array(v.string())),
   whatYouWillLearn: v.optional(v.array(v.string())),
   requirements: v.optional(v.array(v.string())),
-  
+
   // NEW: Track last update for student notifications
   lastUpdatedAt: v.optional(v.number()),
-  
+
   createdAt: v.number(),
   updatedAt: v.number(),
 };
@@ -184,26 +191,26 @@ courses: defineTable(courseSchema)
 
 ```typescript
 const lessonSchema = {
-  moduleId: v.id('courseModules'),
-  title: v.string(),
-  description: v.optional(v.string()),
-  type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
-  duration: v.optional(v.string()),
-  
-  // EXISTING video fields
-  videoUrl: v.optional(v.string()),
-  videoId: v.optional(v.string()),
-  
-  // NEW: Bunny.net Stream metadata
-  bunnyVideoId: v.optional(v.string()), // Bunny.net video GUID
-  bunnyVideoStatus: v.optional(v.string()), // 'uploading', 'processing', 'ready', 'failed'
-  bunnyThumbnailUrl: v.optional(v.string()),
-  bunnyPlaybackUrl: v.optional(v.string()),
-  
-  content: v.optional(v.string()),
-  isPreview: v.boolean(),
-  order: v.number(),
-  createdAt: v.number(),
+	moduleId: v.id('courseModules'),
+	title: v.string(),
+	description: v.optional(v.string()),
+	type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
+	duration: v.optional(v.string()),
+
+	// EXISTING video fields
+	videoUrl: v.optional(v.string()),
+	videoId: v.optional(v.string()),
+
+	// NEW: Bunny.net Stream metadata
+	bunnyVideoId: v.optional(v.string()), // Bunny.net video GUID
+	bunnyVideoStatus: v.optional(v.string()), // 'uploading', 'processing', 'ready', 'failed'
+	bunnyThumbnailUrl: v.optional(v.string()),
+	bunnyPlaybackUrl: v.optional(v.string()),
+
+	content: v.optional(v.string()),
+	isPreview: v.boolean(),
+	order: v.number(),
+	createdAt: v.number(),
 };
 ```
 
@@ -214,27 +221,29 @@ const lessonSchema = {
 ```typescript
 // EXISTING notification types already include 'course_update'
 const notificationSchema = {
-  userId: v.id('users'),
-  title: v.string(),
-  description: v.string(),
-  type: v.union(
-    v.literal('course_update'), // ALREADY EXISTS ✅
-    v.literal('message'),
-    v.literal('announcement'),
-    v.literal('community'),
-    v.literal('live_session'),
-    v.literal('certificate'),
-    v.literal('milestone'),
-  ),
-  read: v.boolean(),
-  createdAt: v.number(),
-  link: v.optional(v.string()),
-  
-  // NEW: Store course reference for updates
-  metadata: v.optional(v.object({
-    courseId: v.optional(v.id('courses')),
-    courseName: v.optional(v.string()),
-  })),
+	userId: v.id('users'),
+	title: v.string(),
+	description: v.string(),
+	type: v.union(
+		v.literal('course_update'), // ALREADY EXISTS ✅
+		v.literal('message'),
+		v.literal('announcement'),
+		v.literal('community'),
+		v.literal('live_session'),
+		v.literal('certificate'),
+		v.literal('milestone'),
+	),
+	read: v.boolean(),
+	createdAt: v.number(),
+	link: v.optional(v.string()),
+
+	// NEW: Store course reference for updates
+	metadata: v.optional(
+		v.object({
+			courseId: v.optional(v.id('courses')),
+			courseName: v.optional(v.string()),
+		}),
+	),
 };
 ```
 
@@ -253,41 +262,41 @@ import { mutation } from './_generated/server';
  * Called when instructor first enters wizard and saves
  */
 export const createDraft = mutation({
-  args: {
-    title: v.string(), // Required for draft
-    description: v.optional(v.string()),
-    instructorId: v.id('users'),
-    currentStep: v.number(), // Which step they saved at (0-4)
-    
-    // Optional fields filled in later
-    level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
-    duration: v.optional(v.string()),
-    price: v.optional(v.number()),
-    thumbnailUrl: v.optional(v.string()),
-    tags: v.optional(v.array(v.string())),
-    whatYouWillLearn: v.optional(v.array(v.string())),
-    requirements: v.optional(v.array(v.string())),
-  },
-  handler: async (ctx, args) => {
-    // Verify user is instructor
-    const user = await ctx.db.get(args.instructorId);
-    if (!user || !user.isInstructor) {
-      throw new Error('Only instructors can create courses');
-    }
+	args: {
+		title: v.string(), // Required for draft
+		description: v.optional(v.string()),
+		instructorId: v.id('users'),
+		currentStep: v.number(), // Which step they saved at (0-4)
 
-    const now = Date.now();
-    const courseId = await ctx.db.insert('courses', {
-      ...args,
-      status: 'draft',
-      rating: 0,
-      reviewCount: 0,
-      createdAt: now,
-      updatedAt: now,
-      lastUpdatedAt: now,
-    });
+		// Optional fields filled in later
+		level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
+		duration: v.optional(v.string()),
+		price: v.optional(v.number()),
+		thumbnailUrl: v.optional(v.string()),
+		tags: v.optional(v.array(v.string())),
+		whatYouWillLearn: v.optional(v.array(v.string())),
+		requirements: v.optional(v.array(v.string())),
+	},
+	handler: async (ctx, args) => {
+		// Verify user is instructor
+		const user = await ctx.db.get(args.instructorId);
+		if (!user || !user.isInstructor) {
+			throw new Error('Only instructors can create courses');
+		}
 
-    return courseId;
-  },
+		const now = Date.now();
+		const courseId = await ctx.db.insert('courses', {
+			...args,
+			status: 'draft',
+			rating: 0,
+			reviewCount: 0,
+			createdAt: now,
+			updatedAt: now,
+			lastUpdatedAt: now,
+		});
+
+		return courseId;
+	},
 });
 ```
 
@@ -301,39 +310,39 @@ export const createDraft = mutation({
  * Called on every "Save Draft" click or step navigation
  */
 export const updateDraft = mutation({
-  args: {
-    id: v.id('courses'),
-    currentStep: v.optional(v.number()),
-    
-    // All fields optional - only update what changed
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
-    duration: v.optional(v.string()),
-    price: v.optional(v.number()),
-    thumbnailUrl: v.optional(v.string()),
-    tags: v.optional(v.array(v.string())),
-    whatYouWillLearn: v.optional(v.array(v.string())),
-    requirements: v.optional(v.array(v.string())),
-  },
-  handler: async (ctx, { id, ...updates }) => {
-    const course = await ctx.db.get(id);
-    if (!course) {
-      throw new Error('Course not found');
-    }
+	args: {
+		id: v.id('courses'),
+		currentStep: v.optional(v.number()),
 
-    // Only allow updating drafts or published courses
-    if (course.status === 'archived') {
-      throw new Error('Cannot update archived course');
-    }
+		// All fields optional - only update what changed
+		title: v.optional(v.string()),
+		description: v.optional(v.string()),
+		level: v.optional(v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('advanced'))),
+		duration: v.optional(v.string()),
+		price: v.optional(v.number()),
+		thumbnailUrl: v.optional(v.string()),
+		tags: v.optional(v.array(v.string())),
+		whatYouWillLearn: v.optional(v.array(v.string())),
+		requirements: v.optional(v.array(v.string())),
+	},
+	handler: async (ctx, { id, ...updates }) => {
+		const course = await ctx.db.get(id);
+		if (!course) {
+			throw new Error('Course not found');
+		}
 
-    await ctx.db.patch(id, {
-      ...updates,
-      updatedAt: Date.now(),
-    });
+		// Only allow updating drafts or published courses
+		if (course.status === 'archived') {
+			throw new Error('Cannot update archived course');
+		}
 
-    return id;
-  },
+		await ctx.db.patch(id, {
+			...updates,
+			updatedAt: Date.now(),
+		});
+
+		return id;
+	},
 });
 ```
 
@@ -347,106 +356,102 @@ export const updateDraft = mutation({
  * Validates minimum requirements before publishing
  */
 export const publish = mutation({
-  args: {
-    id: v.id('courses'),
-  },
-  handler: async (ctx, { id }) => {
-    const course = await ctx.db.get(id);
-    if (!course) {
-      throw new Error('Course not found');
-    }
+	args: {
+		id: v.id('courses'),
+	},
+	handler: async (ctx, { id }) => {
+		const course = await ctx.db.get(id);
+		if (!course) {
+			throw new Error('Course not found');
+		}
 
-    // Validate publishing requirements
-    const errors: string[] = [];
+		// Validate publishing requirements
+		const errors: string[] = [];
 
-    // 1. Must have thumbnail
-    if (!course.thumbnailUrl) {
-      errors.push('Course must have a thumbnail image');
-    }
+		// 1. Must have thumbnail
+		if (!course.thumbnailUrl) {
+			errors.push('Course must have a thumbnail image');
+		}
 
-    // 2. Must have pricing set (can be 0 for free)
-    if (course.price === undefined || course.price === null) {
-      errors.push('Course must have pricing set');
-    }
+		// 2. Must have pricing set (can be 0 for free)
+		if (course.price === undefined || course.price === null) {
+			errors.push('Course must have pricing set');
+		}
 
-    // 3. Must have at least 1 module
-    const modules = await ctx.db
-      .query('courseModules')
-      .withIndex('by_course', q => q.eq('courseId', id))
-      .collect();
+		// 3. Must have at least 1 module
+		const modules = await ctx.db
+			.query('courseModules')
+			.withIndex('by_course', q => q.eq('courseId', id))
+			.collect();
 
-    if (modules.length === 0) {
-      errors.push('Course must have at least one module');
-    }
+		if (modules.length === 0) {
+			errors.push('Course must have at least one module');
+		}
 
-    // 4. Must have at least 1 lesson
-    const hasLessons = await Promise.all(
-      modules.map(async module => {
-        const lessons = await ctx.db
-          .query('lessons')
-          .withIndex('by_module', q => q.eq('moduleId', module._id))
-          .collect();
-        return lessons.length > 0;
-      })
-    );
+		// 4. Must have at least 1 lesson
+		const hasLessons = await Promise.all(
+			modules.map(async module => {
+				const lessons = await ctx.db
+					.query('lessons')
+					.withIndex('by_module', q => q.eq('moduleId', module._id))
+					.collect();
+				return lessons.length > 0;
+			}),
+		);
 
-    if (!hasLessons.some(has => has)) {
-      errors.push('Course must have at least one lesson');
-    }
+		if (!hasLessons.some(has => has)) {
+			errors.push('Course must have at least one lesson');
+		}
 
-    if (errors.length > 0) {
-      throw new Error(`Cannot publish course:\n${errors.join('\n')}`);
-    }
+		if (errors.length > 0) {
+			throw new Error(`Cannot publish course:\n${errors.join('\n')}`);
+		}
 
-    // All validations passed - publish course
-    const now = Date.now();
-    await ctx.db.patch(id, {
-      status: 'published',
-      updatedAt: now,
-      lastUpdatedAt: now,
-    });
+		// All validations passed - publish course
+		const now = Date.now();
+		await ctx.db.patch(id, {
+			status: 'published',
+			updatedAt: now,
+			lastUpdatedAt: now,
+		});
 
-    // If editing existing published course, notify enrolled students
-    if (course.status === 'published') {
-      await notifyEnrolledStudents(ctx, id, course.title);
-    }
+		// If editing existing published course, notify enrolled students
+		if (course.status === 'published') {
+			await notifyEnrolledStudents(ctx, id, course.title);
+		}
 
-    return id;
-  },
+		return id;
+	},
 });
 
 /**
  * Helper: Notify enrolled students when course is updated
  */
-async function notifyEnrolledStudents(
-  ctx: any,
-  courseId: string,
-  courseName: string
-) {
-  const enrollments = await ctx.db
-    .query('enrollments')
-    .withIndex('by_course', q => q.eq('courseId', courseId))
-    .collect();
+async function notifyEnrolledStudents(ctx: any, courseId: string, courseName: string) {
+	const enrollments = await ctx.db
+		.query('enrollments')
+		.withIndex('by_course', q => q.eq('courseId', courseId))
+		.collect();
 
-  // Create notification for each enrolled student
-  const now = Date.now();
-  await Promise.all(
-    enrollments.map(enrollment =>
-      ctx.db.insert('notifications', {
-        userId: enrollment.userId,
-        title: 'Course Updated',
-        description: `${courseName} has new content!`,
-        type: 'course_update',
-        read: false,
-        createdAt: now,
-        link: `/courses/${courseId}`,
-        metadata: {
-          courseId,
-          courseName,
-        },
-      })
-    )
-  );
+	// Create notification for each enrolled student
+	const now = Date.now();
+	await Promise.all(
+		enrollments.map(enrollment =>
+			ctx.db.insert('notifications', {
+				userId: enrollment.userId,
+				title: 'Course Updated',
+				description: `${courseName} has new content!`,
+				type: 'course_update',
+				read: false,
+				createdAt: now,
+				link: `/courses/${courseId}`,
+				metadata: {
+					courseId,
+					courseName,
+				},
+			}),
+		),
+	);
 }
 ```
 
@@ -462,22 +467,22 @@ async function notifyEnrolledStudents(
  * - Hidden from catalog
  */
 export const archive = mutation({
-  args: {
-    id: v.id('courses'),
-  },
-  handler: async (ctx, { id }) => {
-    const course = await ctx.db.get(id);
-    if (!course) {
-      throw new Error('Course not found');
-    }
+	args: {
+		id: v.id('courses'),
+	},
+	handler: async (ctx, { id }) => {
+		const course = await ctx.db.get(id);
+		if (!course) {
+			throw new Error('Course not found');
+		}
 
-    await ctx.db.patch(id, {
-      status: 'archived',
-      updatedAt: Date.now(),
-    });
+		await ctx.db.patch(id, {
+			status: 'archived',
+			updatedAt: Date.now(),
+		});
 
-    return id;
-  },
+		return id;
+	},
 });
 ```
 
@@ -493,88 +498,86 @@ import { mutation, query } from './_generated/server';
  * Create a new module for a course
  */
 export const create = mutation({
-  args: {
-    courseId: v.id('courses'),
-    title: v.string(),
-    description: v.optional(v.string()),
-    order: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const course = await ctx.db.get(args.courseId);
-    if (!course) {
-      throw new Error('Course not found');
-    }
+	args: {
+		courseId: v.id('courses'),
+		title: v.string(),
+		description: v.optional(v.string()),
+		order: v.number(),
+	},
+	handler: async (ctx, args) => {
+		const course = await ctx.db.get(args.courseId);
+		if (!course) {
+			throw new Error('Course not found');
+		}
 
-    const moduleId = await ctx.db.insert('courseModules', {
-      ...args,
-      createdAt: Date.now(),
-    });
+		const moduleId = await ctx.db.insert('courseModules', {
+			...args,
+			createdAt: Date.now(),
+		});
 
-    return moduleId;
-  },
+		return moduleId;
+	},
 });
 
 /**
  * Update module
  */
 export const update = mutation({
-  args: {
-    id: v.id('courseModules'),
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    order: v.optional(v.number()),
-  },
-  handler: async (ctx, { id, ...updates }) => {
-    const module = await ctx.db.get(id);
-    if (!module) {
-      throw new Error('Module not found');
-    }
+	args: {
+		id: v.id('courseModules'),
+		title: v.optional(v.string()),
+		description: v.optional(v.string()),
+		order: v.optional(v.number()),
+	},
+	handler: async (ctx, { id, ...updates }) => {
+		const module = await ctx.db.get(id);
+		if (!module) {
+			throw new Error('Module not found');
+		}
 
-    await ctx.db.patch(id, updates);
-    return id;
-  },
+		await ctx.db.patch(id, updates);
+		return id;
+	},
 });
 
 /**
  * Delete module (and all its lessons)
  */
 export const remove = mutation({
-  args: {
-    id: v.id('courseModules'),
-  },
-  handler: async (ctx, { id }) => {
-    // Get all lessons in this module
-    const lessons = await ctx.db
-      .query('lessons')
-      .withIndex('by_module', q => q.eq('moduleId', id))
-      .collect();
+	args: {
+		id: v.id('courseModules'),
+	},
+	handler: async (ctx, { id }) => {
+		// Get all lessons in this module
+		const lessons = await ctx.db
+			.query('lessons')
+			.withIndex('by_module', q => q.eq('moduleId', id))
+			.collect();
 
-    // Delete all lessons
-    await Promise.all(
-      lessons.map(lesson => ctx.db.delete(lesson._id))
-    );
+		// Delete all lessons
+		await Promise.all(lessons.map(lesson => ctx.db.delete(lesson._id)));
 
-    // Delete module
-    await ctx.db.delete(id);
-    return id;
-  },
+		// Delete module
+		await ctx.db.delete(id);
+		return id;
+	},
 });
 
 /**
  * Get modules for a course
  */
 export const listByCourse = query({
-  args: {
-    courseId: v.id('courses'),
-  },
-  handler: async (ctx, { courseId }) => {
-    const modules = await ctx.db
-      .query('courseModules')
-      .withIndex('by_course', q => q.eq('courseId', courseId))
-      .collect();
+	args: {
+		courseId: v.id('courses'),
+	},
+	handler: async (ctx, { courseId }) => {
+		const modules = await ctx.db
+			.query('courseModules')
+			.withIndex('by_course', q => q.eq('courseId', courseId))
+			.collect();
 
-    return modules.sort((a, b) => a.order - b.order);
-  },
+		return modules.sort((a, b) => a.order - b.order);
+	},
 });
 ```
 
@@ -590,98 +593,98 @@ import { mutation, query } from './_generated/server';
  * Create a new lesson in a module
  */
 export const create = mutation({
-  args: {
-    moduleId: v.id('courseModules'),
-    title: v.string(),
-    description: v.optional(v.string()),
-    type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
-    duration: v.optional(v.string()),
-    content: v.optional(v.string()),
-    isPreview: v.boolean(),
-    order: v.number(),
-    
-    // Video fields (filled after upload)
-    videoUrl: v.optional(v.string()),
-    videoId: v.optional(v.string()),
-    bunnyVideoId: v.optional(v.string()),
-    bunnyVideoStatus: v.optional(v.string()),
-    bunnyThumbnailUrl: v.optional(v.string()),
-    bunnyPlaybackUrl: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const module = await ctx.db.get(args.moduleId);
-    if (!module) {
-      throw new Error('Module not found');
-    }
+	args: {
+		moduleId: v.id('courseModules'),
+		title: v.string(),
+		description: v.optional(v.string()),
+		type: v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment')),
+		duration: v.optional(v.string()),
+		content: v.optional(v.string()),
+		isPreview: v.boolean(),
+		order: v.number(),
 
-    const lessonId = await ctx.db.insert('lessons', {
-      ...args,
-      createdAt: Date.now(),
-    });
+		// Video fields (filled after upload)
+		videoUrl: v.optional(v.string()),
+		videoId: v.optional(v.string()),
+		bunnyVideoId: v.optional(v.string()),
+		bunnyVideoStatus: v.optional(v.string()),
+		bunnyThumbnailUrl: v.optional(v.string()),
+		bunnyPlaybackUrl: v.optional(v.string()),
+	},
+	handler: async (ctx, args) => {
+		const module = await ctx.db.get(args.moduleId);
+		if (!module) {
+			throw new Error('Module not found');
+		}
 
-    return lessonId;
-  },
+		const lessonId = await ctx.db.insert('lessons', {
+			...args,
+			createdAt: Date.now(),
+		});
+
+		return lessonId;
+	},
 });
 
 /**
  * Update lesson
  */
 export const update = mutation({
-  args: {
-    id: v.id('lessons'),
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    type: v.optional(v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment'))),
-    duration: v.optional(v.string()),
-    content: v.optional(v.string()),
-    isPreview: v.optional(v.boolean()),
-    order: v.optional(v.number()),
-    videoUrl: v.optional(v.string()),
-    videoId: v.optional(v.string()),
-    bunnyVideoId: v.optional(v.string()),
-    bunnyVideoStatus: v.optional(v.string()),
-    bunnyThumbnailUrl: v.optional(v.string()),
-    bunnyPlaybackUrl: v.optional(v.string()),
-  },
-  handler: async (ctx, { id, ...updates }) => {
-    const lesson = await ctx.db.get(id);
-    if (!lesson) {
-      throw new Error('Lesson not found');
-    }
+	args: {
+		id: v.id('lessons'),
+		title: v.optional(v.string()),
+		description: v.optional(v.string()),
+		type: v.optional(v.union(v.literal('video'), v.literal('quiz'), v.literal('assignment'))),
+		duration: v.optional(v.string()),
+		content: v.optional(v.string()),
+		isPreview: v.optional(v.boolean()),
+		order: v.optional(v.number()),
+		videoUrl: v.optional(v.string()),
+		videoId: v.optional(v.string()),
+		bunnyVideoId: v.optional(v.string()),
+		bunnyVideoStatus: v.optional(v.string()),
+		bunnyThumbnailUrl: v.optional(v.string()),
+		bunnyPlaybackUrl: v.optional(v.string()),
+	},
+	handler: async (ctx, { id, ...updates }) => {
+		const lesson = await ctx.db.get(id);
+		if (!lesson) {
+			throw new Error('Lesson not found');
+		}
 
-    await ctx.db.patch(id, updates);
-    return id;
-  },
+		await ctx.db.patch(id, updates);
+		return id;
+	},
 });
 
 /**
  * Delete lesson
  */
 export const remove = mutation({
-  args: {
-    id: v.id('lessons'),
-  },
-  handler: async (ctx, { id }) => {
-    await ctx.db.delete(id);
-    return id;
-  },
+	args: {
+		id: v.id('lessons'),
+	},
+	handler: async (ctx, { id }) => {
+		await ctx.db.delete(id);
+		return id;
+	},
 });
 
 /**
  * Get lessons for a module
  */
 export const listByModule = query({
-  args: {
-    moduleId: v.id('courseModules'),
-  },
-  handler: async (ctx, { moduleId }) => {
-    const lessons = await ctx.db
-      .query('lessons')
-      .withIndex('by_module', q => q.eq('moduleId', moduleId))
-      .collect();
+	args: {
+		moduleId: v.id('courseModules'),
+	},
+	handler: async (ctx, { moduleId }) => {
+		const lessons = await ctx.db
+			.query('lessons')
+			.withIndex('by_module', q => q.eq('moduleId', moduleId))
+			.collect();
 
-    return lessons.sort((a, b) => a.order - b.order);
-  },
+		return lessons.sort((a, b) => a.order - b.order);
+	},
 });
 ```
 
@@ -692,12 +695,14 @@ export const listByModule = query({
 **Decision**: Use Bunny.net Stream (90% cheaper than AWS)
 
 **Pricing:**
+
 - Storage: $0.01/GB/month
 - Encoding (1080p): $0.05/minute
 - CDN Delivery (US/EU): $0.01/GB
 - Estimated cost for 100 courses (300 hours): ~$59/month
 
 **Setup Requirements:**
+
 1. Create Bunny.net account
 2. Create Stream library (get Library ID and API Key)
 3. Store credentials in environment variables
@@ -726,14 +731,14 @@ const BUNNY_API_KEY = process.env.BUNNY_STREAM_API_KEY!;
 const BUNNY_CDN_HOSTNAME = process.env.BUNNY_STREAM_CDN_HOSTNAME!;
 
 export interface BunnyVideoResponse {
-  guid: string;
-  videoLibraryId: number;
-  title: string;
-  status: number; // 0=queued, 1=processing, 2=encoding, 3=finished, 4=failed
-  thumbnailUrl: string;
-  length: number; // seconds
-  width: number;
-  height: number;
+	guid: string;
+	videoLibraryId: number;
+	title: string;
+	status: number; // 0=queued, 1=processing, 2=encoding, 3=finished, 4=failed
+	thumbnailUrl: string;
+	length: number; // seconds
+	width: number;
+	height: number;
 }
 
 /**
@@ -741,83 +746,71 @@ export interface BunnyVideoResponse {
  * Returns video GUID for upload
  */
 export async function createBunnyVideo(title: string): Promise<string> {
-  const response = await fetch(
-    `${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos`,
-    {
-      method: 'POST',
-      headers: {
-        'AccessKey': BUNNY_API_KEY,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title }),
-    }
-  );
+	const response = await fetch(`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos`, {
+		method: 'POST',
+		headers: {
+			AccessKey: BUNNY_API_KEY,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ title }),
+	});
 
-  if (!response.ok) {
-    throw new Error(`Failed to create video: ${response.statusText}`);
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to create video: ${response.statusText}`);
+	}
 
-  const data: BunnyVideoResponse = await response.json();
-  return data.guid;
+	const data: BunnyVideoResponse = await response.json();
+	return data.guid;
 }
 
 /**
  * Upload video file to Bunny.net Stream
  * Must be called after createBunnyVideo()
  */
-export async function uploadBunnyVideo(
-  videoGuid: string,
-  videoFile: File
-): Promise<void> {
-  const response = await fetch(
-    `${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoGuid}`,
-    {
-      method: 'PUT',
-      headers: {
-        'AccessKey': BUNNY_API_KEY,
-        'Content-Type': 'application/octet-stream',
-      },
-      body: videoFile,
-    }
-  );
+export async function uploadBunnyVideo(videoGuid: string, videoFile: File): Promise<void> {
+	const response = await fetch(`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoGuid}`, {
+		method: 'PUT',
+		headers: {
+			AccessKey: BUNNY_API_KEY,
+			'Content-Type': 'application/octet-stream',
+		},
+		body: videoFile,
+	});
 
-  if (!response.ok) {
-    throw new Error(`Failed to upload video: ${response.statusText}`);
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to upload video: ${response.statusText}`);
+	}
 }
 
 /**
  * Get video status and metadata
  */
 export async function getBunnyVideo(videoGuid: string): Promise<BunnyVideoResponse> {
-  const response = await fetch(
-    `${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoGuid}`,
-    {
-      headers: {
-        'AccessKey': BUNNY_API_KEY,
-      },
-    }
-  );
+	const response = await fetch(`${BUNNY_API_BASE}/library/${BUNNY_LIBRARY_ID}/videos/${videoGuid}`, {
+		headers: {
+			AccessKey: BUNNY_API_KEY,
+		},
+	});
 
-  if (!response.ok) {
-    throw new Error(`Failed to get video: ${response.statusText}`);
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to get video: ${response.statusText}`);
+	}
 
-  return response.json();
+	return response.json();
 }
 
 /**
  * Get video playback URL
  */
 export function getBunnyPlaybackUrl(videoGuid: string): string {
-  return `https://${BUNNY_CDN_HOSTNAME}/${videoGuid}/playlist.m3u8`;
+	return `https://${BUNNY_CDN_HOSTNAME}/${videoGuid}/playlist.m3u8`;
 }
 
 /**
  * Get video thumbnail URL
  */
 export function getBunnyThumbnailUrl(videoGuid: string): string {
-  return `https://${BUNNY_CDN_HOSTNAME}/${videoGuid}/thumbnail.jpg`;
+	return `https://${BUNNY_CDN_HOSTNAME}/${videoGuid}/thumbnail.jpg`;
 }
 ```
 
@@ -832,12 +825,12 @@ import { Upload, Video, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { 
-  createBunnyVideo, 
-  uploadBunnyVideo, 
+import {
+  createBunnyVideo,
+  uploadBunnyVideo,
   getBunnyVideo,
   getBunnyPlaybackUrl,
-  getBunnyThumbnailUrl 
+  getBunnyThumbnailUrl
 } from '@/lib/bunny-stream';
 
 interface VideoUploadProps {
@@ -1028,18 +1021,18 @@ const MAX_RETRY_ATTEMPTS = 3;
 export default function CourseWizard() {
   const searchParams = useSearchParams();
   const courseId = searchParams.get('id') as Id<'courses'> | null;
-  
+
   const form = useForm<CreateCourseWizardType>({
     mode: 'onChange',
     reValidateMode: 'onBlur',
     defaultValues: CreateCourseDefaultValues,
   });
-  
+
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [retryAttempt, setRetryAttempt] = useState(0);
-  
+
   const { user } = useAuth();
   const router = useRouter();
 
@@ -1048,7 +1041,7 @@ export default function CourseWizard() {
   const updateDraft = useMutation(api.courses.updateDraft);
   const publishCourse = useMutation(api.courses.publish);
   const existingCourse = useQuery(
-    api.courses.get, 
+    api.courses.get,
     courseId ? { id: courseId } : 'skip'
   );
 
@@ -1112,23 +1105,23 @@ export default function CourseWizard() {
 
     try {
       await saveDraftWithRetry(data);
-      
+
       // Clear localStorage backup on successful save
       localStorage.removeItem(STORAGE_KEY);
-      
+
       toast.success('Draft saved successfully');
       setRetryAttempt(0);
-      
+
     } catch (error) {
       console.error('Failed to save draft after retries:', error);
-      
+
       // Save to localStorage as backup
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         formData: data,
         currentStep,
         timestamp: Date.now(),
       }));
-      
+
       toast.error(
         'Failed to save draft. Your changes are backed up locally.',
         {
@@ -1137,7 +1130,7 @@ export default function CourseWizard() {
         }
       );
     }
-    
+
     setIsSaving(false);
   };
 
@@ -1170,16 +1163,16 @@ export default function CourseWizard() {
           description: data.description,
           // ... map all fields
         });
-        
+
         // Update URL with new course ID
         router.replace(`/instructor/courses/wizard?id=${newCourseId}`);
         return newCourseId;
       }
-      
+
     } catch (error) {
       if (attempt < MAX_RETRY_ATTEMPTS) {
         // Wait before retry (exponential backoff)
-        await new Promise(resolve => 
+        await new Promise(resolve =>
           setTimeout(resolve, 1000 * Math.pow(2, attempt))
         );
         return saveDraftWithRetry(data, attempt + 1);
@@ -1196,7 +1189,7 @@ export default function CourseWizard() {
       toast.error('Please save your course first');
       return;
     }
-    
+
     // Open preview in new tab
     window.open(`/courses/${courseId}/preview`, '_blank');
   };
@@ -1214,20 +1207,20 @@ export default function CourseWizard() {
 
     try {
       await publishCourse({ id: courseId });
-      
+
       toast.success('Course published successfully!');
       router.push('/instructor/dashboard');
-      
+
     } catch (error) {
       console.error('Failed to publish course:', error);
-      
-      const errorMessage = error instanceof Error 
-        ? error.message 
+
+      const errorMessage = error instanceof Error
+        ? error.message
         : 'Failed to publish course';
-        
+
       toast.error(errorMessage);
     }
-    
+
     setIsLoading(false);
   };
 
@@ -1248,8 +1241,8 @@ export default function CourseWizard() {
             <button
               key={index}
               className={`flex flex-col items-center space-y-2 ${
-                index <= currentStep 
-                  ? 'text-primary' 
+                index <= currentStep
+                  ? 'text-primary'
                   : 'text-muted-foreground'
               }`}
               onClick={() => {
@@ -1267,8 +1260,8 @@ export default function CourseWizard() {
                       : 'border-muted-foreground text-muted-foreground'
                 }`}
               >
-                {index < currentStep 
-                  ? <CheckCircle2 className="h-5 w-5" /> 
+                {index < currentStep
+                  ? <CheckCircle2 className="h-5 w-5" />
                   : index + 1
                 }
               </div>
@@ -1276,7 +1269,7 @@ export default function CourseWizard() {
             </button>
           ))}
         </div>
-        
+
         <Progress value={progressPercentage} className="h-2" />
       </div>
 
@@ -1291,8 +1284,8 @@ export default function CourseWizard() {
       <div className="flex justify-between mt-8">
         <div>
           {currentStep > 0 && (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handlePrevious}
               className="flex items-center gap-2"
             >
@@ -1301,7 +1294,7 @@ export default function CourseWizard() {
             </Button>
           )}
         </div>
-        
+
         <div className="flex space-x-2">
           <Button
             variant="outline"
@@ -1310,23 +1303,23 @@ export default function CourseWizard() {
             className="flex items-center gap-2"
           >
             <Save className="h-4 w-4" />
-            {isSaving 
+            {isSaving
               ? `Saving... ${retryAttempt > 0 ? `(Retry ${retryAttempt}/${MAX_RETRY_ATTEMPTS})` : ''}`
               : 'Save Draft'
             }
           </Button>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             onClick={handlePreview}
             className="flex items-center gap-2"
           >
             <Eye className="h-4 w-4" />
             Preview
           </Button>
-          
+
           {currentStep < steps.length - 1 ? (
-            <Button 
+            <Button
               onClick={handleNext}
               className="flex items-center gap-2"
             >
@@ -1334,7 +1327,7 @@ export default function CourseWizard() {
               <ChevronRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button 
+            <Button
               onClick={handlePublish}
               disabled={isLoading}
               className="flex items-center gap-2"
@@ -1362,6 +1355,7 @@ Add `VideoUpload` component integration for video lessons.
 ### 4.1 Step 1: Basic Info
 
 **Required Fields:**
+
 - Title (required for draft)
 - Description
 - Category
@@ -1371,33 +1365,39 @@ Add `VideoUpload` component integration for video lessons.
 - Discussion forum option
 
 **Validation:**
+
 - Title: Min 10 characters, max 100
 - Description: Min 50 characters, max 1000
 - Thumbnail: Image file, 16:9 aspect ratio preferred
 
 **Save Behavior:**
+
 - Creates initial course record with status `draft`
 - Stores `currentStep: 0`
 
 ### 4.2 Step 2: Structure
 
 **Fields:**
+
 - Modules (array)
   - Module title
   - Module description
   - Order
 
 **Validation:**
+
 - At least 1 module (for publish)
 - Module title: Min 5 characters
 
 **Save Behavior:**
+
 - Creates/updates modules in `courseModules` table
 - Maintains order for display
 
 ### 4.3 Step 3: Content
 
 **Fields:**
+
 - For each module's lessons:
   - Lesson title
   - Lesson type (video, quiz, assignment)
@@ -1407,11 +1407,13 @@ Add `VideoUpload` component integration for video lessons.
   - Is preview (free preview lesson)
 
 **Validation:**
+
 - At least 1 lesson (for publish)
 - Video lessons must have uploaded video
 - Quiz lessons must have at least 1 question
 
 **Save Behavior:**
+
 - Creates/updates lessons in `lessons` table
 - Uploads videos to Bunny.net Stream
 - Stores video metadata (bunnyVideoId, playbackUrl, etc.)
@@ -1419,30 +1421,36 @@ Add `VideoUpload` component integration for video lessons.
 ### 4.4 Step 4: Pricing
 
 **Fields:**
+
 - Price (can be 0 for free)
 - Currency (default USD)
 - Free course checkbox
 
 **Validation:**
+
 - Price: >= 0
 - Free courses: Check instructor tier (implement later)
 
 **Save Behavior:**
+
 - Updates course with pricing information
 
 ### 4.5 Step 5: Review
 
 **Display:**
+
 - Summary of all course information
 - Module and lesson count
 - Total duration
 - Preview button
 
 **Actions:**
+
 - Save Draft (final save before publish)
 - Publish (validate requirements, change status)
 
 **Validation (Publish):**
+
 - Title ✅
 - Description ✅
 - Thumbnail ✅
@@ -1579,27 +1587,23 @@ api.lessons.listByModule(args: {
 **Strategy**: Exponential backoff with 3 retry attempts
 
 ```typescript
-const saveDraftWithRetry = async (
-  data: CreateCourseWizardType,
-  attempt = 1
-): Promise<Id<'courses'>> => {
-  try {
-    // Attempt save
-    return await saveDraft(data);
-  } catch (error) {
-    if (attempt < MAX_RETRY_ATTEMPTS) {
-      // Wait before retry: 1s, 2s, 4s
-      await new Promise(resolve => 
-        setTimeout(resolve, 1000 * Math.pow(2, attempt))
-      );
-      return saveDraftWithRetry(data, attempt + 1);
-    }
-    throw error; // All retries failed
-  }
+const saveDraftWithRetry = async (data: CreateCourseWizardType, attempt = 1): Promise<Id<'courses'>> => {
+	try {
+		// Attempt save
+		return await saveDraft(data);
+	} catch (error) {
+		if (attempt < MAX_RETRY_ATTEMPTS) {
+			// Wait before retry: 1s, 2s, 4s
+			await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, attempt)));
+			return saveDraftWithRetry(data, attempt + 1);
+		}
+		throw error; // All retries failed
+	}
 };
 ```
 
 **UI Feedback:**
+
 - Show "Saving... (Retry 1/3)" during retries
 - Show success toast on save
 - Show error toast if all retries fail
@@ -1607,16 +1611,18 @@ const saveDraftWithRetry = async (
 ### 6.2 localStorage Backup
 
 **When to Backup:**
+
 - After each form field change (debounced)
 - Before page unload
 - After failed save (all retries exhausted)
 
 **Backup Structure:**
+
 ```typescript
 interface WizardBackup {
-  formData: CreateCourseWizardType;
-  currentStep: number;
-  timestamp: number;
+	formData: CreateCourseWizardType;
+	currentStep: number;
+	timestamp: number;
 }
 
 // Save backup
@@ -1625,8 +1631,8 @@ localStorage.setItem('course-wizard-backup', JSON.stringify(backup));
 // Restore backup
 const backup = JSON.parse(localStorage.getItem('course-wizard-backup'));
 if (backup && Date.now() - backup.timestamp < 24 * 60 * 60 * 1000) {
-  form.reset(backup.formData);
-  setCurrentStep(backup.currentStep);
+	form.reset(backup.formData);
+	setCurrentStep(backup.currentStep);
 }
 
 // Clear backup
@@ -1636,12 +1642,14 @@ localStorage.removeItem('course-wizard-backup');
 ### 6.3 Validation Errors
 
 **Display Strategy:**
+
 - Show errors after submit attempt (not while typing)
 - Inline errors below fields
 - Summary at top if multiple errors
 - Toast notifications for server errors
 
 **Example Error Messages:**
+
 ```typescript
 // Publishing validation errors
 const errors = [
@@ -1665,26 +1673,28 @@ toast.error(
 ### 6.4 Video Upload Errors
 
 **Common Errors:**
+
 - File too large (> 2GB)
 - Unsupported format
 - Upload timeout
 - Encoding failure
 
 **Handling:**
+
 ```typescript
 try {
-  await uploadVideo(file);
+	await uploadVideo(file);
 } catch (error) {
-  if (error.message.includes('timeout')) {
-    toast.error('Upload timeout. Please try again or use a smaller file.');
-  } else if (error.message.includes('format')) {
-    toast.error('Unsupported video format. Please use MP4, MOV, or AVI.');
-  } else {
-    toast.error(`Upload failed: ${error.message}`);
-  }
-  
-  // Show retry button
-  setShowRetryButton(true);
+	if (error.message.includes('timeout')) {
+		toast.error('Upload timeout. Please try again or use a smaller file.');
+	} else if (error.message.includes('format')) {
+		toast.error('Unsupported video format. Please use MP4, MOV, or AVI.');
+	} else {
+		toast.error(`Upload failed: ${error.message}`);
+	}
+
+	// Show retry button
+	setShowRetryButton(true);
 }
 ```
 
@@ -1695,6 +1705,7 @@ try {
 ### 7.1 Draft Requirements
 
 **To save as draft:**
+
 - ✅ Title (minimum 1 character)
 
 That's it! Everything else is optional for drafts.
@@ -1702,6 +1713,7 @@ That's it! Everything else is optional for drafts.
 ### 7.2 Publishing Requirements
 
 **To publish course:**
+
 1. ✅ Title (10-100 characters)
 2. ✅ Description (50-1000 characters)
 3. ✅ Thumbnail image uploaded
@@ -1710,99 +1722,107 @@ That's it! Everything else is optional for drafts.
 6. ✅ Pricing set (can be $0)
 
 **Implementation:**
+
 ```typescript
 export const publish = mutation({
-  args: { id: v.id('courses') },
-  handler: async (ctx, { id }) => {
-    const course = await ctx.db.get(id);
-    const errors: string[] = [];
+	args: { id: v.id('courses') },
+	handler: async (ctx, { id }) => {
+		const course = await ctx.db.get(id);
+		const errors: string[] = [];
 
-    // Validate title
-    if (!course.title || course.title.length < 10) {
-      errors.push('Title must be at least 10 characters');
-    }
+		// Validate title
+		if (!course.title || course.title.length < 10) {
+			errors.push('Title must be at least 10 characters');
+		}
 
-    // Validate description
-    if (!course.description || course.description.length < 50) {
-      errors.push('Description must be at least 50 characters');
-    }
+		// Validate description
+		if (!course.description || course.description.length < 50) {
+			errors.push('Description must be at least 50 characters');
+		}
 
-    // Validate thumbnail
-    if (!course.thumbnailUrl) {
-      errors.push('Course must have a thumbnail image');
-    }
+		// Validate thumbnail
+		if (!course.thumbnailUrl) {
+			errors.push('Course must have a thumbnail image');
+		}
 
-    // Validate pricing
-    if (course.price === undefined || course.price === null) {
-      errors.push('Course must have pricing set');
-    }
+		// Validate pricing
+		if (course.price === undefined || course.price === null) {
+			errors.push('Course must have pricing set');
+		}
 
-    // Validate modules
-    const modules = await ctx.db
-      .query('courseModules')
-      .withIndex('by_course', q => q.eq('courseId', id))
-      .collect();
+		// Validate modules
+		const modules = await ctx.db
+			.query('courseModules')
+			.withIndex('by_course', q => q.eq('courseId', id))
+			.collect();
 
-    if (modules.length === 0) {
-      errors.push('Course must have at least one module');
-    }
+		if (modules.length === 0) {
+			errors.push('Course must have at least one module');
+		}
 
-    // Validate lessons
-    const hasLessons = await Promise.all(
-      modules.map(async module => {
-        const lessons = await ctx.db
-          .query('lessons')
-          .withIndex('by_module', q => q.eq('moduleId', module._id))
-          .collect();
-        return lessons.length > 0;
-      })
-    );
+		// Validate lessons
+		const hasLessons = await Promise.all(
+			modules.map(async module => {
+				const lessons = await ctx.db
+					.query('lessons')
+					.withIndex('by_module', q => q.eq('moduleId', module._id))
+					.collect();
+				return lessons.length > 0;
+			}),
+		);
 
-    if (!hasLessons.some(has => has)) {
-      errors.push('Course must have at least one lesson');
-    }
+		if (!hasLessons.some(has => has)) {
+			errors.push('Course must have at least one lesson');
+		}
 
-    if (errors.length > 0) {
-      throw new Error(`Cannot publish course:\n${errors.join('\n')}`);
-    }
+		if (errors.length > 0) {
+			throw new Error(`Cannot publish course:\n${errors.join('\n')}`);
+		}
 
-    // Publish!
-    await ctx.db.patch(id, {
-      status: 'published',
-      updatedAt: Date.now(),
-    });
-  },
+		// Publish!
+		await ctx.db.patch(id, {
+			status: 'published',
+			updatedAt: Date.now(),
+		});
+	},
 });
 ```
 
 ### 7.3 Field Validation
 
 **Title:**
+
 - Required for draft
 - 10-100 characters for publish
 - No special characters except: `-`, `&`, `:`, `(`, `)`
 
 **Description:**
+
 - Optional for draft
 - 50-1000 characters for publish
 
 **Thumbnail:**
+
 - Image file (JPG, PNG, GIF)
 - Max 5MB
 - 16:9 aspect ratio recommended
 
 **Price:**
+
 - Number >= 0
 - Up to 2 decimal places
 - Required for publish
 
 **Module Title:**
+
 - 5-100 characters
 
 **Lesson Title:**
+
 - 5-100 characters
 
 **Video File:**
+
 - MP4, MOV, AVI
 - Max 2GB
 - Min 10 seconds
@@ -1816,6 +1836,7 @@ export const publish = mutation({
 **Route**: `/courses/[id]/preview`
 
 **Display:**
+
 - Course landing page (student purchase view)
 - Shows: title, description, pricing, curriculum, requirements
 - "Preview Mode" banner at top
@@ -1865,10 +1886,12 @@ export default async function CoursePreviewPage({
 ### 8.2 Preview Behavior
 
 **Draft Courses:**
+
 - Preview shows current draft state
 - Not accessible by students (requires instructor auth)
 
 **Published Courses:**
+
 - Preview shows live published state
 - Accessible by anyone (same as public landing page)
 
@@ -1881,19 +1904,21 @@ export default async function CoursePreviewPage({
 **Scenario:** User clicks "Save Draft", network drops mid-request
 
 **Handling:**
+
 1. Retry 3 times with exponential backoff
 2. If all retries fail, save to localStorage
 3. Show error toast: "Failed to save. Changes backed up locally."
 4. On next page load, detect localStorage backup and offer to restore
 
 **Implementation:**
+
 ```typescript
 // Detect backup on page load
 useEffect(() => {
   const backup = localStorage.getItem(STORAGE_KEY);
   if (backup) {
     const { formData, timestamp } = JSON.parse(backup);
-    
+
     // Only restore if < 24 hours old
     if (Date.now() - timestamp < 24 * 60 * 60 * 1000) {
       toast.info(
@@ -1905,8 +1930,8 @@ useEffect(() => {
               <Button onClick={() => restoreBackup(formData)}>
                 Restore
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => discardBackup()}
               >
                 Discard
@@ -1925,33 +1950,35 @@ useEffect(() => {
 **Scenario:** Large video takes too long to upload/encode
 
 **Handling:**
+
 1. Show upload progress bar
 2. Show encoding status: "Processing video... (This may take a few minutes)"
 3. Poll Bunny.net API for status (max 5 minutes)
 4. If timeout, show error with retry button
 
 **Implementation:**
+
 ```typescript
 const pollVideoStatus = async (videoGuid: string) => {
-  const maxAttempts = 60; // 5 minutes (5s per poll)
-  let attempts = 0;
+	const maxAttempts = 60; // 5 minutes (5s per poll)
+	let attempts = 0;
 
-  while (attempts < maxAttempts) {
-    const video = await getBunnyVideo(videoGuid);
+	while (attempts < maxAttempts) {
+		const video = await getBunnyVideo(videoGuid);
 
-    if (video.status === 3) {
-      return video; // Success
-    }
+		if (video.status === 3) {
+			return video; // Success
+		}
 
-    if (video.status === 4) {
-      throw new Error('Video encoding failed');
-    }
+		if (video.status === 4) {
+			throw new Error('Video encoding failed');
+		}
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    attempts++;
-  }
+		await new Promise(resolve => setTimeout(resolve, 5000));
+		attempts++;
+	}
 
-  throw new Error('Video encoding timeout. Please try again.');
+	throw new Error('Video encoding timeout. Please try again.');
 };
 ```
 
@@ -1960,45 +1987,54 @@ const pollVideoStatus = async (videoGuid: string) => {
 **Scenario:** User fills in some fields but not all, then closes browser
 
 **Handling:**
+
 1. Auto-save to localStorage every 30 seconds (debounced)
 2. Save to localStorage on page unload
 3. Restore from localStorage on next visit
 
 **Implementation:**
+
 ```typescript
 // Auto-save to localStorage
 const debouncedSave = useMemo(
-  () => debounce((data: CreateCourseWizardType) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      formData: data,
-      currentStep,
-      timestamp: Date.now(),
-    }));
-  }, 30000), // 30 seconds
-  [currentStep]
+	() =>
+		debounce((data: CreateCourseWizardType) => {
+			localStorage.setItem(
+				STORAGE_KEY,
+				JSON.stringify({
+					formData: data,
+					currentStep,
+					timestamp: Date.now(),
+				}),
+			);
+		}, 30000), // 30 seconds
+	[currentStep],
 );
 
 // Watch form changes
 useEffect(() => {
-  const subscription = form.watch(data => {
-    debouncedSave(data);
-  });
-  return () => subscription.unsubscribe();
+	const subscription = form.watch(data => {
+		debouncedSave(data);
+	});
+	return () => subscription.unsubscribe();
 }, [form, debouncedSave]);
 
 // Save on page unload
 useEffect(() => {
-  const handleUnload = () => {
-    const data = form.getValues();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      formData: data,
-      currentStep,
-      timestamp: Date.now(),
-    }));
-  };
+	const handleUnload = () => {
+		const data = form.getValues();
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				formData: data,
+				currentStep,
+				timestamp: Date.now(),
+			}),
+		);
+	};
 
-  window.addEventListener('beforeunload', handleUnload);
-  return () => window.removeEventListener('beforeunload', handleUnload);
+	window.addEventListener('beforeunload', handleUnload);
+	return () => window.removeEventListener('beforeunload', handleUnload);
 }, [form, currentStep]);
 ```
 
@@ -2007,25 +2043,27 @@ useEffect(() => {
 **Scenario:** User creates modules/lessons, then decides to delete some
 
 **Handling:**
+
 1. Show confirmation dialog: "Delete [module/lesson]? This cannot be undone."
 2. If module deleted, cascade delete all lessons
 3. Reorder remaining modules/lessons
 
 **Implementation:**
+
 ```typescript
 const handleDeleteModule = async (moduleId: Id<'courseModules'>) => {
-  const confirm = window.confirm(
-    'Delete this module? All lessons in this module will also be deleted. This cannot be undone.'
-  );
+	const confirm = window.confirm(
+		'Delete this module? All lessons in this module will also be deleted. This cannot be undone.',
+	);
 
-  if (!confirm) return;
+	if (!confirm) return;
 
-  try {
-    await removeModule({ id: moduleId });
-    toast.success('Module deleted');
-  } catch (error) {
-    toast.error('Failed to delete module');
-  }
+	try {
+		await removeModule({ id: moduleId });
+		toast.success('Module deleted');
+	} catch (error) {
+		toast.error('Failed to delete module');
+	}
 };
 ```
 
@@ -2034,30 +2072,29 @@ const handleDeleteModule = async (moduleId: Id<'courseModules'>) => {
 **Scenario:** Instructor opens wizard in 2 tabs, edits in both
 
 **Handling:**
+
 1. Each tab has its own form state
 2. Last save wins (optimistic concurrency)
 3. Show warning if another tab is detected
 
 **Implementation:**
+
 ```typescript
 // Detect multiple tabs
 useEffect(() => {
-  const channel = new BroadcastChannel('course-wizard');
-  
-  // Announce this tab
-  channel.postMessage({ type: 'tab-opened', courseId });
+	const channel = new BroadcastChannel('course-wizard');
 
-  // Listen for other tabs
-  channel.onmessage = (event) => {
-    if (event.data.type === 'tab-opened' && event.data.courseId === courseId) {
-      toast.warning(
-        'This course is open in another tab. Changes from both tabs will conflict.',
-        { autoClose: false }
-      );
-    }
-  };
+	// Announce this tab
+	channel.postMessage({ type: 'tab-opened', courseId });
 
-  return () => channel.close();
+	// Listen for other tabs
+	channel.onmessage = event => {
+		if (event.data.type === 'tab-opened' && event.data.courseId === courseId) {
+			toast.warning('This course is open in another tab. Changes from both tabs will conflict.', { autoClose: false });
+		}
+	};
+
+	return () => channel.close();
 }, [courseId]);
 ```
 
@@ -2078,120 +2115,118 @@ import schema from './schema';
 import { createDraft, updateDraft, publish, archive } from './courses';
 
 describe('Course mutations', () => {
-  test('createDraft creates course with draft status', async () => {
-    const t = convexTest(schema);
+	test('createDraft creates course with draft status', async () => {
+		const t = convexTest(schema);
 
-    // Create user
-    const userId = await t.run(async (ctx) => {
-      return await ctx.db.insert('users', {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        externalId: 'test-123',
-        isInstructor: true,
-        isAdmin: false,
-      });
-    });
+		// Create user
+		const userId = await t.run(async ctx => {
+			return await ctx.db.insert('users', {
+				firstName: 'John',
+				lastName: 'Doe',
+				email: 'john@example.com',
+				externalId: 'test-123',
+				isInstructor: true,
+				isAdmin: false,
+			});
+		});
 
-    // Create draft
-    const courseId = await t.mutation(createDraft, {
-      instructorId: userId,
-      title: 'Test Course',
-      currentStep: 0,
-    });
+		// Create draft
+		const courseId = await t.mutation(createDraft, {
+			instructorId: userId,
+			title: 'Test Course',
+			currentStep: 0,
+		});
 
-    // Verify
-    const course = await t.run(async (ctx) => {
-      return await ctx.db.get(courseId);
-    });
+		// Verify
+		const course = await t.run(async ctx => {
+			return await ctx.db.get(courseId);
+		});
 
-    expect(course).toBeDefined();
-    expect(course!.status).toBe('draft');
-    expect(course!.title).toBe('Test Course');
-    expect(course!.currentStep).toBe(0);
-  });
+		expect(course).toBeDefined();
+		expect(course!.status).toBe('draft');
+		expect(course!.title).toBe('Test Course');
+		expect(course!.currentStep).toBe(0);
+	});
 
-  test('publish validates requirements', async () => {
-    const t = convexTest(schema);
+	test('publish validates requirements', async () => {
+		const t = convexTest(schema);
 
-    // Create incomplete course
-    const courseId = await t.run(async (ctx) => {
-      return await ctx.db.insert('courses', {
-        title: 'Test',
-        description: 'Test',
-        instructorId: 'test' as any,
-        status: 'draft',
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-    });
+		// Create incomplete course
+		const courseId = await t.run(async ctx => {
+			return await ctx.db.insert('courses', {
+				title: 'Test',
+				description: 'Test',
+				instructorId: 'test' as any,
+				status: 'draft',
+				createdAt: Date.now(),
+				updatedAt: Date.now(),
+			});
+		});
 
-    // Try to publish (should fail - no thumbnail)
-    await expect(
-      t.mutation(publish, { id: courseId })
-    ).rejects.toThrow('Course must have a thumbnail image');
-  });
+		// Try to publish (should fail - no thumbnail)
+		await expect(t.mutation(publish, { id: courseId })).rejects.toThrow('Course must have a thumbnail image');
+	});
 
-  test('publish succeeds with all requirements', async () => {
-    const t = convexTest(schema);
+	test('publish succeeds with all requirements', async () => {
+		const t = convexTest(schema);
 
-    // Create complete course
-    const userId = await t.run(async (ctx) => {
-      return await ctx.db.insert('users', {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane@example.com',
-        externalId: 'test-456',
-        isInstructor: true,
-        isAdmin: false,
-      });
-    });
+		// Create complete course
+		const userId = await t.run(async ctx => {
+			return await ctx.db.insert('users', {
+				firstName: 'Jane',
+				lastName: 'Smith',
+				email: 'jane@example.com',
+				externalId: 'test-456',
+				isInstructor: true,
+				isAdmin: false,
+			});
+		});
 
-    const courseId = await t.run(async (ctx) => {
-      return await ctx.db.insert('courses', {
-        title: 'Complete Course',
-        description: 'This is a complete course description with at least 50 characters.',
-        instructorId: userId,
-        status: 'draft',
-        thumbnailUrl: 'https://example.com/thumb.jpg',
-        price: 99,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-    });
+		const courseId = await t.run(async ctx => {
+			return await ctx.db.insert('courses', {
+				title: 'Complete Course',
+				description: 'This is a complete course description with at least 50 characters.',
+				instructorId: userId,
+				status: 'draft',
+				thumbnailUrl: 'https://example.com/thumb.jpg',
+				price: 99,
+				createdAt: Date.now(),
+				updatedAt: Date.now(),
+			});
+		});
 
-    // Create module
-    const moduleId = await t.run(async (ctx) => {
-      return await ctx.db.insert('courseModules', {
-        courseId,
-        title: 'Module 1',
-        order: 0,
-        createdAt: Date.now(),
-      });
-    });
+		// Create module
+		const moduleId = await t.run(async ctx => {
+			return await ctx.db.insert('courseModules', {
+				courseId,
+				title: 'Module 1',
+				order: 0,
+				createdAt: Date.now(),
+			});
+		});
 
-    // Create lesson
-    await t.run(async (ctx) => {
-      return await ctx.db.insert('lessons', {
-        moduleId,
-        title: 'Lesson 1',
-        type: 'video',
-        isPreview: false,
-        order: 0,
-        createdAt: Date.now(),
-      });
-    });
+		// Create lesson
+		await t.run(async ctx => {
+			return await ctx.db.insert('lessons', {
+				moduleId,
+				title: 'Lesson 1',
+				type: 'video',
+				isPreview: false,
+				order: 0,
+				createdAt: Date.now(),
+			});
+		});
 
-    // Publish should succeed
-    await t.mutation(publish, { id: courseId });
+		// Publish should succeed
+		await t.mutation(publish, { id: courseId });
 
-    // Verify status
-    const course = await t.run(async (ctx) => {
-      return await ctx.db.get(courseId);
-    });
+		// Verify status
+		const course = await t.run(async ctx => {
+			return await ctx.db.get(courseId);
+		});
 
-    expect(course!.status).toBe('published');
-  });
+		expect(course!.status).toBe('published');
+	});
 });
 ```
 
@@ -2276,69 +2311,69 @@ import { create as createModule } from '@/convex/courseModules';
 import { create as createLesson } from '@/convex/lessons';
 
 describe('Course creation wizard flow', () => {
-  it('completes full course creation flow', async () => {
-    const t = convexTest(schema);
+	it('completes full course creation flow', async () => {
+		const t = convexTest(schema);
 
-    // 1. Create instructor
-    const userId = await t.run(async (ctx) => {
-      return await ctx.db.insert('users', {
-        firstName: 'Dr. Sarah',
-        lastName: 'Johnson',
-        email: 'sarah@example.com',
-        externalId: 'instructor-123',
-        isInstructor: true,
-        isAdmin: false,
-      });
-    });
+		// 1. Create instructor
+		const userId = await t.run(async ctx => {
+			return await ctx.db.insert('users', {
+				firstName: 'Dr. Sarah',
+				lastName: 'Johnson',
+				email: 'sarah@example.com',
+				externalId: 'instructor-123',
+				isInstructor: true,
+				isAdmin: false,
+			});
+		});
 
-    // 2. Create draft (Step 1: Basic Info)
-    const courseId = await t.mutation(createDraft, {
-      instructorId: userId,
-      title: 'Advanced Dermal Fillers Masterclass',
-      description: 'Comprehensive training on advanced dermal filler techniques for medical aesthetics professionals.',
-      currentStep: 0,
-    });
+		// 2. Create draft (Step 1: Basic Info)
+		const courseId = await t.mutation(createDraft, {
+			instructorId: userId,
+			title: 'Advanced Dermal Fillers Masterclass',
+			description: 'Comprehensive training on advanced dermal filler techniques for medical aesthetics professionals.',
+			currentStep: 0,
+		});
 
-    // 3. Update draft with thumbnail and pricing (Step 4: Pricing)
-    await t.mutation(updateDraft, {
-      id: courseId,
-      thumbnailUrl: 'https://example.com/course-thumb.jpg',
-      price: 299,
-      currentStep: 3,
-    });
+		// 3. Update draft with thumbnail and pricing (Step 4: Pricing)
+		await t.mutation(updateDraft, {
+			id: courseId,
+			thumbnailUrl: 'https://example.com/course-thumb.jpg',
+			price: 299,
+			currentStep: 3,
+		});
 
-    // 4. Create module (Step 2: Structure)
-    const moduleId = await t.mutation(createModule, {
-      courseId,
-      title: 'Introduction to Dermal Fillers',
-      description: 'Foundation concepts and safety',
-      order: 0,
-    });
+		// 4. Create module (Step 2: Structure)
+		const moduleId = await t.mutation(createModule, {
+			courseId,
+			title: 'Introduction to Dermal Fillers',
+			description: 'Foundation concepts and safety',
+			order: 0,
+		});
 
-    // 5. Create lesson (Step 3: Content)
-    await t.mutation(createLesson, {
-      moduleId,
-      title: 'Facial Anatomy Overview',
-      type: 'video',
-      isPreview: true,
-      order: 0,
-      bunnyVideoId: 'test-video-123',
-      bunnyPlaybackUrl: 'https://example.b-cdn.net/test-video-123/playlist.m3u8',
-      duration: '15:30',
-    });
+		// 5. Create lesson (Step 3: Content)
+		await t.mutation(createLesson, {
+			moduleId,
+			title: 'Facial Anatomy Overview',
+			type: 'video',
+			isPreview: true,
+			order: 0,
+			bunnyVideoId: 'test-video-123',
+			bunnyPlaybackUrl: 'https://example.b-cdn.net/test-video-123/playlist.m3u8',
+			duration: '15:30',
+		});
 
-    // 6. Publish course (Step 5: Review)
-    await t.mutation(publish, { id: courseId });
+		// 6. Publish course (Step 5: Review)
+		await t.mutation(publish, { id: courseId });
 
-    // Verify final state
-    const course = await t.run(async (ctx) => {
-      return await ctx.db.get(courseId);
-    });
+		// Verify final state
+		const course = await t.run(async ctx => {
+			return await ctx.db.get(courseId);
+		});
 
-    expect(course!.status).toBe('published');
-    expect(course!.title).toBe('Advanced Dermal Fillers Masterclass');
-    expect(course!.price).toBe(299);
-  });
+		expect(course!.status).toBe('published');
+		expect(course!.title).toBe('Advanced Dermal Fillers Masterclass');
+		expect(course!.price).toBe(299);
+	});
 });
 ```
 
@@ -2350,99 +2385,99 @@ describe('Course creation wizard flow', () => {
 import { test, expect } from '@playwright/test';
 
 test.describe('Course Creation Wizard', () => {
-  test.beforeEach(async ({ page }) => {
-    // Login as instructor
-    await page.goto('/sign-in');
-    await page.fill('[name="email"]', 'instructor@example.com');
-    await page.fill('[name="password"]', 'password123');
-    await page.click('button[type="submit"]');
-    
-    // Navigate to wizard
-    await page.goto('/instructor/courses/wizard');
-  });
+	test.beforeEach(async ({ page }) => {
+		// Login as instructor
+		await page.goto('/sign-in');
+		await page.fill('[name="email"]', 'instructor@example.com');
+		await page.fill('[name="password"]', 'password123');
+		await page.click('button[type="submit"]');
 
-  test('completes course creation flow', async ({ page }) => {
-    // Step 1: Basic Info
-    await page.fill('[name="title"]', 'E2E Test Course');
-    await page.fill('[name="description"]', 'This is a test course created by automated E2E tests.');
-    await page.selectOption('[name="category"]', 'botox');
-    
-    // Upload thumbnail
-    await page.setInputFiles('[name="thumbnail"]', 'tests/fixtures/course-thumb.jpg');
-    
-    // Next step
-    await page.click('button:has-text("Next")');
+		// Navigate to wizard
+		await page.goto('/instructor/courses/wizard');
+	});
 
-    // Step 2: Structure
-    await page.click('button:has-text("Add Module")');
-    await page.fill('[name="modules[0].title"]', 'Module 1');
-    await page.click('button:has-text("Next")');
+	test('completes course creation flow', async ({ page }) => {
+		// Step 1: Basic Info
+		await page.fill('[name="title"]', 'E2E Test Course');
+		await page.fill('[name="description"]', 'This is a test course created by automated E2E tests.');
+		await page.selectOption('[name="category"]', 'botox');
 
-    // Step 3: Content
-    await page.click('button:has-text("Add Lesson")');
-    await page.fill('[name="modules[0].lessons[0].title"]', 'Lesson 1');
-    await page.selectOption('[name="modules[0].lessons[0].type"]', 'video');
-    
-    // Upload video
-    await page.setInputFiles('[name="video"]', 'tests/fixtures/sample-video.mp4');
-    
-    // Wait for upload to complete
-    await page.waitForSelector('text=Upload complete', { timeout: 60000 });
-    
-    await page.click('button:has-text("Next")');
+		// Upload thumbnail
+		await page.setInputFiles('[name="thumbnail"]', 'tests/fixtures/course-thumb.jpg');
 
-    // Step 4: Pricing
-    await page.fill('[name="price"]', '99');
-    await page.click('button:has-text("Next")');
+		// Next step
+		await page.click('button:has-text("Next")');
 
-    // Step 5: Review & Publish
-    await expect(page.locator('text=E2E Test Course')).toBeVisible();
-    await expect(page.locator('text=Module 1')).toBeVisible();
-    await expect(page.locator('text=Lesson 1')).toBeVisible();
-    
-    await page.click('button:has-text("Publish Course")');
+		// Step 2: Structure
+		await page.click('button:has-text("Add Module")');
+		await page.fill('[name="modules[0].title"]', 'Module 1');
+		await page.click('button:has-text("Next")');
 
-    // Verify success
-    await expect(page.locator('text=Course published successfully')).toBeVisible();
-    await expect(page).toHaveURL('/instructor/dashboard');
-  });
+		// Step 3: Content
+		await page.click('button:has-text("Add Lesson")');
+		await page.fill('[name="modules[0].lessons[0].title"]', 'Lesson 1');
+		await page.selectOption('[name="modules[0].lessons[0].type"]', 'video');
 
-  test('saves draft and resumes later', async ({ page }) => {
-    // Fill in basic info
-    await page.fill('[name="title"]', 'Draft Course');
-    await page.fill('[name="description"]', 'This course is saved as a draft.');
-    
-    // Save draft
-    await page.click('button:has-text("Save Draft")');
-    await expect(page.locator('text=Draft saved successfully')).toBeVisible();
+		// Upload video
+		await page.setInputFiles('[name="video"]', 'tests/fixtures/sample-video.mp4');
 
-    // Navigate away
-    await page.goto('/instructor/dashboard');
+		// Wait for upload to complete
+		await page.waitForSelector('text=Upload complete', { timeout: 60000 });
 
-    // Return to wizard
-    await page.goto('/instructor/courses/wizard');
+		await page.click('button:has-text("Next")');
 
-    // Verify draft restored
-    await expect(page.locator('[name="title"]')).toHaveValue('Draft Course');
-    await expect(page.locator('[name="description"]')).toHaveValue('This course is saved as a draft.');
-  });
+		// Step 4: Pricing
+		await page.fill('[name="price"]', '99');
+		await page.click('button:has-text("Next")');
 
-  test('validates publishing requirements', async ({ page }) => {
-    // Try to publish without required fields
-    await page.fill('[name="title"]', 'Incomplete Course');
-    
-    // Go to review step without filling required fields
-    for (let i = 0; i < 4; i++) {
-      await page.click('button:has-text("Next")');
-    }
+		// Step 5: Review & Publish
+		await expect(page.locator('text=E2E Test Course')).toBeVisible();
+		await expect(page.locator('text=Module 1')).toBeVisible();
+		await expect(page.locator('text=Lesson 1')).toBeVisible();
 
-    // Try to publish
-    await page.click('button:has-text("Publish Course")');
+		await page.click('button:has-text("Publish Course")');
 
-    // Verify error messages
-    await expect(page.locator('text=Course must have a thumbnail')).toBeVisible();
-    await expect(page.locator('text=Course must have at least one module')).toBeVisible();
-  });
+		// Verify success
+		await expect(page.locator('text=Course published successfully')).toBeVisible();
+		await expect(page).toHaveURL('/instructor/dashboard');
+	});
+
+	test('saves draft and resumes later', async ({ page }) => {
+		// Fill in basic info
+		await page.fill('[name="title"]', 'Draft Course');
+		await page.fill('[name="description"]', 'This course is saved as a draft.');
+
+		// Save draft
+		await page.click('button:has-text("Save Draft")');
+		await expect(page.locator('text=Draft saved successfully')).toBeVisible();
+
+		// Navigate away
+		await page.goto('/instructor/dashboard');
+
+		// Return to wizard
+		await page.goto('/instructor/courses/wizard');
+
+		// Verify draft restored
+		await expect(page.locator('[name="title"]')).toHaveValue('Draft Course');
+		await expect(page.locator('[name="description"]')).toHaveValue('This course is saved as a draft.');
+	});
+
+	test('validates publishing requirements', async ({ page }) => {
+		// Try to publish without required fields
+		await page.fill('[name="title"]', 'Incomplete Course');
+
+		// Go to review step without filling required fields
+		for (let i = 0; i < 4; i++) {
+			await page.click('button:has-text("Next")');
+		}
+
+		// Try to publish
+		await page.click('button:has-text("Publish Course")');
+
+		// Verify error messages
+		await expect(page.locator('text=Course must have a thumbnail')).toBeVisible();
+		await expect(page.locator('text=Course must have at least one module')).toBeVisible();
+	});
 });
 ```
 
@@ -2458,6 +2493,7 @@ test.describe('Course Creation Wizard', () => {
 - ✅ E2E flow tested
 
 **Run Coverage:**
+
 ```bash
 yarn test:coverage
 ```
@@ -2469,6 +2505,7 @@ yarn test:coverage
 ### 11.1 Code Patterns
 
 **Follow Project Standards:**
+
 - See `.claude/standards/` for all coding standards
 - React Hook Form with Controller pattern for forms
 - Zod for validation schemas
@@ -2498,32 +2535,33 @@ yarn test:coverage
 
 ```typescript
 export const create = mutation({
-  args: {
-    field1: v.string(),
-    field2: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    // 1. Validate auth
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
+	args: {
+		field1: v.string(),
+		field2: v.optional(v.string()),
+	},
+	handler: async (ctx, args) => {
+		// 1. Validate auth
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
 
-    // 2. Validate data
-    if (!args.field1) throw new Error('Field1 is required');
+		// 2. Validate data
+		if (!args.field1) throw new Error('Field1 is required');
 
-    // 3. Perform operation
-    const id = await ctx.db.insert('table', {
-      ...args,
-      createdAt: Date.now(),
-    });
+		// 3. Perform operation
+		const id = await ctx.db.insert('table', {
+			...args,
+			createdAt: Date.now(),
+		});
 
-    return id;
-  },
+		return id;
+	},
 });
 ```
 
 ### 11.2 File Paths to Modify
 
 **Backend:**
+
 - ✅ `convex/schema.ts` - Add status, currentStep, bunny fields
 - ✅ `convex/courses.ts` - Add createDraft, updateDraft, publish, archive
 - ✅ `convex/courseModules.ts` - Add create, update, remove, listByCourse
@@ -2531,6 +2569,7 @@ export const create = mutation({
 - 🆕 `lib/bunny-stream.ts` - Bunny.net API client
 
 **Frontend:**
+
 - ✅ `app/instructor/courses/wizard/page.tsx` - Connect mutations
 - ✅ `components/course-wizard/basic-info-step.tsx` - Update form
 - ✅ `components/course-wizard/structure-step.tsx` - Add module CRUD
@@ -2541,9 +2580,11 @@ export const create = mutation({
 - 🆕 `app/courses/[id]/preview/page.tsx` - Preview page
 
 **Environment:**
+
 - ✅ `.env.local` - Add Bunny.net credentials
 
 **Tests:**
+
 - 🆕 `convex/courses.test.ts`
 - 🆕 `convex/courseModules.test.ts`
 - 🆕 `convex/lessons.test.ts`
@@ -2555,29 +2596,34 @@ export const create = mutation({
 ### 11.3 Best Practices
 
 **Data Persistence:**
+
 - Auto-save to localStorage every 30 seconds
 - Save on page unload
 - Clear localStorage on successful server save
 
 **Error Handling:**
+
 - Show loading states for all async operations
 - Retry failed mutations with exponential backoff
 - Provide clear error messages
 - Always have fallback UI
 
 **Performance:**
+
 - Debounce auto-save
 - Lazy load video player
 - Optimize images (thumbnail)
 - Use Suspense for data loading
 
 **Security:**
+
 - Validate on both client and server
 - Check instructor role before mutations
 - Verify course ownership before updates
 - Sanitize user input
 
 **Accessibility:**
+
 - Use semantic HTML
 - Provide ARIA labels
 - Support keyboard navigation
@@ -2592,18 +2638,20 @@ export const create = mutation({
 **When to Add:** If certification tracking becomes critical
 
 **Implementation:**
+
 - Add `versions` table
 - Store full course snapshot on each publish
 - Link certificates to specific version
 - Show "Completed Version 2.1" on certificates
 
 **Schema:**
+
 ```typescript
 const courseVersionSchema = {
-  courseId: v.id('courses'),
-  versionNumber: v.string(), // "1.0", "1.1", etc.
-  snapshot: v.any(), // Full course data
-  createdAt: v.number(),
+	courseId: v.id('courses'),
+	versionNumber: v.string(), // "1.0", "1.1", etc.
+	snapshot: v.any(), // Full course data
+	createdAt: v.number(),
 };
 ```
 
@@ -2612,7 +2660,8 @@ const courseVersionSchema = {
 **When to Add:** When implementing instructor subscription tiers
 
 **Implementation:**
-- Define tier limits: 
+
+- Define tier limits:
   - Free tier: 1 free course, max 500MB
   - Pro tier: Unlimited free courses, max 5GB each
   - Enterprise: Unlimited
@@ -2624,6 +2673,7 @@ const courseVersionSchema = {
 **Enhancement:** Show "Saving...", "Saved", "Failed to save" indicator
 
 **Implementation:**
+
 ```typescript
 const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
@@ -2638,6 +2688,7 @@ const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'erro
 **Enhancement:** Multiple instructors can edit the same course
 
 **Implementation:**
+
 - Add `courseCollaborators` table
 - Use WebSockets for real-time updates
 - Show "User X is editing Module Y" indicators
@@ -2648,6 +2699,7 @@ const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'erro
 **Enhancement:** Pre-built course templates for common formats
 
 **Implementation:**
+
 - Add "Start from template" option
 - Templates include structure + sample content
 - Examples: "6-Week Bootcamp", "Certification Course", "Webinar Series"
@@ -2657,6 +2709,7 @@ const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'erro
 **Enhancement:** Upload multiple videos at once
 
 **Implementation:**
+
 - Multi-file upload component
 - Batch create lessons from filenames
 - Show progress for each upload
@@ -2680,17 +2733,15 @@ courses: defineTable(courseSchema)
 ```typescript
 // Get all published courses
 const published = await ctx.db
-  .query('courses')
-  .withIndex('by_status', q => q.eq('status', 'published'))
-  .collect();
+	.query('courses')
+	.withIndex('by_status', q => q.eq('status', 'published'))
+	.collect();
 
 // Get instructor's drafts
 const drafts = await ctx.db
-  .query('courses')
-  .withIndex('by_instructor_status', q => 
-    q.eq('instructorId', userId).eq('status', 'draft')
-  )
-  .collect();
+	.query('courses')
+	.withIndex('by_instructor_status', q => q.eq('instructorId', userId).eq('status', 'draft'))
+	.collect();
 ```
 
 ---
@@ -2709,7 +2760,7 @@ This specification provides a complete implementation plan for the Course Creati
 ✅ Student notification system  
 ✅ Comprehensive testing strategy  
 ✅ Edge case handling  
-✅ Implementation best practices  
+✅ Implementation best practices
 
 **Ready for Implementation** 🚀
 

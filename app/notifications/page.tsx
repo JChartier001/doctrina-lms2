@@ -30,10 +30,12 @@ export default function NotificationsPage() {
 	const router = useRouter();
 
 	// Convex queries and mutations - using useQueryWithStatus for better type safety
-	const { isPending, isError, error, data: notifications } = useQueryWithStatus(
-		api.notifications.listForUser,
-		user?.id ? { userId: user.id as Id<'users'> } : 'skip'
-	);
+	const {
+		isPending,
+		isError,
+		error,
+		data: notifications,
+	} = useQueryWithStatus(api.notifications.listForUser, user?.id ? { userId: user.id as Id<'users'> } : 'skip');
 	const markAsReadMutation = useMutation(api.notifications.markAsRead);
 	const markAllAsReadMutation = useMutation(api.notifications.markAllAsRead);
 	const deleteNotificationMutation = useMutation(api.notifications.deleteNotification);
@@ -123,9 +125,7 @@ export default function NotificationsPage() {
 				<Card>
 					<CardHeader>
 						<CardTitle>Error Loading Notifications</CardTitle>
-						<CardDescription>
-							Failed to load notifications: {error?.message || 'Unknown error'}
-						</CardDescription>
+						<CardDescription>Failed to load notifications: {error?.message || 'Unknown error'}</CardDescription>
 					</CardHeader>
 					<CardContent>
 						<Button onClick={() => window.location.reload()}>Retry</Button>

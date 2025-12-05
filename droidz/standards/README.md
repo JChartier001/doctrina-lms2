@@ -6,6 +6,7 @@
 ## Purpose
 
 These standards ensure:
+
 - **Consistency**: All code follows the same patterns
 - **Quality**: Best practices enforced across the codebase
 - **Maintainability**: Code is easy to understand and modify
@@ -73,6 +74,7 @@ Vitest + Testing Library + convex-test:
 ## Tech Stack Overview
 
 ### Frontend
+
 - **Framework**: Next.js 16.0.1 (App Router, Turbopack)
 - **UI Library**: React 19.2.0
 - **Styling**: Tailwind CSS 4.1.17
@@ -81,12 +83,14 @@ Vitest + Testing Library + convex-test:
 - **Animation**: Framer Motion 12.23.24
 
 ### Backend & Database
+
 - **Backend**: Convex 1.28.2 (serverless, real-time)
 - **Database**: Convex (reactive, WebSocket-based)
 - **Auth**: Clerk 6.34.5
 - **Payments**: Stripe 19.3.0
 
 ### Testing & Quality
+
 - **Test Framework**: Vitest 4.0.8
 - **Testing Library**: @testing-library/react 16.3.0
 - **Convex Testing**: convex-test 0.0.38
@@ -94,6 +98,7 @@ Vitest + Testing Library + convex-test:
 - **Type Checking**: TypeScript 5.9.3 (strict mode)
 
 ### Development Tools
+
 - **Package Manager**: Bun 1.2.0 / Yarn 4.10.3
 - **Node Version**: 24.10.0 (Volta)
 
@@ -102,16 +107,19 @@ Vitest + Testing Library + convex-test:
 ### For Developers
 
 **Before starting work:**
+
 1. Read relevant standard for your task area
 2. Reference specific patterns during implementation
 3. Follow coding examples exactly
 
 **During development:**
+
 - Use standards as checklist for code review
 - Update standards when discovering new patterns
 - Ask questions if standards are unclear
 
 **Quality checks:**
+
 ```bash
 # Run before committing
 yarn verify  # Format + Lint + Type Check + Test with coverage
@@ -120,12 +128,14 @@ yarn verify  # Format + Lint + Type Check + Test with coverage
 ### For AI Assistants
 
 Standards are automatically:
+
 - Loaded during task planning
 - Referenced during code generation
 - Enforced during implementation
 - Checked during verification
 
 **Key patterns to follow:**
+
 1. Always use named exports (not default)
 2. Server Components by default, `'use client'` when needed
 3. `useQuery`/`useMutation` for Convex data (never REST)
@@ -155,6 +165,7 @@ Use this checklist:
 ### Pattern 1: Real-Time Data Fetching
 
 **Server Component (static data):**
+
 ```typescript
 // app/courses/page.tsx
 import { fetchApi } from 'convex/nextjs';
@@ -167,6 +178,7 @@ export default async function CoursesPage() {
 ```
 
 **Client Component (real-time updates):**
+
 ```typescript
 'use client';
 import { useQuery } from 'convex/react';
@@ -198,7 +210,7 @@ export function CourseForm() {
   const methods = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-  
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -229,13 +241,13 @@ import { query } from './_generated/server';
 import { v } from 'convex/values';
 
 export const getByEmail = query({
-  args: { email: v.string() },
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query('users')
-      .withIndex('by_email', q => q.eq('email', args.email))
-      .first();
-  },
+	args: { email: v.string() },
+	handler: async (ctx, args) => {
+		return await ctx.db
+			.query('users')
+			.withIndex('by_email', q => q.eq('email', args.email))
+			.first();
+	},
 });
 ```
 
@@ -247,21 +259,21 @@ import { mutation } from './_generated/server';
 import { v } from 'convex/values';
 
 export const create = mutation({
-  args: {
-    title: v.string(),
-    description: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Always check auth in mutations
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Not authenticated');
-    
-    return await ctx.db.insert('courses', {
-      ...args,
-      instructorId: identity.subject,
-      createdAt: Date.now(),
-    });
-  },
+	args: {
+		title: v.string(),
+		description: v.string(),
+	},
+	handler: async (ctx, args) => {
+		// Always check auth in mutations
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Not authenticated');
+
+		return await ctx.db.insert('courses', {
+			...args,
+			instructorId: identity.subject,
+			createdAt: Date.now(),
+		});
+	},
 });
 ```
 
@@ -293,6 +305,7 @@ export const create = mutation({
    - Optimistic UI updates with useOptimistic
 
 **🎯 All Examples Now Project-Specific:**
+
 - Real code from your codebase
 - Actual Convex queries (users.ts, resources.ts, notifications.ts)
 - Actual components (ResourceCard, NotificationBell)
@@ -301,6 +314,7 @@ export const create = mutation({
 ## Maintenance
 
 **Standards should be updated when:**
+
 - New patterns emerge in codebase
 - Framework best practices change
 - Team learns better approaches
@@ -308,6 +322,7 @@ export const create = mutation({
 - Major version upgrades occur
 
 **How to update:**
+
 1. Identify the pattern or convention
 2. Update relevant standard file
 3. Add DO/DON'T examples
@@ -317,6 +332,7 @@ export const create = mutation({
 ## Resources
 
 ### Official Documentation
+
 - [Next.js 16 Docs](https://nextjs.org/docs)
 - [React 19 Docs](https://react.dev)
 - [Convex Docs](https://docs.convex.dev)
@@ -325,12 +341,14 @@ export const create = mutation({
 - [Vitest Docs](https://vitest.dev)
 
 ### Libraries
+
 - [shadcn/ui Components](https://ui.shadcn.com)
 - [React Hook Form](https://react-hook-form.com)
 - [Zod Validation](https://zod.dev)
 - [Convex Helpers](https://github.com/get-convex/convex-helpers)
 
 ### Project Files
+
 - [CLAUDE.md](/CLAUDE.md) - Development guide
 - [package.json](/package.json) - Dependencies
 

@@ -13,7 +13,7 @@ Last Updated: 2025-11-25
 - **UI Framework:** React 19.2.0 (latest)
 - **CSS Framework:** Tailwind CSS 4.1.17 + PostCSS
 - **UI Components:** shadcn/ui (Radix UI primitives)
-  - @radix-ui/* components (v1.x)
+  - @radix-ui/\* components (v1.x)
   - class-variance-authority for variants
   - tailwind-merge for class merging
 - **Forms:** React Hook Form 7.66.0 + @hookform/resolvers
@@ -42,7 +42,7 @@ Last Updated: 2025-11-25
 ## Testing & Quality
 
 - **Test Framework:** Vitest 4.0.8
-- **Testing Library:** 
+- **Testing Library:**
   - @testing-library/react 16.3.0
   - @testing-library/jest-dom 6.9.1
   - @testing-library/user-event 14.6.1
@@ -64,7 +64,7 @@ Last Updated: 2025-11-25
 - **Theme:** next-themes 0.4.6
 - **Drag & Drop:** @hello-pangea/dnd 18.0.1
 - **Command Menu:** cmdk 1.1.1
-- **Utilities:** 
+- **Utilities:**
   - clsx 2.1.1
   - uuid (latest)
   - chalk 5.6.2 (CLI)

@@ -11,6 +11,7 @@ Complete the existing Course Creation Wizard to allow instructors to create and 
 ## Current State
 
 **What exists:**
+
 - UI for 5-step wizard (Basic Info, Structure, Content, Pricing, Review)
 - Form components for each step
 - Progress tracking UI
@@ -18,6 +19,7 @@ Complete the existing Course Creation Wizard to allow instructors to create and 
 - Convex backend with courses, modules, and lessons tables
 
 **What's missing:**
+
 - Backend mutations not connected (commented out)
 - Save draft functionality
 - Publish functionality
@@ -28,6 +30,7 @@ Complete the existing Course Creation Wizard to allow instructors to create and 
 ## Goal
 
 Enable instructors to:
+
 1. Create a new course through the wizard
 2. Save progress as a draft at any step
 3. Preview course before publishing
@@ -46,6 +49,7 @@ Enable instructors to:
 ## Technical Requirements
 
 **Backend:**
+
 - Add `status` field to course schema (draft/published/archived)
 - Implement course creation mutations
 - Implement course update mutations
@@ -53,6 +57,7 @@ Enable instructors to:
 - Handle course lifecycle (draft → published)
 
 **Frontend:**
+
 - Connect wizard to Convex mutations
 - Implement save draft button
 - Implement publish button

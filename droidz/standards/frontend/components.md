@@ -7,18 +7,23 @@ React 19 with Next.js 16 introduces powerful Server Components alongside enhance
 ## Core Principles
 
 ### 1. **Server Components by Default**
+
 Start with Server Components, add 'use client' only when needed
 
 ### 2. **Single Responsibility**
+
 Each component should have one clear purpose and do it well
 
 ### 3. **Reusability & Composability**
+
 Build complex UIs by combining smaller, simpler components
 
 ### 4. **Type Safety**
+
 Use TypeScript with explicit types for all props
 
 ### 5. **Named Exports**
+
 Always use named exports (not default exports)
 
 ## ✅ DO
@@ -26,6 +31,7 @@ Always use named exports (not default exports)
 ### Server Components (Default)
 
 **✅ DO**: Use Server Components for static content and data fetching
+
 ```typescript
 // app/courses/page.tsx
 import { fetchApi } from 'convex/nextjs';
@@ -34,7 +40,7 @@ import { api } from '@/convex/_generated/api';
 export default async function CoursesPage() {
   // Data fetching in Server Component (no loading state needed!)
   const courses = await fetchApi(api.courses.list);
-  
+
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-6">Courses</h1>
@@ -49,6 +55,7 @@ export default async function CoursesPage() {
 ```
 
 **✅ DO**: Use async/await in Server Components
+
 ```typescript
 // components/course-details.tsx
 import { fetchApi } from 'convex/nextjs';
@@ -61,11 +68,11 @@ interface CourseDetailsProps {
 
 export async function CourseDetails({ courseId }: CourseDetailsProps) {
   const course = await fetchApi(api.courses.get, { id: courseId });
-  
+
   if (!course) {
     return <div>Course not found</div>;
   }
-  
+
   return (
     <div>
       <h2>{course.title}</h2>
@@ -78,6 +85,7 @@ export async function CourseDetails({ courseId }: CourseDetailsProps) {
 ### Client Components ('use client')
 
 **✅ DO**: Add 'use client' for interactivity, hooks, or browser APIs
+
 ```typescript
 'use client';
 
@@ -93,7 +101,7 @@ interface EnrollButtonProps {
 export function EnrollButton({ courseId }: EnrollButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const enroll = useMutation(api.enrollments.create);
-  
+
   const handleClick = async () => {
     setIsLoading(true);
     try {
@@ -104,7 +112,7 @@ export function EnrollButton({ courseId }: EnrollButtonProps) {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <Button onClick={handleClick} disabled={isLoading}>
       {isLoading ? 'Enrolling...' : 'Enroll Now'}
@@ -114,6 +122,7 @@ export function EnrollButton({ courseId }: EnrollButtonProps) {
 ```
 
 **✅ DO**: Use named exports for all components
+
 ```typescript
 // ✅ Good - named export
 export function ResourceCard({ resource }: ResourceCardProps) {
@@ -127,32 +136,30 @@ export default function ResourceCard() {
 ```
 
 **✅ DO**: Define explicit prop interfaces
+
 ```typescript
 import { Id } from '@/convex/_generated/dataModel';
 
 interface CourseCardProps {
-  course: {
-    _id: Id<'courses'>;
-    title: string;
-    description: string;
-    instructorId: Id<'users'>;
-    thumbnailUrl?: string;
-    price?: number;
-  };
-  onEnroll?: (courseId: Id<'courses'>) => void;
-  variant?: 'default' | 'compact';
+	course: {
+		_id: Id<'courses'>;
+		title: string;
+		description: string;
+		instructorId: Id<'users'>;
+		thumbnailUrl?: string;
+		price?: number;
+	};
+	onEnroll?: (courseId: Id<'courses'>) => void;
+	variant?: 'default' | 'compact';
 }
 
-export function CourseCard({ 
-  course, 
-  onEnroll, 
-  variant = 'default' 
-}: CourseCardProps) {
-  // Implementation
+export function CourseCard({ course, onEnroll, variant = 'default' }: CourseCardProps) {
+	// Implementation
 }
 ```
 
 **✅ DO**: Use Convex hooks for real-time data
+
 ```typescript
 'use client';
 
@@ -162,9 +169,9 @@ import { api } from '@/convex/_generated/api';
 export function NotificationBell() {
   // Real-time, automatically updates when data changes
   const notifications = useQuery(api.notifications.list);
-  
+
   const unreadCount = notifications?.filter(n => !n.read).length ?? 0;
-  
+
   return (
     <button className="relative">
       <Bell className="h-5 w-5" />
@@ -181,6 +188,7 @@ export function NotificationBell() {
 ### Component Composition
 
 **✅ DO**: Compose components using children pattern
+
 ```typescript
 interface CardProps {
   children: React.ReactNode;
@@ -207,6 +215,7 @@ export function Card({ children, className }: CardProps) {
 ```
 
 **✅ DO**: Use render props for flexible composition
+
 ```typescript
 interface DataTableProps<T> {
   data: T[];
@@ -214,15 +223,15 @@ interface DataTableProps<T> {
   renderEmpty?: () => React.ReactNode;
 }
 
-export function DataTable<T>({ 
-  data, 
-  renderRow, 
-  renderEmpty 
+export function DataTable<T>({
+  data,
+  renderRow,
+  renderEmpty
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return renderEmpty?.() ?? <div>No data</div>;
   }
-  
+
   return (
     <div className="space-y-2">
       {data.map((item, index) => (
@@ -236,6 +245,7 @@ export function DataTable<T>({
 ### Forms with React Hook Form + Controller
 
 **✅ DO**: Use FormProvider + Controller pattern
+
 ```typescript
 'use client';
 
@@ -257,11 +267,11 @@ export function CourseForm() {
     resolver: zodResolver(schema),
     defaultValues: { title: '', description: '' },
   });
-  
+
   const onSubmit = async (data: FormData) => {
     // Handle submission
   };
-  
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
@@ -278,7 +288,7 @@ export function CourseForm() {
             </FormItem>
           )}
         />
-        
+
         <Controller
           control={methods.control}
           name="description"
@@ -292,7 +302,7 @@ export function CourseForm() {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" disabled={methods.formState.isSubmitting}>
           {methods.formState.isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
@@ -305,6 +315,7 @@ export function CourseForm() {
 ## ❌ DON'T
 
 **❌ DON'T**: Use 'use client' unnecessarily
+
 ```typescript
 // Bad - no need for 'use client'
 'use client';
@@ -320,6 +331,7 @@ export function StaticHeader() {
 ```
 
 **❌ DON'T**: Use default exports
+
 ```typescript
 // Bad
 export default function CourseCard() {
@@ -333,27 +345,29 @@ export function CourseCard() {
 ```
 
 **❌ DON'T**: Forget to handle loading states
+
 ```typescript
 // Bad - no loading state
 'use client';
 
 export function CourseList() {
   const courses = useQuery(api.courses.list);
-  
+
   return courses.map(c => <CourseCard course={c} />); // Error if undefined!
 }
 
 // Good - handle loading
 export function CourseList() {
   const courses = useQuery(api.courses.list);
-  
+
   if (courses === undefined) return <Skeleton />;
-  
+
   return courses.map(c => <CourseCard key={c._id} course={c} />);
 }
 ```
 
 **❌ DON'T**: Use any or implicit types
+
 ```typescript
 // Bad
 export function Button({ onClick, children }: any) {
@@ -373,6 +387,7 @@ export function Button({ onClick, children, variant = 'primary' }: ButtonProps) 
 ```
 
 **❌ DON'T**: Forget keys in lists
+
 ```typescript
 // Bad
 {courses.map(course => (
@@ -392,6 +407,7 @@ export function Button({ onClick, children, variant = 'primary' }: ButtonProps) 
 **Use Case**: Show placeholder UI while data loads
 
 **Implementation**:
+
 ```typescript
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -411,7 +427,7 @@ export function CourseCardSkeleton() {
 // Usage
 export function CoursesList() {
   const courses = useQuery(api.courses.list);
-  
+
   if (courses === undefined) {
     return (
       <div className="grid grid-cols-3 gap-6">
@@ -421,7 +437,7 @@ export function CoursesList() {
       </div>
     );
   }
-  
+
   return <div>...</div>;
 }
 ```
@@ -431,6 +447,7 @@ export function CoursesList() {
 **Use Case**: Instant feedback before server confirms
 
 **Implementation**:
+
 ```typescript
 'use client';
 
@@ -440,15 +457,15 @@ import { useOptimistic } from 'react';
 export function FavoriteButton({ resourceId, isFavorited }: Props) {
   const [optimisticFavorited, setOptimisticFavorited] = useOptimistic(isFavorited);
   const toggleFavorite = useMutation(api.favorites.toggle);
-  
+
   const handleClick = async () => {
     // Immediately show the change
     setOptimisticFavorited(!optimisticFavorited);
-    
+
     // Then update on server
     await toggleFavorite({ resourceId });
   };
-  
+
   return (
     <Button onClick={handleClick} variant="ghost">
       <Heart className={optimisticFavorited ? 'fill-red-500' : ''} />
@@ -462,6 +479,7 @@ export function FavoriteButton({ resourceId, isFavorited }: Props) {
 **Use Case**: Gracefully handle component errors
 
 **Implementation**:
+
 ```typescript
 // app/error.tsx (Next.js convention)
 'use client';
@@ -520,12 +538,12 @@ describe('EnrollButton', () => {
   it('handles enrollment click', async () => {
     const mockEnroll = vi.fn();
     vi.mocked(useMutation).mockReturnValue(mockEnroll);
-    
+
     render(<EnrollButton courseId="course_123" />);
-    
+
     const button = screen.getByRole('button', { name: /enroll/i });
     fireEvent.click(button);
-    
+
     expect(mockEnroll).toHaveBeenCalledWith({ courseId: 'course_123' });
   });
 });

@@ -14,6 +14,7 @@ Doctrina LMS is built on a modern, type-safe technology stack optimized for real
 **Role**: Full-stack React framework with server-side rendering
 
 **Rationale**:
+
 - App Router provides modern file-based routing with layouts and loading states
 - Server Components reduce client bundle size and improve initial load performance
 - Built-in image optimization for thumbnails and media
@@ -22,20 +23,22 @@ Doctrina LMS is built on a modern, type-safe technology stack optimized for real
 - Large ecosystem and community support
 
 **Key Patterns**:
+
 ```typescript
 // Server Component (default)
 export default async function CoursePage({ params }: { params: { id: string } }) {
-  // Server-side data fetching
+	// Server-side data fetching
 }
 
 // Client Component (when needed)
-'use client';
+('use client');
 export function InteractiveComponent() {
-  // Client-side interactivity
+	// Client-side interactivity
 }
 ```
 
 **Configuration Files**:
+
 - `next.config.ts` - Framework configuration
 - `app/layout.tsx` - Root layout
 - `app/page.tsx` - Home page
@@ -50,6 +53,7 @@ export function InteractiveComponent() {
 **Role**: Component-based user interface development
 
 **Rationale**:
+
 - Latest stable version with concurrent features
 - Server Components support for improved performance
 - Hooks API for state and side effects
@@ -57,6 +61,7 @@ export function InteractiveComponent() {
 - Mature ecosystem with extensive tooling
 
 **Key Patterns**:
+
 ```typescript
 // Functional component with hooks
 export function CourseCard({ course }: CourseCardProps) {
@@ -76,6 +81,7 @@ export function CourseCard({ course }: CourseCardProps) {
 **Role**: Utility-first styling
 
 **Rationale**:
+
 - Utility-first approach reduces context switching
 - JIT compilation for minimal CSS bundle
 - Built-in dark mode support
@@ -83,14 +89,16 @@ export function CourseCard({ course }: CourseCardProps) {
 - Excellent developer experience with IDE integration
 
 **Key Patterns**:
+
 ```tsx
 // Utility classes for styling
 <div className="flex items-center gap-4 p-6 bg-background rounded-lg shadow-md">
-  <h2 className="text-xl font-semibold text-foreground">Course Title</h2>
+	<h2 className="text-xl font-semibold text-foreground">Course Title</h2>
 </div>
 ```
 
 **Configuration Files**:
+
 - `tailwind.config.ts` - Theme and plugin configuration
 - `app/globals.css` - Global styles and CSS variables
 
@@ -100,6 +108,7 @@ export function CourseCard({ course }: CourseCardProps) {
 **Role**: Accessible, unstyled UI primitives
 
 **Rationale**:
+
 - Fully accessible (WAI-ARIA compliant)
 - Unstyled primitives allow complete design customization
 - Composable API for complex interactions
@@ -107,6 +116,7 @@ export function CourseCard({ course }: CourseCardProps) {
 - Copy-paste approach gives full control over components
 
 **Components Used**:
+
 - Accordion, Alert Dialog, Avatar, Button
 - Card, Checkbox, Dialog, Dropdown Menu
 - Form, Input, Label, Popover
@@ -114,6 +124,7 @@ export function CourseCard({ course }: CourseCardProps) {
 - Toast, Tooltip, and more
 
 **Key Patterns**:
+
 ```typescript
 // shadcn/ui component usage
 import { Button } from '@/components/ui/button';
@@ -139,6 +150,7 @@ export function CourseCard() {
 **Role**: Declarative animations and gestures
 
 **Rationale**:
+
 - Declarative API simplifies complex animations
 - Gesture support (drag, tap, hover)
 - Layout animations for smooth transitions
@@ -146,6 +158,7 @@ export function CourseCard() {
 - Performance optimized with hardware acceleration
 
 **Key Patterns**:
+
 ```typescript
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -169,6 +182,7 @@ export function AnimatedCard() {
 **Role**: Data visualization for analytics
 
 **Rationale**:
+
 - Built on React with declarative API
 - Responsive and customizable
 - Good TypeScript support
@@ -176,6 +190,7 @@ export function AnimatedCard() {
 - Active maintenance and community
 
 **Key Patterns**:
+
 ```typescript
 import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -201,6 +216,7 @@ export function EnrollmentChart({ data }) {
 **Role**: Real-time database, serverless functions, file storage
 
 **Rationale**:
+
 - Real-time data synchronization out of the box
 - Type-safe queries and mutations with TypeScript
 - Automatic caching and optimistic updates
@@ -210,30 +226,31 @@ export function EnrollmentChart({ data }) {
 - ACID transactions
 
 **Key Patterns**:
+
 ```typescript
 // convex/courses.ts - Query
 export const list = query({
-  handler: async (ctx) => {
-    return await ctx.db.query('courses').collect();
-  },
+	handler: async ctx => {
+		return await ctx.db.query('courses').collect();
+	},
 });
 
 // convex/courses.ts - Mutation
 export const create = mutation({
-  args: {
-    title: v.string(),
-    description: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthorized');
+	args: {
+		title: v.string(),
+		description: v.string(),
+	},
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) throw new Error('Unauthorized');
 
-    return await ctx.db.insert('courses', {
-      ...args,
-      instructorId: identity.subject,
-      createdAt: Date.now(),
-    });
-  },
+		return await ctx.db.insert('courses', {
+			...args,
+			instructorId: identity.subject,
+			createdAt: Date.now(),
+		});
+	},
 });
 ```
 
@@ -241,6 +258,7 @@ export const create = mutation({
 **Functions Location**: `convex/*.ts`
 
 **Tables**:
+
 - `users` - User profiles and roles
 - `courses` - Course metadata
 - `courseModules` - Course structure
@@ -265,6 +283,7 @@ export const create = mutation({
 **Role**: User authentication, session management, user metadata
 
 **Rationale**:
+
 - Pre-built UI components (sign-in, sign-up, user profile)
 - Multiple authentication strategies (email, social, SSO)
 - Webhook support for user sync
@@ -273,6 +292,7 @@ export const create = mutation({
 - Organization support for future B2B features
 
 **Key Patterns**:
+
 ```typescript
 // Server-side auth check
 import { auth } from '@clerk/nextjs/server';
@@ -294,6 +314,7 @@ export function UserProfile() {
 ```
 
 **Packages**:
+
 - `@clerk/nextjs` - Next.js integration
 - `@clerk/backend` - Server utilities
 - `@clerk/themes` - UI theming
@@ -308,6 +329,7 @@ export function UserProfile() {
 **Role**: Form state management and validation
 
 **Rationale**:
+
 - Minimal re-renders with uncontrolled components
 - Built-in validation with resolver support
 - TypeScript-first design
@@ -315,6 +337,7 @@ export function UserProfile() {
 - Easy integration with UI libraries
 
 **Key Patterns**:
+
 ```typescript
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -348,6 +371,7 @@ export function CourseForm() {
 **Role**: Runtime type validation and TypeScript inference
 
 **Rationale**:
+
 - TypeScript-first with automatic type inference
 - Composable schema definitions
 - Rich validation primitives
@@ -355,15 +379,16 @@ export function CourseForm() {
 - Used for both client and server validation
 
 **Key Patterns**:
+
 ```typescript
 import { z } from 'zod';
 
 // Schema definition
 export const courseSchema = z.object({
-  title: z.string().min(1).max(200),
-  description: z.string().min(10),
-  price: z.number().positive().optional(),
-  level: z.enum(['beginner', 'intermediate', 'advanced']),
+	title: z.string().min(1).max(200),
+	description: z.string().min(10),
+	price: z.number().positive().optional(),
+	level: z.enum(['beginner', 'intermediate', 'advanced']),
 });
 
 // Type inference
@@ -372,7 +397,7 @@ type CourseInput = z.infer<typeof courseSchema>;
 // Validation
 const result = courseSchema.safeParse(data);
 if (!result.success) {
-  console.error(result.error.issues);
+	console.error(result.error.issues);
 }
 ```
 
@@ -386,6 +411,7 @@ if (!result.success) {
 **Role**: Course purchases and subscription management
 
 **Rationale**:
+
 - Industry-standard payment processing
 - Excellent developer experience
 - Comprehensive webhook system
@@ -394,6 +420,7 @@ if (!result.success) {
 - Global payment method support
 
 **Key Patterns**:
+
 ```typescript
 // Server-side checkout session creation
 import Stripe from 'stripe';
@@ -401,13 +428,13 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function createCheckoutSession(courseId: string, userId: string) {
-  return await stripe.checkout.sessions.create({
-    mode: 'payment',
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${courseId}?success=true`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${courseId}`,
-    metadata: { courseId, userId },
-  });
+	return await stripe.checkout.sessions.create({
+		mode: 'payment',
+		line_items: [{ price: priceId, quantity: 1 }],
+		success_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${courseId}?success=true`,
+		cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${courseId}`,
+		metadata: { courseId, userId },
+	});
 }
 ```
 
@@ -423,6 +450,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Role**: Type-safe JavaScript development
 
 **Rationale**:
+
 - Compile-time error detection
 - Enhanced IDE support (autocomplete, refactoring)
 - Better code documentation through types
@@ -432,6 +460,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Configuration**: `tsconfig.json`
 
 **Strict Mode Settings**:
+
 - `strict: true`
 - `noUncheckedIndexedAccess: true`
 - `noImplicitAny: true`
@@ -442,6 +471,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Role**: Code quality and consistency
 
 **Rationale**:
+
 - Catches common errors and anti-patterns
 - Enforces consistent code style
 - Plugin ecosystem for framework-specific rules
@@ -450,6 +480,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Configuration**: `eslint.config.mjs`
 
 **Key Plugins**:
+
 - `eslint-config-next` - Next.js specific rules
 - `eslint-config-prettier` - Prettier compatibility
 - `eslint-plugin-simple-import-sort` - Import organization
@@ -461,6 +492,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Role**: Automatic code formatting
 
 **Rationale**:
+
 - Consistent code style without debates
 - Integrates with ESLint
 - IDE integration for format-on-save
@@ -474,6 +506,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 **Role**: Unit and integration testing
 
 **Rationale**:
+
 - Vite-native for fast execution
 - Jest-compatible API
 - Built-in TypeScript support
@@ -481,6 +514,7 @@ export async function createCheckoutSession(courseId: string, userId: string) {
 - Coverage reporting with v8
 
 **Key Patterns**:
+
 ```typescript
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -496,6 +530,7 @@ describe('CourseCard', () => {
 **Configuration**: `vitest.config.ts`
 
 **Testing Libraries**:
+
 - `@testing-library/react` - React component testing
 - `@testing-library/user-event` - User interaction simulation
 - `@testing-library/jest-dom` - DOM assertions
@@ -512,6 +547,7 @@ describe('CourseCard', () => {
 **Role**: Dependency management and script execution
 
 **Rationale**:
+
 - Significantly faster than npm/yarn
 - Built-in TypeScript support
 - Drop-in npm replacement
@@ -524,12 +560,13 @@ describe('CourseCard', () => {
 **Role**: Consistent Node.js versions across team
 
 **Configuration** (in `package.json`):
+
 ```json
 {
-  "volta": {
-    "node": "24.10.0",
-    "yarn": "4.10.3"
-  }
+	"volta": {
+		"node": "24.10.0",
+		"yarn": "4.10.3"
+	}
 }
 ```
 
@@ -539,43 +576,43 @@ describe('CourseCard', () => {
 
 ### Utility Libraries
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `date-fns` | 4.1.0 | Date manipulation |
-| `dayjs` | 1.11.19 | Lightweight date library |
-| `clsx` | 2.1.1 | Conditional class names |
-| `tailwind-merge` | 3.3.1 | Tailwind class merging |
-| `class-variance-authority` | 0.7.1 | Variant-based styling |
-| `lucide-react` | 0.553.0 | Icon library |
-| `uuid` | latest | Unique ID generation |
+| Package                    | Version | Purpose                  |
+| -------------------------- | ------- | ------------------------ |
+| `date-fns`                 | 4.1.0   | Date manipulation        |
+| `dayjs`                    | 1.11.19 | Lightweight date library |
+| `clsx`                     | 2.1.1   | Conditional class names  |
+| `tailwind-merge`           | 3.3.1   | Tailwind class merging   |
+| `class-variance-authority` | 0.7.1   | Variant-based styling    |
+| `lucide-react`             | 0.553.0 | Icon library             |
+| `uuid`                     | latest  | Unique ID generation     |
 
 ### UI Enhancement
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `@hello-pangea/dnd` | 18.0.1 | Drag and drop |
-| `embla-carousel-react` | 8.6.0 | Carousel component |
-| `cmdk` | 1.1.1 | Command palette |
-| `react-resizable-panels` | 3.0.6 | Resizable layouts |
-| `vaul` | 1.1.2 | Drawer component |
-| `next-themes` | 0.4.6 | Dark mode support |
-| `react-day-picker` | 9.11.1 | Date picker |
-| `input-otp` | 1.4.2 | OTP input |
+| Package                  | Version | Purpose            |
+| ------------------------ | ------- | ------------------ |
+| `@hello-pangea/dnd`      | 18.0.1  | Drag and drop      |
+| `embla-carousel-react`   | 8.6.0   | Carousel component |
+| `cmdk`                   | 1.1.1   | Command palette    |
+| `react-resizable-panels` | 3.0.6   | Resizable layouts  |
+| `vaul`                   | 1.1.2   | Drawer component   |
+| `next-themes`            | 0.4.6   | Dark mode support  |
+| `react-day-picker`       | 9.11.1  | Date picker        |
+| `input-otp`              | 1.4.2   | OTP input          |
 
 ### Document Generation
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `jspdf` | latest | PDF generation |
-| `html2canvas` | latest | HTML to canvas |
-| `qrcode.react` | latest | QR code generation |
+| Package        | Version | Purpose            |
+| -------------- | ------- | ------------------ |
+| `jspdf`        | latest  | PDF generation     |
+| `html2canvas`  | latest  | HTML to canvas     |
+| `qrcode.react` | latest  | QR code generation |
 
 ### Integration
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| `svix` | 1.81.0 | Webhook verification |
-| `convex-helpers` | 0.1.104 | Convex utilities |
+| Package          | Version | Purpose              |
+| ---------------- | ------- | -------------------- |
+| `svix`           | 1.81.0  | Webhook verification |
+| `convex-helpers` | 0.1.104 | Convex utilities     |
 
 ---
 

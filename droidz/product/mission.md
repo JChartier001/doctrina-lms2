@@ -39,12 +39,14 @@ Doctrina LMS addresses these challenges through:
 ### Primary Users
 
 #### Students (Learners)
+
 - **Demographics**: Adult learners, career changers, professionals seeking continuing education
 - **Goals**: Skill acquisition, certification, career advancement
 - **Pain Points**: Limited time, need for flexible schedules, desire for practical skills
 - **Needs**: Clear progress tracking, mobile access, engaging content, achievement recognition
 
 #### Instructors (Content Creators)
+
 - **Demographics**: Subject matter experts, professional educators, industry practitioners
 - **Goals**: Monetize expertise, reach broader audiences, build educational brand
 - **Pain Points**: Technical complexity, marketing challenges, student engagement tracking
@@ -53,10 +55,12 @@ Doctrina LMS addresses these challenges through:
 ### Secondary Users
 
 #### Administrators
+
 - **Role**: Platform management, content moderation, user support
 - **Needs**: User management tools, reporting dashboards, system configuration
 
 #### Organizations
+
 - **Role**: Corporate training, team skill development
 - **Needs**: Bulk enrollment, progress reporting, custom branding (future)
 
@@ -88,43 +92,43 @@ Doctrina LMS addresses these challenges through:
 
 ## Key Differentiators
 
-| Feature | Doctrina LMS | Traditional LMS |
-|---------|-------------|-----------------|
-| Data Sync | Real-time (Convex) | Polling/Refresh |
-| Architecture | Serverless, scalable | Server-dependent |
-| Setup | Zero-configuration backend | Complex infrastructure |
-| Updates | Instant across all clients | Manual refresh required |
-| Type Safety | End-to-end TypeScript | Partial or none |
-| Mobile Experience | Responsive by default | Often requires native apps |
+| Feature           | Doctrina LMS               | Traditional LMS            |
+| ----------------- | -------------------------- | -------------------------- |
+| Data Sync         | Real-time (Convex)         | Polling/Refresh            |
+| Architecture      | Serverless, scalable       | Server-dependent           |
+| Setup             | Zero-configuration backend | Complex infrastructure     |
+| Updates           | Instant across all clients | Manual refresh required    |
+| Type Safety       | End-to-end TypeScript      | Partial or none            |
+| Mobile Experience | Responsive by default      | Often requires native apps |
 
 ## Success Metrics
 
 ### Platform Health
 
-| Metric | Target | Measurement Frequency |
-|--------|--------|----------------------|
-| Monthly Active Users (MAU) | 10,000+ (Year 1) | Monthly |
-| Course Completion Rate | 40%+ | Monthly |
-| Student Satisfaction (NPS) | 50+ | Quarterly |
-| Platform Uptime | 99.9% | Continuous |
+| Metric                     | Target           | Measurement Frequency |
+| -------------------------- | ---------------- | --------------------- |
+| Monthly Active Users (MAU) | 10,000+ (Year 1) | Monthly               |
+| Course Completion Rate     | 40%+             | Monthly               |
+| Student Satisfaction (NPS) | 50+              | Quarterly             |
+| Platform Uptime            | 99.9%            | Continuous            |
 
 ### Learning Outcomes
 
-| Metric | Target | Measurement Frequency |
-|--------|--------|----------------------|
-| Quiz Pass Rate | 75%+ | Weekly |
-| Certificate Issuance | 1,000+ (Year 1) | Monthly |
-| Average Course Rating | 4.2/5.0+ | Monthly |
-| Repeat Enrollment Rate | 30%+ | Quarterly |
+| Metric                 | Target          | Measurement Frequency |
+| ---------------------- | --------------- | --------------------- |
+| Quiz Pass Rate         | 75%+            | Weekly                |
+| Certificate Issuance   | 1,000+ (Year 1) | Monthly               |
+| Average Course Rating  | 4.2/5.0+        | Monthly               |
+| Repeat Enrollment Rate | 30%+            | Quarterly             |
 
 ### Business Metrics
 
-| Metric | Target | Measurement Frequency |
-|--------|--------|----------------------|
-| Total Courses Published | 500+ (Year 1) | Monthly |
-| Active Instructors | 100+ (Year 1) | Monthly |
-| Transaction Volume | $100K+ GMV (Year 1) | Monthly |
-| Instructor Retention | 80%+ | Quarterly |
+| Metric                  | Target              | Measurement Frequency |
+| ----------------------- | ------------------- | --------------------- |
+| Total Courses Published | 500+ (Year 1)       | Monthly               |
+| Active Instructors      | 100+ (Year 1)       | Monthly               |
+| Transaction Volume      | $100K+ GMV (Year 1) | Monthly               |
+| Instructor Retention    | 80%+                | Quarterly             |
 
 ## Guiding Principles
 
